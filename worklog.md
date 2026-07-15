@@ -61,3 +61,23 @@ Stage Summary:
 - All 9 screens render pixel-perfect to the supplied UI images
 - Navigation, auth flow, and form screens all work end-to-end
 - No errors, lint clean, dev server healthy
+
+---
+Task ID: 2
+Agent: Main (Z.ai Code)
+Task: Replace password login with OTP flow (username/mobile → receive OTP → verify → login)
+
+Work Log:
+- Rewrote login-screen.tsx with 3-step state machine: credentials → otp → success
+- Step 1 (credentials): toggle between Username / Mobile Number, single input, "Tuma OTP" button (disabled until input filled), info note "Hakuna password inahitajika"
+- Step 2 (otp): 6-digit OTP input boxes with auto-advance, paste support, backspace navigation, masked identifier display, 45s resend countdown, "Thibitisha na Ingia" button (disabled until 6 digits entered)
+- Step 3 (success): green check circle, "Login Imefanikiwa!" message, auto-redirects to home after ~1s
+- Removed all password-related UI (password field, eye toggle, "Kumbuka mimi", "Umesahau password?")
+- Browser-verified full flow: enter username → Tuma OTP → fill 6 digits → Thibitisha → success → Home screen
+- Lint clean, no runtime errors
+
+Stage Summary:
+- Login now uses OTP authentication (no password)
+- Supports both Username and Mobile Number as identifier
+- Full OTP UX: auto-advance, paste, resend timer, masked display
+- Verified end-to-end in browser
