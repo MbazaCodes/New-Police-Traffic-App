@@ -98,10 +98,24 @@ function PhoneFrame({
 }) {
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-start bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 py-4 sm:py-8 dark:from-slate-900 dark:via-slate-950 dark:to-black">
-      {/* App title for desktop context */}
-      <div className="mb-4 hidden text-center sm:block">
-        <h1 className="text-xl font-bold text-[#1A237E] dark:text-slate-100">TZ Police Digital Platform</h1>
-        <p className="text-xs text-gray-500 dark:text-slate-400">Officer PWA — Next.js</p>
+      {/* Top bar with title + download button */}
+      <div className="mb-4 flex w-full max-w-[600px] flex-col items-center gap-3 px-4 sm:flex-row sm:justify-between sm:px-0">
+        <div className="text-center sm:text-left">
+          <h1 className="text-xl font-bold text-[#1A237E] dark:text-slate-100">TZ Police Digital Platform</h1>
+          <p className="text-xs text-gray-500 dark:text-slate-400">Officer PWA — Next.js + Flutter</p>
+        </div>
+        <a
+          href="/api/download"
+          download
+          className="flex items-center gap-2 rounded-xl bg-[#1A237E] px-5 py-2.5 text-[13px] font-bold text-white shadow-lg shadow-[#1A237E]/30 transition hover:bg-[#0d1f5e] active:scale-95 dark:bg-[#2196F3] dark:shadow-[#2196F3]/30"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download Project (ZIP)
+        </a>
       </div>
 
       {/* Phone frame */}
@@ -115,9 +129,19 @@ function PhoneFrame({
         </div>
       </div>
 
-      <p className="mt-4 text-center text-xs text-gray-500 dark:text-slate-400 sm:hidden">
-        TZ Police Digital Platform — Officer PWA
-      </p>
+      {/* Mobile download link (below phone) */}
+      <a
+        href="/api/download"
+        download
+        className="mt-5 flex items-center gap-2 rounded-xl bg-[#1A237E] px-5 py-2.5 text-[13px] font-bold text-white shadow-lg active:scale-95 dark:bg-[#2196F3]"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        Download Project (ZIP)
+      </a>
     </div>
   );
 }
