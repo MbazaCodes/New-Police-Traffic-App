@@ -76,6 +76,18 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  /* Police app theme - light */
+  --police-bg: #F5F5F5;
+  --police-card: #FFFFFF;
+  --police-card-muted: #F9FAFB;
+  --police-text: #1A1A1A;
+  --police-text-muted: #6B7280;
+  --police-text-faint: #9CA3AF;
+  --police-navy: #1A237E;
+  --police-navy-2: #002B5C;
+  --police-border: #E5E7EB;
+  --police-border-soft: #F3F4F6;
+  --police-input: #F9FAFB;
 }
 
 .dark {
@@ -110,6 +122,18 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  /* Police app theme - dark */
+  --police-bg: #0B1120;
+  --police-card: #1E293B;
+  --police-card-muted: #334155;
+  --police-text: #F1F5F9;
+  --police-text-muted: #94A3B8;
+  --police-text-faint: #64748B;
+  --police-navy: #93C5FD;
+  --police-navy-2: #BFDBFE;
+  --police-border: #334155;
+  --police-border-soft: #1E293B;
+  --police-input: #0F172A;
 }
 
 @layer base {
@@ -119,4 +143,30 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ===== TZ Police App Custom Utilities (Tailwind 4 @utility) ===== */
+@utility bg-police { background-color: var(--police-bg); }
+@utility bg-police-card { background-color: var(--police-card); }
+@utility bg-police-muted { background-color: var(--police-card-muted); }
+@utility bg-police-input { background-color: var(--police-input); }
+@utility text-police { color: var(--police-text); }
+@utility text-police-muted { color: var(--police-text-muted); }
+@utility text-police-faint { color: var(--police-text-faint); }
+@utility text-police-navy { color: var(--police-navy); }
+@utility text-police-navy2 { color: var(--police-navy-2); }
+@utility border-police { border-color: var(--police-border); }
+@utility border-police-soft { border-color: var(--police-border-soft); }
+
+/* Hide scrollbar for app-like feel */
+.app-scroll::-webkit-scrollbar { width: 0; height: 0; }
+.app-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Smooth app-like transitions */
+.police-screen-enter {
+  animation: policeFadeIn 0.25s ease-out;
+}
+@keyframes policeFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

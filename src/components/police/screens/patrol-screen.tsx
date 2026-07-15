@@ -7,7 +7,7 @@ import { toast } from "@/hooks/use-toast";
 
 export function PatrolScreen() {
   return (
-    <div className="min-h-full bg-[#F5F5F5]">
+    <div className="min-h-full bg-police">
       <TopAppBar title="Patroli" subtitle="Fanya doria, rekodi na ripoti matukio" />
 
       <div className="space-y-4 p-4">
@@ -31,7 +31,7 @@ export function PatrolScreen() {
             onClick={() =>
               toast({ title: "Patroli Imeanza", description: "Kurekodi patroli yako imeanza." })
             }
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-[14px] font-bold text-[#1976D2] shadow-md active:scale-[0.97]"
+            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-police-card px-5 py-2.5 text-[14px] font-bold text-[#1976D2] shadow-md active:scale-[0.97]"
           >
             <Play size={16} fill="#1976D2" />
             Anza Patroli
@@ -41,17 +41,17 @@ export function PatrolScreen() {
         {/* Patrol Info Cards */}
         <div className="grid grid-cols-3 gap-2">
           {PATROL_STATS.map((stat) => (
-            <div key={stat.label} className="flex flex-col items-center rounded-xl bg-white p-3 shadow-sm">
+            <div key={stat.label} className="flex flex-col items-center rounded-xl bg-police-card p-3 shadow-sm">
               <div
                 className="flex h-9 w-9 items-center justify-center rounded-full"
                 style={{ backgroundColor: `${stat.color}18` }}
               >
                 <StatIcon name={stat.icon} color={stat.color} />
               </div>
-              <span className="mt-2 text-[20px] font-bold leading-none text-[#1A237E]">
+              <span className="mt-2 text-[20px] font-bold leading-none text-police-navy">
                 {stat.value}
               </span>
-              <span className="mt-1 text-center text-[10px] leading-tight text-gray-500">
+              <span className="mt-1 text-center text-[10px] leading-tight text-police-muted">
                 {stat.label}
               </span>
             </div>
@@ -59,9 +59,9 @@ export function PatrolScreen() {
         </div>
 
         {/* Patrol Report Form */}
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <h3 className="text-[16px] font-bold text-[#1A237E]">Patrol Report</h3>
-          <p className="mb-3 text-[11px] text-gray-500">Jaza taarifa za patroli yako ya leo</p>
+        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+          <h3 className="text-[16px] font-bold text-police-navy">Patrol Report</h3>
+          <p className="mb-3 text-[11px] text-police-muted">Jaza taarifa za patroli yako ya leo</p>
 
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
@@ -73,28 +73,28 @@ export function PatrolScreen() {
             <FormField label="Lengo la Patroli" icon={<Target size={16} />} value="Chagua lengo la patroli" placeholder />
 
             <div>
-              <label className="mb-1 block text-[12px] font-medium text-gray-600">Maelezo ya Patroli</label>
+              <label className="mb-1 block text-[12px] font-medium text-police-muted">Maelezo ya Patroli</label>
               <textarea
                 rows={3}
                 placeholder="Eleza kwa kifupi shughuli uliozifanya..."
-                className="w-full rounded-xl border border-gray-200 bg-[#F9FAFB] px-3 py-2.5 text-[13px] text-gray-700 placeholder:text-gray-400 focus:border-[#2196F3] focus:outline-none"
+                className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:border-[#2196F3] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-[12px] font-medium text-gray-600">Matukio Yaliyobainika</label>
+              <label className="mb-1 block text-[12px] font-medium text-police-muted">Matukio Yaliyobainika</label>
               <textarea
                 rows={3}
                 placeholder="Eleza matukio yoyote yaliyobainika..."
-                className="w-full rounded-xl border border-gray-200 bg-[#F9FAFB] px-3 py-2.5 text-[13px] text-gray-700 placeholder:text-gray-400 focus:border-[#2196F3] focus:outline-none"
+                className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:border-[#2196F3] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-[12px] font-medium text-gray-600">Picha (Hiari)</label>
-              <button className="flex w-full flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-gray-200 bg-[#F9FAFB] py-5">
+              <label className="mb-1 block text-[12px] font-medium text-police-muted">Picha (Hiari)</label>
+              <button className="flex w-full flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-police bg-police-input py-5">
                 <Cloud size={24} className="text-[#2196F3]" />
-                <span className="text-[12px] font-medium text-gray-500">Ongeza picha</span>
+                <span className="text-[12px] font-medium text-police-muted">Ongeza picha</span>
               </button>
             </div>
 
@@ -134,13 +134,13 @@ function FormField({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-[12px] font-medium text-gray-600">{label}</label>
-      <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-[#F9FAFB] px-3">
-        <span className="text-gray-400">{icon}</span>
-        <span className={`h-11 flex-1 text-[13px] ${placeholder ? "text-gray-400" : "text-gray-700"}`}>
+      <label className="mb-1 block text-[12px] font-medium text-police-muted">{label}</label>
+      <div className="flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
+        <span className="text-police-faint">{icon}</span>
+        <span className={`h-11 flex-1 text-[13px] ${placeholder ? "text-police-faint" : "text-police"}`}>
           {value}
         </span>
-        <svg width="12" height="12" viewBox="0 0 12 12" className="text-gray-400">
+        <svg width="12" height="12" viewBox="0 0 12 12" className="text-police-faint">
           <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>

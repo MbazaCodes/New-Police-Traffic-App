@@ -24,28 +24,28 @@ export function SearchResultsScreen() {
   const r = SEARCH_RESULT;
 
   return (
-    <div className="min-h-full bg-[#F5F5F5]">
+    <div className="min-h-full bg-police">
       {/* Top App Bar */}
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-3 py-3">
+      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-police-soft bg-police-card px-3 py-3">
         <div className="flex items-center gap-1">
-          <button onClick={goBack} className="text-gray-700">
+          <button onClick={goBack} className="text-police">
             <ChevronLeft size={26} strokeWidth={2.5} />
           </button>
-          <h1 className="text-[17px] font-bold text-[#1A237E]">Matokéo ya Utafutaji</h1>
+          <h1 className="text-[17px] font-bold text-police-navy">Matokéo ya Utafutaji</h1>
         </div>
-        <button className="text-gray-600">
+        <button className="text-police-muted">
           <Share2 size={20} />
         </button>
       </header>
 
       <div className="space-y-3 p-4">
         {/* Plate + status header */}
-        <div className="flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between rounded-2xl bg-police-card p-4 shadow-sm">
           <div>
-            <div className="inline-block rounded-lg border-2 border-[#1A237E] bg-yellow-50 px-3 py-1 text-[18px] font-extrabold tracking-wider text-[#1A237E]">
+            <div className="inline-block rounded-lg border-2 border-[#1A237E] bg-yellow-50 px-3 py-1 text-[18px] font-extrabold tracking-wider text-police-navy">
               {r.plate}
             </div>
-            <p className="mt-2 text-[11px] text-gray-500">Tarehe: {r.date}</p>
+            <p className="mt-2 text-[11px] text-police-muted">Tarehe: {r.date}</p>
           </div>
           <span className="flex items-center gap-1 rounded-full bg-green-50 px-3 py-1.5 text-[12px] font-bold text-green-600">
             <CheckCircle2 size={14} />
@@ -66,24 +66,24 @@ export function SearchResultsScreen() {
                   Tahadhari
                 </span>
               </div>
-              <p className="mt-1 text-[12px] leading-snug text-gray-700">{r.alertMessage}</p>
+              <p className="mt-1 text-[12px] leading-snug text-police">{r.alertMessage}</p>
             </div>
           </div>
         </div>
 
         {/* Risk Score */}
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
+        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-[13px] font-semibold text-gray-600">Recent Violation Score</span>
-            <span className="text-[13px] font-medium text-gray-500">Driver : Scored {r.riskScore}% points</span>
+            <span className="text-[13px] font-semibold text-police-muted">Recent Violation Score</span>
+            <span className="text-[13px] font-medium text-police-muted">Driver : Scored {r.riskScore}% points</span>
           </div>
-          <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
+          <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-police-muted">
             <div
               className="h-full rounded-full bg-gradient-to-r from-[#007BFF] to-[#F44336]"
               style={{ width: `${r.riskScore}%` }}
             />
           </div>
-          <p className="mt-2 text-[12px] text-gray-600">
+          <p className="mt-2 text-[12px] text-police-muted">
             Kiwango cha hatari :{" "}
             <span className="font-extrabold text-red-600">{r.riskLevel}</span>
           </p>
@@ -116,7 +116,7 @@ export function SearchResultsScreen() {
         </div>
 
         {/* Insurance */}
-        <SectionCard title="INSURANCE COVER AND STATUS" icon={<ShieldCheck size={18} className="text-[#1A237E]" />}>
+        <SectionCard title="INSURANCE COVER AND STATUS" icon={<ShieldCheck size={18} className="text-police-navy" />}>
           <Row label="Bima" value={r.insurance.company} />
           <Row label="Polisi Na." value={r.insurance.policy} />
           <Row label="Inamalizika" value={r.insurance.expires} />
@@ -128,7 +128,7 @@ export function SearchResultsScreen() {
         </SectionCard>
 
         {/* Driver Info */}
-        <SectionCard title="DRIVER INFORMATION" icon={<User size={18} className="text-[#1A237E]" />}>
+        <SectionCard title="DRIVER INFORMATION" icon={<User size={18} className="text-police-navy" />}>
           <Row label="Name" value={r.driver.name} />
           <Row label="Gender" value={r.driver.gender} />
           <Row label="Drive Licence Number" value={r.driver.license} />
@@ -138,7 +138,7 @@ export function SearchResultsScreen() {
         </SectionCard>
 
         {/* Vehicle Info */}
-        <SectionCard title="VEHICLE INFORMATION" icon={<Car size={18} className="text-[#1A237E]" />}>
+        <SectionCard title="VEHICLE INFORMATION" icon={<Car size={18} className="text-police-navy" />}>
           <Row label="Model" value={r.vehicle.model} />
           <Row label="Type" value={r.vehicle.type} />
           <Row label="Year" value={r.vehicle.year} />
@@ -151,9 +151,9 @@ export function SearchResultsScreen() {
         </SectionCard>
 
         {/* Payment */}
-        <SectionCard title="PAYMENT AND BILLS STATUS" icon={<Wallet size={18} className="text-[#1A237E]" />}>
+        <SectionCard title="PAYMENT AND BILLS STATUS" icon={<Wallet size={18} className="text-police-navy" />}>
           <div className="flex items-center justify-between">
-            <span className="text-[13px] text-gray-600">Has Outstanding</span>
+            <span className="text-[13px] text-police-muted">Has Outstanding</span>
             <span className="rounded-full bg-orange-50 px-2.5 py-1 text-[11px] font-bold text-orange-500">
               Has Outstanding
             </span>
@@ -162,24 +162,24 @@ export function SearchResultsScreen() {
         </SectionCard>
 
         {/* Violations */}
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <h3 className="mb-3 flex items-center gap-2 text-[13px] font-bold uppercase text-[#1A237E]">
+        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+          <h3 className="mb-3 flex items-center gap-2 text-[13px] font-bold uppercase text-police-navy">
             <CreditCard size={18} /> Violations
           </h3>
           <div className="space-y-2">
             {r.violations.map((v) => (
-              <div key={v.id} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+              <div key={v.id} className="rounded-xl border border-police-soft bg-police-muted p-3">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-[13px] font-bold text-gray-800">
+                    <p className="text-[13px] font-bold text-police">
                       {v.id}. {v.name}
                     </p>
-                    <p className="mt-0.5 text-[11px] text-gray-500">
+                    <p className="mt-0.5 text-[11px] text-police-muted">
                       Tarehe: {v.date} • Eneo: {v.area}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[13px] font-bold text-gray-800">{v.fine}</p>
+                    <p className="text-[13px] font-bold text-police">{v.fine}</p>
                     <span className="mt-1 inline-block rounded bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-600">
                       HAJALIPWA
                     </span>
@@ -208,11 +208,11 @@ function ActionButton({
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-1.5 rounded-xl bg-white py-3 shadow-sm active:scale-[0.97]"
+      className="flex flex-col items-center gap-1.5 rounded-xl bg-police-card py-3 shadow-sm active:scale-[0.97]"
       style={{ borderTop: `3px solid ${color}` }}
     >
       <span style={{ color }}>{icon}</span>
-      <span className="px-1 text-center text-[10px] font-semibold text-gray-700">{label}</span>
+      <span className="px-1 text-center text-[10px] font-semibold text-police">{label}</span>
     </button>
   );
 }
@@ -227,8 +227,8 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-sm">
-      <h3 className="mb-2.5 flex items-center gap-2 border-b border-gray-100 pb-2 text-[12px] font-bold uppercase tracking-wide text-[#1A237E]">
+    <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+      <h3 className="mb-2.5 flex items-center gap-2 border-b border-police-soft pb-2 text-[12px] font-bold uppercase tracking-wide text-police-navy">
         {icon}
         {title}
       </h3>
@@ -248,8 +248,8 @@ function Row({
 }) {
   return (
     <div className="flex items-center justify-between gap-2">
-      <span className="text-[12px] text-gray-500">{label}</span>
-      <span className={`text-[12px] font-semibold ${valueColor ?? "text-gray-800"}`}>{value}</span>
+      <span className="text-[12px] text-police-muted">{label}</span>
+      <span className={`text-[12px] font-semibold ${valueColor ?? "text-police"}`}>{value}</span>
     </div>
   );
 }

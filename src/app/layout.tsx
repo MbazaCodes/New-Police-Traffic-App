@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "next-themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,8 +19,15 @@ export const metadata: Metadata = {
   description: "Tanzania Police Force digital platform for officers. Usalama Wetu, Jukumu Letu.",
   keywords: ["Tanzania Police", "TPF", "Officer PWA", "Digital Platform"],
   authors: [{ name: "Tanzania Police Force" }],
+  manifest: "/manifest.json",
   icons: {
     icon: "/police-logo.png",
+    apple: "/police-logo.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "TZ Police",
   },
   openGraph: {
     title: "TZ Police Digital Platform",
@@ -33,6 +41,17 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#1A237E" },
+    { media: "(prefers-color-scheme: dark)", color: "#0B1120" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -43,8 +62,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        {children}
-        <Toaster />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

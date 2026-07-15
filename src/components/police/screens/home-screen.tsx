@@ -9,7 +9,7 @@ export function HomeScreen() {
   const { searchTab, setSearchTab, navigate } = usePoliceStore();
 
   return (
-    <div className="min-h-full bg-[#F5F5F5]">
+    <div className="min-h-full bg-police">
       {/* Gradient Header */}
       <div className="bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] px-4 pb-16 pt-2">
         <div className="flex items-center justify-between pt-2">
@@ -39,7 +39,7 @@ export function HomeScreen() {
 
       {/* Hero Banner Card (overlaps header) */}
       <div className="-mt-10 px-4">
-        <div className="flex flex-col items-center rounded-2xl bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
+        <div className="flex flex-col items-center rounded-2xl bg-police-card p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
           <div className="h-20 w-20 overflow-hidden rounded-full ring-2 ring-[#0070C0]/15">
             <Image src="/police-logo.png" alt="TPF" width={80} height={80} className="h-full w-full object-cover" />
           </div>
@@ -72,7 +72,7 @@ export function HomeScreen() {
 
       {/* Quick Search */}
       <div className="mt-4 px-4 pb-6">
-        <div className="rounded-2xl bg-white p-4 shadow-[0_4px_12px_rgba(0,0,0,0.06)]">
+        <div className="rounded-2xl bg-police-card p-4 shadow-[0_4px_12px_rgba(0,0,0,0.06)]">
           <h3 className="text-[17px] font-bold text-[#1E3A8A]">Utafutaji wa Haraka</h3>
 
           {/* Tabs */}
@@ -88,7 +88,7 @@ export function HomeScreen() {
                 className={`flex-1 rounded-lg py-2 text-[12px] font-semibold transition ${
                   searchTab === tab.id
                     ? "bg-[#3B82F6] text-white"
-                    : "bg-gray-100 text-gray-500"
+                    : "bg-police-muted text-police-muted"
                 }`}
               >
                 {tab.label}
@@ -97,13 +97,13 @@ export function HomeScreen() {
           </div>
 
           {/* Search Input */}
-          <div className="mt-3 flex items-center gap-2 rounded-xl border border-gray-200 bg-[#F9FAFB] px-3">
-            <Search size={18} className="text-gray-400" />
+          <div className="mt-3 flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
+            <Search size={18} className="text-police-faint" />
             <input
               placeholder="T123ABC"
-              className="h-11 flex-1 bg-transparent text-[15px] font-medium text-gray-800 placeholder:text-gray-400 focus:outline-none"
+              className="h-11 flex-1 bg-transparent text-[15px] font-medium text-police placeholder:text-police-faint focus:outline-none"
             />
-            <X size={16} className="text-gray-400" />
+            <X size={16} className="text-police-faint" />
           </div>
 
           {/* Search Button */}
@@ -136,7 +136,7 @@ function QuickAction({
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-start rounded-2xl bg-white p-4 text-left shadow-[0_4px_12px_rgba(0,0,0,0.06)] active:scale-[0.98]"
+      className="flex flex-col items-start rounded-2xl bg-police-card p-4 text-left shadow-[0_4px_12px_rgba(0,0,0,0.06)] active:scale-[0.98]"
     >
       <div
         className="flex h-12 w-12 items-center justify-center rounded-full"
@@ -148,7 +148,7 @@ function QuickAction({
         <h4 className="text-[15px] font-bold text-[#1E3A8A]">{title}</h4>
         <ChevronRight size={16} className="text-[#1E3A8A]" />
       </div>
-      <p className="mt-0.5 text-[11px] leading-tight text-gray-500">{subtitle}</p>
+      <p className="mt-0.5 text-[11px] leading-tight text-police-muted">{subtitle}</p>
     </button>
   );
 }

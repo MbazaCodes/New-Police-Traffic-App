@@ -34,7 +34,7 @@ export function Pf3Screen() {
     toast({ title: "Inapakua", description: "Fomu PF3 inapakuliwa kama PDF." });
 
   return (
-    <div className="min-h-full bg-[#F5F5F5]">
+    <div className="min-h-full bg-police">
       <TopAppBar title="Fomu PF3" subtitle="Ripoti Rasmi ya Ajali ya Trafiki" showBack />
 
       <div className="space-y-3 p-4 pb-8">
@@ -48,7 +48,7 @@ export function Pf3Screen() {
               <h2 className="mt-0.5 text-[18px] font-extrabold">FORM PF3</h2>
               <p className="text-[11px] text-white/80">Traffic Accident Report Form</p>
             </div>
-            <div className="rounded-xl bg-white/15 px-3 py-2 text-right backdrop-blur">
+            <div className="rounded-xl bg-police-card/15 px-3 py-2 text-right backdrop-blur">
               <p className="text-[9px] uppercase text-white/60">Namba ya Kumbukumbu</p>
               <p className="text-[13px] font-bold">{f.referenceNo}</p>
             </div>
@@ -59,13 +59,13 @@ export function Pf3Screen() {
         <div className="flex gap-2">
           <button
             onClick={handleDownload}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#1A237E]/20 bg-white py-2.5 text-[12px] font-semibold text-[#1A237E] active:scale-[0.98]"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#1A237E]/20 bg-police-card py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
           >
             <Download size={15} /> Pakua PDF
           </button>
           <button
             onClick={handleDownload}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#1A237E]/20 bg-white py-2.5 text-[12px] font-semibold text-[#1A237E] active:scale-[0.98]"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#1A237E]/20 bg-police-card py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
           >
             <Printer size={15} /> Chapisha
           </button>
@@ -102,12 +102,12 @@ export function Pf3Screen() {
         <Section title="C. Magari Husika" icon={<Car size={16} />} count={`Jumla: ${f.vehicles.length}`}>
           <div className="space-y-2.5">
             {f.vehicles.map((v, i) => (
-              <div key={i} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+              <div key={i} className="rounded-xl border border-police-soft bg-police-muted p-3">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="rounded-md border-2 border-[#1A237E] bg-yellow-50 px-2.5 py-0.5 text-[14px] font-extrabold tracking-wider text-[#1A237E]">
+                  <span className="rounded-md border-2 border-[#1A237E] bg-yellow-50 px-2.5 py-0.5 text-[14px] font-extrabold tracking-wider text-police-navy">
                     {v.plate}
                   </span>
-                  <span className="text-[10px] font-medium text-gray-400">Gari {i + 1}</span>
+                  <span className="text-[10px] font-medium text-police-faint">Gari {i + 1}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <MiniField label="Aina" value={`${v.make} (${v.year})`} />
@@ -135,16 +135,16 @@ export function Pf3Screen() {
         <Section title="D. Waharibika / Majeruhi" icon={<Users size={16} />} count={`Jumla: ${f.casualties.length}`}>
           <div className="space-y-2">
             {f.casualties.map((c, i) => (
-              <div key={i} className="flex items-center gap-3 rounded-xl border border-gray-100 p-2.5">
+              <div key={i} className="flex items-center gap-3 rounded-xl border border-police-soft p-2.5">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange-50">
                   <Users size={16} className="text-orange-500" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13px] font-bold text-gray-800">{c.name}</p>
-                  <p className="text-[11px] text-gray-500">
+                  <p className="text-[13px] font-bold text-police">{c.name}</p>
+                  <p className="text-[11px] text-police-muted">
                     {c.type} • {c.injury}
                   </p>
-                  <p className="text-[10px] text-gray-400">
+                  <p className="text-[10px] text-police-faint">
                     Hospitali: {c.hospital} • Hali: {c.status}
                   </p>
                 </div>
@@ -157,12 +157,12 @@ export function Pf3Screen() {
         <Section title="E. Mashahidi" icon={<Eye size={16} />} count={`Jumla: ${f.witnesses.length}`}>
           <div className="space-y-2">
             {f.witnesses.map((w, i) => (
-              <div key={i} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+              <div key={i} className="rounded-xl border border-police-soft bg-police-muted p-3">
                 <div className="flex items-center justify-between">
-                  <p className="text-[13px] font-bold text-gray-800">{w.name}</p>
-                  <p className="text-[10px] text-gray-400">{w.phone}</p>
+                  <p className="text-[13px] font-bold text-police">{w.name}</p>
+                  <p className="text-[10px] text-police-faint">{w.phone}</p>
                 </div>
-                <p className="mt-1.5 text-[11px] italic leading-snug text-gray-600">"{w.statement}"</p>
+                <p className="mt-1.5 text-[11px] italic leading-snug text-police-muted">"{w.statement}"</p>
               </div>
             ))}
           </div>
@@ -170,10 +170,10 @@ export function Pf3Screen() {
 
         {/* Section 6: Sketch / Ramani */}
         <Section title="F. Ramani ya Ajali" icon={<MapPin size={16} />}>
-          <div className="flex aspect-[4/3] flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-[#F9FAFB]">
-            <MapPin size={28} className="text-gray-300" />
-            <p className="mt-1 text-[11px] text-gray-400">Sketch ya eneo la ajali</p>
-            <p className="text-[9px] text-gray-300">Bonyeza kuongeza ramani</p>
+          <div className="flex aspect-[4/3] flex-col items-center justify-center rounded-xl border-2 border-dashed border-police bg-police-input">
+            <MapPin size={28} className="text-police-faint" />
+            <p className="mt-1 text-[11px] text-police-faint">Sketch ya eneo la ajali</p>
+            <p className="text-[9px] text-police-faint">Bonyeza kuongeza ramani</p>
           </div>
         </Section>
 
@@ -185,10 +185,10 @@ export function Pf3Screen() {
             <Field label="Cheo" value={OFFICER.rank} />
             <Field label="Kituo" value={OFFICER.station} />
           </div>
-          <div className="mt-2 rounded-xl border border-gray-200 bg-[#F9FAFB] p-4">
-            <p className="text-[10px] text-gray-400">Saini ya Afisa</p>
-            <p className="mt-4 text-right font-[cursive] text-[18px] italic text-[#1A237E]">J. Mwinyi</p>
-            <div className="mt-1 border-t border-dashed border-gray-200 pt-1 text-center text-[9px] text-gray-400">
+          <div className="mt-2 rounded-xl border border-police bg-police-input p-4">
+            <p className="text-[10px] text-police-faint">Saini ya Afisa</p>
+            <p className="mt-4 text-right font-[cursive] text-[18px] italic text-police-navy">J. Mwinyi</p>
+            <div className="mt-1 border-t border-dashed border-police pt-1 text-center text-[9px] text-police-faint">
               Saini halali ya Afisa wa Polisi
             </div>
           </div>
@@ -198,7 +198,7 @@ export function Pf3Screen() {
         <div className="flex gap-2.5 pt-1">
           <button
             onClick={handleSaveDraft}
-            className="flex-1 rounded-xl border-2 border-[#1A237E] bg-white py-3 text-[13px] font-bold text-[#1A237E] active:scale-[0.98]"
+            className="flex-1 rounded-xl border-2 border-[#1A237E] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
           >
             <Save size={16} className="mr-1 inline" /> Hifadhi Rasimu
           </button>
@@ -226,13 +226,13 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-sm">
+    <div className="rounded-2xl bg-police-card p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-[14px] font-bold text-[#1A237E]">
-          <span className="text-[#1A237E]">{icon}</span>
+        <h3 className="flex items-center gap-2 text-[14px] font-bold text-police-navy">
+          <span className="text-police-navy">{icon}</span>
           {title}
         </h3>
-        {count && <span className="text-[11px] font-medium text-gray-400">{count}</span>}
+        {count && <span className="text-[11px] font-medium text-police-faint">{count}</span>}
       </div>
       <div className="space-y-2.5">{children}</div>
     </div>
@@ -252,10 +252,10 @@ function Field({
 }) {
   return (
     <div className={full ? "col-span-2" : ""}>
-      <label className="mb-1 block text-[11px] font-medium text-gray-500">{label}</label>
-      <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-[#F9FAFB] px-3">
-        {icon && <span className="text-gray-400">{icon}</span>}
-        <span className="h-10 flex-1 text-[12px] font-medium text-gray-700">{value}</span>
+      <label className="mb-1 block text-[11px] font-medium text-police-muted">{label}</label>
+      <div className="flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
+        {icon && <span className="text-police-faint">{icon}</span>}
+        <span className="h-10 flex-1 text-[12px] font-medium text-police">{value}</span>
       </div>
     </div>
   );
@@ -264,8 +264,8 @@ function Field({
 function MiniField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[9px] text-gray-400">{label}</p>
-      <p className="text-[12px] font-semibold text-gray-700">{value}</p>
+      <p className="text-[9px] text-police-faint">{label}</p>
+      <p className="text-[12px] font-semibold text-police">{value}</p>
     </div>
   );
 }
@@ -280,10 +280,10 @@ function ConditionChip({
   value: string;
 }) {
   return (
-    <div className="flex flex-col items-center rounded-xl bg-gray-50 p-2 text-center">
-      <span className="text-gray-400">{icon}</span>
-      <span className="mt-1 text-[9px] text-gray-400">{label}</span>
-      <span className="text-[11px] font-bold text-gray-700">{value}</span>
+    <div className="flex flex-col items-center rounded-xl bg-police-muted p-2 text-center">
+      <span className="text-police-faint">{icon}</span>
+      <span className="mt-1 text-[9px] text-police-faint">{label}</span>
+      <span className="text-[11px] font-bold text-police">{value}</span>
     </div>
   );
 }

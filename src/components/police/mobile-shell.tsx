@@ -49,9 +49,9 @@ export function MobileShell() {
 
   return (
     <PhoneFrame>
-      <div className="flex h-full flex-col overflow-hidden bg-[#F5F5F5]">
+      <div className="flex h-full flex-col overflow-hidden bg-police">
         <StatusBar />
-        <main className="flex-1 overflow-y-auto">{renderScreen(currentScreen)}</main>
+        <main key={currentScreen} className="police-screen-enter flex-1 overflow-y-auto app-scroll">{renderScreen(currentScreen)}</main>
         {showNav && <BottomNav />}
       </div>
     </PhoneFrame>
@@ -95,25 +95,25 @@ function PhoneFrame({
   darkStatus?: boolean;
 }) {
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-start bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 py-4 sm:py-8">
+    <div className="flex min-h-screen w-full flex-col items-center justify-start bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 py-4 sm:py-8 dark:from-slate-900 dark:via-slate-950 dark:to-black">
       {/* App title for desktop context */}
       <div className="mb-4 hidden text-center sm:block">
-        <h1 className="text-xl font-bold text-[#1A237E]">TZ Police Digital Platform</h1>
-        <p className="text-xs text-gray-500">Officer PWA — Next.js</p>
+        <h1 className="text-xl font-bold text-[#1A237E] dark:text-slate-100">TZ Police Digital Platform</h1>
+        <p className="text-xs text-gray-500 dark:text-slate-400">Officer PWA — Next.js</p>
       </div>
 
       {/* Phone frame */}
       <div className="relative w-full max-w-[400px] sm:w-[400px]">
-        <div className="relative overflow-hidden rounded-[2.5rem] border-[10px] border-gray-900 bg-black shadow-2xl">
+        <div className="relative overflow-hidden rounded-[2.5rem] border-[10px] border-gray-900 bg-black shadow-2xl dark:border-slate-700">
           {/* Notch */}
-          <div className="absolute left-1/2 top-0 z-30 h-6 w-32 -translate-x-1/2 rounded-b-2xl bg-gray-900" />
-          <div className="h-[760px] w-full overflow-hidden bg-white">
+          <div className="absolute left-1/2 top-0 z-30 h-6 w-32 -translate-x-1/2 rounded-b-2xl bg-gray-900 dark:bg-slate-800" />
+          <div className="h-[760px] w-full overflow-hidden bg-police">
             {children}
           </div>
         </div>
       </div>
 
-      <p className="mt-4 text-center text-xs text-gray-500 sm:hidden">
+      <p className="mt-4 text-center text-xs text-gray-500 dark:text-slate-400 sm:hidden">
         TZ Police Digital Platform — Officer PWA
       </p>
     </div>

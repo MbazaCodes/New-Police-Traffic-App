@@ -88,7 +88,7 @@ export function LoginScreen() {
       : identifier;
 
   return (
-    <div className="relative flex min-h-full flex-col bg-white">
+    <div className="relative flex min-h-full flex-col bg-police-card">
       {/* Background cityscape overlay */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
         <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#2196F3] to-transparent" />
@@ -111,7 +111,7 @@ export function LoginScreen() {
               priority
             />
           </div>
-          <h1 className="mt-4 text-center text-[22px] font-extrabold tracking-tight text-[#002B5C]">
+          <h1 className="mt-4 text-center text-[22px] font-extrabold tracking-tight text-police-navy2">
             TANZANIA POLICE FORCE
           </h1>
           <p className="mt-1 text-[13px] font-medium text-[#0070C0]">
@@ -120,23 +120,23 @@ export function LoginScreen() {
         </div>
 
         {/* Login Card */}
-        <div className="mt-7 w-full rounded-2xl bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.08)] ring-1 ring-gray-100">
+        <div className="mt-7 w-full rounded-2xl bg-police-card p-5 shadow-[0_4px_20px_rgba(0,0,0,0.08)] ring-1 ring-gray-100">
           {/* STEP 1: Credentials */}
           {step === "credentials" && (
             <>
-              <h2 className="text-center text-[19px] font-bold text-[#002B5C]">Officer Login</h2>
-              <p className="mt-1 text-center text-[13px] text-gray-500">
+              <h2 className="text-center text-[19px] font-bold text-police-navy2">Officer Login</h2>
+              <p className="mt-1 text-center text-[13px] text-police-muted">
                 Ingia kutumia akaunti yako ya utumishi
               </p>
 
               {/* Method toggle */}
-              <div className="mt-4 flex gap-2 rounded-xl bg-gray-100 p-1">
+              <div className="mt-4 flex gap-2 rounded-xl bg-police-muted p-1">
                 <button
                   onClick={() => setMethod("username")}
                   className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${
                     method === "username"
-                      ? "bg-white text-[#0070C0] shadow-sm"
-                      : "text-gray-500"
+                      ? "bg-police-card text-[#0070C0] shadow-sm"
+                      : "text-police-muted"
                   }`}
                 >
                   <User size={14} /> Username
@@ -145,8 +145,8 @@ export function LoginScreen() {
                   onClick={() => setMethod("phone")}
                   className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${
                     method === "phone"
-                      ? "bg-white text-[#0070C0] shadow-sm"
-                      : "text-gray-500"
+                      ? "bg-police-card text-[#0070C0] shadow-sm"
+                      : "text-police-muted"
                   }`}
                 >
                   <Phone size={14} /> Mobile Number
@@ -155,10 +155,10 @@ export function LoginScreen() {
 
               {/* Identifier Input */}
               <div className="mt-4">
-                <label className="mb-1.5 block text-[13px] font-medium text-[#002B5C]">
+                <label className="mb-1.5 block text-[13px] font-medium text-police-navy2">
                   {method === "username" ? "Username" : "Namba ya Simu"}
                 </label>
-                <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 focus-within:border-[#0070C0] focus-within:ring-2 focus-within:ring-[#0070C0]/20">
+                <div className="flex items-center gap-2 rounded-xl border border-police bg-police-card px-3 focus-within:border-[#0070C0] focus-within:ring-2 focus-within:ring-[#0070C0]/20">
                   {method === "username" ? (
                     <User size={20} className="text-[#0070C0]" />
                   ) : (
@@ -174,7 +174,7 @@ export function LoginScreen() {
                         : "Ingiza namba ya simu (07XX XXX XXX)"
                     }
                     inputMode={method === "phone" ? "tel" : "text"}
-                    className="h-12 flex-1 bg-transparent text-[14px] text-gray-800 placeholder:text-gray-400 focus:outline-none"
+                    className="h-12 flex-1 bg-transparent text-[14px] text-police placeholder:text-police-faint focus:outline-none"
                   />
                 </div>
               </div>
@@ -182,7 +182,7 @@ export function LoginScreen() {
               {/* Info note */}
               <div className="mt-3 flex items-start gap-2 rounded-xl bg-[#0070C0]/5 px-3 py-2.5">
                 <Smartphone size={16} className="mt-0.5 shrink-0 text-[#0070C0]" />
-                <p className="text-[11px] leading-snug text-gray-600">
+                <p className="text-[11px] leading-snug text-police-muted">
                   OTP itatumwa kwa simu yako baada ya kuwasilisha.{" "}
                   <span className="font-medium text-[#0070C0]">Hakuna password inahitajika.</span>
                 </p>
@@ -218,15 +218,15 @@ export function LoginScreen() {
                   setStep("credentials");
                   setOtp(["", "", "", "", "", ""]);
                 }}
-                className="mb-3 flex items-center gap-1 text-[12px] font-medium text-gray-500"
+                className="mb-3 flex items-center gap-1 text-[12px] font-medium text-police-muted"
               >
                 <ArrowLeft size={16} /> Rudi
               </button>
 
-              <h2 className="text-center text-[19px] font-bold text-[#002B5C]">Thibitisha OTP</h2>
-              <p className="mt-1 text-center text-[13px] text-gray-500">
+              <h2 className="text-center text-[19px] font-bold text-police-navy2">Thibitisha OTP</h2>
+              <p className="mt-1 text-center text-[13px] text-police-muted">
                 Tumekutumia OTP yenye tarakimu 6 kwa{" "}
-                <span className="font-semibold text-[#002B5C]">{maskedIdentifier}</span>
+                <span className="font-semibold text-police-navy2">{maskedIdentifier}</span>
               </p>
 
               {/* OTP Inputs */}
@@ -243,10 +243,10 @@ export function LoginScreen() {
                     value={digit}
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKey(idx, e)}
-                    className={`h-12 w-full rounded-xl border-2 bg-white text-center text-[20px] font-bold text-[#002B5C] focus:outline-none ${
+                    className={`h-12 w-full rounded-xl border-2 bg-police-card text-center text-[20px] font-bold text-police-navy2 focus:outline-none ${
                       digit
                         ? "border-[#0070C0] bg-[#0070C0]/5"
-                        : "border-gray-200 focus:border-[#0070C0]"
+                        : "border-police focus:border-[#0070C0]"
                     }`}
                   />
                 ))}
@@ -254,9 +254,9 @@ export function LoginScreen() {
 
               {/* Resend */}
               <div className="mt-4 flex items-center justify-center gap-1.5">
-                <span className="text-[12px] text-gray-500">Hujapata OTP?</span>
+                <span className="text-[12px] text-police-muted">Hujapata OTP?</span>
                 {resendTimer > 0 ? (
-                  <span className="text-[12px] font-medium text-gray-400">
+                  <span className="text-[12px] font-medium text-police-faint">
                     Tuma tena baada ya {resendTimer}s
                   </span>
                 ) : (
@@ -288,11 +288,11 @@ export function LoginScreen() {
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-50">
                 <CheckCircle2 size={48} className="text-green-500" />
               </div>
-              <h2 className="mt-4 text-[19px] font-bold text-[#002B5C]">Login Imefanikiwa!</h2>
-              <p className="mt-1 text-center text-[13px] text-gray-500">
+              <h2 className="mt-4 text-[19px] font-bold text-police-navy2">Login Imefanikiwa!</h2>
+              <p className="mt-1 text-center text-[13px] text-police-muted">
                 Karibu kwenye mfumo. Inaingia...
               </p>
-              <div className="mt-4 h-1 w-32 overflow-hidden rounded-full bg-gray-100">
+              <div className="mt-4 h-1 w-32 overflow-hidden rounded-full bg-police-muted">
                 <div className="h-full w-full animate-pulse rounded-full bg-[#0070C0]" />
               </div>
             </div>
@@ -301,10 +301,10 @@ export function LoginScreen() {
 
         {/* Footer */}
         <div className="mt-auto pt-8 text-center">
-          <p className="text-[11px] text-gray-500">
+          <p className="text-[11px] text-police-muted">
             Mfumo salama wa Jeshi la Polisi Tanzania
           </p>
-          <p className="mt-1 text-[11px] text-gray-400">© 2026 Tanzania Police Force</p>
+          <p className="mt-1 text-[11px] text-police-faint">© 2026 Tanzania Police Force</p>
         </div>
       </div>
     </div>

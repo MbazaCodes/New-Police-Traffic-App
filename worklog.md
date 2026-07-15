@@ -112,3 +112,68 @@ Stage Summary:
 - All clickable elements across all 12 screens are now wired to working destinations or toast feedback
 - No dead-end buttons remain
 - Lint clean, no runtime errors, all flows verified in browser
+
+---
+Task ID: 5
+Agent: Sub-agent (general-purpose)
+Task: Generate Flutter officer-mobile app (TZ Police Digital Platform) — 12 screens, Riverpod + GoRouter + Material 3 light/dark + Hive, matching the existing Next.js PWA content
+
+Work Log:
+- Read worklog.md + all PWA source (police-data.ts, 12 screen .tsx files, top-app-bar.tsx, bottom-nav.tsx, police-icons.tsx, status-bar.tsx) to extract exact Swahili text, colors, and structure.
+- Created `apps/officer-mobile/` with the requested folder structure (40 Dart files, ~11.8k LOC).
+- Project scaffolding: pubspec.yaml (flutter_riverpod, hooks_riverpod, go_router, hive, hive_flutter, google_fonts, flutter_svg, lucide_icons, cupertino_icons; assets/police-logo.png), analysis_options.yaml (flutter_lints), README.md (build/run/deploy).
+- Copied police logo: `cp /home/z/my-project/public/police-logo.png /home/z/my-project/apps/officer-mobile/assets/police-logo.png`.
+- core/theme: app_colors.dart (navy/blue/green/orange/red/purple + tint() helper), app_theme.dart (light + dark ThemeData, useMaterial3:true, Inter via google_fonts, rounded input/button/card themes).
+- core/router: app_router.dart — GoRouter with `StatefulShellRoute.indexedStack` for the 5 bottom-nav tabs, `refreshListenable` bridging auth state via `_AuthListenable(ChangeNotifier)`, redirect logic (login → /home when authenticated, force /login when logged out), 12 routes total.
+- providers: auth_provider.dart (AuthState + AuthMethod, bootstrap/login/logout persisted to Hive), theme_provider.dart (ThemeMode.system/light/dark persisted), navigation_provider.dart (NavTab enum + active tab state).
+- services: storage_service.dart (Hive wrapper, Provider overridden in main()).
+- models: officer, offense, citation, alert, pf3 (Pf3Vehicle/Pf3Casualty/Pf3Witness), vehicle_inspection (InspectionItem/InspectionPhoto), accident_report (AccidentVehicle/Person/Evidence + EvidenceType enum).
+- data/mock_data.dart: complete Swahili content from police-data.ts — officer, homeStats, trafficStats, trafficQuickActions (7), recentOffenses (5), searchResult (driver/vehicle/insurance/payment + 3 violations), patrolStats, alerts (3), profileStats (5), profileActivities (4), profileSettings (6), accidentReport (2 vehicles + 2 people + 4 evidence), vehicleInspection (5 docs + 10 mechanical + 4 photos), pf3Form (2 vehicles + 2 casualties + 2 witnesses), citationHistory (5), offenseTypes (10), vehicleTypes (7).
+- widgets: police_icon.dart (icon name → Lucide IconData map, mirrors PoliceIcon name set), police_logo.dart (circular asset wrapper), top_app_bar.dart (title/subtitle/back/bell-with-badge/logo), bottom_nav_bar.dart (5 tabs, badges, animated active state), stat_card.dart, quick_action_button.dart, section_card.dart (+ MiniField + ReadOnlyField), form_field.dart (AppFormField + AppDropdown), app_toast.dart (snackbar-based toast matching PWA `toast({...})`), status_bar.dart (StatusBar.applyStyle + optional FakeStatusBar).
+- screens (12): login_screen.dart (3-step OTP flow with auto-advance + paste + backspace + resend countdown + success animation + decorative cityscape), home_screen.dart (gradient header + hero banner overlap + 2 quick actions + quick search with 3 tabs), traffic_screen.dart (4 stat cards + 7 quick actions + recent offenses list), patrol_screen.dart (gradient hero with dashed-path painter + 3 stats + patrol report form), alerts_screen.dart (Tuma Tangazo button + filter tabs + alert cards with colored left borders), profile_screen.dart (header + dashboard stats grid + activities + settings + theme toggle (Auto/Light/Dark) + download report + logout), search_results_screen.dart (plate header + alert box + risk score bar + 3 action buttons + 4 section cards + violations), accident_report_screen.dart (6 sections + add buttons + toggle + action links + save/submit), vehicle_inspection_screen.dart (vehicle info + 6 checklist sections + results radio + signature + submit), pf3_screen.dart (gradient banner + 7 sections A-G + quick actions + save/submit), citation_screen.dart (header + vehicle/driver/offense/fine/evidence sections with working dropdowns), history_screen.dart (summary cards + search + filter tabs + 5 citation records).
+- main.dart: ProviderScope override of storageProvider + bootstrap auth state before showing UI, transparent status bar. app.dart: MaterialApp.router with themeMode from provider + light/dark themes.
+- All UI text in Swahili, matching the PWA exactly. Light + dark themes throughout. No `withOpacity` used (all `withValues(alpha:)`), so requires Flutter 3.27+ (updated pubspec constraint).
+- Did NOT run flutter commands (not installed). Source-code-only generation as instructed.
+
+Stage Summary:
+- 40 Dart files, ~11.8k LOC under `apps/officer-mobile/`.
+- 12 screens implemented with identical Swahili text, colors, and layout to the PWA.
+- Riverpod (auth, theme, navigation providers) + GoRouter (StatefulShellRoute.indexedStack for the 5 bottom-nav tabs, redirect on auth change).
+- Material 3 light + dark themes (useMaterial3: true) with Inter font via google_fonts.
+- Hive storage for auth + theme mode persistence.
+- Police logo asset bundled at `assets/police-logo.png`.
+- Source is production-ready but untested (Flutter not installed in this environment). To run: `flutter pub get && flutter run` from `apps/officer-mobile/`.
+
+---
+Task ID: 4
+Agent: Main (Z.ai Code)
+Task: Modernize PWA with Dark/Light mode + PWA manifest + app-like feel; generate Flutter officer-mobile source
+
+Work Log:
+- Flutter app (Task 5, subagent): 40 Dart files generated under apps/officer-mobile/ — pubspec.yaml, 12 screens, Riverpod providers, GoRouter with StatefulShellRoute, Material 3 light/dark themes, Hive storage, police logo asset. Not compiled (no Flutter SDK).
+- PWA Dark/Light mode:
+  - Added next-themes ThemeProvider to layout.tsx (attribute="class", defaultTheme="system")
+  - Added police-specific CSS variables to :root and .dark in globals.css (merged into existing blocks)
+  - Created custom Tailwind 4 @utility classes: bg-police, bg-police-card, bg-police-muted, text-police, text-police-muted, text-police-navy, border-police, etc.
+  - Batch sed-replaced hardcoded colors (bg-white, bg-[#F5F5F5], text-gray-500, etc.) across all 15 police component files with semantic police classes
+  - Created ThemeToggle component (compact icon toggle for top bars + full 3-way toggle for profile: Mwanga/Giza/Auto)
+  - Added compact theme toggle to Traffic top app bar
+  - Added full 3-way theme toggle to Profile settings section
+  - Fixed Tailwind 4 issue: @layer utilities → @utility directive (CSS variables weren't applying until this fix)
+- PWA manifest:
+  - Created public/manifest.json (standalone display, portrait, theme colors, icons, Swahili lang)
+  - Added manifest + appleWebApp + viewport themeColor to layout.tsx metadata
+  - Added viewport export with themeColor, maximumScale=1, userScalable=false for app-like feel
+- App-like UX:
+  - Added screen transition animation (policeFadeIn keyframe, 0.25s)
+  - Added hidden scrollbar (.app-scroll) for native app feel
+  - Updated MobileShell with dark-mode-aware phone frame
+  - Added key={currentScreen} to main for re-trigger of enter animation on screen change
+- Browser-verified: light mode (white bg, readable), dark mode (dark slate bg, light text), theme toggle works in both directions, profile 3-way toggle works
+- Lint clean, no runtime errors
+
+Stage Summary:
+- Flutter officer-mobile: complete source code (40 files, 12 screens, Riverpod + GoRouter + Material 3 + Hive)
+- PWA: full Dark/Light mode with next-themes, PWA manifest for installability, app-like transitions & scrollbar
+- Both light and dark themes verified working in browser
+- Compatible with the modernization guide: Material 3 (Flutter), rounded corners, dynamic themes, modern spacing

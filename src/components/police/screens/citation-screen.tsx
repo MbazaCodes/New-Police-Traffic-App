@@ -34,19 +34,19 @@ export function CitationScreen() {
   };
 
   return (
-    <div className="min-h-full bg-[#F5F5F5]">
+    <div className="min-h-full bg-police">
       <TopAppBar title="Toa Citation" subtitle="Jaza taarifa za kosa la trafiki" showBack />
 
       <div className="space-y-3 p-4 pb-8">
         {/* Citation header */}
-        <div className="flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between rounded-2xl bg-police-card p-4 shadow-sm">
           <div>
-            <p className="text-[10px] uppercase tracking-wide text-gray-400">Namba ya Citation</p>
-            <p className="text-[15px] font-extrabold text-[#1A237E]">CT-2026-00452</p>
+            <p className="text-[10px] uppercase tracking-wide text-police-faint">Namba ya Citation</p>
+            <p className="text-[15px] font-extrabold text-police-navy">CT-2026-00452</p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] uppercase tracking-wide text-gray-400">Afisa</p>
-            <p className="text-[13px] font-semibold text-gray-700">{OFFICER.shortName}</p>
+            <p className="text-[10px] uppercase tracking-wide text-police-faint">Afisa</p>
+            <p className="text-[13px] font-semibold text-police">{OFFICER.shortName}</p>
           </div>
         </div>
 
@@ -102,13 +102,13 @@ export function CitationScreen() {
             <FormField label="Eneo" placeholder="Morogoro Road, DSM" icon={<MapPin size={14} />} full />
           </div>
           <div>
-            <label className="mb-1 block text-[11px] font-medium text-gray-500">
+            <label className="mb-1 block text-[11px] font-medium text-police-muted">
               Maelezo ya Ziada
             </label>
             <textarea
               rows={3}
               placeholder="Eleza kwa kifupi kilichotokea..."
-              className="w-full rounded-xl border border-gray-200 bg-[#F9FAFB] px-3 py-2.5 text-[12px] text-gray-700 placeholder:text-gray-400 focus:border-[#1A237E] focus:outline-none"
+              className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[12px] text-police placeholder:text-police-faint focus:border-[#1A237E] focus:outline-none"
             />
           </div>
         </Section>
@@ -118,12 +118,12 @@ export function CitationScreen() {
           <div className="grid grid-cols-2 gap-2.5">
             <FormField label="Kiasi cha Faini" placeholder="TZS 0" icon={<Wallet size={14} />} />
             <div>
-              <label className="mb-1 block text-[11px] font-medium text-gray-500">Hali ya Malipo</label>
-              <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-[#F9FAFB] px-3">
+              <label className="mb-1 block text-[11px] font-medium text-police-muted">Hali ya Malipo</label>
+              <div className="flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
                 <span className="h-10 flex-1 text-[12px] font-semibold text-orange-500">
                   Inasubiri Malipo
                 </span>
-                <ChevronDown size={14} className="text-gray-400" />
+                <ChevronDown size={14} className="text-police-faint" />
               </div>
             </div>
           </div>
@@ -131,10 +131,10 @@ export function CitationScreen() {
 
         {/* Evidence */}
         <Section title="Ushahidi (Picha)" icon={<Camera size={16} />}>
-          <button className="flex w-full flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-gray-200 bg-[#F9FAFB] py-5">
-            <Camera size={24} className="text-gray-300" />
-            <span className="text-[12px] font-medium text-gray-500">Ongeza picha za ushahidi</span>
-            <span className="text-[9px] text-gray-400">JPG, PNG (Max 10MB)</span>
+          <button className="flex w-full flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-police bg-police-input py-5">
+            <Camera size={24} className="text-police-faint" />
+            <span className="text-[12px] font-medium text-police-muted">Ongeza picha za ushahidi</span>
+            <span className="text-[9px] text-police-faint">JPG, PNG (Max 10MB)</span>
           </button>
         </Section>
 
@@ -142,7 +142,7 @@ export function CitationScreen() {
         <div className="flex gap-2.5 pt-1">
           <button
             onClick={handleSave}
-            className="flex-1 rounded-xl border-2 border-[#1A237E] bg-white py-3 text-[13px] font-bold text-[#1A237E] active:scale-[0.98]"
+            className="flex-1 rounded-xl border-2 border-[#1A237E] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
           >
             <Save size={16} className="mr-1 inline" /> Hifadhi
           </button>
@@ -168,9 +168,9 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-sm">
-      <h3 className="mb-3 flex items-center gap-2 text-[14px] font-bold text-[#1A237E]">
-        <span className="text-[#1A237E]">{icon}</span>
+    <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+      <h3 className="mb-3 flex items-center gap-2 text-[14px] font-bold text-police-navy">
+        <span className="text-police-navy">{icon}</span>
         {title}
       </h3>
       <div className="space-y-2.5">{children}</div>
@@ -195,14 +195,14 @@ function FormField({
 }) {
   return (
     <div className={full ? "col-span-2" : ""}>
-      <label className="mb-1 block text-[11px] font-medium text-gray-500">{label}</label>
-      <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-[#F9FAFB] px-3 focus-within:border-[#1A237E]">
-        {icon && <span className="text-gray-400">{icon}</span>}
+      <label className="mb-1 block text-[11px] font-medium text-police-muted">{label}</label>
+      <div className="flex items-center gap-2 rounded-xl border border-police bg-police-input px-3 focus-within:border-[#1A237E]">
+        {icon && <span className="text-police-faint">{icon}</span>}
         <input
           defaultValue={value}
           placeholder={placeholder}
           inputMode={inputMode}
-          className="h-10 flex-1 bg-transparent text-[12px] font-medium text-gray-700 placeholder:text-gray-400 focus:outline-none"
+          className="h-10 flex-1 bg-transparent text-[12px] font-medium text-police placeholder:text-police-faint focus:outline-none"
         />
       </div>
     </div>
@@ -230,23 +230,23 @@ function Dropdown({
 }) {
   return (
     <div className={full ? "col-span-2" : ""}>
-      <label className="mb-1 block text-[11px] font-medium text-gray-500">{label}</label>
+      <label className="mb-1 block text-[11px] font-medium text-police-muted">{label}</label>
       <button
         onClick={onToggle}
-        className="relative flex w-full items-center gap-2 rounded-xl border border-gray-200 bg-[#F9FAFB] px-3"
+        className="relative flex w-full items-center gap-2 rounded-xl border border-police bg-police-input px-3"
       >
-        <span className={`h-10 flex-1 text-left text-[12px] ${value ? "font-medium text-gray-700" : "text-gray-400"}`}>
+        <span className={`h-10 flex-1 text-left text-[12px] ${value ? "font-medium text-police" : "text-police-faint"}`}>
           {value || placeholder}
         </span>
-        <ChevronDown size={14} className={`text-gray-400 transition ${open ? "rotate-180" : ""}`} />
+        <ChevronDown size={14} className={`text-police-faint transition ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="relative z-10 mt-1 max-h-40 overflow-y-auto rounded-xl border border-gray-200 bg-white py-1 shadow-lg">
+        <div className="relative z-10 mt-1 max-h-40 overflow-y-auto rounded-xl border border-police bg-police-card py-1 shadow-lg">
           {options.map((opt) => (
             <button
               key={opt}
               onClick={() => onSelect(opt)}
-              className="block w-full px-3 py-2 text-left text-[12px] text-gray-700 hover:bg-gray-50"
+              className="block w-full px-3 py-2 text-left text-[12px] text-police hover:bg-police-muted"
             >
               {opt}
             </button>

@@ -17,7 +17,7 @@ export function AlertsScreen() {
   ];
 
   return (
-    <div className="min-h-full bg-[#F5F5F5]">
+    <div className="min-h-full bg-police">
       <TopAppBar title="Arifa / Tangazo" subtitle="Pata taarifa na matangazo muhimu" />
 
       <div className="space-y-3 p-4">
@@ -28,7 +28,7 @@ export function AlertsScreen() {
           }
           className="flex w-full items-center gap-3 rounded-2xl bg-[#2196F3] p-4 text-left shadow-md shadow-[#2196F3]/20 active:scale-[0.98]"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-police-card/20">
             <Megaphone size={22} className="text-white" />
           </div>
           <div className="flex-1">
@@ -38,7 +38,7 @@ export function AlertsScreen() {
         </button>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-1 border-b border-gray-200">
+        <div className="flex items-center gap-1 border-b border-police">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -47,7 +47,7 @@ export function AlertsScreen() {
             >
               <span
                 className={`text-[13px] font-medium ${
-                  alertFilter === tab.id ? "font-bold text-[#2196F3]" : "text-gray-500"
+                  alertFilter === tab.id ? "font-bold text-[#2196F3]" : "text-police-muted"
                 }`}
               >
                 {tab.label}
@@ -80,7 +80,7 @@ export function AlertsScreen() {
               onClick={() =>
                 toast({ title: alert.title, description: alert.source })
               }
-              className="block w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm active:scale-[0.99]"
+              className="block w-full overflow-hidden rounded-2xl bg-police-card text-left shadow-sm active:scale-[0.99]"
               style={{ borderLeft: `4px solid ${alert.borderColor}` }}
             >
               <div className="flex gap-3 p-3.5">
@@ -92,7 +92,7 @@ export function AlertsScreen() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
-                    <h4 className="text-[14px] font-bold leading-tight text-[#1A237E]">
+                    <h4 className="text-[14px] font-bold leading-tight text-police-navy">
                       {alert.title}
                     </h4>
                     <span
@@ -100,8 +100,8 @@ export function AlertsScreen() {
                       style={{ backgroundColor: alert.dotColor }}
                     />
                   </div>
-                  <p className="mt-0.5 text-[10px] text-gray-400">{alert.time}</p>
-                  <p className="mt-1.5 text-[12px] leading-snug text-gray-600">{alert.message}</p>
+                  <p className="mt-0.5 text-[10px] text-police-faint">{alert.time}</p>
+                  <p className="mt-1.5 text-[12px] leading-snug text-police-muted">{alert.message}</p>
                   <div className="mt-2 flex items-center justify-between">
                     <span
                       className="rounded-full px-2.5 py-0.5 text-[10px] font-semibold"
@@ -109,7 +109,7 @@ export function AlertsScreen() {
                     >
                       {alert.source}
                     </span>
-                    <ChevronRight size={16} className="text-gray-300" />
+                    <ChevronRight size={16} className="text-police-faint" />
                   </div>
                 </div>
               </div>
