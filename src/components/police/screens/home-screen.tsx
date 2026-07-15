@@ -3,8 +3,7 @@
 import Image from "next/image";
 import { Bell, Search, Camera, ScanLine, ChevronRight, X } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { HOME_STATS, OFFICER } from "@/lib/police-data";
-import { PoliceIcon } from "../police-icons";
+import { OFFICER } from "@/lib/police-data";
 
 export function HomeScreen() {
   const { searchTab, setSearchTab, navigate } = usePoliceStore();
@@ -49,29 +48,6 @@ export function HomeScreen() {
           </h2>
           <p className="text-[13px] font-medium text-[#3B82F6]">USALAMA WETU, JUKUMU LETU</p>
         </div>
-      </div>
-
-      {/* Stat Cards */}
-      <div className="mt-4 grid grid-cols-4 gap-2 px-4">
-        {HOME_STATS.map((stat) => (
-          <div
-            key={stat.label}
-            className="flex flex-col items-center rounded-xl bg-white p-2.5 shadow-[0_2px_6px_rgba(0,0,0,0.05)]"
-          >
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg"
-              style={{ backgroundColor: `${stat.color}15` }}
-            >
-              <PoliceIcon name={stat.icon} size={18} className="" />
-            </div>
-            <span className="mt-1.5 text-[17px] font-bold leading-none" style={{ color: stat.color }}>
-              {stat.value}
-            </span>
-            <span className="mt-1 text-center text-[9px] leading-tight text-gray-500">
-              {stat.label}
-            </span>
-          </div>
-        ))}
       </div>
 
       {/* Quick Actions */}
