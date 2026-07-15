@@ -10,8 +10,8 @@ interface PoliceState {
   logout: () => void;
 
   // Navigation
-  activeTab: ScreenId; // current bottom-nav tab
-  currentScreen: ScreenId; // actual screen shown (may be a pushed screen like accident-report)
+  activeTab: ScreenId;
+  currentScreen: ScreenId;
   history: ScreenId[];
 
   navigate: (screen: ScreenId) => void;
@@ -23,6 +23,12 @@ interface PoliceState {
   setSearchTab: (t: "plate" | "license" | "nida") => void;
   alertFilter: "all" | "mine" | "important";
   setAlertFilter: (f: "all" | "mine" | "important") => void;
+
+  // Camera Scanner
+  scannerOpen: boolean;
+  scannerMode: "qr" | "ocr";
+  openScanner: (mode: "qr" | "ocr") => void;
+  closeScanner: () => void;
 }
 
 export const usePoliceStore = create<PoliceState>((set, get) => ({
@@ -66,4 +72,9 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
 
   alertFilter: "all",
   setAlertFilter: (f) => set({ alertFilter: f }),
+
+  scannerOpen: false,
+  scannerMode: "qr",
+  openScanner: (mode) => set({ scannerOpen: true, scannerMode: mode }),
+  closeScanner: () => set({ scannerOpen: false }),
 }));

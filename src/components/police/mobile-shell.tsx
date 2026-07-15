@@ -15,6 +15,7 @@ import { VehicleInspectionScreen } from "./screens/vehicle-inspection-screen";
 import { Pf3Screen } from "./screens/pf3-screen";
 import { CitationScreen } from "./screens/citation-screen";
 import { HistoryScreen } from "./screens/history-screen";
+import { CameraScannerModal } from "./camera-scanner-modal";
 import type { ScreenId } from "@/lib/police-data";
 
 // Screens that hide the bottom nav (full-screen forms / auth)
@@ -53,6 +54,7 @@ export function MobileShell() {
         <StatusBar />
         <main key={currentScreen} className="police-screen-enter flex-1 overflow-y-auto app-scroll">{renderScreen(currentScreen)}</main>
         {showNav && <BottomNav />}
+        <CameraScannerModal />
       </div>
     </PhoneFrame>
   );

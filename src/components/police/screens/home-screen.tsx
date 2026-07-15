@@ -6,7 +6,7 @@ import { usePoliceStore } from "@/store/police-store";
 import { OFFICER } from "@/lib/police-data";
 
 export function HomeScreen() {
-  const { searchTab, setSearchTab, navigate } = usePoliceStore();
+  const { searchTab, setSearchTab, navigate, openScanner } = usePoliceStore();
 
   return (
     <div className="min-h-full bg-police">
@@ -58,14 +58,14 @@ export function HomeScreen() {
             bg="#3B82F6"
             title="Soma Nambari"
             subtitle="Tumia kamera kusoma namba ya gari"
-            onClick={() => navigate("search-results")}
+            onClick={() => openScanner("ocr")}
           />
           <QuickAction
             icon={<ScanLine size={26} className="text-[#10B981]" />}
             bg="#10B981"
             title="Scan QR"
             subtitle="Changanya QR code ya hati au namba"
-            onClick={() => navigate("search-results")}
+            onClick={() => openScanner("qr")}
           />
         </div>
       </div>
