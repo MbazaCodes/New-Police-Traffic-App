@@ -16,9 +16,11 @@ import {
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { SEARCH_RESULT } from "@/lib/police-data";
+import { toast } from "@/hooks/use-toast";
 
 export function SearchResultsScreen() {
   const goBack = usePoliceStore((s) => s.goBack);
+  const navigate = usePoliceStore((s) => s.navigate);
   const r = SEARCH_RESULT;
 
   return (
@@ -89,9 +91,28 @@ export function SearchResultsScreen() {
 
         {/* Action Buttons */}
         <div className="grid grid-cols-3 gap-2">
-          <ActionButton icon={<FileText size={18} />} label="Ongeza Citation" color="#2563EB" />
-          <ActionButton icon={<MessageSquareWarning size={18} />} label="Ongeza Onyo" color="#FF9800" />
-          <ActionButton icon={<Hand size={18} />} label="Arrest" color="#F44336" />
+          <ActionButton
+            icon={<FileText size={18} />}
+            label="Ongeza Citation"
+            color="#2563EB"
+            onClick={() => navigate("citation")}
+          />
+          <ActionButton
+            icon={<MessageSquareWarning size={18} />}
+            label="Ongeza Onyo"
+            color="#FF9800"
+            onClick={() =>
+              toast({ title: "Onyo Limetolewa", description: "Onyo limewasilishwa kwa dereva." })
+            }
+          />
+          <ActionButton
+            icon={<Hand size={18} />}
+            label="Arrest"
+            color="#F44336"
+            onClick={() =>
+              toast({ title: "Kizuizi Kimewekwa", description: "Mchakato wa kizuizi umeanzishwa." })
+            }
+          />
         </div>
 
         {/* Insurance */}
@@ -177,13 +198,16 @@ function ActionButton({
   icon,
   label,
   color,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;
   color: string;
+  onClick?: () => void;
 }) {
   return (
     <button
+      onClick={onClick}
       className="flex flex-col items-center gap-1.5 rounded-xl bg-white py-3 shadow-sm active:scale-[0.97]"
       style={{ borderTop: `3px solid ${color}` }}
     >

@@ -10,7 +10,10 @@ export type ScreenId =
   | "alerts"
   | "profile"
   | "accident-report"
-  | "vehicle-inspection";
+  | "vehicle-inspection"
+  | "pf3"
+  | "citation"
+  | "history";
 
 export const OFFICER = {
   name: "Insp. Juma Mwinyi",
@@ -40,12 +43,13 @@ export const TRAFFIC_STATS = [
 ];
 
 export const TRAFFIC_QUICK_ACTIONS = [
-  { label: "Ripoti Kosa", icon: "clipboard", color: "#2563EB" },
-  { label: "Toa Citation", icon: "file-text", color: "#10B981" },
-  { label: "Tafuta Gari", icon: "search", color: "#8B5CF6" },
+  { label: "Ripoti Kosa", icon: "clipboard", color: "#2563EB", screen: "citation" as ScreenId },
+  { label: "Toa Citation", icon: "file-text", color: "#10B981", screen: "citation" as ScreenId },
+  { label: "Tafuta Gari", icon: "search", color: "#8B5CF6", screen: "search-results" as ScreenId },
   { label: "Ukaguzi wa Gari", icon: "car", color: "#F97316", screen: "vehicle-inspection" as ScreenId },
   { label: "Ripoti Ajali", icon: "alert-triangle", color: "#EF4444", screen: "accident-report" as ScreenId },
-  { label: "Historia ya Citation", icon: "clock", color: "#3B82F6" },
+  { label: "Fomu PF3", icon: "file-text", color: "#0A3D62", screen: "pf3" as ScreenId },
+  { label: "Historia ya Citation", icon: "clock", color: "#3B82F6", screen: "history" as ScreenId },
 ];
 
 export const RECENT_OFFENSES = [
@@ -271,3 +275,128 @@ export const VEHICLE_INSPECTION = {
     { label: "Dashibodi" },
   ],
 };
+
+// PF3 — Police Form 3 (Tanzania Police Traffic Accident Report)
+export const PF3_FORM = {
+  referenceNo: "PF3/DSM/2026/00892",
+  region: "Dar es Salaam",
+  district: "Kinondoni",
+  station: "Kituo Kikuu cha Polisi Dar es Salaam",
+  accidentType: "Mgongano wa Magari Mawili",
+  severity: "Mdogo",
+  weather: "Wazi",
+  roadSurface: "Lami",
+  lightCondition: "Mchana",
+  vehicles: [
+    {
+      plate: "T123ABC",
+      make: "Toyota Corolla",
+      year: "2020",
+      color: "Nyeupe",
+      driver: "Juma Khamis Mwinyi",
+      license: "DL123456789TZ",
+      direction: "Kuelekea Ubungo",
+      damage: "Mbele - Upande wa Kulia",
+      insured: true,
+    },
+    {
+      plate: "T789GHI",
+      make: "Toyota Hiace",
+      year: "2019",
+      color: "Fedha",
+      driver: "Ali Mohamed Salum",
+      license: "DL987654321TZ",
+      direction: "Kutoka Ubungo",
+      damage: "Nyuma - Upande wa Kushoto",
+      insured: true,
+    },
+  ],
+  casualties: [
+    { name: "Ali Mohamed Salum", type: "Abiria", injury: "Maumivu Madogo", hospital: "Mwananyamala", status: "Matibabu" },
+    { name: "Fatuma Hassan", type: "Abiria", injury: "Hakuna Madhara", hospital: "—", status: "Ametoka" },
+  ],
+  witnesses: [
+    { name: "Saidi Juma", phone: "0788 123 456", statement: "Gari la T123ABC lilipita kasi na kupoteza udhibiti." },
+    { name: "Mariam Ally", phone: "0766 987 654", statement: "Niliona gari la pindi likijaribu kuepuka." },
+  ],
+};
+
+// Citation history
+export const CITATION_HISTORY = [
+  {
+    id: "CT-2026-0451",
+    plate: "T123ABC",
+    offense: "Over Speeding",
+    driver: "Juma Khamis Mwinyi",
+    date: "10 Mei 2026",
+    time: "14:30",
+    location: "Mandela Road, DSM",
+    fine: "TZS 150,000",
+    status: "Hajalipwa",
+    statusColor: "#F44336",
+  },
+  {
+    id: "CT-2026-0450",
+    plate: "T789GHI",
+    offense: "No Seatbelt",
+    driver: "Ali Mohamed Salum",
+    date: "08 Mei 2026",
+    time: "09:15",
+    location: "Mbezi Beach, DSM",
+    fine: "TZS 50,000",
+    status: "Imelipwa",
+    statusColor: "#10B981",
+  },
+  {
+    id: "CT-2026-0449",
+    plate: "T456DEF",
+    offense: "Traffic Light Violation",
+    driver: "Saidi Juma Khamis",
+    date: "05 Mei 2026",
+    time: "17:45",
+    location: "Samora Ave, DSM",
+    fine: "TZS 100,000",
+    status: "Imelipwa",
+    statusColor: "#10B981",
+  },
+  {
+    id: "CT-2026-0448",
+    plate: "T321XYZ",
+    offense: "Kutumia Simu wakati wa Udereva",
+    driver: "Grace Mushi",
+    date: "02 Mei 2026",
+    time: "11:20",
+    location: "Nkrumah Street, DSM",
+    fine: "TZS 50,000",
+    status: "Hajalipwa",
+    statusColor: "#F44336",
+  },
+  {
+    id: "CT-2026-0447",
+    plate: "T654ABC",
+    offense: "Kutopita kasi",
+    driver: "Hamisi Rashid",
+    date: "28 Apr 2026",
+    time: "08:05",
+    location: "Morogoro Road, DSM",
+    fine: "TZS 30,000",
+    status: "Imelipwa",
+    statusColor: "#10B981",
+  },
+];
+
+// Citation form options
+export const OFFENSE_TYPES = [
+  "Over Speeding",
+  "No Seatbelt",
+  "Traffic Light Violation",
+  "Kutumia Simu wakati wa Udereva",
+  "Kutopita kasi",
+  "Kutopita mstari",
+  "Gari bila Bima",
+  "Leseni imekwisha",
+  "Kukata kona hatari",
+  "Kuepuka kodi",
+];
+
+export const VEHICLE_TYPES = ["Saloon", "Pick Up", "Minibus", "Lori", "Pikipiki", "Bajaji", "Basila"];

@@ -3,6 +3,7 @@
 import { Calendar, Clock, MapPin, Target, Cloud, Play, Shield, Route } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { PATROL_STATS } from "@/lib/police-data";
+import { toast } from "@/hooks/use-toast";
 
 export function PatrolScreen() {
   return (
@@ -26,7 +27,12 @@ export function PatrolScreen() {
           <p className="mt-1.5 max-w-[80%] text-[12px] leading-snug text-white/85">
             Bonyeza kitufe hapa chini kuanza doria yako na kurekodi shughuli.
           </p>
-          <button className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-[14px] font-bold text-[#1976D2] shadow-md active:scale-[0.97]">
+          <button
+            onClick={() =>
+              toast({ title: "Patroli Imeanza", description: "Kurekodi patroli yako imeanza." })
+            }
+            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-[14px] font-bold text-[#1976D2] shadow-md active:scale-[0.97]"
+          >
             <Play size={16} fill="#1976D2" />
             Anza Patroli
           </button>
@@ -92,7 +98,12 @@ export function PatrolScreen() {
               </button>
             </div>
 
-            <button className="w-full rounded-xl bg-[#2196F3] py-3 text-[15px] font-bold text-white shadow-md shadow-[#2196F3]/30 active:scale-[0.98]">
+            <button
+              onClick={() =>
+                toast({ title: "Imehifadhiwa", description: "Ripoti ya patroli imehifadhiwa kikamilifu." })
+              }
+              className="w-full rounded-xl bg-[#2196F3] py-3 text-[15px] font-bold text-white shadow-md shadow-[#2196F3]/30 active:scale-[0.98]"
+            >
               Hifadhi Report
             </button>
           </div>

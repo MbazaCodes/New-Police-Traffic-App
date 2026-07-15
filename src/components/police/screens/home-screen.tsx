@@ -58,12 +58,14 @@ export function HomeScreen() {
             bg="#3B82F6"
             title="Soma Nambari"
             subtitle="Tumia kamera kusoma namba ya gari"
+            onClick={() => navigate("search-results")}
           />
           <QuickAction
             icon={<ScanLine size={26} className="text-[#10B981]" />}
             bg="#10B981"
             title="Scan QR"
             subtitle="Changanya QR code ya hati au namba"
+            onClick={() => navigate("search-results")}
           />
         </div>
       </div>
@@ -123,14 +125,19 @@ function QuickAction({
   bg,
   title,
   subtitle,
+  onClick,
 }: {
   icon: React.ReactNode;
   bg: string;
   title: string;
   subtitle: string;
+  onClick?: () => void;
 }) {
   return (
-    <button className="flex flex-col items-start rounded-2xl bg-white p-4 text-left shadow-[0_4px_12px_rgba(0,0,0,0.06)] active:scale-[0.98]">
+    <button
+      onClick={onClick}
+      className="flex flex-col items-start rounded-2xl bg-white p-4 text-left shadow-[0_4px_12px_rgba(0,0,0,0.06)] active:scale-[0.98]"
+    >
       <div
         className="flex h-12 w-12 items-center justify-center rounded-full"
         style={{ backgroundColor: `${bg}15` }}

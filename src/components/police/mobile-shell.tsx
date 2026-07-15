@@ -12,10 +12,21 @@ import { AlertsScreen } from "./screens/alerts-screen";
 import { ProfileScreen } from "./screens/profile-screen";
 import { AccidentReportScreen } from "./screens/accident-report-screen";
 import { VehicleInspectionScreen } from "./screens/vehicle-inspection-screen";
+import { Pf3Screen } from "./screens/pf3-screen";
+import { CitationScreen } from "./screens/citation-screen";
+import { HistoryScreen } from "./screens/history-screen";
 import type { ScreenId } from "@/lib/police-data";
 
 // Screens that hide the bottom nav (full-screen forms / auth)
-const NO_NAV_SCREENS: ScreenId[] = ["login", "accident-report", "vehicle-inspection", "search-results"];
+const NO_NAV_SCREENS: ScreenId[] = [
+  "login",
+  "accident-report",
+  "vehicle-inspection",
+  "search-results",
+  "pf3",
+  "citation",
+  "history",
+];
 
 export function MobileShell() {
   const { isAuthenticated, currentScreen } = usePoliceStore();
@@ -65,6 +76,12 @@ function renderScreen(screen: ScreenId) {
       return <AccidentReportScreen />;
     case "vehicle-inspection":
       return <VehicleInspectionScreen />;
+    case "pf3":
+      return <Pf3Screen />;
+    case "citation":
+      return <CitationScreen />;
+    case "history":
+      return <HistoryScreen />;
     default:
       return <HomeScreen />;
   }

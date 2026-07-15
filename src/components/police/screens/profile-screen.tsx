@@ -6,9 +6,11 @@ import { TopAppBar } from "../top-app-bar";
 import { PoliceIcon } from "../police-icons";
 import { PROFILE_STATS, PROFILE_ACTIVITIES, PROFILE_SETTINGS, OFFICER } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
+import { toast } from "@/hooks/use-toast";
 
 export function ProfileScreen() {
   const logout = usePoliceStore((s) => s.logout);
+  const navigate = usePoliceStore((s) => s.navigate);
 
   return (
     <div className="min-h-full bg-[#F5F5F5]">
@@ -31,7 +33,12 @@ export function ProfileScreen() {
               <p className="mt-0.5 text-[12px] font-medium text-[#2196F3]">
                 Namba ya Utambulisho: {OFFICER.id}
               </p>
-              <button className="mt-2 inline-flex items-center gap-1 rounded-lg border border-[#2196F3] px-3 py-1 text-[11px] font-semibold text-[#2196F3]">
+              <button
+                onClick={() =>
+                  toast({ title: "Hariri Profaili", description: "Fomu ya kuhariri profaili itafunguka." })
+                }
+                className="mt-2 inline-flex items-center gap-1 rounded-lg border border-[#2196F3] px-3 py-1 text-[11px] font-semibold text-[#2196F3]"
+              >
                 <Pencil size={12} /> Hariri Profaili
               </button>
             </div>
@@ -81,7 +88,12 @@ export function ProfileScreen() {
         <div className="rounded-2xl bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-[14px] font-bold text-[#1A237E]">Shughuli za Hivi Karibuni</h3>
-            <button className="text-[12px] font-medium text-[#2196F3]">Angalia Zote</button>
+            <button
+              onClick={() => navigate("history")}
+              className="text-[12px] font-medium text-[#2196F3]"
+            >
+              Angalia Zote
+            </button>
           </div>
           <div className="space-y-3">
             {PROFILE_ACTIVITIES.map((act, i) => (
@@ -108,6 +120,9 @@ export function ProfileScreen() {
           {PROFILE_SETTINGS.map((item) => (
             <button
               key={item.label}
+              onClick={() =>
+                toast({ title: item.label, description: "Ukiwa tayari kufungua..." })
+              }
               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 active:bg-gray-50"
             >
               <div
@@ -126,7 +141,12 @@ export function ProfileScreen() {
         </div>
 
         {/* Download Report Button */}
-        <button className="flex w-full items-center gap-3 rounded-2xl bg-[#2196F3] p-4 text-left shadow-md shadow-[#2196F3]/20 active:scale-[0.98]">
+        <button
+          onClick={() =>
+            toast({ title: "Inapakua", description: "Ripoti ya shughuli inapakuliwa kama PDF." })
+          }
+          className="flex w-full items-center gap-3 rounded-2xl bg-[#2196F3] p-4 text-left shadow-md shadow-[#2196F3]/20 active:scale-[0.98]"
+        >
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
             <Download size={22} className="text-white" />
           </div>

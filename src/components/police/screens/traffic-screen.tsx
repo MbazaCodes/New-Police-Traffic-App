@@ -69,14 +69,20 @@ export function TrafficScreen() {
         <div className="rounded-2xl bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-[16px] font-bold text-[#1A1A1A]">Makosa ya Karibuni</h3>
-            <button className="text-[13px] font-medium text-[#2563EB]">Angalia Zote</button>
+            <button
+              onClick={() => navigate("history")}
+              className="text-[13px] font-medium text-[#2563EB]"
+            >
+              Angalia Zote
+            </button>
           </div>
 
           <div className="space-y-2.5">
             {RECENT_OFFENSES.map((offense) => (
-              <div
+              <button
                 key={offense.id}
-                className="flex items-center gap-3 rounded-xl border border-gray-100 p-2.5"
+                onClick={() => navigate("history")}
+                className="flex w-full items-center gap-3 rounded-xl border border-gray-100 p-2.5 text-left active:scale-[0.99]"
               >
                 <div
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
@@ -100,7 +106,7 @@ export function TrafficScreen() {
                   <p className="mt-0.5 text-[12px] font-bold text-[#1A1A1A]">{offense.fine}</p>
                 </div>
                 <ChevronRight size={18} className="shrink-0 text-gray-300" />
-              </div>
+              </button>
             ))}
           </div>
         </div>

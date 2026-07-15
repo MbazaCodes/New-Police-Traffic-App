@@ -21,8 +21,11 @@ import {
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { ACCIDENT_VEHICLES, ACCIDENT_PEOPLE, ACCIDENT_EVIDENCE } from "@/lib/police-data";
+import { usePoliceStore } from "@/store/police-store";
+import { toast } from "@/hooks/use-toast";
 
 export function AccidentReportScreen() {
+  const navigate = usePoliceStore((s) => s.navigate);
   return (
     <div className="min-h-full bg-[#F5F5F5]">
       <TopAppBar title="Ripoti ya Ajali" subtitle="Jaza taarifa za ajali kwa usahihi" showBack />
@@ -135,13 +138,21 @@ export function AccidentReportScreen() {
             <span className="text-[12px] font-medium text-gray-700">Je, kulikuwa na majeruhi?</span>
             <ToggleSwitch defaultOn />
           </div>
-          <button className="flex w-full items-center justify-between rounded-xl border border-[#1A237E]/20 px-3 py-2.5">
+          <button
+            onClick={() => navigate("pf3")}
+            className="flex w-full items-center justify-between rounded-xl border border-[#1A237E]/20 px-3 py-2.5 active:scale-[0.99]"
+          >
             <span className="flex items-center gap-2 text-[12px] font-semibold text-[#1A237E]">
               <FileText size={16} /> Tengeneza Fomu PF3
             </span>
             <ChevronRight size={16} className="text-gray-400" />
           </button>
-          <button className="flex w-full items-center justify-between rounded-xl border border-[#1A237E]/20 px-3 py-2.5">
+          <button
+            onClick={() =>
+              toast({ title: "Imetumwa", description: "Taarifa imewasilishwa kwa Kituo Kikuu." })
+            }
+            className="flex w-full items-center justify-between rounded-xl border border-[#1A237E]/20 px-3 py-2.5 active:scale-[0.99]"
+          >
             <span className="flex items-center gap-2 text-[12px] font-semibold text-[#1A237E]">
               <Send size={16} /> Taarifa kwa Kituo Kikuu
             </span>
@@ -151,10 +162,20 @@ export function AccidentReportScreen() {
 
         {/* Submit Buttons */}
         <div className="flex gap-2.5 pt-1">
-          <button className="flex-1 rounded-xl border-2 border-[#1A237E] bg-white py-3 text-[13px] font-bold text-[#1A237E] active:scale-[0.98]">
+          <button
+            onClick={() =>
+              toast({ title: "Imehifadhiwa", description: "Rasimu ya ripoti ya ajali imehifadhiwa." })
+            }
+            className="flex-1 rounded-xl border-2 border-[#1A237E] bg-white py-3 text-[13px] font-bold text-[#1A237E] active:scale-[0.98]"
+          >
             Hifadhi Rasimu
           </button>
-          <button className="flex-[1.5] rounded-xl bg-[#1A237E] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]">
+          <button
+            onClick={() =>
+              toast({ title: "Imetumwa", description: "Ripoti ya ajali imewasilishwa kikamilifu." })
+            }
+            className="flex-[1.5] rounded-xl bg-[#1A237E] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]"
+          >
             Hifadhi na Tuma Ripoti
           </button>
         </div>

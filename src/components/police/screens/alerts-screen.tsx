@@ -5,6 +5,7 @@ import { TopAppBar } from "../top-app-bar";
 import { PoliceIcon } from "../police-icons";
 import { ALERTS } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
+import { toast } from "@/hooks/use-toast";
 
 export function AlertsScreen() {
   const { alertFilter, setAlertFilter } = usePoliceStore();
@@ -21,7 +22,12 @@ export function AlertsScreen() {
 
       <div className="space-y-3 p-4">
         {/* Tuma Tangazo button */}
-        <button className="flex w-full items-center gap-3 rounded-2xl bg-[#2196F3] p-4 text-left shadow-md shadow-[#2196F3]/20 active:scale-[0.98]">
+        <button
+          onClick={() =>
+            toast({ title: "Tuma Tangazo", description: "Fomu ya kutuma tangazo itafunguka." })
+          }
+          className="flex w-full items-center gap-3 rounded-2xl bg-[#2196F3] p-4 text-left shadow-md shadow-[#2196F3]/20 active:scale-[0.98]"
+        >
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
             <Megaphone size={22} className="text-white" />
           </div>
@@ -56,7 +62,12 @@ export function AlertsScreen() {
               )}
             </button>
           ))}
-          <button className="ml-auto py-2.5 text-[12px] font-medium text-[#2196F3]">
+          <button
+            onClick={() =>
+              toast({ title: "Arifa Zote", description: "Arifa zote zinaonyeshwa." })
+            }
+            className="ml-auto py-2.5 text-[12px] font-medium text-[#2196F3]"
+          >
             Angalia Yote
           </button>
         </div>
@@ -64,9 +75,12 @@ export function AlertsScreen() {
         {/* Alert List */}
         <div className="space-y-2.5">
           {ALERTS.map((alert) => (
-            <div
+            <button
               key={alert.id}
-              className="overflow-hidden rounded-2xl bg-white shadow-sm"
+              onClick={() =>
+                toast({ title: alert.title, description: alert.source })
+              }
+              className="block w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm active:scale-[0.99]"
               style={{ borderLeft: `4px solid ${alert.borderColor}` }}
             >
               <div className="flex gap-3 p-3.5">
@@ -99,7 +113,7 @@ export function AlertsScreen() {
                   </div>
                 </div>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>

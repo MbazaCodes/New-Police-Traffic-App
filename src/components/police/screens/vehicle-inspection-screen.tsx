@@ -14,9 +14,12 @@ import {
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { VEHICLE_INSPECTION } from "@/lib/police-data";
+import { usePoliceStore } from "@/store/police-store";
+import { toast } from "@/hooks/use-toast";
 
 export function VehicleInspectionScreen() {
   const v = VEHICLE_INSPECTION;
+  const goBack = usePoliceStore((s) => s.goBack);
 
   return (
     <div className="min-h-full bg-[#F5F5F5]">
@@ -147,7 +150,13 @@ export function VehicleInspectionScreen() {
         </div>
 
         {/* Submit */}
-        <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1A237E] py-3.5 text-[15px] font-bold text-white shadow-md active:scale-[0.98]">
+        <button
+          onClick={() => {
+            toast({ title: "Ukaguzi Umekamilika", description: "Ripoti ya ukaguzi wa gari imehifadhiwa." });
+            setTimeout(() => goBack(), 800);
+          }}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1A237E] py-3.5 text-[15px] font-bold text-white shadow-md active:scale-[0.98]"
+        >
           <CheckCircle2 size={20} />
           Hifadhi na Kamaliza Ukaguzi
         </button>

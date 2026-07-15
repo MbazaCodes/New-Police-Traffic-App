@@ -81,3 +81,34 @@ Stage Summary:
 - Supports both Username and Mobile Number as identifier
 - Full OTP UX: auto-advance, paste, resend timer, masked display
 - Verified end-to-end in browser
+
+---
+Task ID: 3
+Agent: Main (Z.ai Code)
+Task: Add PF3 to Traffic Hatua za Haraka + wire up all page content into working flows
+
+Work Log:
+- Added "pf3", "citation", "history" to ScreenId type
+- Added "Fomu PF3" as 7th item in TRAFFIC_QUICK_ACTIONS (navy #0A3D62, navigates to pf3)
+- Wired all 7 traffic quick actions to destinations: Ripoti Kosa→citation, Toa Citation→citation, Tafuta Gari→search-results, Ukaguzi wa Gari→vehicle-inspection, Ripoti Ajali→accident-report, Fomu PF3→pf3, Historia ya Citation→history
+- Created PF3 screen (pf3-screen.tsx): official police accident report form with 7 sections (A. Mamlaka, B. Maelezo ya Ajali, C. Magari Husika, D. Waharibika/Majeruhi, E. Mashahidi, F. Ramani, G. Uthibitisho wa Afisa), reference number PF3/DSM/2026/00892, PDF/print buttons, save draft + submit with toasts
+- Created Citation screen (citation-screen.tsx): traffic offense form with vehicle/driver/offense/fine/evidence sections, working dropdowns for offense type & vehicle type, save + submit with toasts
+- Created History screen (history-screen.tsx): citation history list with summary cards (total/unpaid fines), search box, filter tabs (Zote/Haijalipwa/Imelipwa), 5 citation records, download report button
+- Registered all 3 new screens in mobile-shell.tsx renderScreen + NO_NAV_SCREENS
+- Wired up home quick actions: Soma Nambari→search-results, Scan QR→search-results
+- Wired up accident report: "Tengeneza Fomu PF3"→pf3, "Taarifa kwa Kituo Kikuu"→toast, save/submit→toasts
+- Wired up search-results: Ongeza Citation→citation, Ongeza Onyo→toast, Arrest→toast
+- Wired up patrol: Anza Patroli→toast, Hifadhi Report→toast
+- Wired up vehicle inspection: submit→toast + auto goBack
+- Wired up profile: Hariri Profaili→toast, Angalia Zote→history, settings items→toasts, Pakua Ripoti Kuu→toast
+- Wired up alerts: Tuma Tangazo→toast, Angalia Yote→toast, alert items→toast (clickable)
+- Wired up traffic: Angalia Zote→history, offense items→history (clickable)
+- Fixed lucide-react import error: "Road" icon doesn't exist, replaced with "Route"
+- Browser-verified all flows: login→home→traffic→PF3 (renders 7 sections), PF3 submit toast works, traffic→citation (renders form), traffic→history (renders list, filter works), history filter shows correct results
+
+Stage Summary:
+- PF3 added to Traffic Hatua za Haraka (now 7 quick actions)
+- 3 new screens created: PF3, Citation, History
+- All clickable elements across all 12 screens are now wired to working destinations or toast feedback
+- No dead-end buttons remain
+- Lint clean, no runtime errors, all flows verified in browser
