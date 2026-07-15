@@ -14,6 +14,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
+import type { UserRole } from "@/store/police-store";
+import { Shield, Monitor, Star } from "lucide-react";
 
 type Step = "credentials" | "otp" | "success";
 
@@ -25,6 +27,7 @@ export function LoginScreen() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [sending, setSending] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [role, setRole] = useState<UserRole>("officer");
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Resend countdown
@@ -73,7 +76,7 @@ export function LoginScreen() {
   const verifyOtp = () => {
     if (otp.join("").length < 6) return;
     setStep("success");
-    setTimeout(() => login(), 1100);
+    setTimeout(() => login(role), 1100);
   };
 
   const resendOtp = () => {
@@ -124,10 +127,46 @@ export function LoginScreen() {
           {/* STEP 1: Credentials */}
           {step === "credentials" && (
             <>
-              <h2 className="text-center text-[19px] font-bold text-police-navy2">Officer Login</h2>
+              <h2 className="text-center text-[19px] font-bold text-police-navy2">Ingia kwenye Mfumo</h2>
               <p className="mt-1 text-center text-[13px] text-police-muted">
-                Ingia kutumia akaunti yako ya utumishi
+                Chagua nafasi yako kisha ingia
               </p>
+
+              {/* Role selector */}
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                {([
+                  { id: "officer", label: "Afisa", sublabel: "Mobile", icon: Shield },
+                  { id: "admin", label: "Admin", sublabel: "Web", icon: Monitor },
+                  { id: "commander", label: "Kamanda", sublabel: "Command Center", icon: Star },
+                ] as const).map((r) => {
+                  const Icon = r.icon;
+                  const active = role === r.id;
+                  return (
+                    <button
+                      key={r.id}
+                      onClick={() => setRole(r.id)}
+                      className={`flex flex-col items-center gap-1 rounded-xl border-2 p-2.5 transition ${
+                        active
+                          ? "border-[#0070C0] bg-[#0070C0]/5"
+                          : "border-gray-200 bg-white"
+                      }`}
+                    >
+                      <Icon
+                        size={20}
+                        className={active ? "text-[#0070C0]" : "text-gray-400"}
+                      />
+                      <span
+                        className={`text-[11px] font-bold ${
+                          active ? "text-police-navy2" : "text-gray-500"
+                        }`}
+                      >
+                        {r.label}
+                      </span>
+                      <span className="text-[8px] text-gray-400">{r.sublabel}</span>
+                    </button>
+                  );
+                })}
+              </div>
 
               {/* Method toggle */}
               <div className="mt-4 flex gap-2 rounded-xl bg-police-muted p-1">

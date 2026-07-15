@@ -265,3 +265,92 @@ Stage Summary:
 - Search: fetches existing taarifa (not blank) with searching/found/not-found states
 - Citation: pre-fills from search results, driver fields editable for non-owner, owner toggle
 - Alerts: complete with working filter, mark-as-read, broadcast modal, stats summary
+
+---
+Task ID: 8
+Agent: Sub-agent (general-purpose)
+Task: Build 9 admin screen React components for the TZ Police Digital Platform Admin & Command Center (desktop-oriented, data tables/charts/cards)
+
+Work Log:
+- Read worklog.md (Tasks 1-7 done: 9 PWA screens, OTP login, dark/light mode, scanner, alerts, etc.)
+- Read existing admin-shell.tsx — confirms expected named exports: AdminDashboard, AdminOfficers, AdminIncidents, AdminCitations, AdminPatrols, AdminAlerts, AdminReports, AdminUsers, AdminSettings
+- Read admin-data.ts — DASHBOARD_KPIS, INCIDENT_TREND, OFFENSE_DISTRIBUTION, LIVE_INCIDENTS, OFFICERS, ADMIN_INCIDENTS, ADMIN_CITATIONS, ACTIVE_PATROLS, ADMIN_ALERTS_HISTORY, ADMIN_USERS, REGION_STATS, ADMIN_USER
+- Read police-store.ts — confirmed AdminScreen type, setAdminScreen action
+- Read globals.css — confirmed police CSS utilities (bg-police, bg-police-card, text-police-navy, border-police, etc.) with light/dark variables
+- Read use-toast.ts — exports `toast({ title, description })`
+
+Created 9 files in /home/z/my-project/src/components/admin/screens/ (all named exports):
+
+1. admin-dashboard.tsx — 4 KPI cards (icon+gradient chip, trend %) + AreaChart (incident+citation trends) + PieChart (offense distribution) + live incidents list (urgent=red, active=orange, resolved=green badges) + region stats table; uses setAdminScreen for "Angalia Zote"
+
+2. admin-officers.tsx — search + unit filter + status filter tabs (Wote/Kazini/Mapumziko/Ametoka) + 11-col data table (avatar+name, ID, unit, station, status badge, patrols/citations/incidents/hours counts, phone, action) + right-side slide-out detail drawer with stats grid + call/message toasts
+
+3. admin-incidents.tsx — 5 filter tabs with counts (Zote/Muhimu/Haijatatuliwa/Inachunguzwa/Imetatuliwa) + 9-col table (ID, type, location, date/time, priority badge, status badge, assigned officer, description, assign+view actions) + detail modal with priority escalation & call-to-officer toasts
+
+4. admin-citations.tsx — 4 stat cards (total, paid, unpaid, total TZS amount) + filter tabs (Zote/Zilizolipwa/Haijalipwa) + 9-col table (ID, plate chip, offense, driver, date, amount, status badge, officer, view+remind actions) + export CSV button (toast)
+
+5. admin-patrols.tsx — 3 patrol stat cards + active patrols list with progress bars (gradient blue→green), start time, distance, contact/finish buttons (toasts) + map placeholder (SVG grid + fake roads + animated ping pins for each patrol, hover tooltip) + legend
+
+6. admin-alerts.tsx — "Tuma Tangazo" compose form (5 audience selectors with counts, 2 priority options, textarea with 500 char counter, send button with simulated 800ms send state + toast) + history table (title, audience, priority badge, sent by, date/time, recipients count)
+
+7. admin-reports.tsx — date range selector (7d/30d/90d/1y) + from/to date pickers + PDF/CSV export buttons (toasts) + 3 stat cards + BarChart (incidents by day) + PieChart (offense distribution with labels) + LineChart (citations vs paid over week, dual series) + region comparison table with resolution rate progress bars
+
+8. admin-users.tsx — search + 8-col table (avatar+name, role badge commander=purple/admin=blue, rank, email link, station, status badge, last login, edit+suspend actions) + suspend/restore toggle (state update + toast) + edit modal with name/rank/email/station/role form fields
+
+9. admin-settings.tsx — 4 sections (Jumla, Usalama, Arifa, Mfumo) with custom Toggle switches + input fields + selects + info banners + system status grid (version, server, storage, last backup) + sticky bottom save bar with toast confirmation
+
+Design:
+- All use police CSS classes (bg-police-card, text-police-navy, text-police-muted, text-police-faint, border-police, border-police-soft, bg-police-muted, bg-police-input) for proper dark/light theming
+- All cards use rounded-xl bg-police-card p-4 shadow-sm
+- Status badges: green=active/paid/resolved, orange=break/pending, red=urgent/unpaid/suspended, gray=off-duty, purple=commander, blue=admin
+- lucide-react icons throughout (Users, Shield, AlertTriangle, FileText, Bell, Settings, etc.)
+- recharts charts (ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, BarChart, Bar, LineChart, Line, Tooltip, Legend, CartesianGrid, XAxis, YAxis) with CSS-variable-aware tooltip styling
+- Tables wrapped in overflow-x-auto for horizontal scroll on small screens (min-w set so columns don't squish)
+- Swahili labels throughout matching officer app
+- toast from @/hooks/use-toast for all action feedback
+- usePoliceStore.setAdminScreen for cross-screen navigation (Dashboard → Incidents)
+
+Verification:
+- `bun run lint` → exit 0, no errors
+- `bunx tsc --noEmit` → no errors in admin/screens/ (pre-existing errors only in examples/, skills/, alerts-screen.tsx which are out of scope)
+
+Stage Summary:
+- 9 admin screen components created, all named exports matching admin-shell.tsx imports
+- Full desktop admin/command-center UX: KPIs, charts, data tables, drawers/modals, filter tabs, forms, toasts
+- Light + dark mode fully supported via police CSS utilities
+- Recharts visualizations: area, pie, bar, line charts
+- Lint clean, TypeScript clean for new files
+
+---
+Task ID: 9
+Agent: Main (Z.ai Code)
+Task: Add Admin & Command Center web app for Admins and Officers in Charge
+
+Work Log:
+- Added userRole (officer/admin/commander) + adminScreen state to Zustand store
+- Updated login screen with role selector: 3 cards (Afisa/Mobile, Admin/Web, Kamanda/Command Center)
+- Login now passes role to login() function → routes to AdminShell for admin/commander roles
+- Created admin mock data (admin-data.ts): DASHBOARD_KPIS, INCIDENT_TREND, OFFENSE_DISTRIBUTION, LIVE_INCIDENTS, OFFICERS (8), ADMIN_INCIDENTS (7), ADMIN_CITATIONS (7), ACTIVE_PATROLS (5), ADMIN_ALERTS_HISTORY, ADMIN_USERS (5), REGION_STATS
+- Created AdminShell: desktop layout with dark navy sidebar (#0d1b3d), 9 nav items with badges, top bar with search/theme toggle/notifications/user chip, responsive (collapsible sidebar on mobile)
+- Subagent built 9 admin screens (Task ID 8):
+  1. Dashboard: 4 KPI cards, area chart (incident+citation trends), pie chart (offense distribution), live incidents list, region stats table
+  2. Officers: search + filter, 8-officer data table with status badges, detail drawer
+  3. Incidents: 5 filter tabs, incident table with priority/status badges, detail modal
+  4. Citations: 4 stat cards, filter tabs, citation table, CSV export
+  5. Patrols: active patrol cards with progress bars, map placeholder with pins
+  6. Alerts: Tuma Tangazo compose form (audience/priority/message), alert history table
+  7. Reports: bar/pie/line charts (recharts), date range, region comparison, PDF/CSV export
+  8. Users: user table with role badges, edit modal, suspend/restore
+  9. Settings: 4 sections (General/Security/Notifications/System) with toggles, save bar
+- Updated MobileShell to route to AdminShell when userRole is admin or commander
+- Browser-verified: login as Admin → Command Center dashboard with sidebar, KPIs, charts, live incidents, region stats
+- Verified navigation: Dashboard → Maofisa (officer table) → Citations (table) → Patroli (active patrols) → Arifa (broadcast form) → Ripoti (3 charts) all work
+- Verified dark mode works on admin app (dark navy theme)
+- Lint clean, no runtime errors
+
+Stage Summary:
+- Admin & Command Center: full desktop web app with 9 screens
+- Role-based login: Officer (mobile) / Admin (web) / Commander (command center)
+- Dashboard with real charts (recharts), data tables, KPIs, live monitoring
+- Works in both light and dark mode
+- All screens wired and functional with toast feedback

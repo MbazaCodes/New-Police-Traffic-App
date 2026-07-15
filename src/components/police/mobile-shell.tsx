@@ -16,6 +16,7 @@ import { Pf3Screen } from "./screens/pf3-screen";
 import { CitationScreen } from "./screens/citation-screen";
 import { HistoryScreen } from "./screens/history-screen";
 import { CameraScannerModal } from "./camera-scanner-modal";
+import { AdminShell } from "../admin/admin-shell";
 import type { ScreenId } from "@/lib/police-data";
 
 // Screens that hide the bottom nav (full-screen forms / auth)
@@ -30,7 +31,7 @@ const NO_NAV_SCREENS: ScreenId[] = [
 ];
 
 export function MobileShell() {
-  const { isAuthenticated, currentScreen } = usePoliceStore();
+  const { isAuthenticated, currentScreen, userRole } = usePoliceStore();
 
   // Not logged in -> always show login
   if (!isAuthenticated) {
@@ -44,6 +45,11 @@ export function MobileShell() {
         </div>
       </PhoneFrame>
     );
+  }
+
+  // Admin / Commander -> full desktop Command Center (no phone frame)
+  if (userRole === "admin" || userRole === "commander") {
+    return <AdminShell />;
   }
 
   const showNav = !NO_NAV_SCREENS.includes(currentScreen);

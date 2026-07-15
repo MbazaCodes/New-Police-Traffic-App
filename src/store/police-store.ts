@@ -3,11 +3,25 @@
 import { create } from "zustand";
 import type { ScreenId } from "@/lib/police-data";
 
+export type UserRole = "officer" | "admin" | "commander";
+export type AdminScreen =
+  | "dashboard"
+  | "officers"
+  | "incidents"
+  | "citations"
+  | "patrols"
+  | "alerts"
+  | "reports"
+  | "users"
+  | "settings";
+
 interface PoliceState {
   // Auth
   isAuthenticated: boolean;
-  login: () => void;
+  userRole: UserRole;
+  login: (role?: UserRole) => void;
   logout: () => void;
+  setRole: (role: UserRole) => void;
 
   // Navigation
   activeTab: ScreenId;
@@ -17,6 +31,10 @@ interface PoliceState {
   navigate: (screen: ScreenId) => void;
   setTab: (tab: ScreenId) => void;
   goBack: () => void;
+
+  // Admin navigation
+  adminScreen: AdminScreen;
+  setAdminScreen: (s: AdminScreen) => void;
 
   // UI state
   searchTab: "plate" | "license" | "nida";
@@ -53,7 +71,16 @@ interface PoliceState {
 
 export const usePoliceStore = create<PoliceState>((set, get) => ({
   isAuthenticated: false,
-  login: () => set({ isAuthenticated: true, currentScreen: "home", activeTab: "home", history: ["home"] }),
+  userRole: "officer" as UserRole,
+  login: (role = "officer" as UserRole) =>
+    set({
+      isAuthenticated: true,
+      userRole: role,
+      currentScreen: "home",
+      activeTab: "home",
+      history: ["home"],
+      adminScreen: "dashboard",
+    }),
   logout: () =>
     set({
       isAuthenticated: false,
@@ -61,6 +88,7 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
       activeTab: "home",
       history: [],
     }),
+  setRole: (role) => set({ userRole: role }),
 
   activeTab: "home",
   currentScreen: "login",
@@ -86,6 +114,9 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
       set({ currentScreen: get().activeTab });
     }
   },
+
+  adminScreen: "dashboard" as AdminScreen,
+  setAdminScreen: (s) => set({ adminScreen: s }),
 
   searchTab: "plate",
   setSearchTab: (t) => set({ searchTab: t }),
