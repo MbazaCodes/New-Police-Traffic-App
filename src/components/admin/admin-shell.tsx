@@ -18,6 +18,9 @@ import {
   Moon,
   Sun,
   ChevronDown,
+  Building2,
+  Network,
+  ArrowRightLeft,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { usePoliceStore, type AdminScreen } from "@/store/police-store";
@@ -31,8 +34,11 @@ import { AdminAlerts } from "./screens/admin-alerts";
 import { AdminReports } from "./screens/admin-reports";
 import { AdminUsers } from "./screens/admin-users";
 import { AdminSettings } from "./screens/admin-settings";
+import { AdminStations } from "./screens/admin-stations";
+import { AdminPosts } from "./screens/admin-posts";
+import { AdminAssignments } from "./screens/admin-assignments";
 
-const NAV_ITEMS: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
+const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "officers", label: "Maofisa", icon: Users },
   { id: "incidents", label: "Matukio", icon: AlertTriangle, badge: 5 },
@@ -41,6 +47,18 @@ const NAV_ITEMS: { id: AdminScreen; label: string; icon: typeof LayoutDashboard;
   { id: "alerts", label: "Arifa", icon: Bell, badge: 3 },
   { id: "reports", label: "Ripoti", icon: BarChart3 },
   { id: "users", label: "Watumiaji", icon: Users },
+  { id: "stations", label: "Vituo", icon: Building2 },
+  { id: "posts", label: "Posti", icon: Network, badge: 1 },
+  { id: "assignments", label: "Mgao", icon: ArrowRightLeft, badge: 3 },
+  { id: "settings", label: "Mipangilio", icon: Settings },
+];
+
+// Admin gets a focused set: users, stations, posts, assignments + settings
+const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
+  { id: "users", label: "Watumiaji", icon: Users },
+  { id: "stations", label: "Vituo", icon: Building2 },
+  { id: "posts", label: "Posti", icon: Network, badge: 1 },
+  { id: "assignments", label: "Mgao", icon: ArrowRightLeft, badge: 3 },
   { id: "settings", label: "Mipangilio", icon: Settings },
 ];
 
@@ -51,6 +69,7 @@ export function AdminShell() {
   const isDark = theme === "dark";
 
   const roleLabel = userRole === "commander" ? "Command Center" : "Admin Panel";
+  const navItems = userRole === "commander" ? COMMANDER_NAV : ADMIN_NAV;
 
   return (
     <div className="flex min-h-screen bg-police">
@@ -77,7 +96,7 @@ export function AdminShell() {
 
           {/* Nav */}
           <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-            {NAV_ITEMS.map((item) => {
+            {navItems.map((item) => {
               const active = adminScreen === item.id;
               const Icon = item.icon;
               return (
@@ -203,6 +222,12 @@ function renderAdminScreen(screen: AdminScreen) {
       return <AdminReports />;
     case "users":
       return <AdminUsers />;
+    case "stations":
+      return <AdminStations />;
+    case "posts":
+      return <AdminPosts />;
+    case "assignments":
+      return <AdminAssignments />;
     case "settings":
       return <AdminSettings />;
     default:

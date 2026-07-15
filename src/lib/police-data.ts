@@ -5,6 +5,7 @@ export type ScreenId =
   | "login"
   | "home"
   | "search-results"
+  | "citizen-search-results"
   | "traffic"
   | "patrol"
   | "alerts"

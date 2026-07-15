@@ -354,3 +354,140 @@ Stage Summary:
 - Dashboard with real charts (recharts), data tables, KPIs, live monitoring
 - Works in both light and dark mode
 - All screens wired and functional with toast feedback
+
+---
+Task ID: 10
+Agent: Sub-agent (Admin Stations/Posts/Assignments screens)
+Task: Build admin stations/posts/assignments screens for the TZ Police Digital Platform Admin panel
+
+Work Log:
+- Read worklog.md and existing admin screen components (admin-officers, admin-patrols, admin-users, admin-incidents) to learn project patterns: police CSS classes (bg-police-card, bg-police-input, bg-police-muted, text-police-navy, text-police-muted, text-police-faint, border-police-soft), toast from @/hooks/use-toast, lucide-react icons, rounded-xl bg-police-card p-4 shadow-sm cards, overflow-x-auto tables with min-w
+- Confirmed store already had stations/posts/assignments in AdminScreen type (added in earlier task but not yet wired up)
+- Confirmed data file src/lib/admin-mgmt-data.ts already exists with STATIONS (7), POSTS (7), ASSIGNMENTS (7), UNASSIGNED_OFFICERS (3)
+- Created src/components/admin/screens/admin-stations.tsx (named export AdminStations):
+  * Header "Vituo vya Polisi" + "Ongeza Kituo" button (toast on click)
+  * 4 stat cards: Total Stations, Active, Maintenance, Total Officers
+  * Search filter by name/region/district
+  * Filter tabs: Vituo Vyote / Inafanya Kazi / Inarekebishwa
+  * Data table: Name+address, Region/District, Phone, Officers badge, Posts badge, Status badge (green active / orange maintenance), Established year, Actions (View, Edit, Manage Posts) — all toast
+  * Wrapped in overflow-x-auto with min-w-[1100px], empty state
+- Created src/components/admin/screens/admin-posts.tsx (named export AdminPosts):
+  * Header "Posti za Polisi" + "Ongeza Posti" button (toast)
+  * 4 stat cards: Total Posts, Active, Inactive, Total Officers
+  * Search + filter tabs (Wote / Inafanya Kazi / Imezimwa)
+  * Data table: Name+location, Station, Type badge (Traffic=blue, Patrol=green, with TrafficCone/Shield icons), Officers count, Shift schedule, Status badge (green active / red inactive), Actions (View, Edit, Mgawie) — all toast
+  * Wrapped in overflow-x-auto, empty state
+- Created src/components/admin/screens/admin-assignments.tsx (named export AdminAssignments):
+  * Header "Mgao wa Maofisa" + "Ongeza Mgao" button (toast)
+  * 4 stat cards: Total Assignments, Active, On Leave, Unassigned Officers
+  * Section A: Assigned officers table — Officer name+rank avatar, Station, Post, Role badge, Assigned Date, Status badge (green active / orange on-leave), Actions (Reassign, Remove) — all toast
+  * Section B: Unassigned officers card grid — each card with avatar, name, rank, "Mgawie Afisa huyu" button
+  * AssignModal component (inline modal form) with:
+    - Read-only officer display
+    - Station dropdown (from STATIONS)
+    - Post dropdown (filtered by selected station via useMemo — disabled until station chosen)
+    - Role text input (default "General Duty")
+    - Confirm button → toast "Mgao Umewekwa" with details and close
+    - Validation: confirm disabled until all 3 fields filled
+- Wired all 3 new screens into admin-shell.tsx:
+  * Added imports: AdminStations, AdminPosts, AdminAssignments
+  * Added 3 nav items to NAV_ITEMS: Vituo (Building2), Posti (Network, badge 1), Mgao (ArrowRightLeft, badge 3)
+  * Added 3 cases to renderAdminScreen switch
+  * Added icon imports: Building2, Network, ArrowRightLeft
+- Verified with `bun run lint` — exit 0, no errors
+- Verified with `bunx tsc --noEmit` — no errors in any of the new files (only pre-existing errors in unrelated files like examples/websocket, skills/, alerts-screen.tsx, login-screen.tsx, police-store.ts)
+
+Stage Summary:
+- 3 new admin screens created: admin-stations.tsx, admin-posts.tsx, admin-assignments.tsx
+- All screens use police CSS classes for full dark mode support
+- All screens use Swahili labels and lucide-react icons
+- Toast feedback on every action button (View, Edit, Manage Posts, Add, Reassign, Remove, Assign)
+- Assignment modal includes station→post cascading dropdown (post filtered by selected station)
+- Screens wired into AdminShell sidebar with appropriate badges — fully navigable from admin/commander UI
+- Lint clean, no TypeScript errors in new code
+
+---
+Task ID: 11
+Agent: Sub-agent (general officer screens)
+Task: Build mobile screens for the "Afisa Polisi" (General/Normal Police Officer) role in the TZ Police Digital Platform
+
+Work Log:
+- Read existing worklog, traffic home/traffic/search-results screens, police-store, admin-mgmt-data, top-app-bar, police-icons, and ScreenId type to understand conventions
+- Found and fixed a latent bug in `src/store/police-store.ts`: `citizenSearchType: "name" | "nida" | "mobile"` (which is a bitwise-OR value expression, not a string) → `citizenSearchType: "name" as "name" | "nida" | "mobile"` so the initial value is the literal `"name"` and the type stays correct
+- Added `"citizen-search-results"` to the `ScreenId` union in `src/lib/police-data.ts` so general-officer navigation can target the new screen
+- Added `Hand` icon import + `hand` entry to `ICON_MAP` in `src/components/police/police-icons.tsx` so the "Kamata Mtuhumiwa" quick action can render via PoliceIcon
+- Created `src/components/police/screens/general-home-screen.tsx` (`GeneralHomeScreen`):
+  • Gradient header (from-[#1E3A8A] to-[#3B82F6]) with "Karibu, [Officer.shortName]", bell with badge + toast, avatar circle
+  • Hero banner card overlapping the header: police logo + "TANZANIA POLICE FORCE" + "USALAMA WETU, JUKUMU LETU"
+  • 2-col Quick Actions grid: "Tafuta Raia" (UserCheck, #3B82F6 → navigate citizen-search-results), "Ripoti Tukio" (AlertTriangle, #EF4444 → toast)
+  • "Utafutaji wa Raia" search card with 3 tabs (Jina/NIDA/Simu) bound to store `citizenSearchType` + `setCitizenSearchType`, dynamic placeholder ("Juma Mwinyi" / "1990123456789" / "0712345678"), "Tafuta" button that calls `runSearch(searchValue)` then `navigate("citizen-search-results")` (Enter key also triggers)
+  • Footer with "Mfumo salama wa Jeshi la Polisi Tanzania" + copyright
+- Created `src/components/police/screens/general-police-screen.tsx` (`GeneralPoliceScreen`):
+  • TopAppBar title="Polisi" subtitle="Uendeshaji wa shughuli za polisi" showThemeToggle
+  • 4 stat cards: Matukio Yote (1,234 navy), Yanayoendelea (56 orange), Yameitatuliwa (1,178 green), Maofisa Kazini (23 red) — values colored to match stat color
+  • 3-col Quick Actions grid (6 items) using PoliceIcon by name: Ripoti Tukio (clipboard #2563EB), Tafuta Raia (search #8B5CF6 → navigate citizen-search-results), Rekodi Taarifa (file-text #10B981), Kamata Mtuhumiwa (hand #F97316), Ripoti Ajali (alert #EF4444), Historia (clock #3B82F6) — non-navigation actions fire a toast
+  • "Matukio ya Karibuni" section: 5 mock incidents, each with icon, status badge, date+time, location, "Angalia Zote" link (toast)
+- Created `src/components/police/screens/citizen-search-results-screen.tsx` (`CitizenSearchResultsScreen`):
+  • Header with back button + "Matokeo ya Raia" + share button (toast)
+  • 3 states mirroring the vehicle search-results screen:
+    - "searching": Loader2 spinner + "Inatafuta taarifa za raia..." + query
+    - "not-found": SearchX + "Raia Hajapatikana" + retry button (re-runs `runSearch(searchQuery)`)
+    - "found"/"idle": full citizen profile from `CITIZEN_RESULT`
+  • Citizen header card: gradient avatar circle with initials (e.g. "JK"), bold name, status badge ("Mtu wa Kawaida" green), NIDA, Mobile
+  • Conditional alert box (red border, AlertTriangle) — rendered only when `CITIZEN_RESULT.alerts` is non-empty
+  • Action buttons (3 cols) above the detail cards so they're always reachable: Rekodi Taarifa (blue), Toa Onyo (orange toast), Kamata (red toast) — colored top-border style copied from the vehicle search-results screen
+  • SectionCard sections: "Taarifa za Kibinafsi" (gender, DOB, age, address, occupation), "Rekodi ya Uhalifu" (hasRecord badge: green "Hakana Rekodi" / red "Ana Rekodi", cases, convictions), "Hati za Kitaifa" (documents list with status badges), "Magari Yaliyosajiliwa" (plate + model + color + year), "Historia ya Mwingiliano" (date, type, case number, station)
+  • Verified footer line "Taarifa zimehakikiwa kutoka NIDA & LINESS"
+- All three files use police CSS classes (bg-police, bg-police-card, bg-police-muted, bg-police-input, text-police, text-police-navy, text-police-muted, text-police-faint, border-police, border-police-soft) so dark mode works automatically
+- Status badge color logic: green = normal/Sahihi, orange = warning/Imeisha, red = alert/record/invalid
+- Swahili text throughout, lucide-react icons, toast from `@/hooks/use-toast`
+- Verified with `bun run lint` → no errors. Also confirmed `bunx tsc --noEmit` produces no errors in any of the new/edited files (pre-existing TS errors in alerts-screen.tsx, login-screen.tsx, examples/, and skills/ are unrelated to this task)
+
+Stage Summary:
+- 3 new general-officer screens delivered (`GeneralHomeScreen`, `GeneralPoliceScreen`, `CitizenSearchResultsScreen`) plus 3 supporting edits (store bug fix, ScreenId extended, PoliceIcon `hand` added)
+- General officer flow now wires: Home → citizen search → citizen-search-results (with searching/not-found/found states), and Polisi page → Tafuta Raia quick action → citizen-search-results
+- Lint passes cleanly. Files are ready to be wired into the mobile-shell / navigation switch by a follow-up task.
+
+---
+Task ID: 12
+Agent: Main (Z.ai Code)
+Task: Role-based restructuring - Admin gets focused nav, General Officer (Afisa Polisi) with citizen search
+
+Work Log:
+- Updated store: 4 roles (officer-traffic, officer-general, admin, commander) + citizenSearchType state
+- Updated login role selector: 4 cards (Afisa Trafiki, Afisa Polisi, Admin, Kamanda) in 2x2 grid
+- Admin now lands on "users" screen (not dashboard) with focused nav
+
+- Admin role (focused navigation):
+  - 5 nav items only: Watumiaji (Users), Vituo (Stations), Posti (Posts), Mgao (Assignments), Mipangilio (Settings)
+  - Does NOT see: Dashboard, Matukio, Citations, Patroli, Arifa, Ripoti (commander-only)
+  - Created 3 new admin screens (Task ID 10): admin-stations.tsx, admin-posts.tsx, admin-assignments.tsx
+  - Stations: 7 stations table with stats, search, filter, CRUD actions
+  - Posts: 7 posts table with station linkage, type badges, shift schedules
+  - Assignments: assigned officers table + unassigned officers with inline assignment modal (station/post cascading dropdowns)
+
+- General Officer (Afisa Polisi) mobile app:
+  - Created 3 new screens (Task ID 11): general-home-screen.tsx, general-police-screen.tsx, citizen-search-results-screen.tsx
+  - GeneralHomeScreen: gradient header, hero banner, quick actions (Tafuta Raia, Ripoti Tukio), citizen search with 3 tabs (Jina/NIDA/Simu)
+  - GeneralPoliceScreen: replaces Traffic page, title "Polisi", stats cards, 6 quick actions, recent incidents list
+  - CitizenSearchResultsScreen: searching/not-found/found states, full citizen profile (name, NIDA, mobile, personal info, criminal record, documents, vehicles, history) + 3 action buttons
+  - Created GeneralBottomNav: 5 tabs (Nyumbani, Polisi, Patroli, Arifa, Akaunti) — "Polisi" replaces "Trafiki"
+  - Updated MobileShell to route general officers to their screens + GeneralBottomNav
+
+- Commander role: unchanged — full command center with all 12 screens (Dashboard, Maofisa, Matukio, Citations, Patroli, Arifa, Ripoti, Watumiaji, Vituo, Posti, Mgao, Mipangilio)
+
+- Browser-verified all 4 roles:
+  1. Admin: login → focused nav (Users/Stations/Posts/Assignments/Settings) ✓, Stations table ✓, Assignments ✓
+  2. General Officer: login → home with citizen search (Jina/NIDA/Simu) ✓, Polisi page (not Trafiki) ✓, citizen search results with full profile ✓
+  3. Commander: full command center (unchanged) ✓
+  4. Traffic Officer: unchanged vehicle search app ✓
+
+- Lint clean, no runtime errors
+
+Stage Summary:
+- 4 distinct roles with role-dedicated pages:
+  - Afisa Trafiki: mobile app with vehicle search (Namba ya Gari/Leseni/NIDA)
+  - Afisa Polisi: mobile app with citizen search (Jina/NIDA/Simu) + "Polisi" page (not Trafiki)
+  - Admin: web app with focused nav (Users, Stations, Posts, Assignments, Settings only)
+  - Kamanda: full command center web app (all 12 screens)
+- Each role rank has pages dedicated to their level

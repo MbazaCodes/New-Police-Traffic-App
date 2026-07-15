@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import type { UserRole } from "@/store/police-store";
-import { Shield, Monitor, Star } from "lucide-react";
+import { Shield, Monitor, Star, Car, UserCheck } from "lucide-react";
 
 type Step = "credentials" | "otp" | "success";
 
@@ -133,10 +133,11 @@ export function LoginScreen() {
               </p>
 
               {/* Role selector */}
-              <div className="mt-4 grid grid-cols-3 gap-2">
+              <div className="mt-4 grid grid-cols-2 gap-2">
                 {([
-                  { id: "officer", label: "Afisa", sublabel: "Mobile", icon: Shield },
-                  { id: "admin", label: "Admin", sublabel: "Web", icon: Monitor },
+                  { id: "officer-traffic", label: "Afisa Trafiki", sublabel: "Traffic Officer", icon: Car },
+                  { id: "officer-general", label: "Afisa Polisi", sublabel: "General Officer", icon: UserCheck },
+                  { id: "admin", label: "Admin", sublabel: "Users & Stations", icon: Monitor },
                   { id: "commander", label: "Kamanda", sublabel: "Command Center", icon: Star },
                 ] as const).map((r) => {
                   const Icon = r.icon;
@@ -145,24 +146,26 @@ export function LoginScreen() {
                     <button
                       key={r.id}
                       onClick={() => setRole(r.id)}
-                      className={`flex flex-col items-center gap-1 rounded-xl border-2 p-2.5 transition ${
+                      className={`flex items-center gap-2.5 rounded-xl border-2 p-2.5 text-left transition ${
                         active
                           ? "border-[#0070C0] bg-[#0070C0]/5"
                           : "border-gray-200 bg-white"
                       }`}
                     >
                       <Icon
-                        size={20}
+                        size={18}
                         className={active ? "text-[#0070C0]" : "text-gray-400"}
                       />
-                      <span
-                        className={`text-[11px] font-bold ${
-                          active ? "text-police-navy2" : "text-gray-500"
-                        }`}
-                      >
-                        {r.label}
-                      </span>
-                      <span className="text-[8px] text-gray-400">{r.sublabel}</span>
+                      <div className="min-w-0">
+                        <div
+                          className={`text-[11px] font-bold leading-tight ${
+                            active ? "text-police-navy2" : "text-gray-500"
+                          }`}
+                        >
+                          {r.label}
+                        </div>
+                        <div className="text-[8px] leading-tight text-gray-400">{r.sublabel}</div>
+                      </div>
                     </button>
                   );
                 })}

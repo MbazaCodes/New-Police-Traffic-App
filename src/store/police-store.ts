@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import type { ScreenId } from "@/lib/police-data";
 
-export type UserRole = "officer" | "admin" | "commander";
+export type UserRole = "officer-traffic" | "officer-general" | "admin" | "commander";
 export type AdminScreen =
   | "dashboard"
   | "officers"
@@ -13,7 +13,10 @@ export type AdminScreen =
   | "alerts"
   | "reports"
   | "users"
-  | "settings";
+  | "settings"
+  | "stations"
+  | "posts"
+  | "assignments";
 
 interface PoliceState {
   // Auth
@@ -39,6 +42,8 @@ interface PoliceState {
   // UI state
   searchTab: "plate" | "license" | "nida";
   setSearchTab: (t: "plate" | "license" | "nida") => void;
+  citizenSearchType: "name" | "nida" | "mobile";
+  setCitizenSearchType: (t: "name" | "nida" | "mobile") => void;
   alertFilter: "all" | "mine" | "important";
   setAlertFilter: (f: "all" | "mine" | "important") => void;
 
@@ -71,15 +76,15 @@ interface PoliceState {
 
 export const usePoliceStore = create<PoliceState>((set, get) => ({
   isAuthenticated: false,
-  userRole: "officer" as UserRole,
-  login: (role = "officer" as UserRole) =>
+  userRole: "officer-traffic" as UserRole,
+  login: (role = "officer-traffic" as UserRole) =>
     set({
       isAuthenticated: true,
       userRole: role,
       currentScreen: "home",
       activeTab: "home",
       history: ["home"],
-      adminScreen: "dashboard",
+      adminScreen: role === "admin" ? "users" : "dashboard",
     }),
   logout: () =>
     set({
@@ -120,6 +125,10 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
 
   searchTab: "plate",
   setSearchTab: (t) => set({ searchTab: t }),
+
+  // General officer citizen search type
+  citizenSearchType: "name" as "name" | "nida" | "mobile",
+  setCitizenSearchType: (t: "name" | "nida" | "mobile") => set({ citizenSearchType: t }),
 
   searchQuery: "",
   searchStatus: "idle",
