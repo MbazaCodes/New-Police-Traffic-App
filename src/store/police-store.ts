@@ -24,6 +24,26 @@ interface PoliceState {
   alertFilter: "all" | "mine" | "important";
   setAlertFilter: (f: "all" | "mine" | "important") => void;
 
+  // Search
+  searchQuery: string;
+  searchStatus: "idle" | "searching" | "found" | "not-found";
+  setSearchQuery: (q: string) => void;
+  runSearch: (query: string) => void;
+  clearSearch: () => void;
+
+  // Citation pre-fill (from search results)
+  citationPrefill: {
+    plate: string;
+    model: string;
+    color: string;
+    vehicleType: string;
+    driverName: string;
+    driverLicense: string;
+    driverPhone: string;
+    driverNida: string;
+  } | null;
+  setCitationPrefill: (data: PoliceState["citationPrefill"]) => void;
+
   // Camera Scanner
   scannerOpen: boolean;
   scannerMode: "qr" | "ocr";
@@ -69,6 +89,26 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
 
   searchTab: "plate",
   setSearchTab: (t) => set({ searchTab: t }),
+
+  searchQuery: "",
+  searchStatus: "idle",
+  setSearchQuery: (q) => set({ searchQuery: q }),
+  runSearch: (query) => {
+    set({ searchQuery: query, searchStatus: "searching" });
+    // Simulate fetching existing record
+    setTimeout(() => {
+      const q = query.trim().toUpperCase();
+      if (q && (q.startsWith("T") || q.length > 0)) {
+        set({ searchStatus: "found" });
+      } else {
+        set({ searchStatus: "not-found" });
+      }
+    }, 1400);
+  },
+  clearSearch: () => set({ searchQuery: "", searchStatus: "idle" }),
+
+  citationPrefill: null,
+  setCitationPrefill: (data) => set({ citationPrefill: data }),
 
   alertFilter: "all",
   setAlertFilter: (f) => set({ alertFilter: f }),

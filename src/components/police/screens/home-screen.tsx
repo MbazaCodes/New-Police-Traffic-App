@@ -1,12 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Bell, Search, Camera, ScanLine, ChevronRight, X } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { OFFICER } from "@/lib/police-data";
 
 export function HomeScreen() {
-  const { searchTab, setSearchTab, navigate, openScanner } = usePoliceStore();
+  const { searchTab, setSearchTab, navigate, openScanner, runSearch } = usePoliceStore();
+  const [searchValue, setSearchValue] = useState("");
 
   return (
     <div className="min-h-full bg-police">
@@ -100,15 +102,32 @@ export function HomeScreen() {
           <div className="mt-3 flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
             <Search size={18} className="text-police-faint" />
             <input
-              placeholder="T123ABC"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && searchValue.trim()) {
+                  runSearch(searchValue);
+                  navigate("search-results");
+                }
+              }}
+              placeholder={searchTab === "plate" ? "T123ABC" : searchTab === "license" ? "DL123456789TZ" : "1990123456789"}
               className="h-11 flex-1 bg-transparent text-[15px] font-medium text-police placeholder:text-police-faint focus:outline-none"
             />
-            <X size={16} className="text-police-faint" />
+            {searchValue && (
+              <button onClick={() => setSearchValue("")} className="text-police-faint">
+                <X size={16} />
+              </button>
+            )}
           </div>
 
           {/* Search Button */}
           <button
-            onClick={() => navigate("search-results")}
+            onClick={() => {
+              if (searchValue.trim()) {
+                runSearch(searchValue);
+              }
+              navigate("search-results");
+            }}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3 text-[15px] font-bold text-white shadow-md shadow-[#3B82F6]/30 active:scale-[0.98]"
           >
             <Search size={18} />

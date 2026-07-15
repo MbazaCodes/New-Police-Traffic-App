@@ -169,6 +169,8 @@ export const ALERTS = [
     dotColor: "#F44336",
     borderColor: "#F44336",
     unread: true,
+    category: "mine" as const,
+    important: true,
   },
   {
     id: 2,
@@ -183,6 +185,8 @@ export const ALERTS = [
     dotColor: "#2196F3",
     borderColor: "#2196F3",
     unread: false,
+    category: "all" as const,
+    important: true,
   },
   {
     id: 3,
@@ -197,6 +201,40 @@ export const ALERTS = [
     dotColor: "#4CAF50",
     borderColor: "#4CAF50",
     unread: false,
+    category: "all" as const,
+    important: false,
+  },
+  {
+    id: 4,
+    icon: "shield-alert",
+    iconColor: "#FF9800",
+    title: "Kesi Mpya Imekabidhiwa",
+    time: "siku 630 zilizopita",
+    message:
+      "Kesi mpya ya wizi imerekodiwa na imekabidhiwa kwako. Tafadhali kagua maelezo na uanze uchunguzi haraka.",
+    source: "Kituo Kikuu cha Polisi",
+    sourceBg: "#FFF3E0",
+    dotColor: "#FF9800",
+    borderColor: "#FF9800",
+    unread: true,
+    category: "mine" as const,
+    important: false,
+  },
+  {
+    id: 5,
+    icon: "alert-triangle",
+    iconColor: "#F44336",
+    title: "Tahadhari ya Usalama - Eneo la Ubungo",
+    time: "siku 631 zilizopita",
+    message:
+      "Ripoti za majambazi zimeongezeka katika eneo la Ubungo. Patroli za ziada zimepangwa. Waofisa wa jirani waone kesi husika.",
+    source: "Kamanda wa Mkoa",
+    sourceBg: "#FFEBEE",
+    dotColor: "#F44336",
+    borderColor: "#F44336",
+    unread: false,
+    category: "all" as const,
+    important: true,
   },
 ];
 

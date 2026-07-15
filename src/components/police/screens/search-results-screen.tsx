@@ -17,11 +17,29 @@ import {
 import { usePoliceStore } from "@/store/police-store";
 import { SEARCH_RESULT } from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
+import { Loader2, SearchX } from "lucide-react";
 
 export function SearchResultsScreen() {
   const goBack = usePoliceStore((s) => s.goBack);
   const navigate = usePoliceStore((s) => s.navigate);
+  const searchStatus = usePoliceStore((s) => s.searchStatus);
+  const searchQuery = usePoliceStore((s) => s.searchQuery);
+  const setCitationPrefill = usePoliceStore((s) => s.setCitationPrefill);
   const r = SEARCH_RESULT;
+
+  const goToCitation = () => {
+    setCitationPrefill({
+      plate: r.plate,
+      model: r.vehicle.model,
+      color: r.vehicle.color,
+      vehicleType: r.vehicle.type,
+      driverName: r.driver.name,
+      driverLicense: r.driver.license,
+      driverPhone: r.driver.mobile,
+      driverNida: r.driver.nida,
+    });
+    navigate("citation");
+  };
 
   return (
     <div className="min-h-full bg-police">
@@ -38,6 +56,37 @@ export function SearchResultsScreen() {
         </button>
       </header>
 
+      {/* Searching state */}
+      {searchStatus === "searching" && (
+        <div className="flex flex-col items-center justify-center gap-4 px-4 py-24">
+          <Loader2 size={48} className="animate-spin text-[#2196F3]" />
+          <p className="text-[15px] font-bold text-police-navy">Inatafuta taarifa...</p>
+          <p className="text-[12px] text-police-muted">
+            {searchQuery ? `Inatafuta: "${searchQuery}"` : "Inatafuta rekodi..."}
+          </p>
+          <p className="text-[11px] text-police-faint">Inafungua taarifa za gari na dereva</p>
+        </div>
+      )}
+
+      {/* Not found state */}
+      {searchStatus === "not-found" && (
+        <div className="flex flex-col items-center justify-center gap-4 px-6 py-24 text-center">
+          <SearchX size={48} className="text-police-faint" />
+          <p className="text-[15px] font-bold text-police-navy">Taarifa Haijapatikana</p>
+          <p className="text-[12px] text-police-muted">
+            Hakuna rekodi ya "{searchQuery}" iliyopatikana. Angalia namba na ujaribu tena.
+          </p>
+          <button
+            onClick={goBack}
+            className="mt-2 rounded-xl bg-[#2196F3] px-6 py-2.5 text-[13px] font-bold text-white"
+          >
+            Jaribu Tena
+          </button>
+        </div>
+      )}
+
+      {/* Found / idle: show full results */}
+      {(searchStatus === "found" || searchStatus === "idle") && (
       <div className="space-y-3 p-4">
         {/* Plate + status header */}
         <div className="flex items-center justify-between rounded-2xl bg-police-card p-4 shadow-sm">
@@ -95,7 +144,7 @@ export function SearchResultsScreen() {
             icon={<FileText size={18} />}
             label="Ongeza Citation"
             color="#2563EB"
-            onClick={() => navigate("citation")}
+            onClick={() => goToCitation()}
           />
           <ActionButton
             icon={<MessageSquareWarning size={18} />}
@@ -190,6 +239,7 @@ export function SearchResultsScreen() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

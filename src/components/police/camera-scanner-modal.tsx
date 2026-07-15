@@ -8,7 +8,7 @@ import { toast } from "@/hooks/use-toast";
 type ScanStatus = "idle" | "starting" | "scanning" | "processing" | "success" | "error" | "no-camera";
 
 export function CameraScannerModal() {
-  const { scannerOpen, scannerMode, closeScanner, navigate } = usePoliceStore();
+  const { scannerOpen, scannerMode, closeScanner, navigate, runSearch } = usePoliceStore();
   const qrReaderId = "qr-reader";
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -58,12 +58,14 @@ export function CameraScannerModal() {
         title: isQR ? "QR Imesomwa" : "Namba Imesomwa",
         description: `Imepatikana: ${value}`,
       });
+      // Trigger search with the scanned value
+      runSearch(value);
       setTimeout(() => {
         navigate("search-results");
         closeScanner();
       }, 1100);
     },
-    [isQR, closeScanner, navigate, stopCamera]
+    [isQR, closeScanner, navigate, stopCamera, runSearch]
   );
 
   // Start QR scanning with html5-qrcode
