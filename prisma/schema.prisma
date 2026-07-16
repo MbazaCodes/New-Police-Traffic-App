@@ -1,0 +1,227 @@
+// TZ Police Digital Platform — Prisma Schema
+// DEV: SQLite | PROD: Switch provider to "postgresql" + Supabase DATABASE_URL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  shortName    String?
+  rank         String?
+  rankShort    String?
+  role         String   @default("officer-traffic") // officer-traffic | officer-general | admin | commander
+  idNumber     String   @unique
+  phone        String?  @unique
+  email        String?  @unique
+  passwordHash String?
+  status       String   @default("active") // active | off-duty | on-leave | suspended
+  avatarUrl    String?
+  lastLogin    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  officer      Officer?
+  citations    Citation[]
+  incidents    Incident[]
+}
+
+model Station {
+  id          String   @id @default(cuid())
+  name        String
+  region      String
+  district    String?
+  address     String?
+  phone       String?
+  status      String   @default("active") // active | maintenance | inactive
+  established String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  officers    Officer[]
+  posts       Post[]
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  name      String
+  stationId String
+  location  String?
+  type      String   @default("Traffic") // Traffic | Patrol
+  status    String   @default("active")
+  shift     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  station     Station      @relation(fields: [stationId], references: [id])
+  assignments Assignment[]
+}
+
+model Officer {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  officerNumber String   @unique
+  stationId     String?
+  postId        String?
+  status        String   @default("active") // active | break | off-duty
+  patrolsCount  Int      @default(0)
+  citationsCount Int     @default(0)
+  incidentsCount Int     @default(0)
+  hoursToday    Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id])
+  station  Station? @relation(fields: [stationId], references: [id])
+}
+
+model Citation {
+  id          String   @id @default(cuid())
+  citationNo  String   @unique
+  officerId   String
+  plate       String
+  vehicleType String?
+  vehicleModel String?
+  vehicleColor String?
+  driverName  String?
+  driverNida  String?
+  driverPhone String?
+  driverLicense String?
+  offenseType String
+  location    String?
+  amount      Float
+  status      String   @default("Inasubiri") // Inasubiri | Imelipwa | Imefutwa
+  notes       String?
+  issuedAt    DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  officer User @relation(fields: [officerId], references: [id])
+}
+
+model Incident {
+  id          String   @id @default(cuid())
+  incidentNo  String   @unique
+  type        String
+  location    String
+  description String?
+  status      String   @default("active") // active | urgent | resolved
+  priority    String   @default("medium") // low | medium | high
+  assignedTo  String?
+  lat         Float?
+  lng         Float?
+  reportedAt  DateTime @default(now())
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  officer User? @relation(fields: [assignedTo], references: [id])
+}
+
+model Patrol {
+  id        String   @id @default(cuid())
+  patrolNo  String   @unique
+  officerId String
+  route     String
+  area      String
+  status    String   @default("active") // active | completed | cancelled
+  startTime DateTime
+  endTime   DateTime?
+  lat       Float?
+  lng       Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Alert {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  category  String   // accident | theft | emergency | system | weather
+  priority  String   @default("normal") // normal | important | urgent
+  status    String   @default("active")
+  isGlobal  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Assignment {
+  id         String   @id @default(cuid())
+  officerId  String
+  postId     String
+  shift      String?
+  status     String   @default("active")
+  assignedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id])
+}
+
+model AccidentReport {
+  id              String   @id @default(cuid())
+  reportNo        String   @unique
+  officerId       String
+  location        String
+  date            DateTime
+  time            String
+  vehicle1Plate   String?
+  vehicle1Model   String?
+  vehicle2Plate   String?
+  vehicle2Model   String?
+  casualties      Int      @default(0)
+  injuries        Int      @default(0)
+  description     String?
+  status          String   @default("draft") // draft | submitted | approved
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model VehicleInspection {
+  id              String   @id @default(cuid())
+  inspectionNo    String   @unique
+  officerId       String
+  plate           String
+  vehicleType     String
+  make            String?
+  model           String?
+  color           String?
+  engineNo        String?
+  chassisNo       String?
+  ownerName       String?
+  ownerPhone      String?
+  insuranceValid  Boolean  @default(false)
+  licenseValid    Boolean  @default(false)
+  roadworthyValid Boolean  @default(false)
+  defects         String?  // JSON array stored as string
+  result          String   @default("pass") // pass | fail | conditional
+  notes           String?
+  inspectedAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PF3Report {
+  id          String   @id @default(cuid())
+  referenceNo String   @unique
+  officerId   String
+  location    String
+  date        DateTime
+  time        String
+  weather     String?
+  roadCond    String?
+  vehicle1    String?  // JSON
+  vehicle2    String?  // JSON
+  witnesses   String?  // JSON
+  narrative   String?
+  status      String   @default("draft")
+  submittedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

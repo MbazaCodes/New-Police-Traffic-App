@@ -1,0 +1,8 @@
+{
+  "name": "@tz-police/database",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Supabase database schema, migrations, client, and seed data",
+  "main": "src/index.ts",
+  "types": "src/index.ts"
+}
