@@ -4,6 +4,16 @@ import { create } from "zustand";
 import type { ScreenId } from "@/lib/police-data";
 
 export type UserRole = "officer-traffic" | "officer-general" | "admin" | "commander";
+export type OfficerRole = "officer-traffic" | "officer-general";
+
+export const OFFICER_ROLES: OfficerRole[] = ["officer-traffic", "officer-general"];
+
+function normalizeOfficerRole(role?: UserRole): OfficerRole {
+  if (role === "officer-general" || role === "officer-traffic") {
+    return role;
+  }
+  return "officer-traffic";
+}
 export type AdminScreen =
   | "dashboard"
   | "officers"
@@ -77,15 +87,17 @@ interface PoliceState {
 export const usePoliceStore = create<PoliceState>((set, get) => ({
   isAuthenticated: false,
   userRole: "officer-traffic" as UserRole,
-  login: (role = "officer-traffic" as UserRole) =>
+  login: (role) => {
+    const officerRole = normalizeOfficerRole(role);
     set({
       isAuthenticated: true,
-      userRole: role,
+      userRole: officerRole,
       currentScreen: "home",
       activeTab: "home",
       history: ["home"],
-      adminScreen: role === "admin" ? "users" : "dashboard",
-    }),
+      adminScreen: "dashboard",
+    });
+  },
   logout: () =>
     set({
       isAuthenticated: false,
@@ -93,7 +105,7 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
       activeTab: "home",
       history: [],
     }),
-  setRole: (role) => set({ userRole: role }),
+  setRole: (role) => set({ userRole: normalizeOfficerRole(role) }),
 
   activeTab: "home",
   currentScreen: "login",

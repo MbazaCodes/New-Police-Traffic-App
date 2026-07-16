@@ -14,8 +14,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import type { UserRole } from "@/store/police-store";
-import { Shield, Monitor, Star, Car, UserCheck } from "lucide-react";
+import type { OfficerRole } from "@/store/police-store";
+import { Car, UserCheck } from "lucide-react";
 
 type Step = "credentials" | "otp" | "success";
 
@@ -27,7 +27,7 @@ export function LoginScreen() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [sending, setSending] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
-  const [role, setRole] = useState<UserRole>("officer");
+  const [role, setRole] = useState<OfficerRole>("officer-traffic");
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Resend countdown
@@ -137,8 +137,6 @@ export function LoginScreen() {
                 {([
                   { id: "officer-traffic", label: "Afisa Trafiki", sublabel: "Traffic Officer", icon: Car },
                   { id: "officer-general", label: "Afisa Polisi", sublabel: "General Officer", icon: UserCheck },
-                  { id: "admin", label: "Admin", sublabel: "Users & Stations", icon: Monitor },
-                  { id: "commander", label: "Kamanda", sublabel: "Command Center", icon: Star },
                 ] as const).map((r) => {
                   const Icon = r.icon;
                   const active = role === r.id;
