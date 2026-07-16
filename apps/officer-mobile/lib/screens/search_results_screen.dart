@@ -56,7 +56,7 @@ class SearchResultsScreen extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: _ActionButton(
-                            icon: LucideIcons.messageSquareWarning,
+                            icon: LucideIcons.megaphone,
                             label: 'Ongeza Onyo',
                             color: AppColors.orange,
                             isDark: isDark,

@@ -248,7 +248,7 @@ class Pf3Screen extends ConsumerWidget {
                             const SizedBox(width: 8),
                             Expanded(
                               child: _ConditionChip(
-                                icon: LucideIcons.route,
+                                icon: LucideIcons.mapPin,
                                 label: 'Uso wa Barabara',
                                 value: f.roadSurface,
                                 isDark: isDark,

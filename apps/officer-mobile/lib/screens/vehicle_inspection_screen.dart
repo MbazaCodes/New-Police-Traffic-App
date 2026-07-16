@@ -992,7 +992,7 @@ class _SignatureSection extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(LucideIcons.penLine, size: 18, color: subtleColor),
+                    Icon(LucideIcons.pencil, size: 18, color: subtleColor),
                     Row(
                       children: [
                         Icon(LucideIcons.trash2, size: 14, color: subtleColor),

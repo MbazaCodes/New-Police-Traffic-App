@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../screens/accident_report_screen.dart';
-import '../screens/alerts_screen.dart';
-import '../screens/citation_screen.dart';
-import '../screens/history_screen.dart';
-import '../screens/home_screen.dart';
-import '../screens/login_screen.dart';
-import '../screens/patrol_screen.dart';
-import '../screens/pf3_screen.dart';
-import '../screens/profile_screen.dart';
-import '../screens/search_results_screen.dart';
-import '../screens/traffic_screen.dart';
-import '../screens/vehicle_inspection_screen.dart';
-import '../providers/auth_provider.dart';
-import '../widgets/bottom_nav_bar.dart';
+import '../../screens/accident_report_screen.dart';
+import '../../screens/alerts_screen.dart';
+import '../../screens/citation_screen.dart';
+import '../../screens/history_screen.dart';
+import '../../screens/home_screen.dart';
+import '../../screens/login_screen.dart';
+import '../../screens/patrol_screen.dart';
+import '../../screens/pf3_screen.dart';
+import '../../screens/profile_screen.dart';
+import '../../screens/search_results_screen.dart';
+import '../../screens/traffic_screen.dart';
+import '../../screens/vehicle_inspection_screen.dart';
+import '../../providers/auth_provider.dart';
+import '../../widgets/bottom_nav_bar.dart';
 
 /// Navigation routes used across the app.
 class AppRoutes {

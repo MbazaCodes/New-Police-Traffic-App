@@ -6,6 +6,14 @@ import '../models/officer.dart';
 import '../models/pf3.dart';
 import '../models/vehicle_inspection.dart';
 
+export '../models/accident_report.dart';
+export '../models/alert.dart';
+export '../models/citation.dart';
+export '../models/offense.dart';
+export '../models/officer.dart';
+export '../models/pf3.dart';
+export '../models/vehicle_inspection.dart';
+
 /// All Swahili mock data for the TZ Police Digital Platform.
 /// Mirrors `src/lib/police-data.ts` from the Next.js PWA so the Flutter app
 /// shows identical content.

@@ -8,7 +8,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../core/constants/app_constants.dart';
 import '../core/theme/app_colors.dart';
-import '../core/router/app_router.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/police_logo.dart';
 
