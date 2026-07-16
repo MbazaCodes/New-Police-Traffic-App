@@ -640,3 +640,39 @@ Stage Summary:
 - Single source of truth: packages/ui-tokens (TS) → tokens.json → app_tokens.dart (Flutter)
 - Database: 15-table PostgreSQL schema with RLS, ready for Supabase
 - ARCHITECTURE.md documents full tree structure for easy debugging and growth
+
+---
+Task ID: 18
+Agent: Main (Z.ai Code)
+Task: Separate deployments — Officer PWA at / and Admin Web at /admin
+
+Work Log:
+- Modified LoginScreen to accept mode prop ("officer" | "admin")
+  - mode="officer": shows only Afisa Trafiki + Afisa Polisi roles
+  - mode="admin": shows only Admin + Kamanda roles
+  - Role options defined as OFFICER_ROLES and ADMIN_ROLES constants
+- Updated MobileShell (/) to use mode="officer"
+  - If admin/commander role somehow reaches /, shows redirect message to /admin
+  - Removed AdminShell import (admin app is now separate route)
+- Created AdminWebShell component (/admin)
+  - Shows admin login (mode="admin") when not authenticated
+  - If officer role reaches /admin, shows redirect to / (officer PWA)
+  - If admin/commander role, renders AdminShell (desktop command center)
+- Created src/app/admin/page.tsx — dynamic import of AdminWebShell (ssr:false)
+- Fixed merge conflicts from remote (duplicate roleOptions definition)
+- Fixed lint error in admin-alerts.tsx (setState in effect)
+- Verified both routes:
+  - / → Officer PWA with 2 officer roles only ✓
+  - /admin → Admin Web with 2 admin roles only ✓ (lands on AdminShell after login)
+- Committed and pushed to GitHub (3 commits)
+
+Deployment URLs:
+- Officer PWA: https://tz-police-pwa.vercel.app/
+- Admin Web: https://tz-police-admin-web.vercel.app/admin
+
+Stage Summary:
+- Two separate Vercel deployments from single codebase
+- / = Officer PWA (mobile phone frame, officer roles only)
+- /admin = Admin/Command Web (desktop, admin/commander roles only)
+- Same GitHub repo, different entry routes
+- Both routes verified working
