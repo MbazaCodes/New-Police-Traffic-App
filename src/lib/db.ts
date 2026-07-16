@@ -1,20 +1,26 @@
 // TZ Police Digital Platform — Database client
-// DEV: Uses mock data from src/lib/police-data.ts & admin-data.ts
-// PROD: Switch to Supabase client (see .env.example)
+// DEV:  Mock-safe — no crash without DATABASE_URL
+// PROD: Set DATABASE_URL to Supabase PostgreSQL connection string
 
-// Lazy Prisma init — won't crash if DATABASE_URL not set
-let _prisma: import("@prisma/client").PrismaClient | null = null;
+import { PrismaClient } from "@prisma/client";
 
-export function getDb() {
-  if (process.env.DATABASE_URL && process.env.DATABASE_URL !== "file:./db/dev.db") {
-    if (!_prisma) {
-      const { PrismaClient } = require("@prisma/client");
-      _prisma = new PrismaClient({ log: ["error"] });
-    }
-    return _prisma;
-  }
-  // Return null in mock/dev mode — all data comes from src/lib/*-data.ts
-  return null;
+declare global {
+  // eslint-disable-next-line no-var
+  var _prisma: PrismaClient | undefined;
 }
 
-export const db = getDb();
+function createClient() {
+  const url = process.env.DATABASE_URL ?? "";
+  // Skip Prisma init in pure mock/dev mode (SQLite file path not set up)
+  if (!url || url === "file:./db/dev.db") {
+    return null as unknown as PrismaClient;
+  }
+  return new PrismaClient({ log: ["error"] });
+}
+
+export const db: PrismaClient =
+  global._prisma ?? createClient();
+
+if (process.env.NODE_ENV !== "production" && db) {
+  global._prisma = db;
+}
