@@ -118,7 +118,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
               if (showLogo)
-                PoliceLogo(
+                const PoliceLogo(
                   size: 36,
                   ringColor: AppColors.blue,
                   ringWidth: 2,

@@ -18,7 +18,7 @@ class SearchResultsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final r = searchResult;
+    const r = searchResult;
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0B1018) : AppColors.grayLight,
@@ -99,9 +99,9 @@ class SearchResultsScreen extends ConsumerWidget {
                             color: AppColors.greenSoft,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: const [
+                            children: [
                               Icon(LucideIcons.checkCircle2, size: 12, color: AppColors.green),
                               SizedBox(width: 4),
                               Text(
@@ -317,8 +317,8 @@ class _PlateHeader extends StatelessWidget {
               color: AppColors.greenSoft,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Row(
-              children: const [
+            child: const Row(
+              children: [
                 Icon(LucideIcons.checkCircle2, size: 14, color: AppColors.green),
                 SizedBox(width: 4),
                 Text(

@@ -187,7 +187,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final fieldBg = isDark ? const Color(0xFF0F1626) : const Color(0xFFF9FAFB);
     final placeholderColor = isDark ? const Color(0xFF6B7689) : AppColors.gray;
 
-    final tabs = const [
+    const tabs = [
       _SearchTab(id: 'plate', label: 'Namba ya Gari'),
       _SearchTab(id: 'license', label: 'Leseni'),
       _SearchTab(id: 'nida', label: 'NIDA'),
@@ -284,11 +284,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onTap: () => context.push(AppRoutes.searchResults),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(LucideIcons.search, size: 18, color: Colors.white),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       'Tafuta',
                       style: TextStyle(
@@ -459,9 +459,9 @@ class _SearchTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeBg = AppColors.blueBright;
+    const activeBg = AppColors.blueBright;
     final inactiveBg = isDark ? const Color(0xFF1A2336) : const Color(0xFFF3F4F6);
-    final activeColor = Colors.white;
+    const activeColor = Colors.white;
     final inactiveColor = isDark ? const Color(0xFF8A94A6) : AppColors.grayText;
 
     return Material(

@@ -76,7 +76,7 @@ class AppTheme {
           fontSize: 15,
         ),
       ),
-      cardTheme: CardThemeData(
+      cardTheme: const CardThemeData(
         color: AppColors.card,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -100,17 +100,17 @@ class AppTheme {
         filled: true,
         fillColor: AppColors.input,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        border: OutlineInputBorder(
+        border: const OutlineInputBorder(
           borderRadius: AppRadius.lgAll,
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: AppColors.border),
         ),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderRadius: AppRadius.lgAll,
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: AppColors.border),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderRadius: AppRadius.lgAll,
-          borderSide: const BorderSide(color: AppColors.bluePrimary, width: 1.6),
+          borderSide: BorderSide(color: AppColors.bluePrimary, width: 1.6),
         ),
         labelStyle: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 12),
         hintStyle: GoogleFonts.inter(color: AppColors.textFaint, fontSize: 13),
@@ -121,7 +121,7 @@ class AppTheme {
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.lgAll,
           ),
           textStyle: GoogleFonts.inter(
@@ -135,7 +135,7 @@ class AppTheme {
           foregroundColor: AppColors.navy,
           side: const BorderSide(color: AppColors.navy, width: 1.6),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.lgAll,
           ),
           textStyle: GoogleFonts.inter(
@@ -224,7 +224,7 @@ class AppTheme {
           fontSize: 15,
         ),
       ),
-      cardTheme: CardThemeData(
+      cardTheme: const CardThemeData(
         color: AppColors.darkCard,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -248,17 +248,17 @@ class AppTheme {
         filled: true,
         fillColor: AppColors.darkCardMuted,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        border: OutlineInputBorder(
+        border: const OutlineInputBorder(
           borderRadius: AppRadius.lgAll,
-          borderSide: const BorderSide(color: AppColors.darkBorder),
+          borderSide: BorderSide(color: AppColors.darkBorder),
         ),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderRadius: AppRadius.lgAll,
-          borderSide: const BorderSide(color: AppColors.darkBorder),
+          borderSide: BorderSide(color: AppColors.darkBorder),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderRadius: AppRadius.lgAll,
-          borderSide: const BorderSide(color: AppColors.blueBright, width: 1.6),
+          borderSide: BorderSide(color: AppColors.blueBright, width: 1.6),
         ),
         labelStyle: GoogleFonts.inter(color: AppColors.darkTextMuted, fontSize: 12),
         hintStyle: GoogleFonts.inter(color: AppColors.darkTextFaint, fontSize: 13),
@@ -269,7 +269,7 @@ class AppTheme {
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.lgAll,
           ),
           textStyle: GoogleFonts.inter(
@@ -283,7 +283,7 @@ class AppTheme {
           foregroundColor: Colors.white,
           side: const BorderSide(color: Colors.white70, width: 1.6),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.lgAll,
           ),
           textStyle: GoogleFonts.inter(

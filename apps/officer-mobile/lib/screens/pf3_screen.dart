@@ -18,7 +18,7 @@ class Pf3Screen extends ConsumerWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final bg = isDark ? const Color(0xFF0B1018) : AppColors.grayLight;
-    final f = pf3Form;
+    const f = pf3Form;
 
     return Scaffold(
       backgroundColor: bg,
@@ -386,9 +386,9 @@ class Pf3Screen extends ConsumerWidget {
                               title: 'Imehifadhiwa',
                               description: 'Rasimu ya Fomu PF3 imehifadhiwa.',
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Icon(LucideIcons.save, size: 16),
                                 SizedBox(width: 4),
                                 Text(
@@ -420,9 +420,9 @@ class Pf3Screen extends ConsumerWidget {
                               title: 'Imetumwa',
                               description: 'Fomu PF3 imewasilishwa kwa Kituo Kikuu.',
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Icon(LucideIcons.send, size: 16),
                                 SizedBox(width: 6),
                                 Text(
@@ -885,7 +885,7 @@ class _CasualtyCard extends StatelessWidget {
             width: 36,
             height: 36,
             alignment: Alignment.center,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.orangeSoft,
               shape: BoxShape.circle,
             ),
@@ -1048,7 +1048,7 @@ class _SignatureBox extends StatelessWidget {
             style: TextStyle(fontSize: 10, color: labelColor),
           ),
           const SizedBox(height: 16),
-          Align(
+          const Align(
             alignment: Alignment.centerRight,
             child: Text(
               'J. Mwinyi',

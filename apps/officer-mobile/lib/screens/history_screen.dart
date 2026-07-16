@@ -139,7 +139,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       ),
                       child: Row(
                         children: [
-                          Icon(LucideIcons.search, size: 18, color: AppColors.gray),
+                          const Icon(LucideIcons.search, size: 18, color: AppColors.gray),
                           const SizedBox(width: 8),
                           Expanded(
                             child: TextField(
@@ -192,7 +192,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                     // Filter tabs
                     Row(
                       children: [
-                        Icon(LucideIcons.filter, size: 14, color: AppColors.gray),
+                        const Icon(LucideIcons.filter, size: 14, color: AppColors.gray),
                         const SizedBox(width: 8),
                         _FilterChip(
                           label: 'Zote',
@@ -331,7 +331,7 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = AppColors.navy;
+    const activeColor = AppColors.navy;
     final inactiveColor =
         isDark ? const Color(0xFF151C2B) : Colors.white;
     final inactiveText =

@@ -146,9 +146,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
+                  const Text(
                     AppConstants.tagline,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: AppColors.bluePrimary,
@@ -347,7 +347,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
+              const Icon(
                 LucideIcons.smartphone,
                 size: 16,
                 color: AppColors.bluePrimary,
@@ -361,8 +361,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       height: 1.35,
                       color: isDark ? const Color(0xFFB4BCC9) : const Color(0xFF6B7280),
                     ),
-                    children: [
-                      const TextSpan(text: 'OTP itatumwa kwa simu yako baada ya kuwasilisha. '),
+                    children: const [
+                      TextSpan(text: 'OTP itatumwa kwa simu yako baada ya kuwasilisha. '),
                       TextSpan(
                         text: 'Hakuna password inahitajika.',
                         style: TextStyle(
@@ -575,14 +575,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             else
               GestureDetector(
                 onTap: _resendOtp,
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(
                       LucideIcons.refreshCw,
                       size: 12,
                       color: AppColors.bluePrimary,
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                     Text(
                       'Tuma tena',
                       style: TextStyle(
@@ -653,7 +653,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             color: isDark ? const Color(0xFF1A2336) : const Color(0xFFF3F4F6),
             borderRadius: BorderRadius.circular(2),
           ),
-          child: LinearProgressIndicator(
+          child: const LinearProgressIndicator(
             backgroundColor: Colors.transparent,
             valueColor: AlwaysStoppedAnimation(AppColors.bluePrimary),
           ),
@@ -849,7 +849,7 @@ class _Cityscape extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   height: 100,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,

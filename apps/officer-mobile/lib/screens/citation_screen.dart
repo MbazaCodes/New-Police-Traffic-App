@@ -254,9 +254,9 @@ class _CitationScreenState extends ConsumerState<CitationScreen> {
                               title: 'Imehifadhiwa',
                               description: 'Rasimu ya Citation imehifadhiwa.',
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Icon(LucideIcons.save, size: 16),
                                 SizedBox(width: 4),
                                 Text(
@@ -288,9 +288,9 @@ class _CitationScreenState extends ConsumerState<CitationScreen> {
                               title: 'Citation Imetolewa',
                               description: 'Citation imewasilishwa na imetumwa kwa dereva.',
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Icon(LucideIcons.send, size: 16),
                                 SizedBox(width: 6),
                                 Text(
