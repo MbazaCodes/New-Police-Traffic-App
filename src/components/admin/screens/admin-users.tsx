@@ -11,20 +11,26 @@ import {
   Clock,
   X,
 } from "lucide-react";
-import { ADMIN_USERS } from "@/lib/admin-data";
 import { getAdminCreatePath, getAdminEntityPath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
-
-type User = (typeof ADMIN_USERS)[number];
+import { useRecordsStore, type AdminUserRecord } from "@/store/records-store";
 
 const ROLE_STYLES: Record<string, string> = {
   commander: "bg-purple-500/15 text-purple-500 border border-purple-500/30",
   admin: "bg-[#2196F3]/15 text-[#2196F3] border border-[#2196F3]/30",
+  regional: "bg-orange-500/15 text-orange-500 border border-orange-500/30",
+  "district-admin": "bg-green-500/15 text-green-500 border border-green-500/30",
+  commissioner: "bg-purple-500/15 text-purple-500 border border-purple-500/30",
+  "all-staffs": "bg-gray-500/15 text-gray-500 border border-gray-500/30",
 };
 
 const ROLE_LABEL: Record<string, string> = {
   commander: "Kamanda",
   admin: "Msimamizi",
+  regional: "Mkoa",
+  "district-admin": "Msimamizi Wilaya",
+  commissioner: "Kamanda Mkuu",
+  "all-staffs": "Wafanyakazi Wote",
 };
 
 const STATUS_STYLES: Record<string, string> = {
@@ -41,8 +47,10 @@ export function AdminUsers() {
   const pathname = usePathname();
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [users, setUsers] = useState<User[]>(ADMIN_USERS);
-  const [editing, setEditing] = useState<User | null>(null);
+  const users = useRecordsStore((s) => s.adminUsers);
+  const setAdminUserStatus = useRecordsStore((s) => s.setAdminUserStatus);
+  const updateAdminUser = useRecordsStore((s) => s.updateAdminUser);
+  const [editing, setEditing] = useState<AdminUserRecord | null>(null);
 
   const filtered = users.filter((u) => {
     if (!query) return true;
@@ -55,15 +63,20 @@ export function AdminUsers() {
     );
   });
 
-  const toggleSuspend = (u: User) => {
-    const newStatus = u.status === "active" ? "suspended" : "active";
-    setUsers((prev) =>
-      prev.map((x) => (x.id === u.id ? { ...x, status: newStatus } : x))
-    );
-    toast({
-      title: newStatus === "suspended" ? "Mtumiaji Amesimwa" : "Mtumiaji Amerejeshwa",
-      description: `${u.name} ${newStatus === "suspended" ? "amesimwa" : "amerejeshwa"}`,
-    });
+  const toggleSuspend = (u: AdminUserRecord) => {
+    const newStatus: "active" | "suspended" = u.status === "active" ? "suspended" : "active";
+    setAdminUserStatus(u.id, newStatus);
+    if (newStatus === "suspended") {
+      toast({
+        title: "Amebwa",
+        description: `${u.name} amesimwa kwa muda`,
+      });
+    } else {
+      toast({
+        title: "Amerejeshwa",
+        description: `${u.name} amerejeshwa kwenye mfumo`,
+      });
+    }
   };
 
   return (
@@ -225,9 +238,7 @@ export function AdminUsers() {
           user={editing}
           onClose={() => setEditing(null)}
           onSave={(updated) => {
-            setUsers((prev) =>
-              prev.map((x) => (x.id === updated.id ? updated : x))
-            );
+            updateAdminUser(updated.id, updated);
             toast({
               title: "Imehifadhiwa",
               description: `Taarifa za ${updated.name} zimesasishwa`,
@@ -245,15 +256,15 @@ function EditUserModal({
   onClose,
   onSave,
 }: {
-  user: User;
+  user: AdminUserRecord;
   onClose: () => void;
-  onSave: (u: User) => void;
+  onSave: (u: AdminUserRecord) => void;
 }) {
   const [name, setName] = useState(user.name);
   const [rank, setRank] = useState(user.rank);
   const [email, setEmail] = useState(user.email);
   const [station, setStation] = useState(user.station);
-  const [role, setRole] = useState(user.role);
+  const [role, setRole] = useState<AdminUserRecord["role"]>(user.role);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

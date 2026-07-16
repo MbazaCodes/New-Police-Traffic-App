@@ -21,17 +21,46 @@ import {
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { PF3_FORM, OFFICER } from "@/lib/police-data";
+import { usePoliceStore } from "@/store/police-store";
+import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 
 export function Pf3Screen() {
   const f = PF3_FORM;
+  const goBack = usePoliceStore((s) => s.goBack);
+  const addPF3 = useRecordsStore((s) => s.addPF3);
+  const submitPF3 = useRecordsStore((s) => s.submitPF3);
 
-  const handleSaveDraft = () =>
+  const now = new Date();
+  const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
+  const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+  const buildPayload = () => ({
+    region: f.region,
+    district: f.district,
+    station: f.station,
+    accidentType: f.accidentType,
+    severity: f.severity,
+    date: `${today} ${currentTime}`,
+    vehicles: f.vehicles.length,
+    casualties: f.casualties.length,
+    witnesses: f.witnesses.length,
+  });
+
+  const handleSaveDraft = () => {
+    addPF3(buildPayload());
     toast({ title: "Imehifadhiwa", description: "Rasimu ya Fomu PF3 imehifadhiwa." });
-  const handleSubmit = () =>
-    toast({ title: "Imetumwa", description: "Fomu PF3 imewasilishwa kwa Kituo Kikuu." });
+  };
+  const handleSubmit = () => {
+    const id = addPF3(buildPayload());
+    submitPF3(id);
+    toast({ title: "Imetumwa kwa Kituo Kikuu", description: "Fomu PF3 imewasilishwa kikamilifu." });
+    setTimeout(() => goBack(), 800);
+  };
   const handleDownload = () =>
     toast({ title: "Inapakua", description: "Fomu PF3 inapakuliwa kama PDF." });
+  const handlePrint = () =>
+    toast({ title: "Inachapisha", description: "Fomu PF3 inatumwa kwa printer." });
 
   return (
     <div className="min-h-full bg-police">
@@ -64,7 +93,7 @@ export function Pf3Screen() {
             <Download size={15} /> Pakua PDF
           </button>
           <button
-            onClick={handleDownload}
+            onClick={handlePrint}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#1A237E]/20 bg-police-card py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
           >
             <Printer size={15} /> Chapisha

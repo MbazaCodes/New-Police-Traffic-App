@@ -25,7 +25,9 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
+import { useRecordsStore } from "@/store/records-store";
 import { CITIZEN_RESULT } from "@/lib/admin-mgmt-data";
+import { OFFICER } from "@/lib/police-data";
 import { findMatchingMissingAlerts } from "@/lib/shared-missing-alerts";
 import { toast } from "@/hooks/use-toast";
 
@@ -35,7 +37,59 @@ export function CitizenSearchResultsScreen() {
   const searchQuery = usePoliceStore((s) => s.searchQuery);
   const searchEntity = usePoliceStore((s) => s.searchEntity);
   const runSearch = usePoliceStore((s) => s.runSearch);
+  const addIncident = useRecordsStore((s) => s.addIncident);
+  const addWarning = useRecordsStore((s) => s.addWarning);
+  const addArrest = useRecordsStore((s) => s.addArrest);
   const r = CITIZEN_RESULT;
+
+  const now = new Date();
+  const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
+  const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+  const handleRecordInfo = () => {
+    addIncident({
+      type: "Taarifa ya Raia",
+      location: r.address,
+      date: today,
+      time: currentTime,
+      status: "active",
+      priority: "medium",
+      assignedTo: OFFICER.name,
+      description: `Taarifa imerekodiwa kwa raia: ${r.name} (NIDA: ${r.nida})`,
+    });
+    toast({ title: "Taarifa Imerekodiwa", description: "Taarifa mpya ya raia imerekodiwa kikamilifu." });
+    setTimeout(() => goBack(), 800);
+  };
+
+  const handleGiveWarning = () => {
+    addWarning({
+      citizenName: r.name,
+      citizenNida: r.nida,
+      citizenPhone: r.mobile,
+      reason: "Onyo limetolewa kutoka matokeo ya utafutaji wa raia",
+      location: r.address,
+      date: today,
+      officer: OFFICER.name,
+    });
+    toast({ title: "Onyo Limetolewa", description: "Onyo limewasilishwa kwa raia." });
+    setTimeout(() => goBack(), 800);
+  };
+
+  const handleArrest = () => {
+    addArrest({
+      suspectName: r.name,
+      suspectNida: r.nida,
+      suspectPhone: r.mobile,
+      reason: "Kizuizi kimewekwa kutoka matokeo ya utafutaji wa raia",
+      location: r.address,
+      date: today,
+      time: currentTime,
+      officer: OFFICER.name,
+      station: OFFICER.station,
+    });
+    toast({ title: "Kizuizi Kimewekwa", description: "Mchakato wa kuzuia/kamata umeanzishwa." });
+    setTimeout(() => goBack(), 800);
+  };
 
   const matchedAlerts = useMemo(() => {
     const queries = [searchQuery, r.name, r.nida, r.mobile, ...r.vehicles.map((v) => v.plate)].filter(Boolean);
@@ -190,34 +244,19 @@ export function CitizenSearchResultsScreen() {
               icon={<FileText size={18} />}
               label="Rekodi Taarifa"
               color="#2563EB"
-              onClick={() =>
-                toast({
-                  title: "Taarifa Imerekodiwa",
-                  description: "Taarifa mpya ya raia imerekebishwa kikamilifu.",
-                })
-              }
+              onClick={handleRecordInfo}
             />
             <ActionButton
               icon={<MessageSquareWarning size={18} />}
               label="Toa Onyo"
               color="#FF9800"
-              onClick={() =>
-                toast({
-                  title: "Onyo Limetolewa",
-                  description: "Onyo limewasilishwa kwa raia.",
-                })
-              }
+              onClick={handleGiveWarning}
             />
             <ActionButton
               icon={<Hand size={18} />}
               label="Kamata"
               color="#F44336"
-              onClick={() =>
-                toast({
-                  title: "Kizuizi Kimewekwa",
-                  description: "Mchakato wa kuzuia/kamata umeanzishwa.",
-                })
-              }
+              onClick={handleArrest}
             />
           </div>
 

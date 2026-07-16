@@ -19,11 +19,13 @@ import {
 import { TopAppBar } from "../top-app-bar";
 import { OFFENSE_TYPES, VEHICLE_TYPES, OFFICER } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
+import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 
 export function CitationScreen() {
   const prefill = usePoliceStore((s) => s.citationPrefill);
   const goBack = usePoliceStore((s) => s.goBack);
+  const addCitation = useRecordsStore((s) => s.addCitation);
 
   const [offense, setOffense] = useState("");
   const [vehicleType, setVehicleType] = useState(prefill?.vehicleType || "");
@@ -36,12 +38,35 @@ export function CitationScreen() {
   const [driverPhone, setDriverPhone] = useState(prefill?.driverPhone || "");
   const [driverNida, setDriverNida] = useState(prefill?.driverNida || "");
   const [isOwner, setIsOwner] = useState(true);
+  const [notes, setNotes] = useState("");
 
   const hasPrefill = !!prefill;
 
-  const handleSave = () =>
+  // Current date / time helpers
+  const now = new Date();
+  const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
+  const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+  const buildPayload = () => ({
+    plate: prefill?.plate || "",
+    offense: offense || "Haijawazwa",
+    driverName: driverName || "Haijawazwa",
+    driverLicense: driverLicense || "—",
+    driverPhone: driverPhone || "—",
+    date: today,
+    time: currentTime,
+    location: "Morogoro Road, DSM",
+    amount: "TZS 50,000",
+    officer: OFFICER.name,
+    notes: notes || undefined,
+  });
+
+  const handleSave = () => {
+    addCitation(buildPayload());
     toast({ title: "Imehifadhiwa", description: "Rasimu ya Citation imehifadhiwa." });
+  };
   const handleSubmit = () => {
+    addCitation(buildPayload());
     toast({
       title: "Citation Imetolewa",
       description: "Citation imewasilishwa na imetumwa kwa dereva.",
@@ -183,8 +208,8 @@ export function CitationScreen() {
             full
           />
           <div className="grid grid-cols-2 gap-2.5">
-            <FormField label="Tarehe" value="15 Mei 2026" icon={<Calendar size={14} />} readOnly />
-            <FormField label="Saa" value="08:15 AM" icon={<Clock size={14} />} readOnly />
+            <FormField label="Tarehe" value={today} icon={<Calendar size={14} />} readOnly />
+            <FormField label="Saa" value={currentTime} icon={<Clock size={14} />} readOnly />
             <FormField label="Eneo" value="Morogoro Road, DSM" icon={<MapPin size={14} />} readOnly full />
           </div>
           <div>
@@ -193,6 +218,8 @@ export function CitationScreen() {
             </label>
             <textarea
               rows={3}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
               placeholder="Eleza kwa kifupi kilichotokea..."
               className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[12px] text-police placeholder:text-police-faint focus:border-[#1A237E] focus:outline-none"
             />

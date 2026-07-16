@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Send, Bell, Users, AlertTriangle, Mail, Megaphone } from "lucide-react";
-import { ADMIN_ALERTS_HISTORY, ADMIN_USER } from "@/lib/admin-data";
+import { ADMIN_USER } from "@/lib/admin-data";
 import {
   addMissingAlert,
   getMissingAlerts,
@@ -10,6 +10,7 @@ import {
   type MissingAlertType,
 } from "@/lib/shared-missing-alerts";
 import { usePoliceStore } from "@/store/police-store";
+import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 
 const AUDIENCE_OPTIONS = [
@@ -27,6 +28,8 @@ const PRIORITY_OPTIONS = [
 
 export function AdminAlerts() {
   const userRole = usePoliceStore((s) => s.userRole);
+  const alertsHistory = useRecordsStore((s) => s.adminAlertsHistory);
+  const addAdminAlertHistory = useRecordsStore((s) => s.addAdminAlertHistory);
   const [audience, setAudience] = useState<string>("all");
   const [priority, setPriority] = useState<string>("normal");
   const [message, setMessage] = useState("");
@@ -52,13 +55,23 @@ export function AdminAlerts() {
     }
     setSending(true);
     setTimeout(() => {
+      addAdminAlertHistory({
+        title: message.trim().slice(0, 80),
+        audience: selectedAudience.label,
+        priority: priority as "normal" | "high",
+        sentBy: ADMIN_USER.shortName,
+        recipients: selectedAudience.count,
+      });
       setSending(false);
       toast({
         title: "Tangazo Limetumwa",
         description: `Limewafikia ${selectedAudience.count} wa ${selectedAudience.label}`,
       });
+      // Reset form
       setMessage("");
-    }, 800);
+      setAudience("all");
+      setPriority("normal");
+    }, 600);
   };
 
   const canManageMissingRegistry = userRole === "commander";
@@ -240,7 +253,7 @@ export function AdminAlerts() {
               Historia ya Arifa
             </h2>
             <span className="rounded-lg bg-police-input px-2.5 py-1 text-[11px] text-police-muted">
-              {ADMIN_ALERTS_HISTORY.length} arifa
+              {alertsHistory.length} arifa
             </span>
           </div>
           <div className="overflow-x-auto">
@@ -256,7 +269,7 @@ export function AdminAlerts() {
                 </tr>
               </thead>
               <tbody>
-                {ADMIN_ALERTS_HISTORY.map((a) => (
+                {alertsHistory.map((a) => (
                   <tr
                     key={a.id}
                     className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"

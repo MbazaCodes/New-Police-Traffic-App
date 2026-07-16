@@ -4,6 +4,8 @@ import { ChevronRight } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { PoliceIcon } from "../police-icons";
 import { usePoliceStore } from "@/store/police-store";
+import { useRecordsStore } from "@/store/records-store";
+import { OFFICER } from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 
 const POLICE_STATS = [
@@ -77,16 +79,60 @@ const RECENT_INCIDENTS = [
 
 export function GeneralPoliceScreen() {
   const navigate = usePoliceStore((s) => s.navigate);
+  const addIncident = useRecordsStore((s) => s.addIncident);
+  const addArrest = useRecordsStore((s) => s.addArrest);
+
+  const now = new Date();
+  const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
+  const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 
   const handleAction = (label: string) => {
+    if (label === "Ripoti Tukio") {
+      navigate("accident-report");
+      return;
+    }
     if (label === "Tafuta Raia") {
       navigate("citizen-search-results");
       return;
     }
-    toast({
-      title: label,
-      description: `Kitendo cha "${label}" kimeanzishwa.`,
-    });
+    if (label === "Rekodi Taarifa") {
+      addIncident({
+        type: "Taarifa ya Jumla",
+        location: "Kituo Kikuu cha Polisi",
+        date: today,
+        time: currentTime,
+        status: "active",
+        priority: "medium",
+        assignedTo: OFFICER.name,
+        description: "Taarifa ya jumla imerekodiwa na afisa wa polisi.",
+      });
+      toast({ title: "Taarifa Imerekodiwa", description: "Taarifa mpya imehifadhiwa kwenye mfumo." });
+      return;
+    }
+    if (label === "Kamata Mtuhumiwa") {
+      addArrest({
+        suspectName: "Mtuhumiwa Haijawazwa",
+        suspectNida: "—",
+        suspectPhone: "—",
+        reason: "Kizuizi cha mtuhumiwa — fomu imefunguka",
+        location: "Kituo Kikuu cha Polisi",
+        date: today,
+        time: currentTime,
+        officer: OFFICER.name,
+        station: OFFICER.station,
+      });
+      toast({ title: "Fomu ya kukamata imefunguka", description: "Rekodi ya kizuizi imeanzishwa." });
+      return;
+    }
+    if (label === "Ripoti Ajali") {
+      navigate("accident-report");
+      return;
+    }
+    if (label === "Historia") {
+      navigate("history");
+      return;
+    }
+    toast({ title: label, description: `Kitendo cha "${label}" kimeanzishwa.` });
   };
 
   return (
@@ -153,12 +199,7 @@ export function GeneralPoliceScreen() {
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-[16px] font-bold text-police">Matukio ya Karibuni</h3>
             <button
-              onClick={() =>
-                toast({
-                  title: "Matukio Yote",
-                  description: "Orodha kamili ya matukio itafunguliwa hivi karibuni.",
-                })
-              }
+              onClick={() => navigate("history")}
               className="text-[13px] font-medium text-[#2563EB]"
             >
               Angalia Zote
@@ -169,12 +210,7 @@ export function GeneralPoliceScreen() {
             {RECENT_INCIDENTS.map((inc) => (
               <button
                 key={inc.id}
-                onClick={() =>
-                  toast({
-                    title: inc.title,
-                    description: `${inc.date} • ${inc.location}`,
-                  })
-                }
+                onClick={() => navigate("history")}
                 className="flex w-full items-center gap-3 rounded-xl border border-police-soft p-2.5 text-left active:scale-[0.99]"
               >
                 <div

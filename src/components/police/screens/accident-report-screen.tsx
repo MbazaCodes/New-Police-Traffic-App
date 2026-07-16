@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Calendar,
   Clock,
@@ -8,12 +9,10 @@ import {
   Car,
   Users,
   FileText,
-  Cloud,
   Upload,
   FileCheck,
   ShieldAlert,
   ChevronRight,
-  Save,
   Send,
   Image as ImageIcon,
   Video,
@@ -22,10 +21,103 @@ import {
 import { TopAppBar } from "../top-app-bar";
 import { ACCIDENT_VEHICLES, ACCIDENT_PEOPLE, ACCIDENT_EVIDENCE } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
+import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
+
+interface VehicleRow {
+  plate: string;
+  model: string;
+  color: string;
+  damage: string;
+}
+
+interface PersonRow {
+  name: string;
+  role: string;
+  phone: string;
+  condition: string;
+}
+
+interface EvidenceRow {
+  name: string;
+  size: string;
+  type: "image" | "video" | "pdf";
+}
 
 export function AccidentReportScreen() {
   const navigate = usePoliceStore((s) => s.navigate);
+  const goBack = usePoliceStore((s) => s.goBack);
+  const addAccident = useRecordsStore((s) => s.addAccident);
+  const submitAccident = useRecordsStore((s) => s.submitAccident);
+
+  const now = new Date();
+  const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
+  const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+  const [vehicles, setVehicles] = useState<VehicleRow[]>(
+    ACCIDENT_VEHICLES.map((v) => ({ plate: v.plate, model: v.model, color: v.color, damage: v.damage }))
+  );
+  const [people, setPeople] = useState<PersonRow[]>(
+    ACCIDENT_PEOPLE.map((p) => ({ name: p.name, role: p.role, phone: p.phone, condition: p.condition }))
+  );
+  const [evidence, setEvidence] = useState<EvidenceRow[]>(
+    ACCIDENT_EVIDENCE.map((e) => ({ name: e.name, size: e.size, type: e.type }))
+  );
+  const [description, setDescription] = useState("");
+  const [hasInjuries, setHasInjuries] = useState(true);
+
+  const addVehicle = () =>
+    setVehicles((prev) => [
+      ...prev,
+      { plate: `T${Math.floor(100 + Math.random() * 900)}XXX`, model: "Haijawazwa", color: "—", damage: "—" },
+    ]);
+
+  const addPerson = () =>
+    setPeople((prev) => [
+      ...prev,
+      { name: "Mtu Mpya", role: "Shahidi", phone: "07XX XXX XXX", condition: "Hakuna Madhara" },
+    ]);
+
+  const addEvidence = () =>
+    setEvidence((prev) => [
+      ...prev,
+      { name: `picha_${prev.length + 1}.jpg`, size: "1.5 MB", type: "image" as const },
+    ]);
+
+  const buildPayload = () => ({
+    date: today,
+    time: currentTime,
+    location: "Morogoro Road, Dar es Salaam",
+    severity: hasInjuries ? "Kubwa" : "Ndogo",
+    vehicles: vehicles.map((v) => ({
+      plate: v.plate,
+      model: v.model,
+      color: v.color,
+      damage: v.damage,
+    })),
+    people: people.map((p) => ({
+      name: p.name,
+      role: p.role,
+      phone: p.phone,
+      condition: p.condition,
+    })),
+    description: description || "—",
+    evidence: evidence.map((e) => ({ name: e.name, size: e.size, type: e.type })),
+  });
+
+  const handleSaveDraft = () => {
+    addAccident(buildPayload());
+    toast({ title: "Imehifadhiwa", description: "Rasimu ya ripoti ya ajali imehifadhiwa." });
+    setTimeout(() => goBack(), 800);
+  };
+
+  const handleSubmit = () => {
+    const id = addAccident(buildPayload());
+    submitAccident(id);
+    toast({ title: "Imetumwa", description: "Ripoti ya ajali imewasilishwa kikamilifu." });
+    setTimeout(() => goBack(), 800);
+  };
+
   return (
     <div className="min-h-full bg-police">
       <TopAppBar title="Ripoti ya Ajali" subtitle="Jaza taarifa za ajali kwa usahihi" showBack />
@@ -34,8 +126,8 @@ export function AccidentReportScreen() {
         {/* Section 1: Taarifa za Msingi */}
         <Section title="Taarifa za Msingi" icon={<FileText size={16} />}>
           <div className="grid grid-cols-2 gap-2.5">
-            <Field label="Tarehe ya Ajali" icon={<Calendar size={14} />} value="15 Mei 2026" />
-            <Field label="Saa ya Ajali" icon={<Clock size={14} />} value="08:15 AM" />
+            <Field label="Tarehe ya Ajali" icon={<Calendar size={14} />} value={today} />
+            <Field label="Saa ya Ajali" icon={<Clock size={14} />} value={currentTime} />
           </div>
           <Field label="Eneo la Ajali" icon={<MapPin size={14} />} value="Morogoro Road, Dar es Salaam" />
           <div>
@@ -52,10 +144,10 @@ export function AccidentReportScreen() {
         <Section
           title="Magari Husika"
           icon={<Car size={16} />}
-          count="Jumla ya Magari: 2"
+          count={`Jumla ya Magari: ${vehicles.length}`}
         >
           <div className="space-y-2">
-            {ACCIDENT_VEHICLES.map((v, i) => (
+            {vehicles.map((v, i) => (
               <div key={i} className="rounded-xl border border-police-soft bg-police-muted p-3">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="rounded-md border border-[#1A237E] bg-yellow-50 px-2 py-0.5 text-[13px] font-extrabold text-police-navy">
@@ -70,15 +162,18 @@ export function AccidentReportScreen() {
               </div>
             ))}
           </div>
-          <button className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1A237E]/30 py-2.5 text-[12px] font-semibold text-police-navy">
+          <button
+            onClick={addVehicle}
+            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1A237E]/30 py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
+          >
             <Plus size={16} /> Ongeza Gari
           </button>
         </Section>
 
         {/* Section 3: Watu Husika */}
-        <Section title="Watu Husika" icon={<Users size={16} />} count="Jumla ya Watu: 2">
+        <Section title="Watu Husika" icon={<Users size={16} />} count={`Jumla ya Watu: ${people.length}`}>
           <div className="space-y-2">
-            {ACCIDENT_PEOPLE.map((p, i) => (
+            {people.map((p, i) => (
               <div key={i} className="rounded-xl border border-police-soft bg-police-muted p-3">
                 <p className="text-[13px] font-bold text-police">{p.name}</p>
                 <div className="mt-1.5 grid grid-cols-2 gap-1.5">
@@ -91,7 +186,10 @@ export function AccidentReportScreen() {
               </div>
             ))}
           </div>
-          <button className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1A237E]/30 py-2.5 text-[12px] font-semibold text-police-navy">
+          <button
+            onClick={addPerson}
+            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1A237E]/30 py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
+          >
             <Plus size={16} /> Ongeza Mtu
           </button>
         </Section>
@@ -103,8 +201,10 @@ export function AccidentReportScreen() {
           </label>
           <textarea
             rows={4}
-            defaultValue="Gari namba T123ABC lilikuwa linapita kuelekea Ubungo, na likajaribu kubadilisha njia ghafla bila tahadhari na kugongana na gari namba T789GHI lilokuwa linakuja kutoka nyuma."
-            className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[12px] leading-relaxed text-police focus:border-[#1A237E] focus:outline-none"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Eleza kwa kifupi kilichotokea..."
+            className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[12px] leading-relaxed text-police placeholder:text-police-faint focus:border-[#1A237E] focus:outline-none"
           />
         </Section>
 
@@ -112,7 +212,7 @@ export function AccidentReportScreen() {
         <Section title="Pakia Ushahidi (Nyaraka / Picha / Video)" icon={<FileText size={16} />}>
           <p className="text-[10px] text-police-faint">Aina Zinaruhusiwa: JPG, PNG, PDF, MP4 (Max 20MB)</p>
           <div className="space-y-2">
-            {ACCIDENT_EVIDENCE.map((file, i) => (
+            {evidence.map((file, i) => (
               <div key={i} className="flex items-center gap-2.5 rounded-xl border border-police-soft bg-police-muted p-2.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-police-card">
                   {file.type === "image" && <ImageIcon size={16} className="text-[#2196F3]" />}
@@ -127,7 +227,10 @@ export function AccidentReportScreen() {
               </div>
             ))}
           </div>
-          <button className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-[#1A237E]/30 py-2.5 text-[12px] font-semibold text-police-navy">
+          <button
+            onClick={addEvidence}
+            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1A237E]/30 py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
+          >
             <Upload size={14} /> Pakia Zaidi
           </button>
         </Section>
@@ -136,7 +239,19 @@ export function AccidentReportScreen() {
         <Section title="Vitendo vya Ziada" icon={<ShieldAlert size={16} />}>
           <div className="flex items-center justify-between rounded-xl bg-police-muted px-3 py-2.5">
             <span className="text-[12px] font-medium text-police">Je, kulikuwa na majeruhi?</span>
-            <ToggleSwitch defaultOn />
+            <button
+              type="button"
+              onClick={() => setHasInjuries(!hasInjuries)}
+              className={`relative h-6 w-11 rounded-full transition ${hasInjuries ? "bg-green-500" : "bg-gray-300"}`}
+              aria-pressed={hasInjuries}
+              aria-label="Toggle injuries"
+            >
+              <span
+                className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition ${
+                  hasInjuries ? "left-[22px]" : "left-0.5"
+                }`}
+              />
+            </button>
           </div>
           <button
             onClick={() => navigate("pf3")}
@@ -163,17 +278,13 @@ export function AccidentReportScreen() {
         {/* Submit Buttons */}
         <div className="flex gap-2.5 pt-1">
           <button
-            onClick={() =>
-              toast({ title: "Imehifadhiwa", description: "Rasimu ya ripoti ya ajali imehifadhiwa." })
-            }
+            onClick={handleSaveDraft}
             className="flex-1 rounded-xl border-2 border-[#1A237E] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
           >
             Hifadhi Rasimu
           </button>
           <button
-            onClick={() =>
-              toast({ title: "Imetumwa", description: "Ripoti ya ajali imewasilishwa kikamilifu." })
-            }
+            onClick={handleSubmit}
             className="flex-[1.5] rounded-xl bg-[#1A237E] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]"
           >
             Hifadhi na Tuma Ripoti
@@ -245,20 +356,6 @@ function MiniField({
     <div>
       <p className="text-[9px] text-police-faint">{label}</p>
       <p className={`text-[12px] font-semibold ${valueColor ?? "text-police"}`}>{value}</p>
-    </div>
-  );
-}
-
-function ToggleSwitch({ defaultOn = false }: { defaultOn?: boolean }) {
-  return (
-    <div
-      className={`relative h-6 w-11 rounded-full transition ${defaultOn ? "bg-green-500" : "bg-gray-300"}`}
-    >
-      <div
-        className={`absolute top-0.5 h-5 w-5 rounded-full bg-police-card shadow transition ${
-          defaultOn ? "left-[22px]" : "left-0.5"
-        }`}
-      />
     </div>
   );
 }

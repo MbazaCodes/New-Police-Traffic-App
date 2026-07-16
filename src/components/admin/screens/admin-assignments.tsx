@@ -15,17 +15,13 @@ import {
   Calendar,
   UserPlus,
 } from "lucide-react";
-import {
-  ASSIGNMENTS,
-  UNASSIGNED_OFFICERS,
-  STATIONS,
-  POSTS,
-} from "@/lib/admin-mgmt-data";
 import { getAdminEntityPath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
-
-type Assignment = (typeof ASSIGNMENTS)[number];
-type UnassignedOfficer = (typeof UNASSIGNED_OFFICERS)[number];
+import {
+  useRecordsStore,
+  type AdminAssignmentRecord,
+  type AdminUnassignedOfficer,
+} from "@/store/records-store";
 
 const STATUS_STYLES: Record<string, string> = {
   active: "bg-green-500/15 text-green-500 border border-green-500/30",
@@ -37,17 +33,77 @@ const STATUS_LABEL: Record<string, string> = {
   "on-leave": "Koko",
 };
 
+// Reassignment target — either an existing assignment (for reassign) or null
+type AssignTarget =
+  | { kind: "new"; officer: AdminUnassignedOfficer }
+  | { kind: "reassign"; assignment: AdminAssignmentRecord };
+
 export function AdminAssignments() {
   const pathname = usePathname();
   const router = useRouter();
-  const [assigning, setAssigning] = useState<UnassignedOfficer | null>(null);
+  const assignments = useRecordsStore((s) => s.adminAssignments);
+  const unassigned = useRecordsStore((s) => s.adminUnassigned);
+  const stations = useRecordsStore((s) => s.adminStations);
+  const posts = useRecordsStore((s) => s.adminPosts);
+  const addAdminAssignment = useRecordsStore((s) => s.addAdminAssignment);
+  const removeAdminAssignment = useRecordsStore((s) => s.removeAdminAssignment);
 
-  const totalAssignments = ASSIGNMENTS.length;
-  const activeAssignments = ASSIGNMENTS.filter(
-    (a) => a.status === "active"
-  ).length;
-  const onLeave = ASSIGNMENTS.filter((a) => a.status === "on-leave").length;
-  const unassignedCount = UNASSIGNED_OFFICERS.length;
+  const [target, setTarget] = useState<AssignTarget | null>(null);
+
+  const totalAssignments = assignments.length;
+  const activeAssignments = assignments.filter((a) => a.status === "active").length;
+  const onLeave = assignments.filter((a) => a.status === "on-leave").length;
+  const unassignedCount = unassigned.length;
+
+  const handleConfirm = (stationId: string, postId: string, role: string) => {
+    if (!target) return;
+    const stationName = stations.find((s) => s.id === stationId)?.name ?? stationId;
+    const postName = posts.find((p) => p.id === postId)?.name ?? postId;
+
+    if (target.kind === "new") {
+      addAdminAssignment({
+        officerId: target.officer.id,
+        officerName: target.officer.name,
+        officerRank: target.officer.rank,
+        stationId,
+        stationName,
+        postId,
+        postName,
+        role,
+      });
+      toast({
+        title: "Mgao Umewekwa",
+        description: `${target.officer.name} amegawiwa kwenye ${stationName} - ${postName} kama ${role}`,
+      });
+    } else {
+      // Reassign: remove old, add new for the same officer
+      const a = target.assignment;
+      removeAdminAssignment(a.id);
+      addAdminAssignment({
+        officerId: a.officerId,
+        officerName: a.officerName,
+        officerRank: a.officerRank,
+        stationId,
+        stationName,
+        postId,
+        postName,
+        role,
+      });
+      toast({
+        title: "Mgao Umebadilishwa",
+        description: `${a.officerName} amehamishiwa kwenye ${stationName} - ${postName}`,
+      });
+    }
+    setTarget(null);
+  };
+
+  const handleRemove = (a: AdminAssignmentRecord) => {
+    removeAdminAssignment(a.id);
+    toast({
+      title: "Mgao Umeondolewa",
+      description: `Mgao wa ${a.officerName} wa ${a.postName} umebatilishwa`,
+    });
+  };
 
   return (
     <div className="space-y-5">
@@ -62,13 +118,16 @@ export function AdminAssignments() {
           </p>
         </div>
         <button
-          onClick={() =>
-            toast({
-              title: "Ongeza Mgao",
-              description:
-                "Chagua afisa asiye na mgao kutoka orodha hapa chini kumgawia",
-            })
-          }
+          onClick={() => {
+            if (unassigned.length === 0) {
+              toast({
+                title: "Hakuna afisa asiye na mgao",
+                description: "Maofisa wote wameshagawiwa",
+              });
+              return;
+            }
+            setTarget({ kind: "new", officer: unassigned[0] });
+          }}
           className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#1E88E5]"
         >
           <Plus size={14} /> Ongeza Mgao
@@ -122,11 +181,11 @@ export function AdminAssignments() {
               </tr>
             </thead>
             <tbody>
-              {ASSIGNMENTS.map((a) => (
+              {assignments.map((a) => (
                 <tr
                   key={a.id}
                   onClick={() => router.push(getAdminEntityPath(pathname, "assignments", a.id))}
-                  className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"
+                  className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0 cursor-pointer"
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2.5">
@@ -186,7 +245,7 @@ export function AdminAssignments() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(getAdminEntityPath(pathname, "assignments", a.id));
+                          setTarget({ kind: "reassign", assignment: a });
                         }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-police-input text-police-navy hover:bg-police-muted"
                         title="Badilisha Mgao"
@@ -196,10 +255,7 @@ export function AdminAssignments() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          toast({
-                            title: "Ondoa Mgao",
-                            description: `Mgao wa ${a.officerName} wa ${a.postName} umebatilishwa`,
-                          });
+                          handleRemove(a);
                         }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-500/15 text-red-500 hover:bg-red-500/25"
                         title="Ondoa Mgao"
@@ -227,7 +283,7 @@ export function AdminAssignments() {
         </div>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {UNASSIGNED_OFFICERS.map((o) => (
+          {unassigned.map((o) => (
             <div
               key={o.id}
               className="rounded-lg border border-police-soft bg-police-muted/40 p-3"
@@ -251,7 +307,7 @@ export function AdminAssignments() {
                 </div>
               </div>
               <button
-                onClick={() => setAssigning(o)}
+                onClick={() => setTarget({ kind: "new", officer: o })}
                 className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#2196F3] py-2 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
               >
                 <UserPlus size={14} /> Mgawie Afisa huyu
@@ -260,7 +316,7 @@ export function AdminAssignments() {
           ))}
         </div>
 
-        {UNASSIGNED_OFFICERS.length === 0 && (
+        {unassigned.length === 0 && (
           <div className="py-8 text-center text-[13px] text-police-faint">
             Hakuna afisa asiye na mgao kwa sasa.
           </div>
@@ -268,20 +324,13 @@ export function AdminAssignments() {
       </div>
 
       {/* Assignment modal */}
-      {assigning && (
+      {target && (
         <AssignModal
-          officer={assigning}
-          onClose={() => setAssigning(null)}
-          onConfirm={(station, post, role) => {
-            const stationName =
-              STATIONS.find((s) => s.id === station)?.name ?? station;
-            const postName = POSTS.find((p) => p.id === post)?.name ?? post;
-            toast({
-              title: "Mgao Umewekwa",
-              description: `${assigning.name} amegawiwa kwenye ${stationName} - ${postName} kama ${role}`,
-            });
-            setAssigning(null);
-          }}
+          target={target}
+          stations={stations}
+          posts={posts}
+          onClose={() => setTarget(null)}
+          onConfirm={handleConfirm}
         />
       )}
     </div>
@@ -289,22 +338,41 @@ export function AdminAssignments() {
 }
 
 function AssignModal({
-  officer,
+  target,
+  stations,
+  posts,
   onClose,
   onConfirm,
 }: {
-  officer: UnassignedOfficer;
+  target: AssignTarget;
+  stations: { id: string; name: string }[];
+  posts: { id: string; name: string; type: string; stationId: string }[];
   onClose: () => void;
   onConfirm: (stationId: string, postId: string, role: string) => void;
 }) {
-  const [stationId, setStationId] = useState<string>("");
-  const [postId, setPostId] = useState<string>("");
-  const [role, setRole] = useState<string>("General Duty");
+  const officer = target.kind === "new" ? target.officer : {
+    id: target.assignment.officerId,
+    name: target.assignment.officerName,
+    rank: target.assignment.officerRank,
+  };
+
+  const [stationId, setStationId] = useState<string>(
+    target.kind === "reassign" ? target.assignment.stationId : ""
+  );
+  const [postId, setPostId] = useState<string>(
+    target.kind === "reassign" ? target.assignment.postId : ""
+  );
+  const [role, setRole] = useState<string>(
+    target.kind === "reassign" ? target.assignment.role : "General Duty"
+  );
 
   const availablePosts = useMemo(
-    () => POSTS.filter((p) => p.stationId === stationId),
-    [stationId]
+    () => posts.filter((p) => p.stationId === stationId),
+    [stationId, posts]
   );
+
+  const title = target.kind === "new" ? "Mgawie Afisa Mgao" : "Badilisha Mgao";
+  const confirmLabel = target.kind === "new" ? "Thibitisha Mgao" : "Badilisha Mgao";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -321,9 +389,7 @@ function AssignModal({
               <UserPlus size={18} />
             </div>
             <div>
-              <p className="text-[15px] font-bold text-police">
-                Mgawie Afisa Mgao
-              </p>
+              <p className="text-[15px] font-bold text-police">{title}</p>
               <p className="font-mono text-[11px] text-police-faint">
                 {officer.id}
               </p>
@@ -370,7 +436,7 @@ function AssignModal({
                 className="h-10 flex-1 bg-transparent text-[13px] text-police focus:outline-none"
               >
                 <option value="">— Chagua Kituo —</option>
-                {STATIONS.map((s) => (
+                {stations.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
                   </option>
@@ -428,7 +494,7 @@ function AssignModal({
               onClick={() => onConfirm(stationId, postId, role.trim())}
               className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Thibitisha Mgao
+              {confirmLabel}
             </button>
           </div>
         </div>

@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Download, FileText, CheckCircle2, XCircle, Wallet } from "lucide-react";
+import { Download, FileText, CheckCircle2, XCircle, Wallet, Eye, X, Bell } from "lucide-react";
 import { ADMIN_CITATIONS, OFFICERS } from "@/lib/admin-data";
 import { getOfficerProfilePath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
@@ -24,10 +24,33 @@ const STATUS_LABEL: Record<string, string> = {
   unpaid: "Haijalipwa",
 };
 
+type Citation = (typeof ADMIN_CITATIONS)[number];
+
+function escapeCsv(value: string | number): string {
+  const s = String(value);
+  if (s.includes(",") || s.includes('"') || s.includes("\n")) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
+}
+
+function downloadFile(content: string, filename: string, mime: string) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 export function AdminCitations() {
   const pathname = usePathname();
   const router = useRouter();
   const [tab, setTab] = useState<string>("all");
+  const [viewing, setViewing] = useState<Citation | null>(null);
 
   const stats = useMemo(() => {
     const total = ADMIN_CITATIONS.length;
@@ -45,6 +68,36 @@ export function AdminCitations() {
       ? ADMIN_CITATIONS
       : ADMIN_CITATIONS.filter((c) => c.status === tab);
 
+  const handleExportCsv = () => {
+    toast({
+      title: "Inapakua",
+      description: "Faili la CSV linapakuliwa sasa hivi",
+    });
+    const header = ["ID", "Plate", "Offense", "Driver", "Date", "Amount (TZS)", "Status", "Officer"];
+    const rows = filtered.map((c) => [
+      c.id,
+      c.plate,
+      c.offense,
+      c.driver,
+      c.date,
+      c.amount,
+      c.status,
+      c.officer,
+    ]);
+    const csv = [header, ...rows]
+      .map((r) => r.map(escapeCsv).join(","))
+      .join("\n");
+    const filename = `citations-${new Date().toISOString().slice(0, 10)}.csv`;
+    downloadFile("\uFEFF" + csv, filename, "text/csv;charset=utf-8;");
+  };
+
+  const handleRemind = (c: Citation) => {
+    toast({
+      title: "Ukumbusho Umetumwa",
+      description: `Ukumbusho wa SMS umetumwa kwa ${c.driver} (${c.plate})`,
+    });
+  };
+
   return (
     <div className="space-y-5">
       {/* Heading */}
@@ -56,12 +109,7 @@ export function AdminCitations() {
           </p>
         </div>
         <button
-          onClick={() =>
-            toast({
-              title: "Imefanikiwa",
-              description: "Citations zimehamishiwa kama CSV (mfano)",
-            })
-          }
+          onClick={handleExportCsv}
           className="inline-flex items-center gap-2 rounded-lg bg-[#2196F3] px-3 py-2 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
         >
           <Download size={14} /> Hamisha CSV
@@ -170,25 +218,19 @@ export function AdminCitations() {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
-                        onClick={() => {
-                          const base = pathname.startsWith("/command") ? "/command" : "/admin";
-                          router.push(`${base}/citations/${encodeURIComponent(c.id)}`);
-                        }}
-                        className="rounded-lg bg-police-input px-2 py-1.5 text-[11px] font-semibold text-police-navy hover:bg-police-muted"
+                        onClick={() => setViewing(c)}
+                        className="flex items-center gap-1 rounded-lg bg-police-input px-2 py-1.5 text-[11px] font-semibold text-police-navy hover:bg-police-muted"
+                        title="Tazama"
                       >
-                        Tazama
+                        <Eye size={12} /> Tazama
                       </button>
                       {c.status === "unpaid" && (
                         <button
-                          onClick={() =>
-                            toast({
-                              title: "Kumbusho Limetumwa",
-                              description: `Kumbusho limepokelewa kwa ${c.driver}`,
-                            })
-                          }
-                          className="rounded-lg bg-orange-500/15 px-2 py-1.5 text-[11px] font-semibold text-orange-500 hover:bg-orange-500/25"
+                          onClick={() => handleRemind(c)}
+                          className="flex items-center gap-1 rounded-lg bg-orange-500/15 px-2 py-1.5 text-[11px] font-semibold text-orange-500 hover:bg-orange-500/25"
+                          title="Tuma Ukumbusho"
                         >
-                          Kumbusha
+                          <Bell size={12} /> Kumbusha
                         </button>
                       )}
                     </div>
@@ -205,6 +247,113 @@ export function AdminCitations() {
           </div>
         )}
       </div>
+
+      {viewing && (
+        <CitationModal
+          citation={viewing}
+          pathname={pathname}
+          onClose={() => setViewing(null)}
+          onGoToDetail={(id) => {
+            const base = pathname.startsWith("/command") ? "/command" : "/admin";
+            router.push(`${base}/citations/${encodeURIComponent(id)}`);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function CitationModal({
+  citation,
+  pathname,
+  onClose,
+  onGoToDetail,
+}: {
+  citation: Citation;
+  pathname: string;
+  onClose: () => void;
+  onGoToDetail: (id: string) => void;
+}) {
+  const officer = OFFICERS.find((o) => o.name === citation.officer);
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden />
+      <div className="relative z-10 w-full max-w-lg overflow-hidden rounded-2xl bg-police-card shadow-2xl">
+        <div className="flex items-center justify-between border-b border-police-soft bg-police-muted/40 p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2196F3]/15 text-[#2196F3]">
+              <FileText size={18} />
+            </div>
+            <div>
+              <p className="text-[15px] font-bold text-police">Maelezo ya Citation</p>
+              <p className="font-mono text-[11px] text-police-faint">{citation.id}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-police-faint hover:bg-police-muted">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="space-y-3 p-4">
+          <div className="flex flex-wrap gap-2">
+            <span className={`rounded-md px-2.5 py-1 text-[11px] font-bold uppercase ${STATUS_STYLES[citation.status]}`}>
+              {STATUS_LABEL[citation.status]}
+            </span>
+            <span className="rounded-md bg-police-input px-2.5 py-1 font-mono text-[11px] font-bold text-police-navy">
+              {citation.plate}
+            </span>
+          </div>
+
+          <DetailRow label="Kosa" value={citation.offense} />
+          <DetailRow label="Dereva" value={citation.driver} />
+          <DetailRow label="Tarehe" value={citation.date} />
+          <DetailRow label="Kiasi" value={`TZS ${parseInt(citation.amount.replace(/[^\d]/g, ""), 10).toLocaleString()}`} />
+          <div>
+            <p className="mb-1 text-[11px] font-semibold uppercase text-police-faint">Afisa</p>
+            {officer ? (
+              <Link href={getOfficerProfilePath(pathname, officer.id)} className="font-medium text-[#2196F3] hover:underline">
+                {citation.officer}
+              </Link>
+            ) : (
+              <p className="text-[13px] text-police">{citation.officer}</p>
+            )}
+          </div>
+
+          {citation.status === "unpaid" && (
+            <div className="rounded-lg border border-orange-500/30 bg-orange-500/5 p-3 text-[12px] text-orange-600">
+              <p className="font-semibold">Citation haijalipwa bado.</p>
+              <p className="mt-0.5 text-[11px]">Ukumbusho wa SMS unaweza kutumwa kwa dereva.</p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-2 pt-2">
+            <button
+              onClick={onClose}
+              className="rounded-lg bg-police-input py-2.5 text-[12px] font-semibold text-police-navy hover:bg-police-muted"
+            >
+              Funga
+            </button>
+            <button
+              onClick={() => {
+                onGoToDetail(citation.id);
+                onClose();
+              }}
+              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+            >
+              Ukurasa Kamili
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-lg bg-police-input p-2.5">
+      <p className="text-[10px] uppercase text-police-faint">{label}</p>
+      <p className="text-[13px] text-police font-semibold text-right">{value}</p>
     </div>
   );
 }

@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Calendar, Clock, MapPin, Target, Play, Square, Shield, Route, Camera, X, CheckCircle } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
-import { PATROL_STATS } from "@/lib/police-data";
+import { PATROL_STATS, OFFICER } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
+import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 
 function formatTime(secs: number) {
@@ -16,6 +17,10 @@ function formatTime(secs: number) {
 
 export function PatrolScreen() {
   const { patrolActive, patrolElapsed, startPatrol, endPatrol, tickPatrol } = usePoliceStore();
+  const goBack = usePoliceStore((s) => s.goBack);
+  const addPatrol = useRecordsStore((s) => s.addPatrol);
+  const endPatrolRecord = useRecordsStore((s) => s.endPatrol);
+  const patrols = useRecordsStore((s) => s.patrols);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [area, setArea] = useState("");
@@ -23,6 +28,7 @@ export function PatrolScreen() {
   const [events, setEvents] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [activePatrolId, setActivePatrolId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -38,6 +44,13 @@ export function PatrolScreen() {
     startPatrol();
     setSubmitted(false);
     setShowForm(false);
+    const id = addPatrol({
+      officer: OFFICER.name,
+      area: "—",
+      startTime: new Date().toISOString(),
+      distance: "0 km",
+    });
+    setActivePatrolId(id);
     toast({ title: "Patroli Imeanza", description: "Kronometer inaendelea kuhesabu." });
   };
 
@@ -58,9 +71,28 @@ export function PatrolScreen() {
 
   const handleSubmit = () => {
     if (!area) { toast({ title: "Kosa", description: "Taja eneo la patroli.", variant: "destructive" }); return; }
+    // End the active patrol record (or add a completed one if none tracked)
+    if (activePatrolId) {
+      endPatrolRecord(activePatrolId);
+    } else {
+      const latestActive = patrols.find((p) => p.status === "active");
+      if (latestActive) {
+        endPatrolRecord(latestActive.id);
+      } else {
+        addPatrol({
+          officer: OFFICER.name,
+          area,
+          startTime: new Date().toISOString(),
+          distance: `${(patrolElapsed / 60).toFixed(1)} km`,
+          notes: events || undefined,
+        });
+      }
+    }
+    setActivePatrolId(null);
     setSubmitted(true);
     setShowForm(false);
     toast({ title: "Ripoti Imehifadhiwa ✓", description: `Patroli ya ${formatTime(patrolElapsed)} imerekodiwa kikamilifu.` });
+    setTimeout(() => goBack(), 800);
   };
 
   return (

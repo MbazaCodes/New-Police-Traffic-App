@@ -15,12 +15,11 @@ import {
   Eye,
   Pencil,
   Network,
+  Save,
 } from "lucide-react";
-import { STATIONS } from "@/lib/admin-mgmt-data";
 import { getAdminEntityPath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
-
-type Station = (typeof STATIONS)[number];
+import { useRecordsStore, type AdminStationRecord } from "@/store/records-store";
 
 const STATUS_STYLES: Record<string, string> = {
   active: "bg-green-500/15 text-green-500 border border-green-500/30",
@@ -38,13 +37,21 @@ const FILTER_TABS = [
   { id: "maintenance", label: "Inarekebishwa" },
 ] as const;
 
+type ModalMode = "create" | "edit" | "view";
+
 export function AdminStations() {
   const pathname = usePathname();
   const router = useRouter();
+  const stations = useRecordsStore((s) => s.adminStations);
+  const addAdminStation = useRecordsStore((s) => s.addAdminStation);
+  const updateAdminStation = useRecordsStore((s) => s.updateAdminStation);
+
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<string>("all");
+  const [modalMode, setModalMode] = useState<ModalMode | null>(null);
+  const [active, setActive] = useState<AdminStationRecord | null>(null);
 
-  const filtered = STATIONS.filter((s) => {
+  const filtered = stations.filter((s) => {
     if (filter !== "all" && s.status !== filter) return false;
     if (!query) return true;
     const q = query.toLowerCase();
@@ -55,12 +62,43 @@ export function AdminStations() {
     );
   });
 
-  const totalStations = STATIONS.length;
-  const activeStations = STATIONS.filter((s) => s.status === "active").length;
-  const maintenanceStations = STATIONS.filter(
+  const totalStations = stations.length;
+  const activeStations = stations.filter((s) => s.status === "active").length;
+  const maintenanceStations = stations.filter(
     (s) => s.status === "maintenance"
   ).length;
-  const totalOfficers = STATIONS.reduce((sum, s) => sum + s.officersCount, 0);
+  const totalOfficers = stations.reduce((sum, s) => sum + s.officersCount, 0);
+
+  const openCreate = () => {
+    setActive(null);
+    setModalMode("create");
+  };
+  const openEdit = (s: AdminStationRecord) => {
+    setActive(s);
+    setModalMode("edit");
+  };
+  const openView = (s: AdminStationRecord) => {
+    setActive(s);
+    setModalMode("view");
+  };
+
+  const handleSubmit = (data: Omit<AdminStationRecord, "id" | "officersCount" | "postsCount" | "established">) => {
+    if (modalMode === "edit" && active) {
+      updateAdminStation(active.id, data);
+      toast({
+        title: "Kituo Kimesasishwa",
+        description: `Taarifa za ${data.name} zimehifadhiwa`,
+      });
+    } else {
+      addAdminStation(data);
+      toast({
+        title: "Kituo Kimeongezwa",
+        description: `${data.name} kimeongezwa kwenye orodha`,
+      });
+    }
+    setModalMode(null);
+    setActive(null);
+  };
 
   return (
     <div className="space-y-5">
@@ -75,12 +113,7 @@ export function AdminStations() {
           </p>
         </div>
         <button
-          onClick={() =>
-            toast({
-              title: "Ongeza Kituo",
-              description: "Fomu ya kuongeza kituo kipya itafungwa hapa",
-            })
-          }
+          onClick={openCreate}
           className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#1E88E5]"
         >
           <Plus size={14} /> Ongeza Kituo
@@ -169,8 +202,8 @@ export function AdminStations() {
               {filtered.map((s) => (
                 <tr
                   key={s.id}
-                  onClick={() => router.push(getAdminEntityPath(pathname, "stations", s.id))}
-                  className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"
+                  onClick={() => openView(s)}
+                  className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0 cursor-pointer"
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-start gap-2.5">
@@ -195,6 +228,7 @@ export function AdminStations() {
                   <td className="px-4 py-3">
                     <a
                       href={`tel:${s.phone}`}
+                      onClick={(e) => e.stopPropagation()}
                       className="flex items-center gap-1.5 text-police-navy hover:underline"
                     >
                       <Phone size={11} className="text-police-faint" />
@@ -233,7 +267,7 @@ export function AdminStations() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(getAdminEntityPath(pathname, "stations", s.id));
+                          openView(s);
                         }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-police-input text-police-navy hover:bg-police-muted"
                         title="Angalia"
@@ -243,7 +277,7 @@ export function AdminStations() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(getAdminEntityPath(pathname, "stations", s.id));
+                          openEdit(s);
                         }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-police-input text-police-navy hover:bg-police-muted"
                         title="Hariri"
@@ -253,8 +287,9 @@ export function AdminStations() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+                          router.push(getAdminEntityPath(pathname, "stations", s.id));
                           toast({
-                            title: "Dhibiti Posti",
+                            title: "Inafungua posti za kituo hiki",
                             description: `Una dhibiti posti za ${s.name}`,
                           });
                         }}
@@ -276,6 +311,185 @@ export function AdminStations() {
           </div>
         )}
       </div>
+
+      {modalMode && (
+        <StationModal
+          mode={modalMode}
+          station={active}
+          onClose={() => {
+            setModalMode(null);
+            setActive(null);
+          }}
+          onSubmit={handleSubmit}
+        />
+      )}
+    </div>
+  );
+}
+
+function StationModal({
+  mode,
+  station,
+  onClose,
+  onSubmit,
+}: {
+  mode: ModalMode;
+  station: AdminStationRecord | null;
+  onClose: () => void;
+  onSubmit: (data: Omit<AdminStationRecord, "id" | "officersCount" | "postsCount" | "established">) => void;
+}) {
+  const [name, setName] = useState(station?.name ?? "");
+  const [region, setRegion] = useState(station?.region ?? "");
+  const [district, setDistrict] = useState(station?.district ?? "");
+  const [address, setAddress] = useState(station?.address ?? "");
+  const [phone, setPhone] = useState(station?.phone ?? "");
+  const [status, setStatus] = useState<AdminStationRecord["status"]>(station?.status ?? "active");
+
+  const isView = mode === "view";
+  const title = mode === "create" ? "Ongeza Kituo Kipya" : mode === "edit" ? "Hariri Kituo" : "Maelezo ya Kituo";
+
+  const handleSave = () => {
+    if (!name.trim() || !region.trim() || !district.trim()) {
+      toast({ title: "Tafadhali jaza jina, mkoa na wilaya" });
+      return;
+    }
+    onSubmit({
+      name: name.trim(),
+      region: region.trim(),
+      district: district.trim(),
+      address: address.trim(),
+      phone: phone.trim(),
+      status,
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden />
+      <div className="relative z-10 w-full max-w-lg overflow-hidden rounded-2xl bg-police-card shadow-2xl">
+        <div className="flex items-center justify-between border-b border-police-soft bg-police-muted/40 p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2196F3]/15 text-[#2196F3]">
+              <Building2 size={18} />
+            </div>
+            <div>
+              <p className="text-[15px] font-bold text-police">{title}</p>
+              {station && (
+                <p className="font-mono text-[11px] text-police-faint">{station.id}</p>
+              )}
+            </div>
+          </div>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-police-faint hover:bg-police-muted">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="space-y-3 p-4">
+          <Field label="Jina la Kituo">
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isView}
+              placeholder="Mfano: Kituo cha Polisi Mjini"
+              className="h-10 w-full rounded-lg border border-police-soft bg-police-input px-3 text-[13px] text-police placeholder:text-police-faint focus:border-[#2196F3] focus:outline-none disabled:opacity-70"
+            />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Mkoa">
+              <input
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
+                disabled={isView}
+                placeholder="Dar es Salaam"
+                className="h-10 w-full rounded-lg border border-police-soft bg-police-input px-3 text-[13px] text-police placeholder:text-police-faint focus:border-[#2196F3] focus:outline-none disabled:opacity-70"
+              />
+            </Field>
+            <Field label="Wilaya">
+              <input
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+                disabled={isView}
+                placeholder="Ilala"
+                className="h-10 w-full rounded-lg border border-police-soft bg-police-input px-3 text-[13px] text-police placeholder:text-police-faint focus:border-[#2196F3] focus:outline-none disabled:opacity-70"
+              />
+            </Field>
+          </div>
+          <Field label="Anwani">
+            <input
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              disabled={isView}
+              placeholder="Sokoine Drive, Dar es Salaam"
+              className="h-10 w-full rounded-lg border border-police-soft bg-police-input px-3 text-[13px] text-police placeholder:text-police-faint focus:border-[#2196F3] focus:outline-none disabled:opacity-70"
+            />
+          </Field>
+          <Field label="Simu">
+            <input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              disabled={isView}
+              placeholder="022 211 0001"
+              className="h-10 w-full rounded-lg border border-police-soft bg-police-input px-3 text-[13px] text-police placeholder:text-police-faint focus:border-[#2196F3] focus:outline-none disabled:opacity-70"
+            />
+          </Field>
+          <Field label="Hadhi">
+            <div className="flex gap-2">
+              {(["active", "maintenance"] as const).map((st) => (
+                <button
+                  key={st}
+                  onClick={() => !isView && setStatus(st)}
+                  disabled={isView}
+                  className={`flex-1 rounded-lg border px-3 py-2 text-[12px] font-semibold transition disabled:opacity-70 ${
+                    status === st
+                      ? st === "active"
+                        ? "border-green-500 bg-green-500/10 text-green-500"
+                        : "border-orange-500 bg-orange-500/10 text-orange-500"
+                      : "border-police-soft bg-police-input text-police-muted"
+                  }`}
+                >
+                  {STATUS_LABEL[st]}
+                </button>
+              ))}
+            </div>
+          </Field>
+
+          {!isView && (
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <button
+                onClick={onClose}
+                className="rounded-lg bg-police-input py-2.5 text-[12px] font-semibold text-police-navy hover:bg-police-muted"
+              >
+                Ghairi
+              </button>
+              <button
+                onClick={handleSave}
+                className="flex items-center justify-center gap-1.5 rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+              >
+                <Save size={13} /> Hifadhi
+              </button>
+            </div>
+          )}
+          {isView && (
+            <button
+              onClick={onClose}
+              className="mt-2 w-full rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+            >
+              Funga
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="mb-1 block text-[11px] font-semibold uppercase text-police-faint">
+        {label}
+      </label>
+      {children}
     </div>
   );
 }

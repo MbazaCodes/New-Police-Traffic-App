@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Pencil,
   CheckCircle2,
@@ -10,16 +11,65 @@ import {
   ShieldAlert,
   PenLine,
   Trash2,
-  Car,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
-import { VEHICLE_INSPECTION } from "@/lib/police-data";
+import { VEHICLE_INSPECTION, OFFICER } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
+import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 
 export function VehicleInspectionScreen() {
   const v = VEHICLE_INSPECTION;
   const goBack = usePoliceStore((s) => s.goBack);
+  const addInspection = useRecordsStore((s) => s.addInspection);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [plate, setPlate] = useState(v.plate);
+  const [model, setModel] = useState(v.model);
+  const [color, setColor] = useState(v.color);
+  const [owner, setOwner] = useState(v.owner);
+  const [notes, setNotes] = useState("");
+  const [overloaded, setOverloaded] = useState(false);
+  const [result, setResult] = useState<"pass" | "fail" | null>(null);
+  const [photos, setPhotos] = useState<{ label: string }[]>(v.photos.map((p) => ({ label: p.label })));
+  const [signature, setSignature] = useState("J. Mwinyi");
+
+  const now = new Date();
+  const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
+  const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+  const documentsPass = v.documents.filter((d) => d.pass).length;
+  const documentsTotal = v.documents.length;
+  const mechanicalPass = v.mechanical.filter((m) => m.pass).length;
+  const mechanicalTotal = v.mechanical.length;
+  const allPass = v.documents.every((d) => d.pass) && v.mechanical.every((m) => m.pass);
+  const computedResult: "pass" | "fail" =
+    result ?? (allPass ? "pass" : "fail");
+
+  const addPhoto = () =>
+    setPhotos((prev) => [...prev, { label: `Picha ${prev.length + 1}` }]);
+
+  const clearSignature = () => {
+    setSignature("");
+    toast({ title: "Imefutwa", description: "Saini imefutwa." });
+  };
+
+  const handleSubmit = () => {
+    addInspection({
+      plate,
+      model,
+      color,
+      owner,
+      officer: OFFICER.name,
+      date: `${today} ${currentTime}`,
+      result: computedResult,
+      documentsChecked: documentsTotal,
+      mechanicalChecked: mechanicalTotal,
+      notes: notes || undefined,
+    });
+    toast({ title: "Ukaguzi Umekamilika", description: "Ripoti ya ukaguzi wa gari imehifadhiwa." });
+    setTimeout(() => goBack(), 800);
+  };
 
   return (
     <div className="min-h-full bg-police">
@@ -29,23 +79,61 @@ export function VehicleInspectionScreen() {
         {/* Vehicle Info Header */}
         <div className="rounded-2xl bg-police-card p-4 shadow-sm">
           <div className="flex items-start justify-between">
-            <div>
-              <span className="inline-block rounded-md border-2 border-[#1A237E] bg-yellow-50 px-2.5 py-1 text-[16px] font-extrabold tracking-wider text-police-navy">
-                {v.plate}
-              </span>
-              <p className="mt-2 text-[13px] text-police-muted">
-                {v.model} | {v.color}
-              </p>
+            <div className="min-w-0 flex-1">
+              {isEditing ? (
+                <div className="space-y-2">
+                  <input
+                    value={plate}
+                    onChange={(e) => setPlate(e.target.value)}
+                    className="w-full rounded-md border-2 border-[#1A237E] bg-yellow-50 px-2.5 py-1 text-[16px] font-extrabold tracking-wider text-police-navy focus:outline-none"
+                  />
+                  <input
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                    placeholder="Modeli"
+                    className="w-full rounded-md border border-police bg-police-input px-2 py-1 text-[13px] text-police-muted focus:outline-none"
+                  />
+                  <input
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    placeholder="Rangi"
+                    className="w-full rounded-md border border-police bg-police-input px-2 py-1 text-[13px] text-police-muted focus:outline-none"
+                  />
+                </div>
+              ) : (
+                <>
+                  <span className="inline-block rounded-md border-2 border-[#1A237E] bg-yellow-50 px-2.5 py-1 text-[16px] font-extrabold tracking-wider text-police-navy">
+                    {plate}
+                  </span>
+                  <p className="mt-2 text-[13px] text-police-muted">
+                    {model} | {color}
+                  </p>
+                </>
+              )}
             </div>
-            <button className="inline-flex items-center gap-1 rounded-lg border border-[#2196F3] px-2.5 py-1 text-[11px] font-semibold text-[#2196F3]">
-              <Pencil size={12} /> Hariri
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-[#2196F3] px-2.5 py-1 text-[11px] font-semibold text-[#2196F3] active:scale-[0.97]"
+            >
+              <Pencil size={12} /> {isEditing ? "Kamilisha" : "Hariri"}
             </button>
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2 border-t border-police-soft pt-3">
-            <InfoRow label="Mwenye Gari" value={v.owner} />
+            {isEditing ? (
+              <div className="col-span-2">
+                <label className="mb-1 block text-[10px] text-police-faint">Mwenye Gari</label>
+                <input
+                  value={owner}
+                  onChange={(e) => setOwner(e.target.value)}
+                  className="w-full rounded-md border border-police bg-police-input px-2 py-1 text-[12px] text-police focus:outline-none"
+                />
+              </div>
+            ) : (
+              <InfoRow label="Mwenye Gari" value={owner} />
+            )}
             <InfoRow label="Namba ya Simu" value={v.phone} />
             <InfoRow label="Eneo la Ukaguzi" value={v.location} />
-            <InfoRow label="Tarehe & Saa" value={v.datetime} />
+            <InfoRow label="Tarehe & Saa" value={`${today}, ${currentTime}`} />
           </div>
         </div>
 
@@ -60,6 +148,8 @@ export function VehicleInspectionScreen() {
           </label>
           <textarea
             rows={2}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
             placeholder="Andika maelezo ya kasoro au halisi nyingine..."
             className="w-full rounded-xl border border-police bg-police-input px-3 py-2 text-[12px] text-police placeholder:text-police-faint focus:outline-none"
           />
@@ -76,12 +166,28 @@ export function VehicleInspectionScreen() {
           <div className="mt-3 flex items-center justify-between">
             <span className="text-[12px] font-medium text-police">Je, upakiaji unazidi kiwango?</span>
             <div className="flex gap-2">
-              <span className="flex items-center gap-1 rounded-lg bg-green-50 px-2.5 py-1 text-[11px] font-bold text-green-600">
+              <button
+                type="button"
+                onClick={() => setOverloaded(false)}
+                className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition ${
+                  !overloaded
+                    ? "bg-green-50 text-green-600"
+                    : "bg-police-muted text-police-faint"
+                }`}
+              >
                 <CheckCircle2 size={14} /> Hapana
-              </span>
-              <span className="flex items-center gap-1 rounded-lg bg-police-muted px-2.5 py-1 text-[11px] font-bold text-police-faint">
+              </button>
+              <button
+                type="button"
+                onClick={() => setOverloaded(true)}
+                className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition ${
+                  overloaded
+                    ? "bg-red-50 text-red-600"
+                    : "bg-police-muted text-police-faint"
+                }`}
+              >
                 <XCircle size={14} /> Ndio
-              </span>
+              </button>
             </div>
           </div>
         </div>
@@ -93,7 +199,7 @@ export function VehicleInspectionScreen() {
             Piga picha sehemu muhimu za gari (nje, ndani, namba ya usajili, kasoro n.k.)
           </p>
           <div className="grid grid-cols-2 gap-2">
-            {v.photos.map((photo, i) => (
+            {photos.map((photo, i) => (
               <div
                 key={i}
                 className="flex aspect-[4/3] flex-col items-center justify-center rounded-xl border-2 border-dashed border-police bg-police-muted"
@@ -103,7 +209,10 @@ export function VehicleInspectionScreen() {
               </div>
             ))}
           </div>
-          <button className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#2196F3]/40 py-2.5 text-[12px] font-semibold text-[#2196F3]">
+          <button
+            onClick={addPhoto}
+            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#2196F3]/40 py-2.5 text-[12px] font-semibold text-[#2196F3] active:scale-[0.98]"
+          >
             <Cloud size={16} /> Ongeza Picha
           </button>
         </div>
@@ -112,22 +221,38 @@ export function VehicleInspectionScreen() {
         <div className="rounded-2xl bg-police-card p-4 shadow-sm">
           <h3 className="mb-3 text-[14px] font-bold text-police-navy">5. Matokelo ya Ukaguzi</h3>
           <div className="space-y-2">
-            <div className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-3">
+            <button
+              type="button"
+              onClick={() => setResult("pass")}
+              className={`flex w-full items-center gap-3 rounded-xl border p-3 transition ${
+                computedResult === "pass"
+                  ? "border-green-200 bg-green-50"
+                  : "border-police-soft bg-police-muted opacity-70"
+              }`}
+            >
               <ShieldCheck size={24} className="text-green-600" />
-              <div className="flex-1">
+              <div className="flex-1 text-left">
                 <p className="text-[13px] font-bold text-green-700">Gari Halina Kasoro Kubwa</p>
                 <p className="text-[11px] text-police-muted">Gari linafaa kuendelea na safari</p>
               </div>
-              <CheckCircle2 size={20} className="text-green-600" />
-            </div>
-            <div className="flex items-center gap-3 rounded-xl border border-police-soft bg-police-muted p-3 opacity-70">
+              <CheckCircle2 size={20} className={`text-green-600 ${computedResult === "pass" ? "" : "opacity-30"}`} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setResult("fail")}
+              className={`flex w-full items-center gap-3 rounded-xl border p-3 transition ${
+                computedResult === "fail"
+                  ? "border-red-200 bg-red-50"
+                  : "border-police-soft bg-police-muted opacity-70"
+              }`}
+            >
               <ShieldAlert size={24} className="text-red-500" />
-              <div className="flex-1">
+              <div className="flex-1 text-left">
                 <p className="text-[13px] font-bold text-red-600">Gari Lina Kasoro</p>
                 <p className="text-[11px] text-police-muted">Lipaswe matengenezeko kabla ya kuendelea</p>
               </div>
-              <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
-            </div>
+              <div className={`h-5 w-5 rounded-full border-2 ${computedResult === "fail" ? "border-red-600 bg-red-600" : "border-gray-300"}`} />
+            </button>
           </div>
         </div>
 
@@ -135,26 +260,30 @@ export function VehicleInspectionScreen() {
         <div className="rounded-2xl bg-police-card p-4 shadow-sm">
           <h3 className="mb-3 text-[14px] font-bold text-police-navy">6. Saini ya Afisa</h3>
           <div className="grid grid-cols-2 gap-2">
-            <LoadField label="Jina la Afisa" value="Insp. Juma Mwinyi" />
-            <LoadField label="Namba ya Utambulisho" value="TP123456" />
+            <LoadField label="Jina la Afisa" value={OFFICER.name} />
+            <LoadField label="Namba ya Utambulisho" value={OFFICER.id} />
           </div>
           <div className="mt-3 rounded-xl border border-police bg-police-input p-4">
             <div className="flex items-center justify-between">
               <PenLine size={18} className="text-police-faint" />
-              <button className="text-[11px] font-medium text-police-faint">
+              <button
+                onClick={clearSignature}
+                className="text-[11px] font-medium text-police-faint active:opacity-70"
+              >
                 <Trash2 size={14} className="inline" /> Futa
               </button>
             </div>
-            <p className="mt-6 text-right font-[cursive] text-[18px] italic text-police-navy">J. Mwinyi</p>
+            {signature ? (
+              <p className="mt-6 text-right font-[cursive] text-[18px] italic text-police-navy">{signature}</p>
+            ) : (
+              <p className="mt-6 text-right text-[11px] italic text-police-faint">Saini imefutwa — tenwe upya</p>
+            )}
           </div>
         </div>
 
         {/* Submit */}
         <button
-          onClick={() => {
-            toast({ title: "Ukaguzi Umekamilika", description: "Ripoti ya ukaguzi wa gari imehifadhiwa." });
-            setTimeout(() => goBack(), 800);
-          }}
+          onClick={handleSubmit}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1A237E] py-3.5 text-[15px] font-bold text-white shadow-md active:scale-[0.98]"
         >
           <CheckCircle2 size={20} />

@@ -43,12 +43,80 @@ const CITATIONS_TREND = [
   { day: "Jumapili", citations: 89, paid: 60 },
 ];
 
+function escapeCsv(value: string | number): string {
+  const s = String(value);
+  if (s.includes(",") || s.includes('"') || s.includes("\n")) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
+}
+
+function downloadFile(content: string, filename: string, mime: string) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 export function AdminReports() {
   const [range, setRange] = useState<string>("7d");
 
   const totalIncidents = INCIDENT_TREND.reduce((s, d) => s + d.incidents, 0);
   const totalCitations = INCIDENT_TREND.reduce((s, d) => s + d.citations, 0);
   const resolved = REGION_STATS.reduce((s, r) => s + r.resolved, 0);
+
+  const handleRangeChange = (r: string) => {
+    setRange(r);
+    toast({
+      title: "Takwimu zimebadilishwa",
+      description: `Muda umewekwa: ${DATE_RANGES.find((d) => d.id === r)?.label ?? r}`,
+    });
+  };
+
+  const handleExportPdf = () => {
+    toast({
+      title: "Inapakua",
+      description: "Ripoti ya PDF inatengenezwa",
+    });
+    const html = `<!doctype html><html lang="sw"><head><meta charset="utf-8"><title>TZ Police Report</title><style>body{font-family:Arial,sans-serif;padding:24px;color:#0d1b3d}h1{color:#1A237E}table{border-collapse:collapse;width:100%;margin-top:12px;font-size:12px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#1A237E;color:#fff}.stat{display:inline-block;margin-right:24px;padding:12px;background:#f5f7fb;border-radius:8px}</style></head><body><h1>Ripoti ya Polisi — TZ</h1><p>Tarehe: ${new Date().toLocaleDateString("en-GB")}</p><div><span class="stat"><b>Matukio Jumla:</b> ${totalIncidents}</span><span class="stat"><b>Citations Jumla:</b> ${totalCitations}</span><span class="stat"><b>Yaliyotatuliwa:</b> ${resolved}</span></div><h2>Mwelekeo wa Matukio (Siku 7)</h2><table><thead><tr><th>Siku</th><th>Matukio</th><th>Citations</th></tr></thead><tbody>${INCIDENT_TREND.map((d) => `<tr><td>${d.day}</td><td>${d.incidents}</td><td>${d.citations}</td></tr>`).join("")}</tbody></table><h2>Takwimu za Mikoa</h2><table><thead><tr><th>Mkoa</th><th>Maofisa</th><th>Matukio</th><th>Citations</th><th>Yaliyotatuliwa</th></tr></thead><tbody>${REGION_STATS.map((r) => `<tr><td>${r.region}</td><td>${r.officers}</td><td>${r.incidents}</td><td>${r.citations}</td><td>${r.resolved}</td></tr>`).join("")}</tbody></table></body></html>`;
+    const w = window.open("", "_blank");
+    if (w) {
+      w.document.write(html);
+      w.document.close();
+      setTimeout(() => w.print(), 500);
+    } else {
+      toast({ title: "Hitilafu", description: "Tafadhali ruhusu pop-up kwa ajili ya kuchapisha" });
+    }
+  };
+
+  const handleExportCsv = () => {
+    toast({
+      title: "Inapakua",
+      description: "Faili la CSV linapakuliwa sasa hivi",
+    });
+    const header = ["Region", "Officers", "Incidents", "Citations", "Resolved"];
+    const rows = REGION_STATS.map((r) => [r.region, r.officers, r.incidents, r.citations, r.resolved]);
+    const trendHeader = ["Day", "Incidents", "Citations"];
+    const trendRows = INCIDENT_TREND.map((d) => [d.day, d.incidents, d.citations]);
+    const csv = [
+      ["# Region Stats"],
+      header,
+      ...rows,
+      [""],
+      ["# Incident Trend (7 days)"],
+      trendHeader,
+      ...trendRows,
+    ]
+      .map((r) => r.map(escapeCsv).join(","))
+      .join("\n");
+    const filename = `police-report-${new Date().toISOString().slice(0, 10)}.csv`;
+    downloadFile("\uFEFF" + csv, filename, "text/csv;charset=utf-8;");
+  };
 
   return (
     <div className="space-y-5">
@@ -62,23 +130,13 @@ export function AdminReports() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() =>
-              toast({
-                title: "Inatengenezwa",
-                description: "Ripoti ya PDF inatengenezwa (mfano)",
-              })
-            }
+            onClick={handleExportPdf}
             className="inline-flex items-center gap-2 rounded-lg bg-red-500 px-3 py-2 text-[12px] font-semibold text-white hover:bg-red-600"
           >
             <FileText size={14} /> Pakua PDF
           </button>
           <button
-            onClick={() =>
-              toast({
-                title: "Imefanikiwa",
-                description: "Ripoti ya CSV imehamishiwa (mfano)",
-              })
-            }
+            onClick={handleExportCsv}
             className="inline-flex items-center gap-2 rounded-lg bg-police-card px-3 py-2 text-[12px] font-semibold text-police-navy shadow-sm hover:bg-police-muted"
           >
             <Download size={14} /> CSV
@@ -97,7 +155,7 @@ export function AdminReports() {
             {DATE_RANGES.map((r) => (
               <button
                 key={r.id}
-                onClick={() => setRange(r.id)}
+                onClick={() => handleRangeChange(r.id)}
                 className={`rounded-lg px-3 py-1.5 text-[12px] font-medium transition ${
                   range === r.id
                     ? "bg-[#2196F3] text-white"

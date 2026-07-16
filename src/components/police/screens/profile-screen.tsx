@@ -135,27 +135,38 @@ export function ProfileScreen() {
 
           <div className="mx-3 border-t border-police-soft" />
 
-          {PROFILE_SETTINGS.map((item) => (
-            <button
-              key={item.label}
-              onClick={() =>
-                toast({ title: item.label, description: "Ukiwa tayari kufungua..." })
+          {PROFILE_SETTINGS.map((item) => {
+            const handleSettingClick = () => {
+              if (item.label === "Historia ya Shughuli") {
+                navigate("history");
+                return;
               }
-              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 active:bg-police-muted"
-            >
-              <div
-                className="flex h-8 w-8 items-center justify-center rounded-lg"
-                style={{ backgroundColor: `${item.color}18` }}
+              if (item.label === "Pakua Ripoti") {
+                toast({ title: "Inapakua", description: "Ripoti inapakuliwa kama PDF." });
+                return;
+              }
+              toast({ title: item.label, description: item.label });
+            };
+            return (
+              <button
+                key={item.label}
+                onClick={handleSettingClick}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 active:bg-police-muted"
               >
-                <PoliceIcon name={item.icon} size={16} className="" />
-              </div>
-              <div className="flex-1 text-left">
-                <p className="text-[13px] font-medium text-police">{item.label}</p>
-                <p className="text-[11px] text-police-faint">{item.desc}</p>
-              </div>
-              <ChevronRight size={18} className="text-police-faint" />
-            </button>
-          ))}
+                <div
+                  className="flex h-8 w-8 items-center justify-center rounded-lg"
+                  style={{ backgroundColor: `${item.color}18` }}
+                >
+                  <PoliceIcon name={item.icon} size={16} className="" />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-[13px] font-medium text-police">{item.label}</p>
+                  <p className="text-[11px] text-police-faint">{item.desc}</p>
+                </div>
+                <ChevronRight size={18} className="text-police-faint" />
+              </button>
+            );
+          })}
         </div>
 
         {/* Download Report Button */}

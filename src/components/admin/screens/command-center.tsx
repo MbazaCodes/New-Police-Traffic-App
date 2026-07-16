@@ -20,13 +20,16 @@ import {
   ChevronRight,
   Wifi,
   WifiOff,
+  X,
 } from "lucide-react";
+import { usePoliceStore, type AdminScreen } from "@/store/police-store";
 import {
   DASHBOARD_KPIS,
   LIVE_INCIDENTS,
   OFFICERS,
   REGION_STATS,
 } from "@/lib/admin-data";
+import { toast } from "@/hooks/use-toast";
 
 // ── Mock data for Command Center ──────────────────────────────────────────────
 
@@ -163,10 +166,12 @@ function MapView({ patrols }: { patrols: typeof ACTIVE_PATROLS }) {
 
 export function CommandCenter() {
   const pathname = usePathname();
+  const { setAdminScreen } = usePoliceStore();
   const [radioMessage, setRadioMessage] = useState("");
   const [selectedPatrol, setSelectedPatrol] = useState<string | null>(null);
   const [logs, setLogs] = useState(RADIO_LOGS);
   const [dispatchQueue, setDispatchQueue] = useState(DISPATCH_QUEUE);
+  const [showEmergency, setShowEmergency] = useState(false);
 
   function sendRadio() {
     if (!radioMessage.trim()) return;
@@ -232,7 +237,10 @@ export function CommandCenter() {
               )} · {sosOfficer.unit} · {sosOfficer.area}
             </p>
           </div>
-          <button className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-[13px] font-bold text-white hover:bg-red-600">
+          <button
+            onClick={() => setShowEmergency(true)}
+            className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-[13px] font-bold text-white hover:bg-red-600"
+          >
             <Phone size={14} />
             Piga Simu
           </button>
@@ -242,20 +250,30 @@ export function CommandCenter() {
       {/* KPI row */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
-          { label: "Maofisa Kazini", value: ACTIVE_PATROLS.filter((p) => p.status === "active").length.toString(), icon: Users, color: "#2196F3" },
-          { label: "Patroli Kazini", value: "23", icon: Shield, color: "#4CAF50" },
-          { label: "Matukio Yangu", value: LIVE_INCIDENTS.filter((i) => i.status !== "resolved").length.toString(), icon: AlertTriangle, color: "#FF9800" },
-          { label: "Simu za SOS", value: "1", icon: Zap, color: "#F44336" },
+          { label: "Maofisa Kazini", value: ACTIVE_PATROLS.filter((p) => p.status === "active").length.toString(), icon: Users, color: "#2196F3", screen: "officers" as AdminScreen },
+          { label: "Patroli Kazini", value: "23", icon: Shield, color: "#4CAF50", screen: "patrols" as AdminScreen },
+          { label: "Matukio Yangu", value: LIVE_INCIDENTS.filter((i) => i.status !== "resolved").length.toString(), icon: AlertTriangle, color: "#FF9800", screen: "incidents" as AdminScreen },
+          { label: "Simu za SOS", value: "1", icon: Zap, color: "#F44336", screen: "alerts" as AdminScreen },
         ].map((kpi) => {
           const Icon = kpi.icon;
           return (
-            <div key={kpi.label} className="rounded-xl bg-police-card p-3 shadow-sm">
+            <button
+              key={kpi.label}
+              onClick={() => {
+                setAdminScreen(kpi.screen);
+                toast({
+                  title: "Inaendelea",
+                  description: `Inafungua skrini ya ${kpi.label}`,
+                });
+              }}
+              className="rounded-xl bg-police-card p-3 shadow-sm text-left transition hover:bg-police-muted hover:shadow-md"
+            >
               <div className="flex h-8 w-8 items-center justify-center rounded-lg mb-2" style={{ backgroundColor: `${kpi.color}1A`, color: kpi.color }}>
                 <Icon size={16} />
               </div>
               <p className="text-xl font-bold text-police-navy">{kpi.value}</p>
               <p className="text-[11px] text-police-muted">{kpi.label}</p>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -422,18 +440,70 @@ export function CommandCenter() {
             const pct = Math.round((area.active / area.patrols) * 100);
             const color = pct >= 80 ? "#4CAF50" : pct >= 50 ? "#FF9800" : "#F44336";
             return (
-              <div key={area.area} className="rounded-xl border border-police-soft bg-police-muted/30 p-3 text-center">
+              <button
+                key={area.area}
+                onClick={() => {
+                  setAdminScreen("patrols");
+                  toast({
+                    title: "Inaendelea",
+                    description: `Inafungua skrini ya Patroli (${area.area})`,
+                  });
+                }}
+                className="rounded-xl border border-police-soft bg-police-muted/30 p-3 text-center transition hover:bg-police-muted/60"
+              >
                 <p className="text-[13px] font-bold text-police">{area.area}</p>
                 <p className="mt-1 text-2xl font-bold" style={{ color }}>{pct}%</p>
                 <p className="text-[10px] text-police-muted">{area.active}/{area.patrols} Doria</p>
                 <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-police-input">
                   <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: color }} />
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
       </div>
+
+      {/* Emergency contacts modal */}
+      {showEmergency && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowEmergency(false)} aria-hidden />
+          <div className="relative z-10 w-full max-w-sm overflow-hidden rounded-2xl bg-police-card shadow-2xl">
+            <div className="flex items-center justify-between border-b border-police-soft bg-red-500/10 p-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500/15 text-red-500">
+                  <Phone size={18} />
+                </div>
+                <p className="text-[15px] font-bold text-police">Nambari za Dharura</p>
+              </div>
+              <button onClick={() => setShowEmergency(false)} className="rounded-lg p-1.5 text-police-faint hover:bg-police-muted">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="space-y-2 p-4">
+              {[
+                { label: "Polisi (Dharura)", number: "112" },
+                { label: "Zima Moto", number: "115" },
+                { label: "Ardhi ya Wagonjwa", number: "114" },
+                { label: "Msaada wa Ajali", number: "111" },
+              ].map((e) => (
+                <a
+                  key={e.number}
+                  href={`tel:${e.number}`}
+                  className="flex items-center justify-between rounded-lg border border-police-soft bg-police-input p-3 transition hover:bg-police-muted"
+                >
+                  <span className="text-[13px] font-semibold text-police">{e.label}</span>
+                  <span className="flex items-center gap-2 font-mono text-[14px] font-bold text-red-500">
+                    {e.number} <Phone size={14} />
+                  </span>
+                </a>
+              ))}
+              <p className="mt-2 rounded-lg bg-red-500/5 p-2 text-center text-[11px] text-red-600">
+                Bonyeza nambari kupiga simu moja kwa moja
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -14,9 +14,10 @@ import {
 } from "lucide-react";
 import { ADMIN_INCIDENTS, OFFICERS } from "@/lib/admin-data";
 import { getOfficerProfilePath } from "@/lib/admin-navigation";
+import { useRecordsStore, type AdminIncidentRecord } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 
-type Incident = (typeof ADMIN_INCIDENTS)[number];
+type Incident = AdminIncidentRecord;
 
 const TABS = [
   { id: "all", label: "Zote" },
@@ -55,21 +56,36 @@ const STATUS_LABEL: Record<string, string> = {
 export function AdminIncidents() {
   const pathname = usePathname();
   const router = useRouter();
+  const incidents = useRecordsStore((s) => s.adminIncidents);
+  const updateAdminIncident = useRecordsStore((s) => s.updateAdminIncident);
   const [tab, setTab] = useState<string>("all");
   const [selected, setSelected] = useState<Incident | null>(null);
+  const [assigning, setAssigning] = useState<Incident | null>(null);
 
-  const filtered =
-    tab === "all"
-      ? ADMIN_INCIDENTS
-      : ADMIN_INCIDENTS.filter((i) => i.status === tab);
+  const filtered = useMemo(
+    () => (tab === "all" ? incidents : incidents.filter((i) => i.status === tab)),
+    [tab, incidents]
+  );
 
-  const counts = {
-    all: ADMIN_INCIDENTS.length,
-    urgent: ADMIN_INCIDENTS.filter((i) => i.status === "urgent").length,
-    active: ADMIN_INCIDENTS.filter((i) => i.status === "active").length,
-    investigating: ADMIN_INCIDENTS.filter((i) => i.status === "investigating")
-      .length,
-    resolved: ADMIN_INCIDENTS.filter((i) => i.status === "resolved").length,
+  const counts = useMemo(
+    () => ({
+      all: incidents.length,
+      urgent: incidents.filter((i) => i.status === "urgent").length,
+      active: incidents.filter((i) => i.status === "active").length,
+      investigating: incidents.filter((i) => i.status === "investigating").length,
+      resolved: incidents.filter((i) => i.status === "resolved").length,
+    }),
+    [incidents]
+  );
+
+  const handleAssign = (officerName: string) => {
+    if (!assigning) return;
+    updateAdminIncident(assigning.id, { assignedTo: officerName });
+    toast({
+      title: "Afisa Amepangiwa",
+      description: `${officerName} amepangiwa kwenye ${assigning.id}`,
+    });
+    setAssigning(null);
   };
 
   return (
@@ -126,10 +142,9 @@ export function AdminIncidents() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((inc) => (
-                (() => {
-                  const officer = OFFICERS.find((o) => o.name === inc.assignedTo);
-                  return (
+              {filtered.map((inc) => {
+                const officer = OFFICERS.find((o) => o.name === inc.assignedTo);
+                return (
                 <tr
                   key={inc.id}
                   className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"
@@ -186,22 +201,14 @@ export function AdminIncidents() {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
-                        onClick={() => {
-                          toast({
-                            title: "Afisa Amepangiwa",
-                            description: `${inc.assignedTo} amepangiwa kwenye ${inc.id}`,
-                          });
-                        }}
+                        onClick={() => setAssigning(inc)}
                         className="flex items-center gap-1 rounded-lg bg-[#2196F3]/10 px-2 py-1.5 text-[11px] font-semibold text-[#2196F3] hover:bg-[#2196F3]/20"
                         title="Pangisha Afisa"
                       >
                         <UserPlus size={12} /> Panga
                       </button>
                       <button
-                        onClick={() => {
-                          const base = pathname.startsWith("/command") ? "/command" : "/admin";
-                          router.push(`${base}/incidents/${encodeURIComponent(inc.id)}`);
-                        }}
+                        onClick={() => setSelected(inc)}
                         className="flex items-center gap-1 rounded-lg bg-police-input px-2 py-1.5 text-[11px] font-semibold text-police-navy hover:bg-police-muted"
                         title="Angalia"
                       >
@@ -210,9 +217,8 @@ export function AdminIncidents() {
                     </div>
                   </td>
                 </tr>
-                  );
-                })()
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -225,19 +231,128 @@ export function AdminIncidents() {
 
       {/* Detail modal */}
       {selected && (
-        <IncidentModal incident={selected} onClose={() => setSelected(null)} />
+        <IncidentModal
+          incident={selected}
+          pathname={pathname}
+          onClose={() => setSelected(null)}
+          onAssign={() => {
+            setAssigning(selected);
+            setSelected(null);
+          }}
+        />
       )}
+
+      {/* Assign modal */}
+      {assigning && (
+        <AssignIncidentModal
+          incident={assigning}
+          officers={OFFICERS}
+          currentOfficer={assigning.assignedTo}
+          onClose={() => setAssigning(null)}
+          onConfirm={handleAssign}
+        />
+      )}
+    </div>
+  );
+}
+
+function AssignIncidentModal({
+  incident,
+  officers,
+  currentOfficer,
+  onClose,
+  onConfirm,
+}: {
+  incident: Incident;
+  officers: { id: string; name: string; rank: string }[];
+  currentOfficer: string;
+  onClose: () => void;
+  onConfirm: (officerName: string) => void;
+}) {
+  const [selected, setSelected] = useState<string>(
+    officers.find((o) => o.name === currentOfficer)?.id ?? ""
+  );
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden />
+      <div className="relative z-10 w-full max-w-lg overflow-hidden rounded-2xl bg-police-card shadow-2xl">
+        <div className="flex items-center justify-between border-b border-police-soft bg-police-muted/40 p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2196F3]/15 text-[#2196F3]">
+              <UserPlus size={18} />
+            </div>
+            <div>
+              <p className="text-[15px] font-bold text-police">Pangisha Afisa</p>
+              <p className="font-mono text-[11px] text-police-faint">{incident.id} · {incident.type}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-police-faint hover:bg-police-muted">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="p-4">
+          <p className="mb-2 text-[11px] font-semibold uppercase text-police-faint">Chagua Afisa</p>
+          <div className="max-h-72 space-y-1.5 overflow-y-auto app-scroll">
+            {officers.map((o) => (
+              <button
+                key={o.id}
+                onClick={() => setSelected(o.id)}
+                className={`flex w-full items-center gap-2.5 rounded-lg border p-2.5 text-left transition ${
+                  selected === o.id
+                    ? "border-[#2196F3] bg-[#2196F3]/5"
+                    : "border-police-soft bg-police-input hover:bg-police-muted"
+                }`}
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2196F3]/15 text-[10px] font-bold text-[#2196F3]">
+                  {o.name.split(" ").slice(0, 2).map((n) => n[0]).join("")}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[12px] font-semibold text-police">{o.name}</p>
+                  <p className="text-[10px] text-police-muted">{o.rank} · <span className="font-mono">{o.id}</span></p>
+                </div>
+                {selected === o.id && <span className="text-[11px] font-bold text-[#2196F3]">✓</span>}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 pt-3">
+            <button
+              onClick={onClose}
+              className="rounded-lg bg-police-input py-2.5 text-[12px] font-semibold text-police-navy hover:bg-police-muted"
+            >
+              Ghairi
+            </button>
+            <button
+              disabled={!selected}
+              onClick={() => {
+                const off = officers.find((o) => o.id === selected);
+                if (off) onConfirm(off.name);
+              }}
+              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5] disabled:opacity-50"
+            >
+              Thibitisha
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
 function IncidentModal({
   incident,
+  pathname,
   onClose,
+  onAssign,
 }: {
   incident: Incident;
+  pathname: string;
   onClose: () => void;
+  onAssign: () => void;
 }) {
+  const officer = OFFICERS.find((o) => o.name === incident.assignedTo);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden />
@@ -289,11 +404,16 @@ function IncidentModal({
             label="Tarehe & Saa"
             value={`${incident.date} • ${incident.time}`}
           />
-          <DetailRow
-            icon={<User size={14} />}
-            label="Afisa Aliyepangiwa"
-            value={incident.assignedTo}
-          />
+          <div>
+            <p className="mb-1 text-[11px] font-semibold uppercase text-police-faint">Afisa Aliyepangiwa</p>
+            {officer ? (
+              <Link href={getOfficerProfilePath(pathname, officer.id)} className="font-medium text-[#2196F3] hover:underline">
+                {incident.assignedTo}
+              </Link>
+            ) : (
+              <p className="text-[13px] text-police">{incident.assignedTo}</p>
+            )}
+          </div>
 
           <div className="rounded-lg border border-police-soft bg-police-muted/40 p-3">
             <p className="mb-1 text-[11px] font-semibold uppercase text-police-faint">
@@ -316,15 +436,12 @@ function IncidentModal({
             </button>
             <button
               onClick={() => {
-                toast({
-                  title: "Imefanikiwa",
-                  description: `Maafisa wameitwa kwenye ${incident.id}`,
-                });
                 onClose();
+                onAssign();
               }}
               className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
             >
-              Ita Maafisa
+              <User size={12} className="mr-1 inline" /> Pangisha Afisa
             </button>
           </div>
         </div>
