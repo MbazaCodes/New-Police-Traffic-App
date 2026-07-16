@@ -1,11 +1,11 @@
 {
-    "name": "officer_mobile",
-    "short_name": "officer_mobile",
+    "name": "TZ Police Officer Mobile",
+    "short_name": "TZ Police",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0B1120",
+    "theme_color": "#1A237E",
+    "description": "Tanzania Police Force digital platform for officers.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

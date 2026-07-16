@@ -28,7 +28,7 @@ dependencies:
   # Fonts & icons
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.10+1
-  lucide_icons: ^0.257.0
+  lucide_icons_flutter: ^3.0.8
 
 dev_dependencies:
   flutter_test:
@@ -36,9 +36,19 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   build_runner: ^2.4.11
   hive_generator: ^2.0.1
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
 
   assets:
     - assets/police-logo.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  web:
+    generate: true
+  image_path: assets/police-logo.png
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: assets/police-logo.png

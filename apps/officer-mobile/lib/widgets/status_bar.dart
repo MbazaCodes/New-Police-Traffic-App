@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 /// In Flutter we use the real OS status bar, but this helper styles it.
 /// Use [StatusBar.applyStyle] in `main()` once, then forget about it.
@@ -60,3 +60,4 @@ class FakeStatusBar extends StatelessWidget {
     );
   }
 }
+

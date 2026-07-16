@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../core/constants/app_constants.dart';
 import '../core/router/app_router.dart';
@@ -494,3 +494,4 @@ class _SearchTab {
   final String id;
   final String label;
 }
+

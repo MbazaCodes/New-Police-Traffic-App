@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 /// Maps icon keys used by the PWA's `<PoliceIcon name="..."/>` to actual
 /// [IconData] from [LucideIcons]. Falls back to [LucideIcons.alertTriangle].
@@ -106,3 +106,4 @@ class PoliceIcon extends StatelessWidget {
     );
   }
 }
+
