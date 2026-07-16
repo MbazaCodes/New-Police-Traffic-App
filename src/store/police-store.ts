@@ -9,55 +9,39 @@ export type OfficerRole = "officer-traffic" | "officer-general";
 export const OFFICER_ROLES: OfficerRole[] = ["officer-traffic", "officer-general"];
 
 function normalizeOfficerRole(role?: UserRole): OfficerRole {
-  if (role === "officer-general" || role === "officer-traffic") {
-    return role;
-  }
+  if (role === "officer-general" || role === "officer-traffic") return role;
   return "officer-traffic";
 }
+
 export type AdminScreen =
-  | "dashboard"
-  | "officers"
-  | "incidents"
-  | "citations"
-  | "patrols"
-  | "alerts"
-  | "reports"
-  | "users"
-  | "settings"
-  | "stations"
-  | "posts"
-  | "assignments";
+  | "dashboard" | "officers" | "incidents" | "citations" | "patrols"
+  | "alerts" | "reports" | "users" | "settings" | "stations" | "posts"
+  | "assignments" | "detained-citizens";
 
 interface PoliceState {
-  // Auth
   isAuthenticated: boolean;
   userRole: UserRole;
   login: (role?: UserRole) => void;
   logout: () => void;
   setRole: (role: UserRole) => void;
 
-  // Navigation
   activeTab: ScreenId;
   currentScreen: ScreenId;
   history: ScreenId[];
-
   navigate: (screen: ScreenId) => void;
   setTab: (tab: ScreenId) => void;
   goBack: () => void;
 
-  // Admin navigation
   adminScreen: AdminScreen;
   setAdminScreen: (s: AdminScreen) => void;
 
-  // UI state
-  searchTab: "plate" | "license" | "nida";
-  setSearchTab: (t: "plate" | "license" | "nida") => void;
+  searchTab: "plate" | "license" | "nida" | "serial";
+  setSearchTab: (t: "plate" | "license" | "nida" | "serial") => void;
   citizenSearchType: "name" | "nida" | "mobile";
   setCitizenSearchType: (t: "name" | "nida" | "mobile") => void;
   alertFilter: "all" | "mine" | "important";
   setAlertFilter: (f: "all" | "mine" | "important") => void;
 
-  // Search
   searchQuery: string;
   searchEntity: "person" | "car" | "device";
   searchStatus: "idle" | "searching" | "found" | "not-found";
@@ -66,24 +50,28 @@ interface PoliceState {
   runSearch: (query: string) => void;
   clearSearch: () => void;
 
-  // Citation pre-fill (from search results)
   citationPrefill: {
-    plate: string;
-    model: string;
-    color: string;
-    vehicleType: string;
-    driverName: string;
-    driverLicense: string;
-    driverPhone: string;
-    driverNida: string;
+    plate: string; model: string; color: string; vehicleType: string;
+    driverName: string; driverLicense: string; driverPhone: string; driverNida: string;
   } | null;
   setCitationPrefill: (data: PoliceState["citationPrefill"]) => void;
 
-  // Camera Scanner
   scannerOpen: boolean;
   scannerMode: "qr" | "ocr";
   openScanner: (mode: "qr" | "ocr") => void;
   closeScanner: () => void;
+
+  // Patrol timer
+  patrolActive: boolean;
+  patrolStartTime: number | null;
+  patrolElapsed: number;
+  startPatrol: () => void;
+  endPatrol: () => void;
+  tickPatrol: () => void;
+
+  // Selected offense for detail
+  selectedOffenseId: number | null;
+  setSelectedOffense: (id: number | null) => void;
 }
 
 export const usePoliceStore = create<PoliceState>((set, get) => ({
@@ -91,22 +79,9 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
   userRole: "officer-traffic" as UserRole,
   login: (role) => {
     const officerRole = normalizeOfficerRole(role);
-    set({
-      isAuthenticated: true,
-      userRole: officerRole,
-      currentScreen: "home",
-      activeTab: "home",
-      history: ["home"],
-      adminScreen: "dashboard",
-    });
+    set({ isAuthenticated: true, userRole: officerRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
   },
-  logout: () =>
-    set({
-      isAuthenticated: false,
-      currentScreen: "login",
-      activeTab: "home",
-      history: [],
-    }),
+  logout: () => set({ isAuthenticated: false, currentScreen: "login", activeTab: "home", history: [] }),
   setRole: (role) => set({ userRole: normalizeOfficerRole(role) }),
 
   activeTab: "home",
@@ -117,11 +92,7 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
     const { history } = get();
     set({ currentScreen: screen, history: [...history, screen] });
   },
-
-  setTab: (tab) => {
-    set({ activeTab: tab, currentScreen: tab, history: [tab] });
-  },
-
+  setTab: (tab) => set({ activeTab: tab, currentScreen: tab, history: [tab] }),
   goBack: () => {
     const { history } = get();
     if (history.length > 1) {
@@ -139,10 +110,8 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
 
   searchTab: "plate",
   setSearchTab: (t) => set({ searchTab: t }),
-
-  // General officer citizen search type
   citizenSearchType: "name" as "name" | "nida" | "mobile",
-  setCitizenSearchType: (t: "name" | "nida" | "mobile") => set({ citizenSearchType: t }),
+  setCitizenSearchType: (t) => set({ citizenSearchType: t }),
 
   searchQuery: "",
   searchEntity: "car",
@@ -151,14 +120,10 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
   setSearchEntity: (t) => set({ searchEntity: t }),
   runSearch: (query) => {
     set({ searchQuery: query, searchStatus: "searching" });
-    // Simulate fetching existing record
     setTimeout(() => {
       const q = query.trim().toUpperCase();
-      if (q && (q.startsWith("T") || q.length > 0)) {
-        set({ searchStatus: "found" });
-      } else {
-        set({ searchStatus: "not-found" });
-      }
+      if (q && q.length > 0) set({ searchStatus: "found" });
+      else set({ searchStatus: "not-found" });
     }, 1400);
   },
   clearSearch: () => set({ searchQuery: "", searchStatus: "idle" }),
@@ -173,4 +138,18 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
   scannerMode: "qr",
   openScanner: (mode) => set({ scannerOpen: true, scannerMode: mode }),
   closeScanner: () => set({ scannerOpen: false }),
+
+  // Patrol timer
+  patrolActive: false,
+  patrolStartTime: null,
+  patrolElapsed: 0,
+  startPatrol: () => set({ patrolActive: true, patrolStartTime: Date.now(), patrolElapsed: 0 }),
+  endPatrol: () => set({ patrolActive: false, patrolStartTime: null }),
+  tickPatrol: () => {
+    const { patrolStartTime } = get();
+    if (patrolStartTime) set({ patrolElapsed: Math.floor((Date.now() - patrolStartTime) / 1000) });
+  },
+
+  selectedOffenseId: null,
+  setSelectedOffense: (id) => set({ selectedOffenseId: id }),
 }));

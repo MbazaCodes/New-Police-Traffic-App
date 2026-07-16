@@ -37,6 +37,7 @@ import { AdminSettings } from "./screens/admin-settings";
 import { AdminStations } from "./screens/admin-stations";
 import { AdminPosts } from "./screens/admin-posts";
 import { AdminAssignments } from "./screens/admin-assignments";
+import { DetainedCitizensScreen } from "./screens/detained-citizens-screen";
 
 const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -46,6 +47,7 @@ const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashbo
   { id: "patrols", label: "Patroli", icon: Shield, badge: 5 },
   { id: "alerts", label: "Arifa", icon: Bell, badge: 3 },
   { id: "reports", label: "Ripoti", icon: BarChart3 },
+  { id: "detained-citizens", label: "Wafungwa", icon: Shield, badge: 3 },
   { id: "users", label: "Watumiaji", icon: Users },
   { id: "stations", label: "Vituo", icon: Building2 },
   { id: "posts", label: "Posti", icon: Network, badge: 1 },
@@ -228,6 +230,8 @@ function renderAdminScreen(screen: AdminScreen) {
       return <AdminPosts />;
     case "assignments":
       return <AdminAssignments />;
+    case "detained-citizens":
+      return <DetainedCitizensScreen />;
     case "settings":
       return <AdminSettings />;
     default:
