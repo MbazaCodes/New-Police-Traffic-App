@@ -122,18 +122,11 @@ function PhoneFrame({
   children: React.ReactNode;
   darkStatus?: boolean;
 }) {
+  void darkStatus;
+
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-start bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 py-4 sm:py-8 dark:from-slate-900 dark:via-slate-950 dark:to-black">
-      {/* Phone frame */}
-      <div className="relative mt-2 w-full max-w-[400px] sm:w-[400px]">
-        <div className="relative overflow-hidden rounded-[2.5rem] border-[10px] border-gray-900 bg-black shadow-2xl dark:border-slate-700">
-          {/* Notch */}
-          <div className="absolute left-1/2 top-0 z-30 h-6 w-32 -translate-x-1/2 rounded-b-2xl bg-gray-900 dark:bg-slate-800" />
-          <div className="h-[760px] w-full overflow-hidden bg-police">
-            {children}
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen w-full overflow-hidden bg-police">
+      {children}
     </div>
   );
 }
