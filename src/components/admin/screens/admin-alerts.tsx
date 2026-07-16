@@ -37,11 +37,7 @@ export function AdminAlerts() {
   const [missingDetails, setMissingDetails] = useState("");
   const [missingLastSeen, setMissingLastSeen] = useState("");
   const [missingImageUrl, setMissingImageUrl] = useState("");
-  const [sharedMissing, setSharedMissing] = useState<MissingAlertRecord[]>([]);
-
-  useEffect(() => {
-    setSharedMissing(getMissingAlerts());
-  }, []);
+  const [sharedMissing, setSharedMissing] = useState<MissingAlertRecord[]>(() => getMissingAlerts());
 
   const selectedAudience =
     AUDIENCE_OPTIONS.find((a) => a.id === audience) ?? AUDIENCE_OPTIONS[0];
