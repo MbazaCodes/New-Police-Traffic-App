@@ -1,53 +1,52 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Megaphone, ChevronRight, X, Send, Users, Bell, BellOff } from "lucide-react";
+import { useState, useMemo, useRef } from "react";
+import { Megaphone, ChevronRight, Send, Users, Bell, BellOff, MessageSquare, X } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { PoliceIcon } from "../police-icons";
-import { ALERTS } from "@/lib/police-data";
+import { ALERTS, CHAT_MESSAGES } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 import { toast } from "@/hooks/use-toast";
+
+type ChatMsg = { id: number; from: string; role: string; message: string; time: string; mine: boolean };
 
 export function AlertsScreen() {
   const { alertFilter, setAlertFilter } = usePoliceStore();
   const [readIds, setReadIds] = useState<number[]>([]);
   const [broadcastOpen, setBroadcastOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMsgs, setChatMsgs] = useState<ChatMsg[]>(CHAT_MESSAGES);
+  const [chatInput, setChatInput] = useState("");
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const tabs = [
-    { id: "all" as const, label: "Yote" },
-    { id: "mine" as const, label: "Kesi Zangu", badge: ALERTS.filter((a) => a.category === "mine").length },
-    { id: "important" as const, label: "Muhimu" },
-  ];
-
-  // Filter alerts based on active tab + read state
-  const filteredAlerts = useMemo(() => {
-    return ALERTS.filter((alert) => {
-      if (alertFilter === "mine") return alert.category === "mine";
-      if (alertFilter === "important") return alert.important;
-      return true;
-    });
-  }, [alertFilter]);
+  const filteredAlerts = useMemo(() => ALERTS.filter((a) => {
+    if (alertFilter === "mine") return a.category === "mine";
+    if (alertFilter === "important") return a.important;
+    return true;
+  }), [alertFilter]);
 
   const unreadCount = ALERTS.filter((a) => a.unread && !readIds.includes(a.id)).length;
 
   const handleAlertClick = (alert: (typeof ALERTS)[0]) => {
-    if (a.unread && !readIds.includes(a.id)) {
-      setReadIds([...readIds, a.id]);
-    }
-    toast({ title: alert.title, description: alert.source });
+    if (alert.unread && !readIds.includes(alert.id)) setReadIds((r) => [...r, alert.id]);
+    toast({ title: alert.title, description: alert.message });
   };
 
-  const markAllRead = () => {
-    setReadIds(ALERTS.map((a) => a.id));
-    toast({ title: "Zote Zimesomwa", description: "Arifa zote zimealamishwa kuwa zimesomwa." });
+  const sendChat = () => {
+    if (!chatInput.trim()) return;
+    const now = new Date();
+    const time = now.toLocaleTimeString("sw-TZ", { hour: "2-digit", minute: "2-digit" });
+    setChatMsgs((m) => [...m, { id: Date.now(), from: "Cprl. Juma", role: "officer", message: chatInput, time, mine: true }]);
+    setChatInput("");
+    setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
   };
 
   return (
     <div className="min-h-full bg-police">
       <TopAppBar title="Arifa / Tangazo" subtitle="Pata taarifa na matangazo muhimu" />
-
       <div className="space-y-3 p-4">
-        {/* Stats summary */}
+
+        {/* Stats */}
         <div className="grid grid-cols-3 gap-2">
           <div className="rounded-xl bg-police-card p-2.5 text-center shadow-sm">
             <Bell size={18} className="mx-auto text-[#2196F3]" />
@@ -61,236 +60,144 @@ export function AlertsScreen() {
           </div>
           <div className="rounded-xl bg-police-card p-2.5 text-center shadow-sm">
             <Users size={18} className="mx-auto text-[#FF9800]" />
-            <p className="mt-1 text-[16px] font-bold text-police">
-              {ALERTS.filter((a) => a.category === "mine").length}
-            </p>
+            <p className="mt-1 text-[16px] font-bold text-police">{ALERTS.filter((a) => a.category === "mine").length}</p>
             <p className="text-[9px] text-police-faint">Kesi Zangu</p>
           </div>
         </div>
 
-        {/* Tuma Tangazo button */}
-        <button
-          onClick={() => setBroadcastOpen(true)}
-          className="flex w-full items-center gap-3 rounded-2xl bg-[#2196F3] p-4 text-left shadow-md shadow-[#2196F3]/20 active:scale-[0.98]"
-        >
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
-            <Megaphone size={22} className="text-white" />
-          </div>
-          <div className="flex-1">
-            <p className="text-[14px] font-bold text-white">Tuma Tangazo</p>
-            <p className="text-[11px] text-white/80">Tuma tangazo kwa maofisa wote au vikundi maalum</p>
-          </div>
-        </button>
-
-        {/* Filter Tabs + Mark all read */}
-        <div className="flex items-center gap-1 border-b border-police">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setAlertFilter(tab.id)}
-              className="relative flex items-center gap-1.5 px-3 py-2.5"
-            >
-              <span
-                className={`text-[13px] font-medium ${
-                  alertFilter === tab.id ? "font-bold text-[#2196F3]" : "text-police-muted"
-                }`}
-              >
-                {tab.label}
-              </span>
-              {tab.badge ? (
-                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
-                  {tab.badge}
-                </span>
-              ) : null}
-              {alertFilter === tab.id && (
-                <span className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-[#2196F3]" />
-              )}
-            </button>
-          ))}
-          <button
-            onClick={markAllRead}
-            className="ml-auto py-2.5 text-[11px] font-medium text-[#2196F3]"
-          >
-            Soma Zote
+        {/* Action buttons row */}
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={() => setBroadcastOpen(true)} className="flex items-center gap-2 rounded-xl bg-[#2196F3] p-3 text-left shadow-md active:scale-[0.98]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20"><Megaphone size={18} className="text-white" /></div>
+            <span className="text-[13px] font-bold text-white">Tuma Tangazo</span>
+          </button>
+          <button onClick={() => setChatOpen(true)} className="flex items-center gap-2 rounded-xl bg-[#10B981] p-3 text-left shadow-md active:scale-[0.98]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20"><MessageSquare size={18} className="text-white" /></div>
+            <span className="text-[13px] font-bold text-white">Kikosi Chat</span>
           </button>
         </div>
 
+        {/* Filter tabs */}
+        <div className="flex gap-2">
+          {([{ id: "all", label: "Yote" }, { id: "mine", label: "Kesi Zangu" }, { id: "important", label: "Muhimu" }] as const).map((tab) => (
+            <button key={tab.id} onClick={() => setAlertFilter(tab.id)} className={`flex-1 rounded-lg py-2 text-[12px] font-semibold transition ${alertFilter === tab.id ? "bg-[#2196F3] text-white" : "bg-police-muted text-police-muted"}`}>{tab.label}</button>
+          ))}
+        </div>
+
         {/* Alert List */}
-        <div className="space-y-2.5">
-          {filteredAlerts.length === 0 ? (
-            <div className="flex flex-col items-center rounded-2xl bg-police-card py-10 shadow-sm">
-              <BellOff size={32} className="text-police-faint" />
-              <p className="mt-2 text-[13px] text-police-muted">Hakuna arifa katika kategoria hii</p>
-            </div>
-          ) : (
-            filteredAlerts.map((alert) => {
-              const isRead = !alert.unread || readIds.includes(alert.id);
-              return (
-                <button
-                  key={alert.id}
-                  onClick={() => handleAlertClick(alert)}
-                  className="block w-full overflow-hidden rounded-2xl bg-police-card text-left shadow-sm active:scale-[0.99]"
-                  style={{ borderLeft: `4px solid ${alert.borderColor}` }}
-                >
-                  <div className="flex gap-3 p-3.5">
-                    <div
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
-                      style={{ backgroundColor: `${alert.iconColor}18` }}
-                    >
-                      <PoliceIcon name={alert.icon} size={20} className="" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <h4
-                          className={`text-[14px] leading-tight text-police-navy ${
-                            !isRead ? "font-bold" : "font-semibold"
-                          }`}
-                        >
-                          {alert.title}
-                        </h4>
-                        {!isRead && (
-                          <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#2196F3]" />
-                        )}
-                      </div>
-                      <p className="mt-0.5 text-[10px] text-police-faint">{alert.time}</p>
-                      <p className="mt-1.5 text-[12px] leading-snug text-police-muted">{alert.message}</p>
-                      <div className="mt-2 flex items-center justify-between">
-                        <span
-                          className="rounded-full px-2.5 py-0.5 text-[10px] font-semibold"
-                          style={{ backgroundColor: alert.sourceBg, color: alert.borderColor }}
-                        >
-                          {alert.source}
-                        </span>
-                        {alert.important && (
-                          <span className="rounded-full bg-red-100 px-2 py-0.5 text-[9px] font-bold text-red-600">
-                            MUHIMU
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <ChevronRight size={16} className="shrink-0 self-center text-police-faint" />
+        <div className="space-y-2">
+          {filteredAlerts.map((alert) => {
+            const isUnread = alert.unread && !readIds.includes(alert.id);
+            return (
+              <button key={alert.id} onClick={() => handleAlertClick(alert)} className={`w-full rounded-xl border p-3 text-left transition active:scale-[0.99] ${isUnread ? "border-l-4 bg-police-card" : "bg-police-card/60 border-police-soft"}`} style={{ borderLeftColor: isUnread ? alert.borderColor : undefined }}>
+                <div className="flex items-start gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: alert.sourceBg }}>
+                    <PoliceIcon name={alert.icon} size={18} style={{ color: alert.iconColor }} className="" />
                   </div>
-                </button>
-              );
-            })
-          )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={`truncate text-[13px] font-bold text-police ${isUnread ? "" : "opacity-75"}`}>{alert.title}</p>
+                      <span className="shrink-0 text-[10px] text-police-faint">{alert.time}</span>
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-[11px] text-police-muted">{alert.message}</p>
+                    <p className="mt-1 text-[10px] font-medium" style={{ color: alert.dotColor }}>{alert.source}</p>
+                  </div>
+                  <ChevronRight size={14} className="mt-1 shrink-0 text-police-faint" />
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Broadcast modal */}
+      {/* Broadcast Modal */}
       {broadcastOpen && <BroadcastModal onClose={() => setBroadcastOpen(false)} />}
+
+      {/* Chat Modal */}
+      {chatOpen && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-police">
+          <div className="flex items-center justify-between bg-[#1E3A8A] px-4 py-3">
+            <div>
+              <p className="text-[16px] font-bold text-white">Kikosi Chat</p>
+              <p className="text-[11px] text-white/70">Mazungumzo ya kikosi • {chatMsgs.length} ujumbe</p>
+            </div>
+            <button onClick={() => setChatOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10"><X size={18} className="text-white" /></button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {chatMsgs.map((m) => (
+              <div key={m.id} className={`flex ${m.mine ? "justify-end" : "justify-start"}`}>
+                <div className={`max-w-[78%] rounded-2xl px-3 py-2 ${m.mine ? "bg-[#2196F3] text-white rounded-br-sm" : "bg-police-card text-police rounded-bl-sm"}`}>
+                  {!m.mine && <p className="text-[10px] font-bold text-[#FF9800] mb-0.5">{m.from}</p>}
+                  <p className="text-[13px] leading-snug">{m.message}</p>
+                  <p className={`mt-1 text-[9px] text-right ${m.mine ? "text-white/70" : "text-police-faint"}`}>{m.time}</p>
+                </div>
+              </div>
+            ))}
+            <div ref={chatEndRef} />
+          </div>
+          <div className="border-t border-police p-3">
+            <div className="flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
+              <input
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendChat()}
+                placeholder="Andika ujumbe..."
+                className="h-10 flex-1 bg-transparent text-[14px] text-police placeholder:text-police-faint focus:outline-none"
+              />
+              <button onClick={sendChat} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2196F3] active:scale-95">
+                <Send size={15} className="text-white" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 function BroadcastModal({ onClose }: { onClose: () => void }) {
-  const [audience, setAudience] = useState<"all" | "unit" | "station">("all");
-  const [priority, setPriority] = useState<"normal" | "important">("normal");
-  const [message, setMessage] = useState("");
+  const [title, setTitle] = useState("");
+  const [msg, setMsg] = useState("");
+  const [audience, setAudience] = useState("all");
 
-  const handleSend = () => {
-    if (!message.trim()) return;
-    toast({
-      title: "Tangazo Limetumwa",
-      description: `Limetumwa kwa ${
-        audience === "all" ? "maofisa wote" : audience === "unit" ? "kitengo chako" : "kituo chako"
-      }.`,
-    });
+  const send = () => {
+    if (!title || !msg) { toast({ title: "Kosa", description: "Jaza kichwa na ujumbe.", variant: "destructive" }); return; }
+    toast({ title: "Tangazo Limetumwa ✓", description: `"${title}" limetumwa kwa ${audience === "all" ? "kikosi chote" : audience}` });
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50" onClick={onClose}>
-      <div
-        className="w-full max-w-[400px] rounded-t-3xl bg-police-card p-5 pb-8 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Handle */}
-        <div className="mx-auto mb-4 h-1 w-12 rounded-full bg-police-border" />
-
+    <div className="fixed inset-0 z-50 flex items-end bg-black/50">
+      <div className="w-full rounded-t-3xl bg-police p-5">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-[16px] font-bold text-police-navy">
-            <Megaphone size={20} className="text-[#2196F3]" />
-            Tuma Tangazo
-          </h2>
-          <button onClick={onClose} className="text-police-muted">
-            <X size={20} />
+          <p className="text-[17px] font-bold text-police">Tuma Tangazo</p>
+          <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-full bg-police-muted"><X size={16} className="text-police" /></button>
+        </div>
+        <div className="space-y-3">
+          <div>
+            <label className="mb-1 block text-[12px] font-medium text-police-muted">Kichwa cha Tangazo</label>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Kichwa..." className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[14px] text-police placeholder:text-police-faint focus:border-[#2196F3] focus:outline-none" />
+          </div>
+          <div>
+            <label className="mb-1 block text-[12px] font-medium text-police-muted">Walengwa</label>
+            <select value={audience} onChange={(e) => setAudience(e.target.value)} className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:border-[#2196F3] focus:outline-none">
+              <option value="all">Vikosi Vyote</option>
+              <option value="traffic">Kikosi cha Trafiki</option>
+              <option value="general">Kikosi cha Jumla</option>
+              <option value="commanders">Makamanda</option>
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-[12px] font-medium text-police-muted">Ujumbe</label>
+            <textarea rows={3} value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Andika ujumbe..." className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:border-[#2196F3] focus:outline-none" />
+          </div>
+          <button onClick={send} className="w-full rounded-xl bg-[#2196F3] py-3 text-[15px] font-bold text-white active:scale-[0.98]">
+            <Send size={16} className="mr-2 inline" /> Tuma Tangazo
           </button>
         </div>
-
-        {/* Audience */}
-        <div className="mb-3">
-          <label className="mb-1.5 block text-[12px] font-medium text-police-muted">Walengwa</label>
-          <div className="flex gap-2">
-            {([
-              { id: "all", label: "Wote" },
-              { id: "unit", label: "Kitengo" },
-              { id: "station", label: "Kituo" },
-            ] as const).map((opt) => (
-              <button
-                key={opt.id}
-                onClick={() => setAudience(opt.id)}
-                className={`flex-1 rounded-lg py-2 text-[12px] font-semibold transition ${
-                  audience === opt.id
-                    ? "bg-[#2196F3] text-white"
-                    : "bg-police-muted text-police-muted"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Priority */}
-        <div className="mb-3">
-          <label className="mb-1.5 block text-[12px] font-medium text-police-muted">Kipaumbele</label>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setPriority("normal")}
-              className={`flex-1 rounded-lg py-2 text-[12px] font-semibold transition ${
-                priority === "normal"
-                  ? "bg-[#2196F3] text-white"
-                  : "bg-police-muted text-police-muted"
-              }`}
-            >
-              Kawaida
-            </button>
-            <button
-              onClick={() => setPriority("important")}
-              className={`flex-1 rounded-lg py-2 text-[12px] font-semibold transition ${
-                priority === "important"
-                  ? "bg-[#F44336] text-white"
-                  : "bg-police-muted text-police-muted"
-              }`}
-            >
-              Muhimu
-            </button>
-          </div>
-        </div>
-
-        {/* Message */}
-        <div className="mb-4">
-          <label className="mb-1.5 block text-[12px] font-medium text-police-muted">Ujumbe</label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={4}
-            placeholder="Andika ujumbe wa tangazo hapa..."
-            className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:border-[#2196F3] focus:outline-none"
-          />
-        </div>
-
-        {/* Send button */}
-        <button
-          onClick={handleSend}
-          disabled={!message.trim()}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-3 text-[14px] font-bold text-white shadow-md disabled:opacity-50 active:scale-[0.98]"
-        >
-          <Send size={18} />
-          Tuma Tangazo
-        </button>
       </div>
     </div>
   );
 }
+
+

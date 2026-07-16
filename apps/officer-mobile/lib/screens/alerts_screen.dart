@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../core/theme/app_colors.dart';
 import '../data/mock_data.dart';
@@ -30,7 +30,7 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
     final subtleColor = isDark ? const Color(0xFF8A94A6) : AppColors.gray;
     final borderColor = isDark ? const Color(0xFF2A3650) : AppColors.grayBorder;
 
-    final tabs = const [
+    const tabs = [
       _AlertTab(id: 'all', label: 'Yote'),
       _AlertTab(id: 'mine', label: 'Kesi Zangu', badge: '2'),
       _AlertTab(id: 'important', label: 'Muhimu'),
@@ -81,10 +81,10 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              Expanded(
+                              const Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Tuma Tangazo',
                                       style: TextStyle(
@@ -133,8 +133,8 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
                               title: 'Arifa Zote',
                               description: 'Arifa zote zinaonyeshwa.',
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
                               child: Text(
                                 'Angalia Yote',
                                 style: TextStyle(
@@ -388,3 +388,4 @@ class _AlertCard extends StatelessWidget {
     );
   }
 }
+

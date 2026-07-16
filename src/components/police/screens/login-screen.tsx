@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   ShieldCheck,
   User,
@@ -14,8 +15,10 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import type { UserRole } from "@/store/police-store";
-import { Shield, Monitor, Star, Car, UserCheck } from "lucide-react";
+import type { OfficerRole } from "@/store/police-store";
+import { Car, UserCheck, UserCog } from "lucide-react";
+
+type LoginRole = OfficerRole | "commander" | "admin";
 
 type Step = "credentials" | "otp" | "success";
 
@@ -88,7 +91,33 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
   const verifyOtp = () => {
     if (otp.join("").length < 6) return;
     setStep("success");
-    setTimeout(() => login(role), 1100);
+    setTimeout(() => {
+      if (role === "commander") {
+        usePoliceStore.setState({
+          isAuthenticated: true,
+          userRole: "commander",
+          adminScreen: "dashboard",
+          currentScreen: "home",
+          activeTab: "home",
+          history: ["home"],
+        });
+        router.push("/command");
+        return;
+      }
+      if (role === "admin") {
+        usePoliceStore.setState({
+          isAuthenticated: true,
+          userRole: "admin",
+          adminScreen: "users",
+          currentScreen: "home",
+          activeTab: "home",
+          history: ["home"],
+        });
+        router.push("/admin");
+        return;
+      }
+      login(role);
+    }, 1100);
   };
 
   const resendOtp = () => {
@@ -101,6 +130,31 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
     method === "phone"
       ? identifier.replace(/(\d{3})\d+(\d{2})/, "$1•••••$2")
       : identifier;
+
+  const roleOptions = [
+    { id: "officer-traffic", label: "Afisa Trafiki", sublabel: "Traffic Officer", icon: Car },
+    { id: "officer-general", label: "Afisa Polisi", sublabel: "General Officer", icon: UserCheck },
+    { id: "commander", label: "Station Commissioner", sublabel: "Commissioner Access", icon: UserCog },
+    ...(showAdminRole
+      ? [{ id: "admin", label: "Admin", sublabel: "Admin Panel Access", icon: UserCog }]
+      : []),
+  ] as const;
+
+  const effectiveAllowedRoles: LoginRole[] =
+    allowedRoles ??
+    (showAdminRole
+      ? ["officer-traffic", "officer-general", "commander", "admin"]
+      : ["officer-traffic", "officer-general", "commander"]);
+
+  const visibleRoleOptions = roleOptions.filter((r) =>
+    effectiveAllowedRoles.includes(r.id as LoginRole)
+  );
+
+  useEffect(() => {
+    if (!visibleRoleOptions.some((r) => r.id === role)) {
+      setRole((visibleRoleOptions[0]?.id as LoginRole) ?? "officer-traffic");
+    }
+  }, [role, visibleRoleOptions]);
 
   return (
     <div className="relative flex min-h-full flex-col bg-police-card">

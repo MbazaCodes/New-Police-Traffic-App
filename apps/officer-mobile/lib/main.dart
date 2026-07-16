@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/constants/app_constants.dart';
@@ -10,6 +12,27 @@ import 'widgets/status_bar.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables.
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    // ignore: avoid_print
+    print("Warning: Could not load .env file: $e");
+  }
+
+  // Initialize Supabase if keys are available.
+  final supabaseUrl = dotenv.maybeGet('SUPABASE_URL');
+  final supabaseAnonKey = dotenv.maybeGet('SUPABASE_ANON_KEY');
+
+  if (supabaseUrl != null &&
+      supabaseAnonKey != null &&
+      supabaseUrl.startsWith('http')) {
+    await Supabase.initialize(
+      url: supabaseUrl,
+      anonKey: supabaseAnonKey,
+    );
+  }
 
   // Init Hive-backed storage before the app starts.
   final storage = await StorageService.init();
@@ -51,14 +74,14 @@ class _BootstrapState extends ConsumerState<_Bootstrap> {
   @override
   Widget build(BuildContext context) {
     if (!_ready) {
-      return MaterialApp(
+      return const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: const Color(0xFF0F1A2E),
+          backgroundColor: Color(0xFF0F1A2E),
           body: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: const [
+              children: [
                 CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../core/router/app_router.dart';
 import '../core/theme/app_colors.dart';
@@ -223,10 +223,10 @@ class ProfileScreen extends ConsumerWidget {
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              Expanded(
+                              const Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Pakua Ripoti Kuu',
                                       style: TextStyle(
@@ -270,9 +270,9 @@ class ProfileScreen extends ConsumerWidget {
                               color: AppColors.red.withValues(alpha: 0.3),
                             ),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Icon(LucideIcons.logOut, size: 18, color: AppColors.red),
                               SizedBox(width: 8),
                               Text(
@@ -409,9 +409,9 @@ class _ProfileHeaderCard extends StatelessWidget {
                           border: Border.all(color: AppColors.blue),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
+                          children: [
                             Icon(LucideIcons.pencil, size: 12, color: AppColors.blue),
                             SizedBox(width: 4),
                             Text(
@@ -883,3 +883,4 @@ class _ThemeSegmentedControl extends StatelessWidget {
     );
   }
 }
+

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../core/router/app_router.dart';
 import '../core/theme/app_colors.dart';
@@ -18,7 +18,7 @@ class SearchResultsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final r = searchResult;
+    const r = searchResult;
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0B1018) : AppColors.grayLight,
@@ -56,7 +56,7 @@ class SearchResultsScreen extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: _ActionButton(
-                            icon: LucideIcons.messageSquareWarning,
+                            icon: LucideIcons.megaphone,
                             label: 'Ongeza Onyo',
                             color: AppColors.orange,
                             isDark: isDark,
@@ -99,9 +99,9 @@ class SearchResultsScreen extends ConsumerWidget {
                             color: AppColors.greenSoft,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: const [
+                            children: [
                               Icon(LucideIcons.checkCircle2, size: 12, color: AppColors.green),
                               SizedBox(width: 4),
                               Text(
@@ -317,8 +317,8 @@ class _PlateHeader extends StatelessWidget {
               color: AppColors.greenSoft,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Row(
-              children: const [
+            child: const Row(
+              children: [
                 Icon(LucideIcons.checkCircle2, size: 14, color: AppColors.green),
                 SizedBox(width: 4),
                 Text(
@@ -791,3 +791,4 @@ class _ViolationsCard extends StatelessWidget {
     );
   }
 }
+

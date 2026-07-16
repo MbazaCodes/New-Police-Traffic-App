@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../core/theme/app_colors.dart';
 import '../data/mock_data.dart';
@@ -254,9 +254,9 @@ class _CitationScreenState extends ConsumerState<CitationScreen> {
                               title: 'Imehifadhiwa',
                               description: 'Rasimu ya Citation imehifadhiwa.',
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Icon(LucideIcons.save, size: 16),
                                 SizedBox(width: 4),
                                 Text(
@@ -288,9 +288,9 @@ class _CitationScreenState extends ConsumerState<CitationScreen> {
                               title: 'Citation Imetolewa',
                               description: 'Citation imewasilishwa na imetumwa kwa dereva.',
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Icon(LucideIcons.send, size: 16),
                                 SizedBox(width: 6),
                                 Text(
@@ -870,3 +870,4 @@ class _UploadBox extends StatelessWidget {
     );
   }
 }
+

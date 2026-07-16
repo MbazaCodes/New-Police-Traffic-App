@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Search,
   Edit3,
@@ -11,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { ADMIN_USERS } from "@/lib/admin-data";
+import { getAdminCreatePath, getAdminEntityPath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
 
 type User = (typeof ADMIN_USERS)[number];
@@ -36,6 +38,8 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export function AdminUsers() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState<User[]>(ADMIN_USERS);
   const [editing, setEditing] = useState<User | null>(null);
@@ -70,6 +74,12 @@ export function AdminUsers() {
         <p className="text-[13px] text-police-muted">
           Dhibiti watumiaji wa mfumo wa Admin & Command Center
         </p>
+        <button
+          onClick={() => router.push(getAdminCreatePath(pathname, "users"))}
+          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#1E88E5]"
+        >
+          Ongeza User
+        </button>
       </div>
 
       {/* Search */}
@@ -110,6 +120,7 @@ export function AdminUsers() {
               {filtered.map((u) => (
                 <tr
                   key={u.id}
+                  onClick={() => router.push(getAdminEntityPath(pathname, "users", u.id))}
                   className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"
                 >
                   <td className="px-4 py-3">
@@ -170,14 +181,20 @@ export function AdminUsers() {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
-                        onClick={() => setEditing(u)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditing(u);
+                        }}
                         className="flex items-center gap-1 rounded-lg bg-police-input px-2 py-1.5 text-[11px] font-semibold text-police-navy hover:bg-police-muted"
                         title="Hariri"
                       >
                         <Edit3 size={12} /> Hariri
                       </button>
                       <button
-                        onClick={() => toggleSuspend(u)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSuspend(u);
+                        }}
                         className={`flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-semibold ${
                           u.status === "active"
                             ? "bg-red-500/15 text-red-500 hover:bg-red-500/25"

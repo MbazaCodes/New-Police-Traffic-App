@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Snack-bar based toast used to mirror the PWA's `toast({...})` calls.
 void showAppToast(BuildContext context, {required String title, String? description}) {

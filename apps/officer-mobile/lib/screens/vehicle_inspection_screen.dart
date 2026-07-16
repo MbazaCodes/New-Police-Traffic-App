@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../core/theme/app_colors.dart';
 import '../data/mock_data.dart';
@@ -18,7 +18,7 @@ class VehicleInspectionScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final bg = isDark ? const Color(0xFF0B1018) : AppColors.grayLight;
-    final v = vehicleInspection;
+    const v = vehicleInspection;
 
     return Scaffold(
       backgroundColor: bg,
@@ -88,9 +88,9 @@ class VehicleInspectionScreen extends ConsumerWidget {
                           if (context.mounted) context.pop();
                         });
                       },
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Icon(LucideIcons.checkCircle2, size: 20, color: Colors.white),
                           SizedBox(width: 8),
                           Text(
@@ -183,9 +183,9 @@ class _VehicleInfoCard extends StatelessWidget {
                   border: Border.all(color: AppColors.blue),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Icon(LucideIcons.pencil, size: 12, color: AppColors.blue),
                     SizedBox(width: 4),
                     Text(
@@ -541,9 +541,9 @@ class _LoadSection extends StatelessWidget {
                       color: AppColors.greenSoft,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(LucideIcons.checkCircle2, size: 14, color: AppColors.green),
                         SizedBox(width: 4),
                         Text(
@@ -749,11 +749,11 @@ class _PhotosSection extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(LucideIcons.cloud, size: 16, color: AppColors.blue),
-                    const SizedBox(width: 6),
+                    SizedBox(width: 6),
                     Text(
                       'Ongeza Picha',
                       style: TextStyle(
@@ -992,7 +992,7 @@ class _SignatureSection extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(LucideIcons.penLine, size: 18, color: subtleColor),
+                    Icon(LucideIcons.pencil, size: 18, color: subtleColor),
                     Row(
                       children: [
                         Icon(LucideIcons.trash2, size: 14, color: subtleColor),
@@ -1010,7 +1010,7 @@ class _SignatureSection extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 24),
-                Align(
+                const Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     'J. Mwinyi',
@@ -1030,3 +1030,4 @@ class _SignatureSection extends StatelessWidget {
     );
   }
 }
+

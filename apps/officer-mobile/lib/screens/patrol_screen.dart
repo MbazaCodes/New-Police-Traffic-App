@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../core/theme/app_colors.dart';
 import '../data/mock_data.dart';
@@ -159,14 +159,14 @@ class _PatrolHero extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),
                   onTap: onStart,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 10,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(
                           LucideIcons.play,
                           size: 16,
@@ -383,7 +383,7 @@ class _PatrolReportForm extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Icon(LucideIcons.cloud, size: 24, color: AppColors.blue),
+                    const Icon(LucideIcons.cloud, size: 24, color: AppColors.blue),
                     const SizedBox(height: 6),
                     Text(
                       'Ongeza picha',
@@ -544,3 +544,4 @@ class _PatrolField extends StatelessWidget {
     );
   }
 }
+

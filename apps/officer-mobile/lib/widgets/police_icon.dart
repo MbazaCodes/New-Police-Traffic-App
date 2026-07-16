@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 /// Maps icon keys used by the PWA's `<PoliceIcon name="..."/>` to actual
 /// [IconData] from [LucideIcons]. Falls back to [LucideIcons.alertTriangle].
@@ -8,7 +8,7 @@ class PoliceIconData {
 
   static IconData fromName(String name) => _map[name] ?? LucideIcons.alertTriangle;
 
-  static const Map<String, IconData> _map = {
+  static final Map<String, IconData> _map = {
     'alert': LucideIcons.alertTriangle,
     'alert-triangle': LucideIcons.alertTriangle,
     'bell': LucideIcons.bell,
@@ -27,7 +27,7 @@ class PoliceIconData {
     'help-circle': LucideIcons.helpCircle,
     'home': LucideIcons.home,
     'map-pin': LucideIcons.mapPin,
-    'route': LucideIcons.route,
+    'route': LucideIcons.mapPin,
     'scan-line': LucideIcons.scanLine,
     'search': LucideIcons.search,
     'settings': LucideIcons.settings,
@@ -35,7 +35,7 @@ class PoliceIconData {
     'shield-alert': LucideIcons.shieldAlert,
     'shield-check': LucideIcons.shieldCheck,
     'smartphone': LucideIcons.smartphone,
-    'traffic-cone': LucideIcons.trafficCone,
+    'traffic-cone': LucideIcons.alertTriangle,
     'user': LucideIcons.user,
     'users': LucideIcons.users,
     'wallet': LucideIcons.wallet,
@@ -59,13 +59,13 @@ class PoliceIconData {
     'image': LucideIcons.image,
     'video': LucideIcons.video,
     'pdf': LucideIcons.fileText,
-    'shield-x': LucideIcons.shieldX,
-    'pen-line': LucideIcons.penLine,
+    'shield-x': LucideIcons.shieldAlert,
+    'pen-line': LucideIcons.pencil,
     'trash': LucideIcons.trash2,
     'printer': LucideIcons.printer,
     'filter': LucideIcons.filter,
     'share': LucideIcons.share2,
-    'message-warning': LucideIcons.messageSquareWarning,
+    'message-warning': LucideIcons.megaphone,
     'hand': LucideIcons.hand,
     'cloud-sun': LucideIcons.cloudSun,
     'sun': LucideIcons.sun,
@@ -106,3 +106,4 @@ class PoliceIcon extends StatelessWidget {
     );
   }
 }
+

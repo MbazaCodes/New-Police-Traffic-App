@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Users,
   Shield,
@@ -29,7 +31,9 @@ import {
   OFFENSE_DISTRIBUTION,
   LIVE_INCIDENTS,
   REGION_STATS,
+  OFFICERS,
 } from "@/lib/admin-data";
+import { getOfficerProfilePath } from "@/lib/admin-navigation";
 import { usePoliceStore } from "@/store/police-store";
 
 const ICON_MAP: Record<string, typeof Users> = {
@@ -52,6 +56,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export function AdminDashboard() {
+  const pathname = usePathname();
   const { setAdminScreen } = usePoliceStore();
 
   return (
@@ -104,6 +109,18 @@ export function AdminDashboard() {
             </div>
           );
         })}
+      </div>
+
+      <div className="rounded-xl bg-police-card p-4 shadow-sm">
+        <h2 className="mb-3 text-[14px] font-bold text-police-navy">Admin Operations</h2>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+          <button onClick={() => setAdminScreen("officers")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Officers</button>
+          <button onClick={() => setAdminScreen("users")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Users</button>
+          <button onClick={() => setAdminScreen("stations")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Stations</button>
+          <button onClick={() => setAdminScreen("posts")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Posts</button>
+          <button onClick={() => setAdminScreen("assignments")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Assignments</button>
+          <button onClick={() => setAdminScreen("incidents")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Incidents</button>
+        </div>
       </div>
 
       {/* Charts row */}
@@ -264,7 +281,15 @@ export function AdminDashboard() {
                   </div>
                   <p className="truncate text-[11px] text-police-muted">
                     <MapPin size={10} className="mr-0.5 inline" />
-                    {inc.location} • {inc.officer}
+                    {inc.location} • {(() => {
+                      const officer = OFFICERS.find((o) => o.name === inc.officer);
+                      if (!officer) return inc.officer;
+                      return (
+                        <Link href={getOfficerProfilePath(pathname, officer.id)} className="font-medium text-[#2196F3] hover:underline">
+                          {inc.officer}
+                        </Link>
+                      );
+                    })()}
                   </p>
                 </div>
                 <span

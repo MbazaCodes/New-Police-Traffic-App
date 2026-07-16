@@ -1,23 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
+import { PwaRegister } from "@/components/pwa-register";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const isAdminMode = process.env.NEXT_PUBLIC_APP_MODE === "admin";
 
 export const metadata: Metadata = {
-  title: "TZ Police Digital Platform — Officer PWA",
-  description: "Tanzania Police Force digital platform for officers. Usalama Wetu, Jukumu Letu.",
-  keywords: ["Tanzania Police", "TPF", "Officer PWA", "Digital Platform"],
+  title: isAdminMode
+    ? "TZ Police — Admin & Command Web"
+    : "TZ Police Digital Platform — Officer PWA",
+  description: isAdminMode
+    ? "Tanzania Police Force — Admin & Command Dashboard. Restricted Access."
+    : "Tanzania Police Force digital platform for officers. Usalama Wetu, Jukumu Letu.",
+  keywords: isAdminMode
+    ? ["Tanzania Police", "TPF", "Admin", "Command Dashboard"]
+    : ["Tanzania Police", "TPF", "Officer PWA", "Digital Platform"],
   authors: [{ name: "Tanzania Police Force" }],
   manifest: "/manifest.json",
   icons: {
@@ -27,17 +25,21 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "TZ Police",
+    title: isAdminMode ? "TZ Police Admin" : "TZ Police",
   },
   openGraph: {
-    title: "TZ Police Digital Platform",
-    description: "Tanzania Police Force — Officer PWA",
+    title: isAdminMode ? "TZ Police Admin & Command" : "TZ Police Digital Platform",
+    description: isAdminMode
+      ? "Tanzania Police Force — Admin & Command Dashboard"
+      : "Tanzania Police Force — Officer PWA",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TZ Police Digital Platform",
-    description: "Tanzania Police Force — Officer PWA",
+    title: isAdminMode ? "TZ Police Admin & Command" : "TZ Police Digital Platform",
+    description: isAdminMode
+      ? "Tanzania Police Force — Admin & Command Dashboard"
+      : "Tanzania Police Force — Officer PWA",
   },
 };
 
@@ -60,10 +62,11 @@ export default function RootLayout({
   return (
     <html lang="sw" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`antialiased bg-background text-foreground`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
+          <PwaRegister />
           <Toaster />
         </ThemeProvider>
       </body>

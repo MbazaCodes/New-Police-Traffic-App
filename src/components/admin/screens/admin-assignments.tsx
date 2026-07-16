@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Plus,
   Users,
@@ -20,6 +21,7 @@ import {
   STATIONS,
   POSTS,
 } from "@/lib/admin-mgmt-data";
+import { getAdminEntityPath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
 
 type Assignment = (typeof ASSIGNMENTS)[number];
@@ -36,6 +38,8 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export function AdminAssignments() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [assigning, setAssigning] = useState<UnassignedOfficer | null>(null);
 
   const totalAssignments = ASSIGNMENTS.length;
@@ -121,6 +125,7 @@ export function AdminAssignments() {
               {ASSIGNMENTS.map((a) => (
                 <tr
                   key={a.id}
+                  onClick={() => router.push(getAdminEntityPath(pathname, "assignments", a.id))}
                   className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"
                 >
                   <td className="px-4 py-3">
@@ -179,24 +184,23 @@ export function AdminAssignments() {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
                       <button
-                        onClick={() =>
-                          toast({
-                            title: "Badilisha Mgao",
-                            description: `Una badilisha mgao wa ${a.officerName}`,
-                          })
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(getAdminEntityPath(pathname, "assignments", a.id));
+                        }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-police-input text-police-navy hover:bg-police-muted"
                         title="Badilisha Mgao"
                       >
                         <ArrowRightLeft size={13} />
                       </button>
                       <button
-                        onClick={() =>
+                        onClick={(e) => {
+                          e.stopPropagation();
                           toast({
                             title: "Ondoa Mgao",
                             description: `Mgao wa ${a.officerName} wa ${a.postName} umebatilishwa`,
-                          })
-                        }
+                          });
+                        }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-500/15 text-red-500 hover:bg-red-500/25"
                         title="Ondoa Mgao"
                       >
