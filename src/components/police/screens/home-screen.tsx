@@ -7,8 +7,10 @@ import { usePoliceStore } from "@/store/police-store";
 import { OFFICER } from "@/lib/police-data";
 
 export function HomeScreen() {
-  const { searchTab, setSearchTab, navigate, openScanner, runSearch } = usePoliceStore();
+  const { searchTab, setSearchTab, navigate, openScanner, runSearch, setSearchEntity } = usePoliceStore();
   const [searchValue, setSearchValue] = useState("");
+
+  const currentEntity = searchTab === "nida" ? "person" : "car";
 
   return (
     <div className="min-h-full bg-police">
@@ -106,6 +108,7 @@ export function HomeScreen() {
               onChange={(e) => setSearchValue(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && searchValue.trim()) {
+                  setSearchEntity(currentEntity);
                   runSearch(searchValue);
                   navigate("search-results");
                 }
@@ -124,6 +127,7 @@ export function HomeScreen() {
           <button
             onClick={() => {
               if (searchValue.trim()) {
+                setSearchEntity(currentEntity);
                 runSearch(searchValue);
               }
               navigate("search-results");

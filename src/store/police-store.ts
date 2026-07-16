@@ -59,8 +59,10 @@ interface PoliceState {
 
   // Search
   searchQuery: string;
+  searchEntity: "person" | "car" | "device";
   searchStatus: "idle" | "searching" | "found" | "not-found";
   setSearchQuery: (q: string) => void;
+  setSearchEntity: (t: "person" | "car" | "device") => void;
   runSearch: (query: string) => void;
   clearSearch: () => void;
 
@@ -143,8 +145,10 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
   setCitizenSearchType: (t: "name" | "nida" | "mobile") => set({ citizenSearchType: t }),
 
   searchQuery: "",
+  searchEntity: "car",
   searchStatus: "idle",
   setSearchQuery: (q) => set({ searchQuery: q }),
+  setSearchEntity: (t) => set({ searchEntity: t }),
   runSearch: (query) => {
     set({ searchQuery: query, searchStatus: "searching" });
     // Simulate fetching existing record

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo } from "react";
 import {
   ChevronLeft,
   Share2,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { SEARCH_RESULT } from "@/lib/police-data";
+import { findMatchingMissingAlerts } from "@/lib/shared-missing-alerts";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, SearchX } from "lucide-react";
 
@@ -24,8 +26,29 @@ export function SearchResultsScreen() {
   const navigate = usePoliceStore((s) => s.navigate);
   const searchStatus = usePoliceStore((s) => s.searchStatus);
   const searchQuery = usePoliceStore((s) => s.searchQuery);
+  const searchEntity = usePoliceStore((s) => s.searchEntity);
   const setCitationPrefill = usePoliceStore((s) => s.setCitationPrefill);
   const r = SEARCH_RESULT;
+
+  const matchedAlerts = useMemo(() => {
+    const queries = [searchQuery, r.plate, r.driver.nida, r.driver.name].filter(Boolean);
+    const all = queries.flatMap((q) => findMatchingMissingAlerts(q, searchEntity));
+    const seen = new Set<string>();
+    return all.filter((a) => {
+      if (seen.has(a.id)) return false;
+      seen.add(a.id);
+      return true;
+    });
+  }, [r.driver.name, r.driver.nida, r.plate, searchEntity, searchQuery]);
+
+  useEffect(() => {
+    if (searchStatus !== "found" || matchedAlerts.length === 0) return;
+    const first = matchedAlerts[0];
+    toast({
+      title: "ALERT: Rekodi ya Missing Imeonekana",
+      description: `${first.title} (${first.identifier})`,
+    });
+  }, [matchedAlerts, searchStatus]);
 
   const goToCitation = () => {
     setCitationPrefill({
@@ -119,6 +142,23 @@ export function SearchResultsScreen() {
             </div>
           </div>
         </div>
+
+        {matchedAlerts.length > 0 && (
+          <div className="rounded-2xl border border-red-300 bg-red-50 p-4">
+            <p className="text-[12px] font-extrabold uppercase text-red-700">Missing Registry Alert</p>
+            <p className="mt-1 text-[12px] text-police">
+              {matchedAlerts[0].title} • {matchedAlerts[0].identifier}
+            </p>
+            <p className="mt-1 text-[11px] text-police-muted">{matchedAlerts[0].details}</p>
+            {matchedAlerts[0].imageUrl && (
+              <img
+                src={matchedAlerts[0].imageUrl}
+                alt="Missing record"
+                className="mt-2 h-24 w-24 rounded-lg object-cover"
+              />
+            )}
+          </div>
+        )}
 
         {/* Risk Score */}
         <div className="rounded-2xl bg-police-card p-4 shadow-sm">

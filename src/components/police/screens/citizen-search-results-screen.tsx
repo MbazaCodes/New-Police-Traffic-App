@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo } from "react";
 import {
   ChevronLeft,
   Share2,
@@ -25,14 +26,35 @@ import {
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { CITIZEN_RESULT } from "@/lib/admin-mgmt-data";
+import { findMatchingMissingAlerts } from "@/lib/shared-missing-alerts";
 import { toast } from "@/hooks/use-toast";
 
 export function CitizenSearchResultsScreen() {
   const goBack = usePoliceStore((s) => s.goBack);
   const searchStatus = usePoliceStore((s) => s.searchStatus);
   const searchQuery = usePoliceStore((s) => s.searchQuery);
+  const searchEntity = usePoliceStore((s) => s.searchEntity);
   const runSearch = usePoliceStore((s) => s.runSearch);
   const r = CITIZEN_RESULT;
+
+  const matchedAlerts = useMemo(() => {
+    const queries = [searchQuery, r.name, r.nida, r.mobile, ...r.vehicles.map((v) => v.plate)].filter(Boolean);
+    const all = queries.flatMap((q) => findMatchingMissingAlerts(q, searchEntity));
+    const seen = new Set<string>();
+    return all.filter((a) => {
+      if (seen.has(a.id)) return false;
+      seen.add(a.id);
+      return true;
+    });
+  }, [r.mobile, r.name, r.nida, r.vehicles, searchEntity, searchQuery]);
+
+  useEffect(() => {
+    if (searchStatus !== "found" || matchedAlerts.length === 0) return;
+    toast({
+      title: "ALERT: Missing Rekodi Imeonekana",
+      description: `${matchedAlerts[0].title} (${matchedAlerts[0].identifier})`,
+    });
+  }, [matchedAlerts, searchStatus]);
 
   const initials = r.name
     .split(" ")
@@ -136,7 +158,7 @@ export function CitizenSearchResultsScreen() {
           </div>
 
           {/* Alert box (only if alerts exist) */}
-          {r.alerts.length > 0 && (
+          {(r.alerts.length > 0 || matchedAlerts.length > 0) && (
             <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
               <div className="flex items-start gap-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100">
@@ -149,7 +171,14 @@ export function CitizenSearchResultsScreen() {
                       Tahadhari
                     </span>
                   </div>
-                  <p className="mt-1 text-[12px] leading-snug text-police">{r.alerts[0]}</p>
+                  <p className="mt-1 text-[12px] leading-snug text-police">
+                    {matchedAlerts[0]?.details ?? r.alerts[0]}
+                  </p>
+                  {matchedAlerts[0] && (
+                    <p className="mt-1 text-[11px] text-red-700">
+                      {matchedAlerts[0].title} • {matchedAlerts[0].identifier}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

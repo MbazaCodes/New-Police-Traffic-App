@@ -16,7 +16,7 @@ import { OFFICER } from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 
 export function GeneralHomeScreen() {
-  const { citizenSearchType, setCitizenSearchType, navigate, runSearch } = usePoliceStore();
+  const { citizenSearchType, setCitizenSearchType, navigate, runSearch, setSearchEntity } = usePoliceStore();
   const [searchValue, setSearchValue] = useState("");
 
   const placeholder =
@@ -34,6 +34,7 @@ export function GeneralHomeScreen() {
       });
       return;
     }
+    setSearchEntity("person");
     runSearch(searchValue);
     navigate("citizen-search-results");
   };

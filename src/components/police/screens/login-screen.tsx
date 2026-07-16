@@ -15,7 +15,9 @@ import {
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import type { OfficerRole } from "@/store/police-store";
-import { Car, UserCheck } from "lucide-react";
+import { Car, UserCheck, UserCog } from "lucide-react";
+
+type LoginRole = OfficerRole | "commander";
 
 type Step = "credentials" | "otp" | "success";
 
@@ -27,7 +29,7 @@ export function LoginScreen() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [sending, setSending] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
-  const [role, setRole] = useState<OfficerRole>("officer-traffic");
+  const [role, setRole] = useState<LoginRole>("officer-traffic");
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Resend countdown
@@ -76,7 +78,13 @@ export function LoginScreen() {
   const verifyOtp = () => {
     if (otp.join("").length < 6) return;
     setStep("success");
-    setTimeout(() => login(role), 1100);
+    setTimeout(() => {
+      if (role === "commander") {
+        window.location.href = "/command";
+        return;
+      }
+      login(role);
+    }, 1100);
   };
 
   const resendOtp = () => {
@@ -133,10 +141,11 @@ export function LoginScreen() {
               </p>
 
               {/* Role selector */}
-              <div className="mt-4 grid grid-cols-2 gap-2">
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                 {([
                   { id: "officer-traffic", label: "Afisa Trafiki", sublabel: "Traffic Officer", icon: Car },
                   { id: "officer-general", label: "Afisa Polisi", sublabel: "General Officer", icon: UserCheck },
+                  { id: "commander", label: "Station Commissioner", sublabel: "Commissioner Access", icon: UserCog },
                 ] as const).map((r) => {
                   const Icon = r.icon;
                   const active = role === r.id;

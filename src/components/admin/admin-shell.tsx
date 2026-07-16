@@ -68,7 +68,7 @@ export function AdminShell() {
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
 
-  const roleLabel = userRole === "commander" ? "Command Center" : "Admin Panel";
+  const roleLabel = userRole === "commander" ? "Station Commissioner" : "Admin Panel";
   const navItems = userRole === "commander" ? COMMANDER_NAV : ADMIN_NAV;
 
   return (
