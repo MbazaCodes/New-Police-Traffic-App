@@ -19,7 +19,18 @@ import { Shield, Monitor, Star, Car, UserCheck } from "lucide-react";
 
 type Step = "credentials" | "otp" | "success";
 
-export function LoginScreen() {
+// Role options per mode
+const OFFICER_ROLES = [
+  { id: "officer-traffic" as UserRole, label: "Afisa Trafiki", sublabel: "Traffic Officer", icon: Car },
+  { id: "officer-general" as UserRole, label: "Afisa Polisi", sublabel: "General Officer", icon: UserCheck },
+];
+
+const ADMIN_ROLES = [
+  { id: "admin" as UserRole, label: "Admin", sublabel: "Users & Stations", icon: Monitor },
+  { id: "commander" as UserRole, label: "Kamanda", sublabel: "Command Center", icon: Star },
+];
+
+export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }) {
   const login = usePoliceStore((s) => s.login);
   const [step, setStep] = useState<Step>("credentials");
   const [method, setMethod] = useState<"username" | "phone">("username");
@@ -27,7 +38,8 @@ export function LoginScreen() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [sending, setSending] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
-  const [role, setRole] = useState<UserRole>("officer");
+  const roleOptions = mode === "admin" ? ADMIN_ROLES : OFFICER_ROLES;
+  const [role, setRole] = useState<UserRole>(roleOptions[0].id);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Resend countdown
@@ -134,12 +146,7 @@ export function LoginScreen() {
 
               {/* Role selector */}
               <div className="mt-4 grid grid-cols-2 gap-2">
-                {([
-                  { id: "officer-traffic", label: "Afisa Trafiki", sublabel: "Traffic Officer", icon: Car },
-                  { id: "officer-general", label: "Afisa Polisi", sublabel: "General Officer", icon: UserCheck },
-                  { id: "admin", label: "Admin", sublabel: "Users & Stations", icon: Monitor },
-                  { id: "commander", label: "Kamanda", sublabel: "Command Center", icon: Star },
-                ] as const).map((r) => {
+                {roleOptions.map((r) => {
                   const Icon = r.icon;
                   const active = role === r.id;
                   return (

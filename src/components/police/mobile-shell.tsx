@@ -20,7 +20,7 @@ import { Pf3Screen } from "./screens/pf3-screen";
 import { CitationScreen } from "./screens/citation-screen";
 import { HistoryScreen } from "./screens/history-screen";
 import { CameraScannerModal } from "./camera-scanner-modal";
-import { AdminShell } from "../admin/admin-shell";
+import { Monitor } from "lucide-react";
 import type { ScreenId } from "@/lib/police-data";
 
 // Screens that hide the bottom nav (full-screen forms / auth)
@@ -38,23 +38,32 @@ const NO_NAV_SCREENS: ScreenId[] = [
 export function MobileShell() {
   const { isAuthenticated, currentScreen, userRole } = usePoliceStore();
 
-  // Not logged in -> always show login
+  // Not logged in -> always show login (officer mode only)
   if (!isAuthenticated) {
     return (
       <PhoneFrame darkStatus>
         <div className="flex h-full flex-col overflow-hidden">
           <StatusBar dark />
           <div className="flex-1 overflow-y-auto">
-            <LoginScreen />
+            <LoginScreen mode="officer" />
           </div>
         </div>
       </PhoneFrame>
     );
   }
 
-  // Admin / Commander -> full desktop Command Center (no phone frame)
+  // If somehow an admin/commander role reaches here, redirect to admin app
   if (userRole === "admin" || userRole === "commander") {
-    return <AdminShell />;
+    return (
+      <PhoneFrame>
+        <div className="flex h-full flex-col items-center justify-center gap-4 bg-police p-6 text-center">
+          <Monitor size={48} className="text-police-navy" />
+          <p className="text-[14px] font-bold text-police-navy">Admin / Commander</p>
+          <p className="text-[12px] text-police-muted">Tafadhali nenda kwenye Admin Web App</p>
+          <a href="/admin" className="rounded-xl bg-[#2196F3] px-5 py-2.5 text-[13px] font-bold text-white">Fungua Admin App</a>
+        </div>
+      </PhoneFrame>
+    );
   }
 
   const isGeneral = userRole === "officer-general";
