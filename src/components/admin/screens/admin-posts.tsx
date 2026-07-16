@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Search,
   X,
@@ -16,6 +17,7 @@ import {
   TrafficCone,
 } from "lucide-react";
 import { POSTS } from "@/lib/admin-mgmt-data";
+import { getAdminCreatePath, getAdminEntityPath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
 
 type Post = (typeof POSTS)[number];
@@ -42,6 +44,8 @@ const FILTER_TABS = [
 ] as const;
 
 export function AdminPosts() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<string>("all");
 
@@ -75,12 +79,7 @@ export function AdminPosts() {
           </p>
         </div>
         <button
-          onClick={() =>
-            toast({
-              title: "Ongeza Posti",
-              description: "Fomu ya kuongeza posti mpya itafungwa hapa",
-            })
-          }
+          onClick={() => router.push(getAdminCreatePath(pathname, "posts"))}
           className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#1E88E5]"
         >
           <Plus size={14} /> Ongeza Posti
@@ -168,6 +167,7 @@ export function AdminPosts() {
               {filtered.map((p) => (
                 <tr
                   key={p.id}
+                  onClick={() => router.push(getAdminEntityPath(pathname, "posts", p.id))}
                   className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"
                 >
                   <td className="px-4 py-3">
@@ -235,36 +235,33 @@ export function AdminPosts() {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
                       <button
-                        onClick={() =>
-                          toast({
-                            title: "Maelezo ya Posti",
-                            description: `Unaangalia maelezo ya ${p.name}`,
-                          })
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(getAdminEntityPath(pathname, "posts", p.id));
+                        }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-police-input text-police-navy hover:bg-police-muted"
                         title="Angalia"
                       >
                         <Eye size={13} />
                       </button>
                       <button
-                        onClick={() =>
-                          toast({
-                            title: "Hariri Posti",
-                            description: `Una hariri taarifa za ${p.name}`,
-                          })
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(getAdminEntityPath(pathname, "posts", p.id));
+                        }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-police-input text-police-navy hover:bg-police-muted"
                         title="Hariri"
                       >
                         <Pencil size={13} />
                       </button>
                       <button
-                        onClick={() =>
+                        onClick={(e) => {
+                          e.stopPropagation();
                           toast({
                             title: "Mgao wa Afisa",
                             description: `Fomu ya kumgawia afisa kwenye ${p.name} itafungwa`,
-                          })
-                        }
+                          });
+                        }}
                         className="inline-flex items-center gap-1 rounded-lg bg-[#2196F3]/15 px-2 py-1.5 text-[11px] font-semibold text-[#2196F3] hover:bg-[#2196F3]/25"
                         title="Mgawie Afisa"
                       >

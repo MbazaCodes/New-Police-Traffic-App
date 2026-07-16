@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   Radio,
@@ -160,6 +162,7 @@ function MapView({ patrols }: { patrols: typeof ACTIVE_PATROLS }) {
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export function CommandCenter() {
+  const pathname = usePathname();
   const [radioMessage, setRadioMessage] = useState("");
   const [selectedPatrol, setSelectedPatrol] = useState<string | null>(null);
   const [logs, setLogs] = useState(RADIO_LOGS);
@@ -187,6 +190,9 @@ export function CommandCenter() {
   }
 
   const sosOfficer = ACTIVE_PATROLS.find((p) => p.status === "sos");
+  const sosOfficerId = sosOfficer
+    ? OFFICERS.find((o) => o.name === sosOfficer.officer)?.id
+    : undefined;
 
   return (
     <div className="space-y-4">
@@ -217,7 +223,13 @@ export function CommandCenter() {
           <div className="flex-1">
             <p className="text-[14px] font-bold text-red-500">🚨 SIMU YA MSAADA — SOS</p>
             <p className="text-[12px] text-red-400">
-              {sosOfficer.officer} · {sosOfficer.unit} · {sosOfficer.area}
+              {sosOfficerId ? (
+                <Link href={`/command/officers/${encodeURIComponent(sosOfficerId)}`} className="font-semibold text-red-300 underline-offset-2 hover:underline">
+                  {sosOfficer.officer}
+                </Link>
+              ) : (
+                sosOfficer.officer
+              )} · {sosOfficer.unit} · {sosOfficer.area}
             </p>
           </div>
           <button className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-[13px] font-bold text-white hover:bg-red-600">
@@ -290,7 +302,21 @@ export function CommandCenter() {
                   {p.unit.split("-")[1]}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[12px] font-semibold text-police">{p.officer}</p>
+                  <p className="truncate text-[12px] font-semibold text-police">
+                    {(() => {
+                      const officer = OFFICERS.find((o) => o.name === p.officer);
+                      if (!officer) return p.officer;
+                      return (
+                        <Link
+                          href={`${pathname.startsWith("/command") ? "/command" : "/admin"}/officers/${encodeURIComponent(officer.id)}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-[#2196F3] hover:underline"
+                        >
+                          {p.officer}
+                        </Link>
+                      );
+                    })()}
+                  </p>
                   <p className="text-[10px] text-police-muted">{p.area} · {p.lastUpdate} iliyopita</p>
                 </div>
                 <span className={`shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-bold ${PATROL_STATUS_STYLE[p.status]}`}>

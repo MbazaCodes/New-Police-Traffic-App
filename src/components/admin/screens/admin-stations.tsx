@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Search,
   X,
@@ -16,6 +17,7 @@ import {
   Network,
 } from "lucide-react";
 import { STATIONS } from "@/lib/admin-mgmt-data";
+import { getAdminEntityPath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
 
 type Station = (typeof STATIONS)[number];
@@ -37,6 +39,8 @@ const FILTER_TABS = [
 ] as const;
 
 export function AdminStations() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<string>("all");
 
@@ -165,6 +169,7 @@ export function AdminStations() {
               {filtered.map((s) => (
                 <tr
                   key={s.id}
+                  onClick={() => router.push(getAdminEntityPath(pathname, "stations", s.id))}
                   className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"
                 >
                   <td className="px-4 py-3">
@@ -226,36 +231,33 @@ export function AdminStations() {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
                       <button
-                        onClick={() =>
-                          toast({
-                            title: "Maelezo ya Kituo",
-                            description: `Unaangalia maelezo ya ${s.name}`,
-                          })
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(getAdminEntityPath(pathname, "stations", s.id));
+                        }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-police-input text-police-navy hover:bg-police-muted"
                         title="Angalia"
                       >
                         <Eye size={13} />
                       </button>
                       <button
-                        onClick={() =>
-                          toast({
-                            title: "Hariri Kituo",
-                            description: `Una hariri taarifa za ${s.name}`,
-                          })
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(getAdminEntityPath(pathname, "stations", s.id));
+                        }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-police-input text-police-navy hover:bg-police-muted"
                         title="Hariri"
                       >
                         <Pencil size={13} />
                       </button>
                       <button
-                        onClick={() =>
+                        onClick={(e) => {
+                          e.stopPropagation();
                           toast({
                             title: "Dhibiti Posti",
                             description: `Una dhibiti posti za ${s.name}`,
-                          })
-                        }
+                          });
+                        }}
                         className="inline-flex items-center gap-1 rounded-lg bg-[#2196F3]/15 px-2 py-1.5 text-[11px] font-semibold text-[#2196F3] hover:bg-[#2196F3]/25"
                         title="Dhibiti Posti"
                       >

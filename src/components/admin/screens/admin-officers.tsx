@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Search,
   Filter,
@@ -13,6 +14,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { OFFICERS } from "@/lib/admin-data";
+import { getOfficerProfilePath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
 
 type Officer = (typeof OFFICERS)[number];
@@ -37,6 +39,8 @@ const STATUS_FILTERS = [
 ] as const;
 
 export function AdminOfficers() {
+  const router = useRouter();
+  const pathname = usePathname();
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [unitFilter, setUnitFilter] = useState<string>("all");
@@ -63,6 +67,10 @@ export function AdminOfficers() {
   });
 
   const activeCount = OFFICERS.filter((o) => o.status === "active").length;
+
+  const openOfficerProfile = (officerId: string) => {
+    router.push(getOfficerProfilePath(pathname, officerId));
+  };
 
   return (
     <div className="space-y-5">
@@ -165,7 +173,16 @@ export function AdminOfficers() {
                           .join("")}
                       </div>
                       <div>
-                        <p className="font-semibold text-police">{o.name}</p>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openOfficerProfile(o.id);
+                          }}
+                          className="font-semibold text-police hover:underline"
+                        >
+                          {o.name}
+                        </button>
                         <p className="text-[10px] text-police-faint">{o.rank}</p>
                       </div>
                     </div>
@@ -199,11 +216,11 @@ export function AdminOfficers() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelected(o);
+                          openOfficerProfile(o.id);
                       }}
                       className="inline-flex items-center gap-0.5 rounded-lg bg-police-input px-2 py-1 text-[11px] font-semibold text-police-navy hover:bg-police-muted"
                     >
-                      Angalia <ChevronRight size={12} />
+                        Profile <ChevronRight size={12} />
                     </button>
                   </td>
                 </tr>

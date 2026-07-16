@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Shield,
   MapPin,
@@ -9,10 +11,12 @@ import {
   CheckCircle2,
   Navigation,
 } from "lucide-react";
-import { ACTIVE_PATROLS } from "@/lib/admin-data";
+import { ACTIVE_PATROLS, OFFICERS } from "@/lib/admin-data";
+import { getOfficerProfilePath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
 
 export function AdminPatrols() {
+  const pathname = usePathname();
   const total = ACTIVE_PATROLS.length;
   const totalDistance = ACTIVE_PATROLS.reduce(
     (sum, p) => sum + parseFloat(p.distance),
@@ -79,7 +83,15 @@ export function AdminPatrols() {
                     </div>
                     <div>
                       <p className="text-[13px] font-semibold text-police">
-                        {p.officer}
+                        {(() => {
+                          const officer = OFFICERS.find((o) => o.name === p.officer);
+                          if (!officer) return p.officer;
+                          return (
+                            <Link href={getOfficerProfilePath(pathname, officer.id)} className="hover:underline text-[#2196F3]">
+                              {p.officer}
+                            </Link>
+                          );
+                        })()}
                       </p>
                       <p className="text-[11px] text-police-muted">
                         <MapPin size={10} className="mr-0.5 inline" />

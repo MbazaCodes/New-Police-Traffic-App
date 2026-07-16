@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   AlertTriangle,
   MapPin,
@@ -10,7 +12,8 @@ import {
   Clock,
   User,
 } from "lucide-react";
-import { ADMIN_INCIDENTS } from "@/lib/admin-data";
+import { ADMIN_INCIDENTS, OFFICERS } from "@/lib/admin-data";
+import { getOfficerProfilePath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
 
 type Incident = (typeof ADMIN_INCIDENTS)[number];
@@ -50,6 +53,8 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export function AdminIncidents() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [tab, setTab] = useState<string>("all");
   const [selected, setSelected] = useState<Incident | null>(null);
 
@@ -122,6 +127,9 @@ export function AdminIncidents() {
             </thead>
             <tbody>
               {filtered.map((inc) => (
+                (() => {
+                  const officer = OFFICERS.find((o) => o.name === inc.assignedTo);
+                  return (
                 <tr
                   key={inc.id}
                   className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"
@@ -161,7 +169,15 @@ export function AdminIncidents() {
                       {STATUS_LABEL[inc.status]}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-police-muted">{inc.assignedTo}</td>
+                  <td className="px-4 py-3 text-police-muted">
+                    {officer ? (
+                      <Link href={getOfficerProfilePath(pathname, officer.id)} className="font-medium text-[#2196F3] hover:underline">
+                        {inc.assignedTo}
+                      </Link>
+                    ) : (
+                      inc.assignedTo
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-police-muted">
                     <span className="line-clamp-1 max-w-[200px]">
                       {inc.description}
@@ -182,7 +198,10 @@ export function AdminIncidents() {
                         <UserPlus size={12} /> Panga
                       </button>
                       <button
-                        onClick={() => setSelected(inc)}
+                        onClick={() => {
+                          const base = pathname.startsWith("/command") ? "/command" : "/admin";
+                          router.push(`${base}/incidents/${encodeURIComponent(inc.id)}`);
+                        }}
                         className="flex items-center gap-1 rounded-lg bg-police-input px-2 py-1.5 text-[11px] font-semibold text-police-navy hover:bg-police-muted"
                         title="Angalia"
                       >
@@ -191,6 +210,8 @@ export function AdminIncidents() {
                     </div>
                   </td>
                 </tr>
+                  );
+                })()
               ))}
             </tbody>
           </table>

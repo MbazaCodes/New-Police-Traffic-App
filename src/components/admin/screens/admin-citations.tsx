@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { Download, FileText, CheckCircle2, XCircle, Wallet } from "lucide-react";
-import { ADMIN_CITATIONS } from "@/lib/admin-data";
+import { ADMIN_CITATIONS, OFFICERS } from "@/lib/admin-data";
+import { getOfficerProfilePath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
 
 const TABS = [
@@ -22,6 +25,8 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export function AdminCitations() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [tab, setTab] = useState<string>("all");
 
   const stats = useMemo(() => {
@@ -126,11 +131,10 @@ export function AdminCitations() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((c) => (
-                <tr
-                  key={c.id}
-                  className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"
-                >
+              {filtered.map((c) => {
+                const officer = OFFICERS.find((o) => o.name === c.officer);
+                return (
+                <tr key={c.id} className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0">
                   <td className="px-4 py-3 font-mono text-[11px] font-semibold text-police-navy">
                     {c.id}
                   </td>
@@ -143,7 +147,7 @@ export function AdminCitations() {
                   <td className="px-4 py-3 text-police-muted">{c.driver}</td>
                   <td className="px-4 py-3 text-police-muted">{c.date}</td>
                   <td className="px-4 py-3 text-right font-semibold text-police-navy">
-                    TZS {parseInt(c.amount, 10).toLocaleString()}
+                    TZS {parseInt(c.amount.replace(/[^\d]/g, ""), 10).toLocaleString()}
                   </td>
                   <td className="px-4 py-3">
                     <span
@@ -154,16 +158,22 @@ export function AdminCitations() {
                       {STATUS_LABEL[c.status]}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-police-muted">{c.officer}</td>
+                  <td className="px-4 py-3 text-police-muted">
+                    {officer ? (
+                      <Link href={getOfficerProfilePath(pathname, officer.id)} className="font-medium text-[#2196F3] hover:underline">
+                        {c.officer}
+                      </Link>
+                    ) : (
+                      c.officer
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
-                        onClick={() =>
-                          toast({
-                            title: "Inatazwa",
-                            description: `Citation ${c.id} inaonyeshwa`,
-                          })
-                        }
+                        onClick={() => {
+                          const base = pathname.startsWith("/command") ? "/command" : "/admin";
+                          router.push(`${base}/citations/${encodeURIComponent(c.id)}`);
+                        }}
                         className="rounded-lg bg-police-input px-2 py-1.5 text-[11px] font-semibold text-police-navy hover:bg-police-muted"
                       >
                         Tazama
@@ -184,7 +194,8 @@ export function AdminCitations() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
