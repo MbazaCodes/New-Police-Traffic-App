@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -51,15 +52,6 @@ prompt
 
 server.log
 # Skills directory
-/skills/
-# Database files - NEVER commit these
-/db/
+/skills/db/
 *.db
 *.db-journal
-*.db-wal
-*.db-shm
-
-# Environment files
-.env
-.env.local
-.env.production

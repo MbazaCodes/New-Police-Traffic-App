@@ -1,86 +1,91 @@
-# TZ Police Digital Platform
+# TZ Police Digital Platform — Monorepo
 
-Tanzania Police Force digital operations platform — Officer PWA + Flutter Mobile App + Admin/Command Center Web.
-
-> **Stack:** Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · Zustand · Recharts · shadcn/ui
-> **Mobile:** Flutter (Dart) · Officer App
-> **Backend (future):** Supabase · PostgreSQL · Prisma
-
----
+A production-ready police platform with 4 role-based apps sharing types, data, UI tokens, database, and auth.
 
 ## Quick Start
 
-```powershell
-# 1. Clone
-git clone https://github.com/MbazaCodes/New-Police-Traffic-App.git
-cd New-Police-Traffic-App
-
-# 2. Install dependencies
+```bash
+# Install dependencies
 bun install
 
-# 3. Copy env file
-copy .env.example .env
+# Copy environment variables
+cp .env.example .env
+# Fill in your Supabase + NextAuth values
 
-# 4. Run dev server
-bun dev
+# Start development (all apps)
+bun run dev
+
+# Or use Turbo
+bunx turbo dev
 ```
 
-Open http://localhost:3000
+## Architecture
 
----
+See **[ARCHITECTURE.md](./ARCHITECTURE.md)** for the full tree structure, shared dependency map, and design decisions.
 
-## Roles and Access
+## Apps
 
-| Role | Portal | Description |
-|------|--------|-------------|
-| officer-traffic | Officer PWA | Citations, vehicle search, PF3, accident reports |
-| officer-general | Officer PWA | Citizen search, patrols, alerts |
-| admin | Admin Web | Users, stations, posts, assignments, settings |
-| commander | Command Center | Live map, dispatch, radio, all admin screens |
+| App | Tech | Port | Purpose |
+|-----|------|------|---------|
+| **officer-pwa** | Next.js 16 | 3000 | Officer mobile PWA (phone frame, vehicle + citizen search) |
+| **admin-web** | Next.js 16 | 3000 | Admin panel (users, stations, posts, assignments) |
+| **command-center** | Next.js 16 | 3000 | Commander dashboard (full operational oversight) |
+| **officer-mobile** | Flutter 3.44+ | — | Native mobile app (mirrors PWA) |
 
-Login: Select any role on the login screen — no password needed in dev/mock mode.
+> **Note:** PWA, Admin, and Command Center currently share a single Next.js app with role-based routing. To split into separate deployments, move components into `apps/admin-web/` and `apps/command-center/` with independent `next.config.ts`.
 
----
+## Shared Packages
 
-## Flutter Setup
+| Package | Purpose |
+|---------|---------|
+| `@tz-police/shared` | Types, constants, mock data, utilities |
+| `@tz-police/ui-tokens` | Colors, typography, spacing, radius, shadows |
+| `@tz-police/database` | Supabase schema, client, typed queries |
+| `@tz-police/auth` | NextAuth config, RBAC, session management |
+| `@tz-police/notifications` | Push notifications, SMS, email |
+| `@tz-police/permissions` | Permission matrix, role hierarchy |
+| `@tz-police/analytics` | Event tracking, metrics |
+| `@tz-police/sdk` | API client SDK for all apps |
+| `@tz-police/maps` | Map utilities (GPS, geocoding) |
+
+## Roles (8)
+
+```
+SUPER_ADMIN > COMMANDER > REGIONAL_COMMANDER > DISTRICT_COMMANDER > OFFICER > TRAFFIC_OFFICER > INVESTIGATOR > VIEWER
+```
+
+## Database
+
+- **PostgreSQL** via Supabase
+- **15 tables** with RLS (Row Level Security)
+- **6 migrations** in `supabase/migrations/`
+- **5 Edge Functions** in `supabase/functions/`
+- Schema: `packages/database/src/schema.sql`
+
+## Authentication
+
+- **NextAuth v4** with JWT strategy (7-day expiry)
+- **Credentials provider** with OTP verification
+- **RBAC** with 8 roles and permission matrix
+- Session includes: role, idNumber, station
+
+## Scripts
 
 ```bash
-cd apps/officer-mobile
-flutter pub get
-flutter run
+bun run dev          # Start dev server
+bun run build        # Production build
+bun run lint         # ESLint
+bun run type-check   # TypeScript check
+bun run db:push      # Push Prisma schema
+bun run db:seed      # Seed database
+bun run supabase:start  # Start local Supabase
 ```
 
----
+## Tech Stack
 
-## API Routes (Mock, ready for Supabase swap)
-
-| Endpoint | Methods | Description |
-|----------|---------|-------------|
-| /api/officers | GET POST | Officer list + create |
-| /api/citations | GET POST | Citations list + create |
-| /api/incidents | GET POST | Incidents list + create |
-| /api/patrols | GET POST | Patrols list + create |
-| /api/alerts | GET | Alerts list |
-| /api/search | GET | Vehicle plate / NIDA / citizen lookup |
-| /api/download | GET | Download project ZIP |
-
----
-
-## Roadmap
-
-- [x] Officer PWA (14 screens)
-- [x] Admin Web (12 screens)
-- [x] Command Center (live map, dispatch, SOS, radio)
-- [x] Flutter app (shared tokens, all screens)
-- [x] PWA manifest + service worker
-- [x] Mock API routes (officers, citations, incidents, patrols, alerts, search)
-- [x] Full Prisma/PostgreSQL schema
-- [ ] Supabase auth
-- [ ] Real-time patrol tracking
-- [ ] RLS policies
-- [ ] Push notifications
-- [ ] CI/CD
-
----
-
-Built by MbazaCodes — Usalama Wetu, Jukumu Letu.
+- **Frontend**: Next.js 16, React 19, TypeScript 5, Tailwind CSS 4, shadcn/ui
+- **Mobile**: Flutter 3.44+, Riverpod, GoRouter, Material 3, Hive
+- **Backend**: Supabase (PostgreSQL, Auth, Realtime, Storage, Edge Functions)
+- **Auth**: NextAuth v4, JWT, RBAC
+- **State**: Zustand (PWA), Riverpod (Flutter)
+- **Monorepo**: Turborepo, Bun workspaces

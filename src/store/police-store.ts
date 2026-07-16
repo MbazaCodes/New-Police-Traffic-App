@@ -6,7 +6,6 @@ import type { ScreenId } from "@/lib/police-data";
 export type UserRole = "officer-traffic" | "officer-general" | "admin" | "commander";
 export type AdminScreen =
   | "dashboard"
-  | "command-center"
   | "officers"
   | "incidents"
   | "citations"

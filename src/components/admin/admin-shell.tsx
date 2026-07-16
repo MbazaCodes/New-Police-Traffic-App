@@ -21,7 +21,6 @@ import {
   Building2,
   Network,
   ArrowRightLeft,
-  Radio,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { usePoliceStore, type AdminScreen } from "@/store/police-store";
@@ -38,11 +37,9 @@ import { AdminSettings } from "./screens/admin-settings";
 import { AdminStations } from "./screens/admin-stations";
 import { AdminPosts } from "./screens/admin-posts";
 import { AdminAssignments } from "./screens/admin-assignments";
-import { CommandCenter } from "./screens/command-center";
 
 const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "command-center", label: "Kituo cha Amri", icon: Radio, badge: 1 },
   { id: "officers", label: "Maofisa", icon: Users },
   { id: "incidents", label: "Matukio", icon: AlertTriangle, badge: 5 },
   { id: "citations", label: "Citations", icon: FileText },
@@ -211,8 +208,6 @@ function renderAdminScreen(screen: AdminScreen) {
   switch (screen) {
     case "dashboard":
       return <AdminDashboard />;
-    case "command-center":
-      return <CommandCenter />;
     case "officers":
       return <AdminOfficers />;
     case "incidents":

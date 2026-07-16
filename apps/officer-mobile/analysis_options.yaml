@@ -6,20 +6,12 @@ analyzer:
     - "**/*.freezed.dart"
   errors:
     invalid_annotation_target: ignore
-    # Suppress during active dev — re-enable before prod
-    todo: ignore
-    deprecated_member_use: ignore
-  language:
-    strict-casts: false
-    strict-inference: false
 
 linter:
   rules:
-    prefer_const_constructors: true
-    prefer_const_literals_to_create_immutables: true
-    prefer_const_declarations: true
-    prefer_single_quotes: true
-    sort_child_properties_last: true
-    avoid_print: false        # allow during dev
-    use_key_in_widget_constructors: false
-    prefer_final_fields: false
+    - prefer_const_constructors
+    - prefer_const_literals_to_create_immutables
+    - prefer_const_declarations
+    - avoid_print
+    - prefer_single_quotes
+    - sort_child_properties_last
