@@ -303,9 +303,9 @@ export function resolveDashboardRoute(role: Role): string {
     STATION_COMMANDER: "/command/station/dashboard",
     TRAFFIC_OFFICER: "/officer/traffic/home",
     GENERAL_OFFICER: "/officer/general/home",
-    INVESTIGATOR: "/investigator/cases",
+    INVESTIGATOR: "/cid/home",
     CLERK: "/clerk/records",
-    VIEWER: "/dashboard",
+    VIEWER: "/viewer/dashboard",
   };
   return redirects[role];
 }

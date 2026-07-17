@@ -92,6 +92,7 @@ export async function POST(request: Request) {
       amount: String(body.amount),
       status: body.status ?? "unpaid",
       officer: body.officer ?? session!.user.name ?? "Unknown",
+      type: body.type ?? "traffic",
       ownerId: session!.user.id,
       isPublic: false,
     }, scope);

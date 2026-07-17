@@ -367,6 +367,45 @@ export const FIELD_ROLES: Role[] = [
   "INVESTIGATOR",
 ];
 
+export type SearchDomain =
+  | "citizens"
+  | "vehicles"
+  | "incidents"
+  | "officers"
+  | "cases"
+  | "wanted"
+  | "pf3"
+  | "accidents";
+
+export function getSearchAccessForRole(role: Role): SearchDomain[] {
+  switch (role) {
+    case "SUPER_ADMIN":
+    case "COMMANDER":
+    case "NATIONAL_COMMANDER":
+      return ["citizens", "vehicles", "incidents", "officers", "cases", "wanted", "pf3", "accidents"];
+    case "REGIONAL_COMMANDER":
+    case "DISTRICT_COMMANDER":
+    case "STATION_COMMANDER":
+      return ["citizens", "vehicles", "incidents", "officers", "cases", "pf3", "accidents"];
+    case "SYSTEM_ADMIN":
+      return ["citizens", "vehicles", "incidents", "officers", "cases"];
+    case "TRAFFIC_OFFICER":
+      return ["citizens", "vehicles", "pf3", "accidents"];
+    case "GENERAL_OFFICER":
+      return ["citizens", "incidents"];
+    case "INVESTIGATOR":
+      return ["citizens", "vehicles", "incidents", "officers", "cases", "wanted", "pf3", "accidents"];
+    case "CLERK":
+      return ["citizens", "vehicles", "cases"];
+    case "VIEWER":
+      return ["citizens", "vehicles", "incidents"];
+    case "OFFICER":
+      return ["citizens", "vehicles", "incidents", "pf3"];
+    default:
+      return [];
+  }
+}
+
 export type ScopeContext = {
   role: Role;
   region?: string;

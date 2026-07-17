@@ -1,5 +1,11 @@
-﻿import { RolePageShell } from "@/components/role/role-page-shell";
+﻿import { ClerkDataEntryConsole } from "@/components/role/clerk-data-entry-console";
 
 export default function Page() {
-  return <RolePageShell title="clerk / records" />;
+  return (
+    <ClerkDataEntryConsole
+      mode="records"
+      title="Police Data Entry"
+      subtitle="Primary Clerk workflow for entering and maintaining police records across citizens, vehicles, and cases."
+    />
+  );
 }

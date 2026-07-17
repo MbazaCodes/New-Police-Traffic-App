@@ -13,10 +13,11 @@ import {
   RefreshCw,
   Smartphone,
   CheckCircle2,
+  ChevronDown,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import type { UserRole } from "@/store/police-store";
-import { Shield, Monitor, Star, Car, UserCheck } from "lucide-react";
+import { Shield, Car, UserCheck } from "lucide-react";
 
 type Step = "credentials" | "otp" | "success";
 
@@ -26,9 +27,25 @@ const OFFICER_ROLES = [
   { id: "officer-general" as UserRole, label: "Afisa Polisi", sublabel: "General Officer", icon: UserCheck },
 ];
 
-const ADMIN_ROLES = [
-  { id: "admin" as UserRole, label: "Admin", sublabel: "Users & Stations", icon: Monitor },
-  { id: "commander" as UserRole, label: "Kamanda", sublabel: "Command Center", icon: Star },
+type WebRoleOption = {
+  id: string;
+  label: string;
+  route: string;
+  storeRole: UserRole;
+};
+
+const WEB_ROLES: WebRoleOption[] = [
+  { id: "SUPER_ADMIN", label: "Super Admin", route: "/admin/dashboard", storeRole: "admin" },
+  { id: "SYSTEM_ADMIN", label: "System Admin", route: "/system/dashboard", storeRole: "admin" },
+  { id: "NATIONAL_COMMANDER", label: "National Commander", route: "/command/national/dashboard", storeRole: "commander" },
+  { id: "REGIONAL_COMMANDER", label: "Regional Commander", route: "/command/regional/dashboard", storeRole: "commander" },
+  { id: "DISTRICT_COMMANDER", label: "District Commander", route: "/command/district/dashboard", storeRole: "commander" },
+  { id: "STATION_COMMANDER", label: "Station Commander", route: "/command/station/dashboard", storeRole: "commander" },
+  { id: "TRAFFIC_OFFICER", label: "Traffic Officer", route: "/officer/traffic/home", storeRole: "officer-traffic" },
+  { id: "GENERAL_OFFICER", label: "General Officer", route: "/officer/general/home", storeRole: "officer-general" },
+  { id: "INVESTIGATOR", label: "CID / Investigator", route: "/cid/home", storeRole: "officer-general" },
+  { id: "CLERK", label: "Clerk", route: "/clerk/dashboard", storeRole: "admin" },
+  { id: "VIEWER", label: "Viewer", route: "/viewer/dashboard", storeRole: "admin" },
 ];
 
 export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }) {
@@ -40,8 +57,8 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [sending, setSending] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
-  const roleOptions = mode === "admin" ? ADMIN_ROLES : OFFICER_ROLES;
-  const [role, setRole] = useState<UserRole>(roleOptions[0].id);
+  const [role, setRole] = useState<UserRole>(OFFICER_ROLES[0].id);
+  const [webRole, setWebRole] = useState<string>(WEB_ROLES[0].id);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Resend countdown
@@ -91,28 +108,17 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
     if (otp.join("").length < 6) return;
     setStep("success");
     setTimeout(() => {
-      if (role === "commander") {
+      if (mode === "admin") {
+        const selectedWebRole = WEB_ROLES.find((r) => r.id === webRole) ?? WEB_ROLES[0];
         usePoliceStore.setState({
           isAuthenticated: true,
-          userRole: "commander",
+          userRole: selectedWebRole.storeRole,
           adminScreen: "dashboard",
           currentScreen: "home",
           activeTab: "home",
           history: ["home"],
         });
-        router.push("/command");
-        return;
-      }
-      if (role === "admin") {
-        usePoliceStore.setState({
-          isAuthenticated: true,
-          userRole: "admin",
-          adminScreen: "users",
-          currentScreen: "home",
-          activeTab: "home",
-          history: ["home"],
-        });
-        router.push("/admin");
+        router.push(selectedWebRole.route);
         return;
       }
       login(role);
@@ -173,38 +179,58 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
               </p>
 
               {/* Role selector */}
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                {roleOptions.map((r) => {
-                  const Icon = r.icon;
-                  const active = role === r.id;
-                  return (
-                    <button
-                      key={r.id}
-                      onClick={() => setRole(r.id)}
-                      className={`flex items-center gap-2.5 rounded-xl border-2 p-2.5 text-left transition ${
-                        active
-                          ? "border-[#0070C0] bg-[#0070C0]/5"
-                          : "border-gray-200 bg-white"
-                      }`}
+              {mode === "admin" ? (
+                <div className="mt-4">
+                  <label className="mb-1.5 block text-[13px] font-medium text-police-navy2">Role (Web)</label>
+                  <div className="relative">
+                    <select
+                      value={webRole}
+                      onChange={(e) => setWebRole(e.target.value)}
+                      className="h-12 w-full appearance-none rounded-xl border border-police bg-police-card px-3 pr-10 text-[14px] text-police focus:border-[#0070C0] focus:outline-none focus:ring-2 focus:ring-[#0070C0]/20"
                     >
-                      <Icon
-                        size={18}
-                        className={active ? "text-[#0070C0]" : "text-gray-400"}
-                      />
-                      <div className="min-w-0">
-                        <div
-                          className={`text-[11px] font-bold leading-tight ${
-                            active ? "text-police-navy2" : "text-gray-500"
-                          }`}
-                        >
+                      {WEB_ROLES.map((r) => (
+                        <option key={r.id} value={r.id}>
                           {r.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown size={18} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-police-faint" />
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  {OFFICER_ROLES.map((r) => {
+                    const Icon = r.icon;
+                    const active = role === r.id;
+                    return (
+                      <button
+                        key={r.id}
+                        onClick={() => setRole(r.id)}
+                        className={`flex items-center gap-2.5 rounded-xl border-2 p-2.5 text-left transition ${
+                          active
+                            ? "border-[#0070C0] bg-[#0070C0]/5"
+                            : "border-gray-200 bg-white"
+                        }`}
+                      >
+                        <Icon
+                          size={18}
+                          className={active ? "text-[#0070C0]" : "text-gray-400"}
+                        />
+                        <div className="min-w-0">
+                          <div
+                            className={`text-[11px] font-bold leading-tight ${
+                              active ? "text-police-navy2" : "text-gray-500"
+                            }`}
+                          >
+                            {r.label}
+                          </div>
+                          <div className="text-[8px] leading-tight text-gray-400">{r.sublabel}</div>
                         </div>
-                        <div className="text-[8px] leading-tight text-gray-400">{r.sublabel}</div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
 
               {/* Method toggle */}
               <div className="mt-4 flex gap-2 rounded-xl bg-police-muted p-1">

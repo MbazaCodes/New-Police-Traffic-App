@@ -9,9 +9,9 @@ export const ROLE_DEFAULT_ROUTES: Record<Role, string> = {
   STATION_COMMANDER: "/command/station/dashboard",
   TRAFFIC_OFFICER: "/officer/traffic/home",
   GENERAL_OFFICER: "/officer/general/home",
-  INVESTIGATOR: "/investigator/cases",
+  INVESTIGATOR: "/cid/home",
   CLERK: "/clerk/records",
-  VIEWER: "/dashboard",
+  VIEWER: "/viewer/dashboard",
   // legacy compatibility
   COMMANDER: "/command/national/dashboard",
   OFFICER: "/officer/traffic/home",
@@ -26,9 +26,9 @@ export const ROLE_ROUTE_PREFIXES: Record<Role, string[]> = {
   STATION_COMMANDER: ["/command/station"],
   TRAFFIC_OFFICER: ["/officer/traffic"],
   GENERAL_OFFICER: ["/officer/general"],
-  INVESTIGATOR: ["/investigator"],
+  INVESTIGATOR: ["/cid", "/investigator"],
   CLERK: ["/clerk"],
-  VIEWER: ["/dashboard"],
+  VIEWER: ["/viewer", "/dashboard"],
   // legacy compatibility
   COMMANDER: ["/command", "/command/national"],
   OFFICER: ["/officer", "/officer/traffic"],
