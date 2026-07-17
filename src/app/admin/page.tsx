@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { LoginScreen } from "@/components/police/screens/login-screen";
 import { StatusBar } from "@/components/police/status-bar";
@@ -9,8 +10,16 @@ const IS_WEB = process.env.NEXT_PUBLIC_APP_MODE === "admin";
 
 export default function AdminPage() {
   const { isAuthenticated, userRole } = usePoliceStore();
+  const [isWebMode, setIsWebMode] = useState(IS_WEB);
 
-  if (!IS_WEB) {
+  useEffect(() => {
+    const hostname = window.location.hostname.toLowerCase();
+    if (hostname.includes("admin-web")) {
+      setIsWebMode(true);
+    }
+  }, []);
+
+  if (!isWebMode) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-[#0d1b3d] p-8 text-center">
         <div className="text-5xl">🚫</div>
