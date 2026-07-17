@@ -14,6 +14,8 @@ const PUBLIC_PATHS = new Set([
   "/api/auth/logout",
 ]);
 
+const PUBLIC_LOGIN_ENTRY_PATHS = new Set(["/", "/admin", "/command"]);
+
 function isPublicAsset(pathname: string): boolean {
   return (
     pathname.startsWith("/_next") ||
@@ -27,7 +29,7 @@ function isPublicAsset(pathname: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, hostname } = request.nextUrl;
 
   if (isPublicAsset(pathname)) {
     return NextResponse.next();
@@ -45,6 +47,9 @@ export async function middleware(request: NextRequest) {
   // - authenticated: redirect to role-specific default route
   if (pathname === "/") {
     if (!role) {
+      if (hostname.toLowerCase().includes("admin-web")) {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
       return NextResponse.next();
     }
     return NextResponse.redirect(new URL(getDefaultRouteForRole(role), request.url));
@@ -55,6 +60,10 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!role) {
+    if (PUBLIC_LOGIN_ENTRY_PATHS.has(pathname)) {
+      return NextResponse.next();
+    }
+
     if (pathname.startsWith("/api")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
