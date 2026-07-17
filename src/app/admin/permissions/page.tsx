@@ -12,7 +12,7 @@ export default function PermissionsPage() {
     <div className="min-h-screen bg-police p-6">
       <div className="mx-auto max-w-7xl space-y-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1565C0]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1E3A8A]">
             <Lock size={24} className="text-white" />
           </div>
           <div>
@@ -46,7 +46,7 @@ export default function PermissionsPage() {
                         {level === 0 ? (
                           <span className="flex items-center justify-center"><X size={12} className="text-[#EF4444]" /></span>
                         ) : hasManage ? (
-                          <span className="rounded-full bg-[#7C3AED]/15 px-2 py-0.5 text-[8px] font-bold text-[#7C3AED]">ALL</span>
+                          <span className="rounded-full bg-[#1E3A8A]/15 px-2 py-0.5 text-[8px] font-bold text-[#1E3A8A]">ALL</span>
                         ) : (
                           <div className="flex flex-col items-center gap-0.5">
                             <span className="text-[9px] font-medium text-police">{level}</span>
@@ -69,7 +69,7 @@ export default function PermissionsPage() {
         {/* Legend */}
         <div className="flex flex-wrap gap-4 rounded-xl bg-police-card p-4 shadow-sm">
           <div className="flex items-center gap-2"><div className="flex gap-0.5">{[...Array(5)].map((_, i) => <span key={i} className="h-2 w-2 rounded-full bg-[#10B981]" />)}</div><span className="text-[11px] text-police-muted">= view/create/update/delete/manage</span></div>
-          <div className="flex items-center gap-2"><span className="rounded-full bg-[#7C3AED]/15 px-2 py-0.5 text-[9px] font-bold text-[#7C3AED]">ALL</span><span className="text-[11px] text-police-muted">= manage (full control)</span></div>
+          <div className="flex items-center gap-2"><span className="rounded-full bg-[#1E3A8A]/15 px-2 py-0.5 text-[9px] font-bold text-[#1E3A8A]">ALL</span><span className="text-[11px] text-police-muted">= manage (full control)</span></div>
           <div className="flex items-center gap-2"><X size={12} className="text-[#EF4444]" /><span className="text-[11px] text-police-muted">= hakuna ruhusa</span></div>
           <div className="ml-auto flex gap-1">
             {ACTIONS.map((a, i) => <span key={a} className="flex items-center gap-1 text-[9px] text-police-faint"><span className="h-2 w-2 rounded-full bg-[#10B981]" />{i+1}={a}</span>)}

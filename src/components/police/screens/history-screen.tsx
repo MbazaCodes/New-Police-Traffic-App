@@ -62,7 +62,7 @@ export function HistoryScreen() {
           </div>
           <div className="rounded-2xl bg-police-card p-3 shadow-sm">
             <p className="text-[10px] text-police-faint">Haijalipwa</p>
-            <p className="mt-1 text-[18px] font-bold text-red-500">TZS {unpaidFines.toLocaleString()}</p>
+            <p className="mt-1 text-[18px] font-bold text-[#EF4444]">TZS {unpaidFines.toLocaleString()}</p>
             <p className="mt-0.5 text-[10px] text-police-faint">{CITATION_HISTORY.filter((c) => c.status === "Hajalipwa").length} Hajalipwa</p>
           </div>
         </div>
@@ -70,7 +70,7 @@ export function HistoryScreen() {
         {/* Type tabs */}
         <div className="flex gap-1.5 overflow-x-auto">
           {TABS.map((t) => (
-            <button key={t.id} onClick={() => setTab(t.id)} className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-semibold transition ${tab === t.id ? "bg-[#1A237E] text-white" : "bg-police-card text-police-muted shadow-sm"}`}>
+            <button key={t.id} onClick={() => setTab(t.id)} className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-semibold transition ${tab === t.id ? "bg-[#1E3A8A] text-white" : "bg-police-card text-police-muted shadow-sm"}`}>
               {t.icon} {t.label}
               <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${tab === t.id ? "bg-white/20 text-white" : "bg-police-muted text-police-faint"}`}>{t.count}</span>
             </button>
@@ -90,7 +90,7 @@ export function HistoryScreen() {
             <div className="flex items-center gap-2">
               <Filter size={14} className="text-police-faint" />
               {([{ id: "all", label: "Zote" }, { id: "unpaid", label: "Haijalipwa" }, { id: "paid", label: "Imelipwa" }] as const).map((f) => (
-                <button key={f.id} onClick={() => setFilter(f.id)} className={`rounded-lg px-3 py-1.5 text-[12px] font-semibold transition ${filter === f.id ? "bg-[#1A237E] text-white" : "bg-police-card text-police-muted"}`}>{f.label}</button>
+                <button key={f.id} onClick={() => setFilter(f.id)} className={`rounded-lg px-3 py-1.5 text-[12px] font-semibold transition ${filter === f.id ? "bg-[#1E3A8A] text-white" : "bg-police-card text-police-muted"}`}>{f.label}</button>
               ))}
             </div>
             <div className="space-y-2.5">
@@ -103,7 +103,7 @@ export function HistoryScreen() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="rounded-md border border-[#1A237E] bg-yellow-50 px-1.5 py-0.5 text-[11px] font-bold text-police-navy">{c.plate}</span>
+                      <span className="rounded-md border border-[#1E3A8A] bg-yellow-50 px-1.5 py-0.5 text-[11px] font-bold text-police-navy">{c.plate}</span>
                       <span className="rounded-full px-2 py-0.5 text-[9px] font-bold text-white" style={{ backgroundColor: c.statusColor }}>{c.status}</span>
                     </div>
                     <p className="mt-1 text-[13px] font-bold text-police">{c.offense}</p>
@@ -124,17 +124,17 @@ export function HistoryScreen() {
             {filteredArrests.length === 0 ? <EmptyState label="Hakuna makamato" /> : filteredArrests.map((a) => (
               <div key={a.id} className="rounded-2xl bg-police-card p-3 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#7C3AED]/10">
-                    <AlertTriangle size={20} className="text-[#7C3AED]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1E3A8A]/10">
+                    <AlertTriangle size={20} className="text-[#1E3A8A]" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p className="text-[13px] font-bold text-police">{a.suspect}</p>
-                      <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold text-white ${a.status === "held" ? "bg-[#EF4444]" : a.status === "released" ? "bg-[#10B981]" : "bg-[#7C3AED]"}`}>
+                      <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold text-white ${a.status === "held" ? "bg-[#EF4444]" : a.status === "released" ? "bg-[#10B981]" : "bg-[#1E3A8A]"}`}>
                         {a.status === "held" ? "Kizuizini" : a.status === "released" ? "Ameachiwa" : "Ameshtakiwa"}
                       </span>
                     </div>
-                    <p className="mt-0.5 text-[12px] font-medium text-[#7C3AED]">{a.id}</p>
+                    <p className="mt-0.5 text-[12px] font-medium text-[#1E3A8A]">{a.id}</p>
                     <p className="text-[11px] text-police-muted">{a.offense}</p>
                     <p className="text-[10px] text-police-faint">{a.arrestDate} saa {a.arrestTime} • {a.arrestLocation}</p>
                   </div>

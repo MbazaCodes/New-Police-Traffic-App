@@ -51,7 +51,7 @@ export function EditProfileScreen() {
 
   return (
     <div className="min-h-full bg-police">
-      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] px-4 py-4">
+      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#2196F3] px-4 py-4">
         <button onClick={() => goBack()} className="mb-3 flex items-center gap-2 text-white/80">
           <ArrowLeft size={18} /> <span className="text-[13px]">Akaunti</span>
         </button>
@@ -63,7 +63,7 @@ export function EditProfileScreen() {
         {/* Avatar */}
         <div className="flex flex-col items-center rounded-2xl bg-police-card p-6 shadow-sm">
           <div className="relative">
-            <div className="h-24 w-24 overflow-hidden rounded-full ring-4 ring-[#3B82F6]/30">
+            <div className="h-24 w-24 overflow-hidden rounded-full ring-4 ring-[#2196F3]/30">
               {avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={avatar} alt="Avatar" className="h-full w-full object-cover" />
@@ -73,7 +73,7 @@ export function EditProfileScreen() {
                 </div>
               )}
             </div>
-            <button onClick={() => fileRef.current?.click()} className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-[#3B82F6] shadow-md">
+            <button onClick={() => fileRef.current?.click()} className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-[#2196F3] shadow-md">
               <Camera size={15} className="text-white" />
             </button>
           </div>
@@ -112,7 +112,7 @@ function FI({ label, value, onChange, type = "text" }: { label: string; value: s
   return (
     <div>
       <label className="mb-1 block text-[12px] font-medium text-police-muted">{label}</label>
-      <input type={type} value={value} onChange={onChange} className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police focus:border-[#3B82F6] focus:outline-none" />
+      <input type={type} value={value} onChange={onChange} className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police focus:border-[#2196F3] focus:outline-none" />
     </div>
   );
 }

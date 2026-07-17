@@ -68,9 +68,9 @@ const VIEWER_NAV: { id: ViewerScreen; label: string; icon: typeof LayoutDashboar
 function ViewerDashboard() {
   const overviewStats = [
     { label: "Total Officers", value: "847", icon: Users, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400", sub: "Across 31 regions" },
-    { label: "Active Cases", value: "234", icon: FileText, color: "bg-amber-500/15 text-amber-600 dark:text-amber-400", sub: "56 under investigation" },
-    { label: "Stations", value: "56", icon: Building2, color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400", sub: "3 new this quarter" },
-    { label: "Regions", value: "31", icon: MapPin, color: "bg-violet-500/15 text-violet-600 dark:text-violet-400", sub: "All mainland + Zanzibar" },
+    { label: "Active Cases", value: "234", icon: FileText, color: "bg-[#FF9800]/15 text-[#FF9800] ", sub: "56 under investigation" },
+    { label: "Stations", value: "56", icon: Building2, color: "bg-[#10B981]/15 text-[#10B981] ", sub: "3 new this quarter" },
+    { label: "Regions", value: "31", icon: MapPin, color: "bg-[#1E3A8A]/15 text-[#1E3A8A] dark:", sub: "All mainland + Zanzibar" },
   ];
 
   const keyMetrics = [
@@ -89,11 +89,11 @@ function ViewerDashboard() {
   ];
 
   const activityColor: Record<string, string> = {
-    incident: "bg-red-500/15 text-red-500",
-    case: "bg-amber-500/15 text-amber-500",
+    incident: "bg-[#EF4444]/100/15 text-[#EF4444]",
+    case: "bg-[#FF9800]/15 text-[#FF9800]",
     deploy: "bg-blue-500/15 text-blue-500",
-    report: "bg-emerald-500/15 text-emerald-500",
-    alert: "bg-violet-500/15 text-violet-500",
+    report: "bg-[#10B981]/15 text-emerald-500",
+    alert: "bg-[#1E3A8A]/15 text-[#1E3A8A]",
   };
 
   return (
@@ -129,8 +129,8 @@ function ViewerDashboard() {
             <p className="text-xs font-medium text-police-faint">{m.label}</p>
             <p className="mt-1 text-xl font-bold text-police-navy">{m.value}</p>
             <div className="mt-1 flex items-center gap-1">
-              {m.positive ? <TrendingUp size={12} className="text-emerald-500" /> : <TrendingDown size={12} className="text-red-500" />}
-              <span className={`text-[11px] font-medium ${m.positive ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
+              {m.positive ? <TrendingUp size={12} className="text-emerald-500" /> : <TrendingDown size={12} className="text-[#EF4444]" />}
+              <span className={`text-[11px] font-medium ${m.positive ? "text-[#10B981] " : "text-[#EF4444]"}`}>
                 {m.change}
               </span>
             </div>
@@ -205,7 +205,7 @@ function ViewerReports() {
       <div className="space-y-3">
         {filtered.map((r) => (
           <div key={r.id} className="flex items-center gap-4 rounded-xl bg-police-card p-4 shadow-sm">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/15 text-red-500">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#EF4444]/100/15 text-[#EF4444]">
               <FileText size={20} />
             </div>
             <div className="min-w-0 flex-1">
@@ -268,8 +268,8 @@ function ViewerAnalytics() {
             <div key={d.month} className="flex flex-1 flex-col items-center gap-1">
               <div className="flex w-full items-end gap-1 h-52">
                 <div className="flex-1 rounded-t-md bg-blue-500/80 transition-all" style={{ height: `${(d.theft / maxVal) * 100}%` }} title={`Theft: ${d.theft}`} />
-                <div className="flex-1 rounded-t-md bg-amber-500/80 transition-all" style={{ height: `${(d.assault / maxVal) * 100}%` }} title={`Assault: ${d.assault}`} />
-                <div className="flex-1 rounded-t-md bg-emerald-500/80 transition-all" style={{ height: `${(d.traffic / maxVal) * 100}%` }} title={`Traffic: ${d.traffic}`} />
+                <div className="flex-1 rounded-t-md bg-[#FF9800]/80 transition-all" style={{ height: `${(d.assault / maxVal) * 100}%` }} title={`Assault: ${d.assault}`} />
+                <div className="flex-1 rounded-t-md bg-[#10B981]/80 transition-all" style={{ height: `${(d.traffic / maxVal) * 100}%` }} title={`Traffic: ${d.traffic}`} />
               </div>
               <span className="text-[11px] font-medium text-police-faint">{d.month}</span>
             </div>
@@ -277,8 +277,8 @@ function ViewerAnalytics() {
         </div>
         <div className="mt-4 flex items-center justify-center gap-6 text-[11px]">
           <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded-sm bg-blue-500/80" /> Theft</div>
-          <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded-sm bg-amber-500/80" /> Assault</div>
-          <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded-sm bg-emerald-500/80" /> Traffic</div>
+          <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded-sm bg-[#FF9800]/80" /> Assault</div>
+          <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded-sm bg-[#10B981]/80" /> Traffic</div>
         </div>
       </div>
 
@@ -291,8 +291,8 @@ function ViewerAnalytics() {
               <div className="flex items-center justify-between">
                 <p className="text-[13px] font-semibold text-police">{t.label}</p>
                 <div className="flex items-center gap-1">
-                  {t.positive ? <TrendingUp size={14} className="text-emerald-500" /> : <TrendingDown size={14} className="text-red-500" />}
-                  <span className={`text-[13px] font-bold ${t.positive ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
+                  {t.positive ? <TrendingUp size={14} className="text-emerald-500" /> : <TrendingDown size={14} className="text-[#EF4444]" />}
+                  <span className={`text-[13px] font-bold ${t.positive ? "text-[#10B981] " : "text-[#EF4444]"}`}>
                     {t.value}
                   </span>
                 </div>
@@ -320,8 +320,8 @@ function ViewerNotifications() {
 
   const typeConfig: Record<string, { icon: typeof Info; color: string }> = {
     info: { icon: Info, color: "bg-blue-500/15 text-blue-500" },
-    warning: { icon: AlertCircle, color: "bg-amber-500/15 text-amber-500" },
-    success: { icon: CheckCircle2, color: "bg-emerald-500/15 text-emerald-500" },
+    warning: { icon: AlertCircle, color: "bg-[#FF9800]/15 text-[#FF9800]" },
+    success: { icon: CheckCircle2, color: "bg-[#10B981]/15 text-emerald-500" },
   };
 
   return (
@@ -530,7 +530,7 @@ export function ViewerShell() {
                   <Icon size={18} />
                   <span className="flex-1 text-[13px] font-medium">{item.label}</span>
                   {item.badge && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#F44336] px-1 text-[10px] font-bold text-white">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[10px] font-bold text-white">
                       {item.badge}
                     </span>
                   )}
@@ -540,7 +540,7 @@ export function ViewerShell() {
           </nav>
 
           {/* Read-only badge */}
-          <div className="mx-3 mb-2 rounded-lg bg-amber-500/15 px-3 py-2 text-center">
+          <div className="mx-3 mb-2 rounded-lg bg-[#FF9800]/15 px-3 py-2 text-center">
             <p className="text-[11px] font-semibold text-amber-400">🔒 Read-Only Access</p>
           </div>
 
@@ -597,7 +597,7 @@ export function ViewerShell() {
             {/* Notifications */}
             <button className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police">
               <Bell size={18} />
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
                 5
               </span>
             </button>

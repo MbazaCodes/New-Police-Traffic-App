@@ -51,9 +51,9 @@ const ICON_MAP: Record<string, typeof Users> = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  urgent: "bg-red-500/15 text-red-500 border border-red-500/30",
-  active: "bg-orange-500/15 text-orange-500 border border-orange-500/30",
-  resolved: "bg-green-500/15 text-green-500 border border-green-500/30",
+  urgent: "bg-[#EF4444]/100/15 text-[#EF4444] border border-[#EF4444]/500/30",
+  active: "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
+  resolved: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -160,9 +160,9 @@ export function AdminDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2 rounded-lg bg-police-card px-3 py-1.5 text-[12px] text-police-muted shadow-sm">
-          <Radio size={14} className="text-green-500" />
+          <Radio size={14} className="text-[#10B981]" />
           <span>Mfumo wa Moja kwa Moja</span>
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#10B981]" />
         </div>
       </div>
 
@@ -171,11 +171,11 @@ export function AdminDashboard() {
         {dashboardCards.map((card) => {
           const Icon = card.icon;
           const tones: Record<string, string> = {
-            green: "bg-green-500/15 text-green-600",
+            green: "bg-[#10B981]/15 text-[#10B981]",
             blue: "bg-[#2196F3]/15 text-[#2196F3]",
-            emerald: "bg-emerald-500/15 text-emerald-600",
-            orange: "bg-orange-500/15 text-orange-600",
-            violet: "bg-violet-500/15 text-violet-600",
+            emerald: "bg-[#10B981]/15 text-[#10B981]",
+            orange: "bg-[#FF9800]/15 text-[#FF9800]",
+            violet: "bg-[#1E3A8A]/15 text-[#1E3A8A]",
             slate: "bg-slate-500/15 text-slate-600",
           };
 
@@ -215,8 +215,8 @@ export function AdminDashboard() {
                 <span
                   className={`flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${
                     isUp
-                      ? "bg-green-500/15 text-green-500"
-                      : "bg-red-500/15 text-red-500"
+                      ? "bg-[#10B981]/15 text-[#10B981]"
+                      : "bg-[#EF4444]/100/15 text-[#EF4444]"
                   }`}
                 >
                   {isUp ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
@@ -447,7 +447,7 @@ export function AdminDashboard() {
                   >
                     <td className="py-2 font-semibold text-police">{r.region}</td>
                     <td className="py-2 text-right text-police-navy">{r.officers}</td>
-                    <td className="py-2 text-right text-orange-500">{r.incidents}</td>
+                    <td className="py-2 text-right text-[#FF9800]">{r.incidents}</td>
                     <td className="py-2 text-right text-[#2196F3]">{r.citations}</td>
                   </tr>
                 ))}

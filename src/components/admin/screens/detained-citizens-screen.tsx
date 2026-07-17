@@ -8,7 +8,7 @@ import { toast } from "@/hooks/use-toast";
 const STATUS_MAP = {
   held: { label: "Kizuizini", color: "#EF4444", bg: "#FEF2F2" },
   released: { label: "Ameachiwa", color: "#10B981", bg: "#F0FDF4" },
-  charged: { label: "Ameshtakiwa", color: "#7C3AED", bg: "#F5F3FF" },
+  charged: { label: "Ameshtakiwa", color: "#1E3A8A", bg: "#F5F3FF" },
 };
 
 const TYPE_MAP = {
@@ -44,7 +44,7 @@ export function DetainedCitizensScreen() {
     return (
       <div className="p-4 space-y-4">
         <div className="flex items-center justify-between">
-          <button onClick={() => setSelected(null)} className="flex items-center gap-1.5 text-[13px] font-medium text-[#2563EB]">← Rudi kwenye Orodha</button>
+          <button onClick={() => setSelected(null)} className="flex items-center gap-1.5 text-[13px] font-medium text-[#2196F3]">← Rudi kwenye Orodha</button>
           <span className="rounded-full px-3 py-1 text-[11px] font-bold text-white" style={{ backgroundColor: st.color }}>{st.label}</span>
         </div>
 
@@ -106,7 +106,7 @@ export function DetainedCitizensScreen() {
     return (
       <div className="p-4 space-y-4">
         <div className="flex items-center justify-between">
-          <button onClick={() => setShowForm(false)} className="text-[13px] font-medium text-[#2563EB]">← Rudi</button>
+          <button onClick={() => setShowForm(false)} className="text-[13px] font-medium text-[#2196F3]">← Rudi</button>
           <h2 className="text-[16px] font-bold text-police">Ongeza Mfungwa / Mzuiziwaji</h2>
           <div className="w-12" />
         </div>
@@ -180,7 +180,7 @@ export function DetainedCitizensScreen() {
       <div className="grid grid-cols-3 gap-3">
         <StatCard icon={<AlertTriangle size={18} className="text-[#EF4444]" />} value={DETAINED_CITIZENS.filter((c) => c.status === "held").length} label="Kizuizini" color="#EF4444" />
         <StatCard icon={<CheckCircle size={18} className="text-[#10B981]" />} value={DETAINED_CITIZENS.filter((c) => c.status === "released").length} label="Wameachiwa" color="#10B981" />
-        <StatCard icon={<Shield size={18} className="text-[#7C3AED]" />} value={DETAINED_CITIZENS.filter((c) => c.status === "charged").length} label="Wameshtakiwa" color="#7C3AED" />
+        <StatCard icon={<Shield size={18} className="text-[#1E3A8A]" />} value={DETAINED_CITIZENS.filter((c) => c.status === "charged").length} label="Wameshtakiwa" color="#1E3A8A" />
       </div>
 
       {/* Search */}

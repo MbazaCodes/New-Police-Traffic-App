@@ -159,7 +159,7 @@ export function AdminShell() {
                   <Icon size={18} />
                   <span className="flex-1 text-[13px] font-medium">{item.label}</span>
                   {item.badge && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#F44336] px-1 text-[10px] font-bold text-white">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[10px] font-bold text-white">
                       {item.badge}
                     </span>
                   )}
@@ -224,7 +224,7 @@ export function AdminShell() {
             {/* Notifications */}
             <button className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police">
               <Bell size={18} />
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
                 3
               </span>
             </button>

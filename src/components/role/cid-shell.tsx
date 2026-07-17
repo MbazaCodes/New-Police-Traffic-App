@@ -123,13 +123,13 @@ const SUSPECTS = [
 ];
 
 const WANTED_PERSONS = [
-  { name: "Idris Makene", crime: "Wizi wa Pesa — TZS 450,000,000", reward: 5_000_000, color: "bg-red-600" },
+  { name: "Idris Makene", crime: "Wizi wa Pesa — TZS 450,000,000", reward: 5_000_000, color: "bg-[#EF4444]/600" },
   { name: "Salma Juma", crime: "Uhalifu wa Dawa Haramu", reward: 3_000_000, color: "bg-amber-600" },
-  { name: "Baraka Mcharo", crime: "Ubakaji na Kujeruhi", reward: 2_500_000, color: "bg-red-700" },
-  { name: "Neema Malima", crime: "Uhujumu Uchumi na Ulaghai", reward: 10_000_000, color: "bg-purple-600" },
-  { name: "Thomas Ngowi", crime: "Wizi wa Gari — 3 Vehicles", reward: 1_500_000, color: "bg-orange-600" },
+  { name: "Baraka Mcharo", crime: "Ubakaji na Kujeruhi", reward: 2_500_000, color: "bg-[#EF4444]/700" },
+  { name: "Neema Malima", crime: "Uhujumu Uchumi na Ulaghai", reward: 10_000_000, color: "bg-[#1E3A8A]/600" },
+  { name: "Thomas Ngowi", crime: "Wizi wa Gari — 3 Vehicles", reward: 1_500_000, color: "bg-[#FF9800]/600" },
   { name: "Farida Hassan", crime: "Mtandao wa Dawa Haramu", reward: 7_000_000, color: "bg-rose-600" },
-  { name: "Gideon Mrema", crime: "Mauaji ya Kiusalama", reward: 8_000_000, color: "bg-red-800" },
+  { name: "Gideon Mrema", crime: "Mauaji ya Kiusalama", reward: 8_000_000, color: "bg-[#EF4444]/800" },
 ];
 
 const EVIDENCE = [
@@ -184,21 +184,21 @@ function statusColor(status: string) {
     case "Stored":
     case "Submitted":
     case "Held":
-      return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400";
+      return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 ";
     case "Under Review":
     case "In Analysis":
     case "Pending":
     case "On Bail":
-      return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400";
+      return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 ";
     case "Closed":
     case "Approved":
     case "Released":
       return "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400";
     case "Impounded":
     case "Wanted":
-      return "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400";
+      return "bg-[#EF4444]/15 text-[#EF4444]700 dark:bg-[#EF4444]/900/40 dark:text-[#EF4444]400";
     case "Rejected":
-      return "bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400";
+      return "bg-[#EF4444]/15 text-[#EF4444] dark:bg-[#EF4444]/900/40 dark:text-[#EF4444]400";
     default:
       return "bg-gray-100 text-gray-700 dark:bg-gray-900/40 dark:text-gray-400";
   }
@@ -207,11 +207,11 @@ function statusColor(status: string) {
 function riskColor(risk: string) {
   switch (risk) {
     case "High":
-      return "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400";
+      return "bg-[#EF4444]/15 text-[#EF4444]700 dark:bg-[#EF4444]/900/40 dark:text-[#EF4444]400";
     case "Medium":
-      return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400";
+      return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 ";
     case "Low":
-      return "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400";
+      return "bg-[#10B981]/15 text-[#10B981]700 dark:bg-[#10B981]/900/40 dark:text-[#10B981]400";
     default:
       return "bg-gray-100 text-gray-700 dark:bg-gray-900/40 dark:text-gray-400";
   }
@@ -230,9 +230,9 @@ function CidDashboard() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[
           { label: "Kesi Zilizo Hai", value: "47", icon: FolderOpen, color: "bg-[#2196F3]" },
-          { label: "Wanaotafutwa", value: "12", icon: AlertTriangle, color: "bg-[#F44336]" },
+          { label: "Wanaotafutwa", value: "12", icon: AlertTriangle, color: "bg-[#EF4444]" },
           { label: "Mahojiano Yasubiri", value: "8", icon: MessageSquare, color: "bg-[#FF9800]" },
-          { label: "Vitu vya Ushahidi", value: "156", icon: FileSearch, color: "bg-[#4CAF50]" },
+          { label: "Vitu vya Ushahidi", value: "156", icon: FileSearch, color: "bg-[#10B981]" },
         ].map((s) => (
           <Card key={s.label} className="bg-police-card border-none shadow-sm">
             <CardContent className="p-4">
@@ -465,8 +465,8 @@ function CidIntelConsole() {
                             <TableCell className="text-police-faint">{r.region}</TableCell>
                             <TableCell>
                               <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
-                                r.status === "Clean" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
-                                : r.status === "Suspect" ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
+                                r.status === "Clean" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 "
+                                : r.status === "Suspect" ? "bg-[#EF4444]/15 text-[#EF4444]700 dark:bg-[#EF4444]/900/40 dark:text-[#EF4444]400"
                                 : r.status === "Wanted" ? "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
                                 : "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400"
                               }`}>
@@ -501,10 +501,10 @@ function CidIntelConsole() {
                             <TableCell className="text-police-faint">{v.owner}</TableCell>
                             <TableCell>
                               <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
-                                v.status === "Clean" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
-                                : v.status === "Stolen" ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
+                                v.status === "Clean" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 "
+                                : v.status === "Stolen" ? "bg-[#EF4444]/15 text-[#EF4444]700 dark:bg-[#EF4444]/900/40 dark:text-[#EF4444]400"
                                 : v.status === "Wanted" ? "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
-                                : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+                                : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 "
                               }`}>
                                 {v.status}
                               </span>
@@ -648,7 +648,7 @@ function CidIntelConsole() {
                             <TableCell className="text-police-faint">{a.date}</TableCell>
                             <TableCell className="text-police text-[12px]">{a.location}</TableCell>
                             <TableCell className="text-police-faint">{a.type}</TableCell>
-                            <TableCell className={a.casualties > 0 ? "font-bold text-red-500" : "text-police-faint"}>{a.casualties}</TableCell>
+                            <TableCell className={a.casualties > 0 ? "font-bold text-[#EF4444]" : "text-police-faint"}>{a.casualties}</TableCell>
                             <TableCell><span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${statusColor(a.status)}`}>{a.status}</span></TableCell>
                           </TableRow>
                         ))}
@@ -780,8 +780,8 @@ function CidWanted() {
                 <p className="text-[14px] font-bold text-police">{w.name}</p>
                 <p className="mt-1 text-[12px] text-police-faint">{w.crime}</p>
                 <div className="mt-3 flex items-center gap-1.5">
-                  <Banknote size={14} className="text-[#4CAF50]" />
-                  <span className="text-[13px] font-semibold text-[#4CAF50]">{formatTZS(w.reward)}</span>
+                  <Banknote size={14} className="text-[#10B981]" />
+                  <span className="text-[13px] font-semibold text-[#10B981]">{formatTZS(w.reward)}</span>
                 </div>
               </div>
             </div>
@@ -922,9 +922,9 @@ function CidReports() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[
           { label: "Jumla ya Kesi", value: "142", icon: FolderOpen, color: "bg-[#2196F3]" },
-          { label: "Zilizokamilika", value: "89", icon: Star, color: "bg-[#4CAF50]" },
+          { label: "Zilizokamilika", value: "89", icon: Star, color: "bg-[#10B981]" },
           { label: "Zinazoendelea", value: "47", icon: Clock, color: "bg-[#FF9800]" },
-          { label: "Wanaotafutwa", value: "12", icon: Eye, color: "bg-[#F44336]" },
+          { label: "Wanaotafutwa", value: "12", icon: Eye, color: "bg-[#EF4444]" },
         ].map((s) => (
           <Card key={s.label} className="bg-police-card border-none shadow-sm">
             <CardContent className="p-4">
@@ -1044,7 +1044,7 @@ function CidSettings() {
       <Card className="bg-police-card border-none shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-[15px] text-police">
-            <Lock size={18} className="text-[#F44336]" />
+            <Lock size={18} className="text-[#EF4444]" />
             Usalama / Security
           </CardTitle>
         </CardHeader>
@@ -1157,7 +1157,7 @@ export function CidShell() {
                   <Icon size={18} />
                   <span className="flex-1 text-[13px] font-medium">{item.label}</span>
                   {item.badge && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#F44336] px-1 text-[10px] font-bold text-white">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[10px] font-bold text-white">
                       {item.badge}
                     </span>
                   )}
@@ -1222,7 +1222,7 @@ export function CidShell() {
             {/* Notifications */}
             <button className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police">
               <Bell size={18} />
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
                 7
               </span>
             </button>

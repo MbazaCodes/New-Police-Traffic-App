@@ -24,8 +24,8 @@ import {
 } from "@/store/records-store";
 
 const STATUS_STYLES: Record<string, string> = {
-  active: "bg-green-500/15 text-green-500 border border-green-500/30",
-  "on-leave": "bg-orange-500/15 text-orange-500 border border-orange-500/30",
+  active: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
+  "on-leave": "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -128,7 +128,7 @@ export function AdminAssignments() {
             }
             setTarget({ kind: "new", officer: unassigned[0] });
           }}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#1E88E5]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#2196F3]"
         >
           <Plus size={14} /> Ongeza Mgao
         </button>
@@ -146,7 +146,7 @@ export function AdminAssignments() {
           icon={<Shield size={18} />}
           label="Walioko Kazini"
           value={String(activeAssignments)}
-          color="#4CAF50"
+          color="#10B981"
         />
         <StatCard
           icon={<UserX size={18} />}
@@ -158,7 +158,7 @@ export function AdminAssignments() {
           icon={<UserPlus size={18} />}
           label="Bila Mgao"
           value={String(unassignedCount)}
-          color="#F44336"
+          color="#EF4444"
         />
       </div>
 
@@ -221,7 +221,7 @@ export function AdminAssignments() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="rounded-md bg-[#9C27B0]/15 px-2 py-0.5 text-[10px] font-semibold uppercase text-[#9C27B0]">
+                    <span className="rounded-md bg-[#1E3A8A]/15 px-2 py-0.5 text-[10px] font-semibold uppercase text-[#1E3A8A]">
                       {a.role}
                     </span>
                   </td>
@@ -257,7 +257,7 @@ export function AdminAssignments() {
                           e.stopPropagation();
                           handleRemove(a);
                         }}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-500/15 text-red-500 hover:bg-red-500/25"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#EF4444]/100/15 text-[#EF4444] hover:bg-[#EF4444]/100/25"
                         title="Ondoa Mgao"
                       >
                         <Trash2 size={13} />
@@ -277,7 +277,7 @@ export function AdminAssignments() {
           <h2 className="text-[14px] font-bold text-police-navy">
             Maofisa Bila Mgao
           </h2>
-          <span className="rounded-md bg-red-500/15 px-2 py-0.5 text-[11px] font-bold uppercase text-red-500">
+          <span className="rounded-md bg-[#EF4444]/100/15 px-2 py-0.5 text-[11px] font-bold uppercase text-[#EF4444]">
             {unassignedCount} wamesubiri
           </span>
         </div>
@@ -289,7 +289,7 @@ export function AdminAssignments() {
               className="rounded-lg border border-police-soft bg-police-muted/40 p-3"
             >
               <div className="flex items-center gap-2.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/15 text-[12px] font-bold text-red-500">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EF4444]/100/15 text-[12px] font-bold text-[#EF4444]">
                   {o.name
                     .split(" ")
                     .slice(0, 2)
@@ -308,7 +308,7 @@ export function AdminAssignments() {
               </div>
               <button
                 onClick={() => setTarget({ kind: "new", officer: o })}
-                className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#2196F3] py-2 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+                className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#2196F3] py-2 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
               >
                 <UserPlus size={14} /> Mgawie Afisa huyu
               </button>
@@ -492,7 +492,7 @@ function AssignModal({
             <button
               disabled={!stationId || !postId || !role.trim()}
               onClick={() => onConfirm(stationId, postId, role.trim())}
-              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5] disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {confirmLabel}
             </button>

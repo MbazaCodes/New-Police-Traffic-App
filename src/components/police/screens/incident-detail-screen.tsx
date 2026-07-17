@@ -71,18 +71,18 @@ export function IncidentDetailScreen() {
           </div>
           <div className="mt-4 w-full space-y-2">
             <button onClick={() => setSubmitted(false)} className="w-full rounded-xl border border-police py-3 text-[14px] font-semibold text-police">Ripoti Nyingine</button>
-            <button onClick={() => goBack()} className="w-full rounded-xl bg-[#2563EB] py-3 text-[14px] font-bold text-white">Rudi Nyuma</button>
+            <button onClick={() => goBack()} className="w-full rounded-xl bg-[#2196F3] py-3 text-[14px] font-bold text-white">Rudi Nyuma</button>
           </div>
         </div>
       </div>
     );
   }
 
-  const severityMap = { low: { label: "Ndogo", color: "#10B981" }, medium: { label: "Wastani", color: "#FF9800" }, high: { label: "Kubwa", color: "#EF4444" }, critical: { label: "Hatari Sana", color: "#7C3AED" } };
+  const severityMap = { low: { label: "Ndogo", color: "#10B981" }, medium: { label: "Wastani", color: "#FF9800" }, high: { label: "Kubwa", color: "#EF4444" }, critical: { label: "Hatari Sana", color: "#1E3A8A" } };
 
   return (
     <div className="min-h-full bg-police">
-      <div className="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] px-4 py-4">
+      <div className="bg-gradient-to-r from-[#2196F3] to-[#1D4ED8] px-4 py-4">
         <button onClick={() => goBack()} className="mb-3 flex items-center gap-2 text-white/80"><ArrowLeft size={18} /> <span className="text-[13px]">Rudi Nyuma</span></button>
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15"><AlertTriangle size={20} className="text-white" /></div>
@@ -146,7 +146,7 @@ export function IncidentDetailScreen() {
           <div>
             <label className="mb-1 block text-[12px] font-medium text-police-muted">Picha za Ushahidi</label>
             <button onClick={() => fileRef.current?.click()} className="flex w-full flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-police bg-police-input py-4">
-              <Camera size={20} className="text-[#2563EB]" />
+              <Camera size={20} className="text-[#2196F3]" />
               <span className="text-[12px] font-medium text-police-muted">Ongeza picha za eneo</span>
             </button>
             <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhoto} />
@@ -156,7 +156,7 @@ export function IncidentDetailScreen() {
                   <div key={i} className="relative h-16 w-16 overflow-hidden rounded-lg border border-police">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={src} alt="" className="h-full w-full object-cover" />
-                    <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))} className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#F44336]"><X size={10} className="text-white" /></button>
+                    <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))} className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#EF4444]"><X size={10} className="text-white" /></button>
                   </div>
                 ))}
               </div>
@@ -164,13 +164,13 @@ export function IncidentDetailScreen() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[#2563EB]/20 bg-[#2563EB]/5 p-4">
+        <div className="rounded-2xl border border-[#2196F3]/20 bg-[#2196F3]/5 p-4">
           <p className="text-[12px] font-medium text-police-muted">Ofisa Aliyeripoti</p>
-          <p className="mt-1 text-[15px] font-bold text-[#2563EB]">{OFFICER.shortName}</p>
+          <p className="mt-1 text-[15px] font-bold text-[#2196F3]">{OFFICER.shortName}</p>
           <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
         </div>
 
-        <button onClick={handleSubmit} className="w-full rounded-xl bg-[#2563EB] py-3.5 text-[15px] font-bold text-white shadow-md active:scale-[0.98]">
+        <button onClick={handleSubmit} className="w-full rounded-xl bg-[#2196F3] py-3.5 text-[15px] font-bold text-white shadow-md active:scale-[0.98]">
           Wasilisha Ripoti kwa Kamanda
         </button>
         <div className="h-4" />

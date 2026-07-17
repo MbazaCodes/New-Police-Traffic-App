@@ -28,9 +28,9 @@ const TABS = [
 ] as const;
 
 const PRIORITY_STYLES: Record<string, string> = {
-  high: "bg-red-500/15 text-red-500 border border-red-500/30",
-  medium: "bg-orange-500/15 text-orange-500 border border-orange-500/30",
-  low: "bg-green-500/15 text-green-500 border border-green-500/30",
+  high: "bg-[#EF4444]/100/15 text-[#EF4444] border border-[#EF4444]/500/30",
+  medium: "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
+  low: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
 };
 
 const PRIORITY_LABEL: Record<string, string> = {
@@ -40,9 +40,9 @@ const PRIORITY_LABEL: Record<string, string> = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  urgent: "bg-red-500/15 text-red-500 border border-red-500/30",
-  active: "bg-orange-500/15 text-orange-500 border border-orange-500/30",
-  resolved: "bg-green-500/15 text-green-500 border border-green-500/30",
+  urgent: "bg-[#EF4444]/100/15 text-[#EF4444] border border-[#EF4444]/500/30",
+  active: "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
+  resolved: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
   investigating: "bg-[#2196F3]/15 text-[#2196F3] border border-[#2196F3]/30",
 };
 
@@ -154,7 +154,7 @@ export function AdminIncidents() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <AlertTriangle size={14} className="text-orange-500" />
+                      <AlertTriangle size={14} className="text-[#FF9800]" />
                       <span className="font-semibold text-police">{inc.type}</span>
                     </div>
                   </td>
@@ -330,7 +330,7 @@ function AssignIncidentModal({
                 const off = officers.find((o) => o.id === selected);
                 if (off) onConfirm(off.name);
               }}
-              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5] disabled:opacity-50"
+              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3] disabled:opacity-50"
             >
               Thibitisha
             </button>
@@ -360,7 +360,7 @@ function IncidentModal({
         {/* Header */}
         <div className="flex items-start justify-between border-b border-police-soft bg-police-muted/40 p-4">
           <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-500/15 text-orange-500">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#FF9800]/15 text-[#FF9800]">
               <AlertTriangle size={22} />
             </div>
             <div>
@@ -430,7 +430,7 @@ function IncidentModal({
                   description: `Tukio ${incident.id} limewekwa kipaumbele juu`,
                 });
               }}
-              className="rounded-lg bg-red-500 py-2.5 text-[12px] font-semibold text-white hover:bg-red-600"
+              className="rounded-lg bg-[#EF4444]/100 py-2.5 text-[12px] font-semibold text-white hover:bg-[#EF4444]/600"
             >
               Weka Kipaumbele
             </button>
@@ -439,7 +439,7 @@ function IncidentModal({
                 onClose();
                 onAssign();
               }}
-              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
             >
               <User size={12} className="mr-1 inline" /> Pangisha Afisa
             </button>

@@ -60,7 +60,7 @@ export function MockDataReferenceScreen() {
 
   return (
     <div className="min-h-full bg-police p-4">
-      <div className="rounded-2xl bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] p-5 text-white shadow-sm">
+      <div className="rounded-2xl bg-gradient-to-br from-[#1E3A8A] to-[#2196F3] p-5 text-white shadow-sm">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[12px] text-white/75">Reference ya data ya mock</p>
@@ -81,7 +81,7 @@ export function MockDataReferenceScreen() {
           return (
             <div key={group.title} className="rounded-2xl bg-police-card p-4 shadow-sm">
               <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1A237E]/10 text-[#1A237E]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1E3A8A]/10 text-[#1E3A8A]">
                   <Icon size={18} />
                 </div>
                 <div>
@@ -105,7 +105,7 @@ export function MockDataReferenceScreen() {
 
       <div className="mt-4 rounded-2xl bg-police-card p-4 shadow-sm">
         <div className="flex items-center gap-2">
-          <Search size={18} className="text-[#2563EB]" />
+          <Search size={18} className="text-[#2196F3]" />
           <h2 className="text-[15px] font-bold text-police">Search Helpers</h2>
         </div>
         <div className="mt-3 space-y-2">

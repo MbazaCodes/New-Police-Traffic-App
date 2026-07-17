@@ -67,7 +67,7 @@ export function AddVehicleScreen() {
           <h2 className="mt-4 text-[20px] font-bold text-police">Gari Limesajiliwa</h2>
           <p className="mt-1 text-center text-[13px] text-police-muted">Taarifa za gari zimehifadhiwa kwenye mfumo wa kituo.</p>
           <div className="mt-6 w-full rounded-2xl bg-police-card p-4 shadow-sm space-y-2.5">
-            <div className="inline-block rounded-lg border-2 border-[#1A237E] bg-yellow-50 px-4 py-1.5 text-[20px] font-extrabold tracking-widest text-police-navy">{savedRecord.plate}</div>
+            <div className="inline-block rounded-lg border-2 border-[#1E3A8A] bg-yellow-50 px-4 py-1.5 text-[20px] font-extrabold tracking-widest text-police-navy">{savedRecord.plate}</div>
             <Row label="ID ya Rekodi" value={savedRecord.id} bold />
             <Row label="Mfano" value={savedRecord.model} />
             <Row label="Mmiliki" value={savedRecord.ownerName || "Haijajulikana"} />
@@ -86,7 +86,7 @@ export function AddVehicleScreen() {
 
   return (
     <div className="min-h-full bg-police">
-      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] px-4 py-4">
+      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#2196F3] px-4 py-4">
         <button onClick={() => goBack()} className="mb-3 flex items-center gap-2 text-white/80">
           <ArrowLeft size={18} /> <span className="text-[13px]">Rudi</span>
         </button>
@@ -112,7 +112,7 @@ export function AddVehicleScreen() {
         </Section>
 
         {/* Owner info */}
-        <Section title="Taarifa za Mmiliki" color="#7C3AED">
+        <Section title="Taarifa za Mmiliki" color="#1E3A8A">
           <FI label="Jina la Mmiliki" value={form.ownerName} onChange={set("ownerName")} placeholder="Jina kamili" />
           <FI label="NIDA ya Mmiliki" value={form.ownerNida} onChange={set("ownerNida")} placeholder="199012031234567" error={errors.ownerNida} />
           <FI label="Simu ya Mmiliki" value={form.ownerPhone} onChange={set("ownerPhone")} placeholder="0712 345 678" error={errors.ownerPhone} />

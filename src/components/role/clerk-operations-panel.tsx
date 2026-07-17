@@ -40,7 +40,7 @@ const FALLBACK_ALERTS: { title: string; detail: string; priority: "high" | "medi
 ];
 
 function priorityColor(priority: string): string {
-  if (priority === "high") return "bg-red-100 text-red-700";
+  if (priority === "high") return "bg-[#EF4444]/15 text-[#EF4444]700";
   if (priority === "medium") return "bg-amber-100 text-amber-700";
   return "bg-emerald-100 text-emerald-700";
 }

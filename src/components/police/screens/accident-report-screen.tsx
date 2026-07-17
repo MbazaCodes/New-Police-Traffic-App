@@ -150,21 +150,21 @@ export function AccidentReportScreen() {
             {vehicles.map((v, i) => (
               <div key={i} className="rounded-xl border border-police-soft bg-police-muted p-3">
                 <div className="mb-2 flex items-center gap-2">
-                  <span className="rounded-md border border-[#1A237E] bg-yellow-50 px-2 py-0.5 text-[13px] font-extrabold text-police-navy">
+                  <span className="rounded-md border border-[#1E3A8A] bg-yellow-50 px-2 py-0.5 text-[13px] font-extrabold text-police-navy">
                     {v.plate}
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-1.5">
                   <MiniField label="Aina ya Gari" value={v.model} />
                   <MiniField label="Rangi" value={v.color} />
-                  <MiniField label="Uharibifu" value={v.damage} valueColor={v.damage === "Kubwa" ? "text-red-600" : "text-orange-500"} />
+                  <MiniField label="Uharibifu" value={v.damage} valueColor={v.damage === "Kubwa" ? "text-[#EF4444]" : "text-[#FF9800]"} />
                 </div>
               </div>
             ))}
           </div>
           <button
             onClick={addVehicle}
-            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1A237E]/30 py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
+            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1E3A8A]/30 py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
           >
             <Plus size={16} /> Ongeza Gari
           </button>
@@ -181,14 +181,14 @@ export function AccidentReportScreen() {
                   <MiniField label="Namba ya Simu" value={p.phone} />
                 </div>
                 <div className="mt-1.5">
-                  <MiniField label="Hali" value={p.condition} valueColor={p.condition === "Hakuna Madhara" ? "text-green-600" : "text-orange-500"} />
+                  <MiniField label="Hali" value={p.condition} valueColor={p.condition === "Hakuna Madhara" ? "text-[#10B981]" : "text-[#FF9800]"} />
                 </div>
               </div>
             ))}
           </div>
           <button
             onClick={addPerson}
-            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1A237E]/30 py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
+            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1E3A8A]/30 py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
           >
             <Plus size={16} /> Ongeza Mtu
           </button>
@@ -204,7 +204,7 @@ export function AccidentReportScreen() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Eleza kwa kifupi kilichotokea..."
-            className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[12px] leading-relaxed text-police placeholder:text-police-faint focus:border-[#1A237E] focus:outline-none"
+            className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[12px] leading-relaxed text-police placeholder:text-police-faint focus:border-[#1E3A8A] focus:outline-none"
           />
         </Section>
 
@@ -216,20 +216,20 @@ export function AccidentReportScreen() {
               <div key={i} className="flex items-center gap-2.5 rounded-xl border border-police-soft bg-police-muted p-2.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-police-card">
                   {file.type === "image" && <ImageIcon size={16} className="text-[#2196F3]" />}
-                  {file.type === "video" && <Video size={16} className="text-purple-500" />}
-                  {file.type === "pdf" && <FileSpreadsheet size={16} className="text-red-500" />}
+                  {file.type === "video" && <Video size={16} className="text-[#1E3A8A]" />}
+                  {file.type === "pdf" && <FileSpreadsheet size={16} className="text-[#EF4444]" />}
                 </div>
                 <div className="flex-1">
                   <p className="text-[12px] font-medium text-police">{file.name}</p>
                   <p className="text-[10px] text-police-faint">{file.size}</p>
                 </div>
-                <FileCheck size={16} className="text-green-500" />
+                <FileCheck size={16} className="text-[#10B981]" />
               </div>
             ))}
           </div>
           <button
             onClick={addEvidence}
-            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1A237E]/30 py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
+            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#1E3A8A]/30 py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
           >
             <Upload size={14} /> Pakia Zaidi
           </button>
@@ -242,7 +242,7 @@ export function AccidentReportScreen() {
             <button
               type="button"
               onClick={() => setHasInjuries(!hasInjuries)}
-              className={`relative h-6 w-11 rounded-full transition ${hasInjuries ? "bg-green-500" : "bg-gray-300"}`}
+              className={`relative h-6 w-11 rounded-full transition ${hasInjuries ? "bg-[#10B981]" : "bg-gray-300"}`}
               aria-pressed={hasInjuries}
               aria-label="Toggle injuries"
             >
@@ -255,7 +255,7 @@ export function AccidentReportScreen() {
           </div>
           <button
             onClick={() => navigate("pf3")}
-            className="flex w-full items-center justify-between rounded-xl border border-[#1A237E]/20 px-3 py-2.5 active:scale-[0.99]"
+            className="flex w-full items-center justify-between rounded-xl border border-[#1E3A8A]/20 px-3 py-2.5 active:scale-[0.99]"
           >
             <span className="flex items-center gap-2 text-[12px] font-semibold text-police-navy">
               <FileText size={16} /> Tengeneza Fomu PF3
@@ -266,7 +266,7 @@ export function AccidentReportScreen() {
             onClick={() =>
               toast({ title: "Imetumwa", description: "Taarifa imewasilishwa kwa Kituo Kikuu." })
             }
-            className="flex w-full items-center justify-between rounded-xl border border-[#1A237E]/20 px-3 py-2.5 active:scale-[0.99]"
+            className="flex w-full items-center justify-between rounded-xl border border-[#1E3A8A]/20 px-3 py-2.5 active:scale-[0.99]"
           >
             <span className="flex items-center gap-2 text-[12px] font-semibold text-police-navy">
               <Send size={16} /> Taarifa kwa Kituo Kikuu
@@ -279,13 +279,13 @@ export function AccidentReportScreen() {
         <div className="flex gap-2.5 pt-1">
           <button
             onClick={handleSaveDraft}
-            className="flex-1 rounded-xl border-2 border-[#1A237E] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
+            className="flex-1 rounded-xl border-2 border-[#1E3A8A] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
           >
             Hifadhi Rasimu
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-[1.5] rounded-xl bg-[#1A237E] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]"
+            className="flex-[1.5] rounded-xl bg-[#1E3A8A] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]"
           >
             Hifadhi na Tuma Ripoti
           </button>

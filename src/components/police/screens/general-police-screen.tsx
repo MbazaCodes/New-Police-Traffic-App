@@ -7,12 +7,12 @@ import { usePoliceStore } from "@/store/police-store";
 import { GENERAL_INCIDENTS, ARREST_RECORDS, WARNING_RECORDS } from "@/lib/police-data";
 
 const POLICE_QUICK_ACTIONS = [
-  { label: "Ripoti Tukio",      icon: "clipboard",   color: "#2563EB", screen: "incident-detail"        },
-  { label: "Tafuta Raia",       icon: "search",      color: "#8B5CF6", screen: "citizen-search-results" },
+  { label: "Ripoti Tukio",      icon: "clipboard",   color: "#2196F3", screen: "incident-detail"        },
+  { label: "Tafuta Raia",       icon: "search",      color: "#1E3A8A", screen: "citizen-search-results" },
   { label: "Rekodi Taarifa",    icon: "file-text",   color: "#10B981", screen: "incident-detail"        },
   { label: "Kamata Mtuhumiwa",  icon: "user-x",      color: "#EF4444", screen: "arrest-form"            },
   { label: "Toa Onyo",          icon: "alert-triangle", color: "#FF9800", screen: "warning-form"        },
-  { label: "Historia",          icon: "clock",       color: "#3B82F6", screen: "history"                },
+  { label: "Historia",          icon: "clock",       color: "#2196F3", screen: "history"                },
 ];
 
 export function GeneralPoliceScreen() {
@@ -24,9 +24,9 @@ export function GeneralPoliceScreen() {
   const totalWarnings = WARNING_RECORDS.length;
 
   const policeStats = [
-    { label: "Matukio Yote",    value: String(GENERAL_INCIDENTS.length), color: "#1A237E" },
+    { label: "Matukio Yote",    value: String(GENERAL_INCIDENTS.length), color: "#1E3A8A" },
     { label: "Yanayoendelea",   value: String(activeIncidents),           color: "#FF9800" },
-    { label: "Yameitatuliwa",   value: String(resolvedIncidents),         color: "#4CAF50" },
+    { label: "Yameitatuliwa",   value: String(resolvedIncidents),         color: "#10B981" },
     { label: "Makamato",        value: String(heldArrests),               color: "#EF4444" },
   ];
 
@@ -64,7 +64,7 @@ export function GeneralPoliceScreen() {
         <div className="rounded-2xl bg-police-card p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-[16px] font-bold text-police">Matukio ya Karibuni</h3>
-            <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2563EB]">Angalia Zote</button>
+            <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2196F3]">Angalia Zote</button>
           </div>
           <div className="space-y-2.5">
             {GENERAL_INCIDENTS.map((inc) => (
@@ -90,7 +90,7 @@ export function GeneralPoliceScreen() {
         <div className="flex gap-2 overflow-x-auto pb-1">
           {[
             { label: `${totalWarnings} Maonyo`, color: "#FF9800" },
-            { label: `${ARREST_RECORDS.length} Makamato Yote`, color: "#7C3AED" },
+            { label: `${ARREST_RECORDS.length} Makamato Yote`, color: "#1E3A8A" },
             { label: `${GENERAL_INCIDENTS.filter((i) => i.casualties > 0).length} Matukio ya Majeruhi`, color: "#EF4444" },
           ].map((p) => (
             <span key={p.label} className="shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-medium" style={{ borderColor: `${p.color}40`, color: p.color, backgroundColor: `${p.color}10` }}>

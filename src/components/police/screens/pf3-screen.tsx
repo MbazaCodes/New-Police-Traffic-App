@@ -71,7 +71,7 @@ export function Pf3Screen() {
 
       <div className="space-y-3 p-4 pb-8">
         {/* Official form banner */}
-        <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#0A3D62] to-[#1A237E] p-4 text-white shadow-lg">
+        <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#0A3D62] to-[#1E3A8A] p-4 text-white shadow-lg">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[10px] font-medium uppercase tracking-wider text-white/70">
@@ -91,13 +91,13 @@ export function Pf3Screen() {
         <div className="flex gap-2">
           <button
             onClick={handleDownload}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#1A237E]/20 bg-police-card py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#1E3A8A]/20 bg-police-card py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
           >
             <Download size={15} /> Pakua PDF
           </button>
           <button
             onClick={handlePrint}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#1A237E]/20 bg-police-card py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#1E3A8A]/20 bg-police-card py-2.5 text-[12px] font-semibold text-police-navy active:scale-[0.98]"
           >
             <Printer size={15} /> Chapisha
           </button>
@@ -136,7 +136,7 @@ export function Pf3Screen() {
             {f.vehicles.map((v, i) => (
               <div key={i} className="rounded-xl border border-police-soft bg-police-muted p-3">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="rounded-md border-2 border-[#1A237E] bg-yellow-50 px-2.5 py-0.5 text-[14px] font-extrabold tracking-wider text-police-navy">
+                  <span className="rounded-md border-2 border-[#1E3A8A] bg-yellow-50 px-2.5 py-0.5 text-[14px] font-extrabold tracking-wider text-police-navy">
                     {v.plate}
                   </span>
                   <span className="text-[10px] font-medium text-police-faint">Gari {i + 1}</span>
@@ -152,7 +152,7 @@ export function Pf3Screen() {
                 <div className="mt-2 flex items-center gap-1.5">
                   <span
                     className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                      v.insured ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+                      v.insured ? "bg-[#10B981]/10 text-[#10B981]" : "bg-[#EF4444]/10 text-[#EF4444]"
                     }`}
                   >
                     {v.insured ? "Bima: Inapatikana" : "Bima: Haiapatikani"}
@@ -168,8 +168,8 @@ export function Pf3Screen() {
           <div className="space-y-2">
             {f.casualties.map((c, i) => (
               <div key={i} className="flex items-center gap-3 rounded-xl border border-police-soft p-2.5">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange-50">
-                  <Users size={16} className="text-orange-500" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#FF9800]/50">
+                  <Users size={16} className="text-[#FF9800]" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[13px] font-bold text-police">{c.name}</p>
@@ -230,13 +230,13 @@ export function Pf3Screen() {
         <div className="flex gap-2.5 pt-1">
           <button
             onClick={handleSaveDraft}
-            className="flex-1 rounded-xl border-2 border-[#1A237E] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
+            className="flex-1 rounded-xl border-2 border-[#1E3A8A] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
           >
             <Save size={16} className="mr-1 inline" /> Hifadhi Rasimu
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-[1.5] rounded-xl bg-[#1A237E] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]"
+            className="flex-[1.5] rounded-xl bg-[#1E3A8A] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]"
           >
             <Send size={16} className="mr-1 inline" /> Wasilisha PF3
           </button>

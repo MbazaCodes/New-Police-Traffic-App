@@ -99,12 +99,12 @@ export function SearchResultsScreen() {
           </button>
           {/* Traffic officer → offer to create citation */}
           {isTraffic && (
-            <div className="mt-2 w-full rounded-2xl border border-[#2563EB]/30 bg-[#2563EB]/5 p-4">
-              <p className="text-[13px] font-bold text-[#2563EB]">Sajili Gari Jipya</p>
+            <div className="mt-2 w-full rounded-2xl border border-[#2196F3]/30 bg-[#2196F3]/5 p-4">
+              <p className="text-[13px] font-bold text-[#2196F3]">Sajili Gari Jipya</p>
               <p className="text-[11px] text-police-muted mt-1">Gari hili halijasajiliwa. Sajili kwanza ili citation na historia ziweze kuhifadhiwa vizuri.</p>
               <button
                 onClick={() => navigate("add-vehicle")}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2563EB] py-2.5 text-[13px] font-bold text-white"
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-2.5 text-[13px] font-bold text-white"
               >
                 <Plus size={15} /> Sajili Gari Hili Mfumoni
               </button>
@@ -139,10 +139,10 @@ export function SearchResultsScreen() {
           {v && (
             <div className="flex items-center justify-between rounded-2xl bg-police-card p-4 shadow-sm">
               <div>
-                <div className="inline-block rounded-lg border-2 border-[#1A237E] bg-yellow-50 px-3 py-1 text-[18px] font-extrabold tracking-wider text-police-navy">{v.plate}</div>
+                <div className="inline-block rounded-lg border-2 border-[#1E3A8A] bg-yellow-50 px-3 py-1 text-[18px] font-extrabold tracking-wider text-police-navy">{v.plate}</div>
                 <p className="mt-1.5 text-[11px] text-police-muted">{v.model} • {v.color} • {v.year}</p>
               </div>
-              <span className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-[12px] font-bold ${v.outstandingFines > 0 ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"}`}>
+              <span className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-[12px] font-bold ${v.outstandingFines > 0 ? "bg-[#EF4444]/10 text-[#EF4444]" : "bg-[#10B981]/10 text-[#10B981]"}`}>
                 {v.outstandingFines > 0 ? "⚠ Ana Faini" : <><CheckCircle2 size={14} /> Safi</>}
               </span>
             </div>
@@ -150,15 +150,15 @@ export function SearchResultsScreen() {
 
           {/* Alert box */}
           {(matchedAlerts.length > 0 || (c && c.alerts.length > 0)) && (
-            <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
+            <div className="rounded-2xl border border-[#EF4444]/20 bg-[#EF4444]/10 p-4">
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100">
-                  <AlertTriangle size={20} className="text-red-600" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EF4444]/15">
+                  <AlertTriangle size={20} className="text-[#EF4444]" />
                 </div>
                 <div>
-                  <span className="text-[13px] font-extrabold uppercase text-red-600">Alert — Tahadhari</span>
+                  <span className="text-[13px] font-extrabold uppercase text-[#EF4444]">Alert — Tahadhari</span>
                   {c?.alerts.map((a, i) => <p key={i} className="mt-1 text-[12px] text-police">{a}</p>)}
-                  {matchedAlerts[0] && <p className="mt-1 text-[11px] text-red-700">{matchedAlerts[0].title} • {matchedAlerts[0].identifier}</p>}
+                  {matchedAlerts[0] && <p className="mt-1 text-[11px] text-[#EF4444]700">{matchedAlerts[0].title} • {matchedAlerts[0].identifier}</p>}
                 </div>
               </div>
             </div>
@@ -180,9 +180,9 @@ export function SearchResultsScreen() {
 
           {/* Action Buttons */}
           <div className="grid grid-cols-3 gap-2">
-            {v && <ActionButton icon={<FileText size={18} />} label="Ongeza Citation" color="#2563EB" onClick={goToCitation} />}
+            {v && <ActionButton icon={<FileText size={18} />} label="Ongeza Citation" color="#2196F3" onClick={goToCitation} />}
             <ActionButton icon={<MessageSquareWarning size={18} />} label="Toa Onyo" color="#FF9800" onClick={goToWarning} />
-            <ActionButton icon={<Hand size={18} />} label="Kamata" color="#F44336" onClick={goToArrest} />
+            <ActionButton icon={<Hand size={18} />} label="Kamata" color="#EF4444" onClick={goToArrest} />
           </div>
 
           {/* Insurance */}
@@ -192,7 +192,7 @@ export function SearchResultsScreen() {
               <Row label="Namba ya Polisi" value={v.insurance.policy} />
               <Row label="Inamalizika" value={v.insurance.expires} />
               <div className="mt-2">
-                <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold w-fit ${v.insurance.valid ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"}`}>
+                <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold w-fit ${v.insurance.valid ? "bg-[#10B981]/10 text-[#10B981]" : "bg-[#EF4444]/10 text-[#EF4444]"}`}>
                   {v.insurance.valid ? <><CheckCircle2 size={12} /> VALID</> : "✗ IMEKWISHA"}
                 </span>
               </div>
@@ -223,14 +223,14 @@ export function SearchResultsScreen() {
               <Row label="Rangi" value={v.color} />
               <Row label="Ukaguzi Inamalizika" value={v.inspectionExpiry} />
               <Row label="Usajili Inamalizika" value={v.registrationExpiry} />
-              <Row label="Imehusika na Ajali" value={v.accidentInvolved ? "Ndiyo" : "Hapana"} valueColor={v.accidentInvolved ? "text-red-600" : undefined} />
+              <Row label="Imehusika na Ajali" value={v.accidentInvolved ? "Ndiyo" : "Hapana"} valueColor={v.accidentInvolved ? "text-[#EF4444]" : undefined} />
             </SectionCard>
           )}
 
           {/* Fines */}
           {v && (
             <SectionCard title="FAINI NA MALIPO" icon={<Wallet size={18} className="text-police-navy" />}>
-              <Row label="Faini Isiyolipwa" value={v.outstandingFines > 0 ? `TZS ${v.outstandingFines.toLocaleString()}` : "Hakuna"} valueColor={v.outstandingFines > 0 ? "text-red-600" : undefined} />
+              <Row label="Faini Isiyolipwa" value={v.outstandingFines > 0 ? `TZS ${v.outstandingFines.toLocaleString()}` : "Hakuna"} valueColor={v.outstandingFines > 0 ? "text-[#EF4444]" : undefined} />
               <Row label="Jumla ya Makosa" value={String(v.violations.length)} />
               {v.violations.length > 0 && (
                 <div className="mt-2 space-y-2">
@@ -243,7 +243,7 @@ export function SearchResultsScreen() {
                         </div>
                         <div className="text-right">
                           <p className="text-[13px] font-bold text-police">{vi.fine}</p>
-                          <span className={`mt-1 inline-block rounded px-2 py-0.5 text-[10px] font-bold ${vi.paid ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
+                          <span className={`mt-1 inline-block rounded px-2 py-0.5 text-[10px] font-bold ${vi.paid ? "bg-[#10B981]/15 text-[#10B981]" : "bg-[#EF4444]/15 text-[#EF4444]"}`}>
                             {vi.paid ? "IMELIPWA" : "HAJALIPWA"}
                           </span>
                         </div>

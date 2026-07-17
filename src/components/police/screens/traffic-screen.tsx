@@ -51,7 +51,7 @@ export function TrafficScreen() {
         <div className="rounded-2xl bg-police-card p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-[16px] font-bold text-police">Makosa ya Karibuni</h3>
-            <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2563EB]">Angalia Zote</button>
+            <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2196F3]">Angalia Zote</button>
           </div>
           <div className="space-y-2.5">
             {RECENT_OFFENSES.map((offense) => (

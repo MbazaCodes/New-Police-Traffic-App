@@ -85,7 +85,7 @@ export function AdminReports() {
       title: "Inapakua",
       description: "Ripoti ya PDF inatengenezwa",
     });
-    const html = `<!doctype html><html lang="sw"><head><meta charset="utf-8"><title>TZ Police Report</title><style>body{font-family:Arial,sans-serif;padding:24px;color:#0d1b3d}h1{color:#1A237E}table{border-collapse:collapse;width:100%;margin-top:12px;font-size:12px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#1A237E;color:#fff}.stat{display:inline-block;margin-right:24px;padding:12px;background:#f5f7fb;border-radius:8px}</style></head><body><h1>Ripoti ya Polisi — TZ</h1><p>Tarehe: ${new Date().toLocaleDateString("en-GB")}</p><div><span class="stat"><b>Matukio Jumla:</b> ${totalIncidents}</span><span class="stat"><b>Citations Jumla:</b> ${totalCitations}</span><span class="stat"><b>Yaliyotatuliwa:</b> ${resolved}</span></div><h2>Mwelekeo wa Matukio (Siku 7)</h2><table><thead><tr><th>Siku</th><th>Matukio</th><th>Citations</th></tr></thead><tbody>${INCIDENT_TREND.map((d) => `<tr><td>${d.day}</td><td>${d.incidents}</td><td>${d.citations}</td></tr>`).join("")}</tbody></table><h2>Takwimu za Mikoa</h2><table><thead><tr><th>Mkoa</th><th>Maofisa</th><th>Matukio</th><th>Citations</th><th>Yaliyotatuliwa</th></tr></thead><tbody>${REGION_STATS.map((r) => `<tr><td>${r.region}</td><td>${r.officers}</td><td>${r.incidents}</td><td>${r.citations}</td><td>${r.resolved}</td></tr>`).join("")}</tbody></table></body></html>`;
+    const html = `<!doctype html><html lang="sw"><head><meta charset="utf-8"><title>TZ Police Report</title><style>body{font-family:Arial,sans-serif;padding:24px;color:#0d1b3d}h1{color:#1E3A8A}table{border-collapse:collapse;width:100%;margin-top:12px;font-size:12px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#1E3A8A;color:#fff}.stat{display:inline-block;margin-right:24px;padding:12px;background:#f5f7fb;border-radius:8px}</style></head><body><h1>Ripoti ya Polisi — TZ</h1><p>Tarehe: ${new Date().toLocaleDateString("en-GB")}</p><div><span class="stat"><b>Matukio Jumla:</b> ${totalIncidents}</span><span class="stat"><b>Citations Jumla:</b> ${totalCitations}</span><span class="stat"><b>Yaliyotatuliwa:</b> ${resolved}</span></div><h2>Mwelekeo wa Matukio (Siku 7)</h2><table><thead><tr><th>Siku</th><th>Matukio</th><th>Citations</th></tr></thead><tbody>${INCIDENT_TREND.map((d) => `<tr><td>${d.day}</td><td>${d.incidents}</td><td>${d.citations}</td></tr>`).join("")}</tbody></table><h2>Takwimu za Mikoa</h2><table><thead><tr><th>Mkoa</th><th>Maofisa</th><th>Matukio</th><th>Citations</th><th>Yaliyotatuliwa</th></tr></thead><tbody>${REGION_STATS.map((r) => `<tr><td>${r.region}</td><td>${r.officers}</td><td>${r.incidents}</td><td>${r.citations}</td><td>${r.resolved}</td></tr>`).join("")}</tbody></table></body></html>`;
     const w = window.open("", "_blank");
     if (w) {
       w.document.write(html);
@@ -148,7 +148,7 @@ export function AdminReports() {
       <div className="flex items-center gap-2">
           <button
             onClick={handleExportPdf}
-            className="inline-flex items-center gap-2 rounded-lg bg-red-500 px-3 py-2 text-[12px] font-semibold text-white hover:bg-red-600"
+            className="inline-flex items-center gap-2 rounded-lg bg-[#EF4444]/100 px-3 py-2 text-[12px] font-semibold text-white hover:bg-[#EF4444]/600"
           >
             <FileText size={14} /> Pakua PDF
           </button>
@@ -218,7 +218,7 @@ export function AdminReports() {
           icon={<TrendingUp size={16} />}
           label="Yaliyotatuliwa"
           value={String(resolved)}
-          color="#4CAF50"
+          color="#10B981"
         />
       </div>
 
@@ -322,7 +322,7 @@ export function AdminReports() {
               <span className="h-2 w-2 rounded-full bg-[#2196F3]" /> Citations
             </span>
             <span className="flex items-center gap-1 text-police-muted">
-              <span className="h-2 w-2 rounded-full bg-[#4CAF50]" /> Zilizolipwa
+              <span className="h-2 w-2 rounded-full bg-[#10B981]" /> Zilizolipwa
             </span>
           </div>
         </div>
@@ -364,9 +364,9 @@ export function AdminReports() {
               <Line
                 type="monotone"
                 dataKey="paid"
-                stroke="#4CAF50"
+                stroke="#10B981"
                 strokeWidth={2.5}
-                dot={{ r: 3, fill: "#4CAF50" }}
+                dot={{ r: 3, fill: "#10B981" }}
                 name="Zilizolipwa"
               />
             </LineChart>
@@ -401,14 +401,14 @@ export function AdminReports() {
                   >
                     <td className="px-3 py-3 font-semibold text-police">{r.region}</td>
                     <td className="px-3 py-3 text-right text-police-navy">{r.officers}</td>
-                    <td className="px-3 py-3 text-right text-orange-500">{r.incidents}</td>
+                    <td className="px-3 py-3 text-right text-[#FF9800]">{r.incidents}</td>
                     <td className="px-3 py-3 text-right text-[#2196F3]">{r.citations}</td>
-                    <td className="px-3 py-3 text-right text-green-500">{r.resolved}</td>
+                    <td className="px-3 py-3 text-right text-[#10B981]">{r.resolved}</td>
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
                         <div className="h-2 w-24 overflow-hidden rounded-full bg-police-input">
                           <div
-                            className="h-full rounded-full bg-green-500"
+                            className="h-full rounded-full bg-[#10B981]"
                             style={{ width: `${rate}%` }}
                           />
                         </div>

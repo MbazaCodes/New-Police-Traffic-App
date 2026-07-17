@@ -53,8 +53,8 @@ export function AlertsScreen() {
             <p className="text-[9px] text-police-faint">Jumla</p>
           </div>
           <div className="rounded-xl bg-police-card p-2.5 text-center shadow-sm">
-            <BellOff size={18} className="mx-auto text-[#F44336]" />
-            <p className="mt-1 text-[16px] font-bold text-[#F44336]">{unread}</p>
+            <BellOff size={18} className="mx-auto text-[#EF4444]" />
+            <p className="mt-1 text-[16px] font-bold text-[#EF4444]">{unread}</p>
             <p className="text-[9px] text-police-faint">Haijasomwa</p>
           </div>
           <div className="rounded-xl bg-police-card p-2.5 text-center shadow-sm">
@@ -178,7 +178,7 @@ function SosModal({ onClose }: { onClose: () => void }) {
   const types = [
     { id: "backup", label: "Msaada wa Ziada", color: "#FF9800" },
     { id: "medical", label: "Dharura ya Matibabu", color: "#EF4444" },
-    { id: "threat", label: "Tishio la Usalama", color: "#7C3AED" },
+    { id: "threat", label: "Tishio la Usalama", color: "#1E3A8A" },
     { id: "accident", label: "Ajali", color: "#2196F3" },
   ];
 

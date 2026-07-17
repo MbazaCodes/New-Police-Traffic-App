@@ -29,7 +29,7 @@ export function ProfileScreen() {
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <h2 className="text-[17px] font-bold text-police-navy">{OFFICER.name}</h2>
-                <span className="rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-bold text-green-600">
+                <span className="rounded-full bg-[#10B981]/10 px-2 py-0.5 text-[10px] font-bold text-[#10B981]">
                   {OFFICER.status}
                 </span>
               </div>
@@ -190,7 +190,7 @@ export function ProfileScreen() {
         {/* Logout */}
         <button
           onClick={logout}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-red-200 bg-police-card py-3 text-[14px] font-bold text-red-500 active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#EF4444]/20 bg-police-card py-3 text-[14px] font-bold text-[#EF4444] active:scale-[0.98]"
         >
           <LogOut size={18} />
           Toka (Logout)

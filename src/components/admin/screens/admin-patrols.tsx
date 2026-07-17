@@ -55,7 +55,7 @@ export function AdminPatrols() {
           </p>
         </div>
         <div className="flex items-center gap-2 rounded-lg bg-police-card px-3 py-1.5 text-[12px] text-police-muted shadow-sm">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+          <span className="h-2 w-2 animate-pulse rounded-full bg-[#10B981]" />
           {activeList.length} patroli sasa zinazoendelea
         </div>
       </div>
@@ -66,7 +66,7 @@ export function AdminPatrols() {
           icon={<Shield size={18} />}
           label="Patroli Zinazoendelea"
           value={String(activeList.length)}
-          color="#4CAF50"
+          color="#10B981"
         />
         <PatrolStat
           icon={<Route size={18} />}
@@ -97,7 +97,7 @@ export function AdminPatrols() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
                     <div className={`flex h-9 w-9 items-center justify-center rounded-full ${
-                      p.status === "completed" ? "bg-police-input text-police-muted" : "bg-green-500/15 text-green-500"
+                      p.status === "completed" ? "bg-police-input text-police-muted" : "bg-[#10B981]/15 text-[#10B981]"
                     }`}>
                       <Shield size={16} />
                     </div>
@@ -120,7 +120,7 @@ export function AdminPatrols() {
                     </div>
                   </div>
                   <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${
-                    p.status === "completed" ? "bg-police-input text-police-muted" : "bg-green-500/15 text-green-500"
+                    p.status === "completed" ? "bg-police-input text-police-muted" : "bg-[#10B981]/15 text-[#10B981]"
                   }`}>
                     {p.status === "completed" ? "Imekamilika" : "Inaendelea"}
                   </span>
@@ -147,7 +147,7 @@ export function AdminPatrols() {
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-police-input">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-[#2196F3] to-[#4CAF50] transition-all"
+                      className="h-full rounded-full bg-gradient-to-r from-[#2196F3] to-[#10B981] transition-all"
                       style={{ width: `${p.progress}%` }}
                     />
                   </div>
@@ -161,7 +161,7 @@ export function AdminPatrols() {
                         description: `Umeongea na ${p.officer} kwenye redio`,
                       })
                     }
-                    className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#2196F3] py-1.5 text-[11px] font-semibold text-white hover:bg-[#1E88E5]"
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#2196F3] py-1.5 text-[11px] font-semibold text-white hover:bg-[#2196F3]"
                   >
                     <Phone size={12} /> Wasiliana
                   </button>
@@ -261,10 +261,10 @@ export function AdminPatrols() {
                 >
                   <div className="relative">
                     {!isCompleted && (
-                      <span className="absolute inset-0 -m-1 animate-ping rounded-full bg-green-500/30" />
+                      <span className="absolute inset-0 -m-1 animate-ping rounded-full bg-[#10B981]/30" />
                     )}
                     <div className={`relative flex h-6 w-6 items-center justify-center rounded-full border-2 border-white shadow-lg transition group-hover:scale-125 ${
-                      isCompleted ? "bg-police-muted text-police-navy" : "bg-green-500"
+                      isCompleted ? "bg-police-muted text-police-navy" : "bg-[#10B981]"
                     }`}>
                       <Shield size={11} className={isCompleted ? "" : "text-white"} />
                     </div>
@@ -278,7 +278,7 @@ export function AdminPatrols() {
 
             {/* Legend */}
             <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-lg bg-police-card/95 px-2.5 py-1.5 text-[10px] text-police-muted shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-green-500" />
+              <span className="h-2 w-2 rounded-full bg-[#10B981]" />
               Patroli Inaendelea
             </div>
             <div className="absolute right-3 top-3 rounded-lg bg-police-card/95 px-2.5 py-1.5 text-[10px] font-semibold text-police-navy shadow-sm">
@@ -287,7 +287,7 @@ export function AdminPatrols() {
           </div>
 
           <div className="mt-3 flex items-center gap-2 rounded-lg bg-police-muted/40 p-2.5 text-[11px] text-police-muted">
-            <CheckCircle2 size={14} className="text-green-500" />
+            <CheckCircle2 size={14} className="text-[#10B981]" />
             Ramani hii ni mfano.unganisha na Google Maps kwa ajili ya kufuatilia live. Bonyeza pini kuona maelezo.
           </div>
         </div>
@@ -301,7 +301,7 @@ export function AdminPatrols() {
             <div className="flex items-center justify-between border-b border-police-soft bg-police-muted/40 p-4">
               <div className="flex items-center gap-3">
                 <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                  activePin.status === "completed" ? "bg-police-input text-police-muted" : "bg-green-500/15 text-green-500"
+                  activePin.status === "completed" ? "bg-police-input text-police-muted" : "bg-[#10B981]/15 text-[#10B981]"
                 }`}>
                   <Shield size={18} />
                 </div>
@@ -334,7 +334,7 @@ export function AdminPatrols() {
               <div className="flex items-center justify-between">
                 <span className="text-police-muted">Hadhi:</span>
                 <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${
-                  activePin.status === "completed" ? "bg-police-input text-police-muted" : "bg-green-500/15 text-green-500"
+                  activePin.status === "completed" ? "bg-police-input text-police-muted" : "bg-[#10B981]/15 text-[#10B981]"
                 }`}>
                   {activePin.status === "completed" ? "Imekamilika" : "Inaendelea"}
                 </span>
@@ -346,14 +346,14 @@ export function AdminPatrols() {
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-police-input">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-[#2196F3] to-[#4CAF50]"
+                    className="h-full rounded-full bg-gradient-to-r from-[#2196F3] to-[#10B981]"
                     style={{ width: `${activePin.progress}%` }}
                   />
                 </div>
               </div>
               <button
                 onClick={() => setActivePin(null)}
-                className="mt-2 w-full rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+                className="mt-2 w-full rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
               >
                 Funga
               </button>

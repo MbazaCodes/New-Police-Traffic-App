@@ -12,9 +12,9 @@ export const ADMIN_USER = {
 
 export const DASHBOARD_KPIS = [
   { label: "Maofisa Walioko Kazini", value: "147", change: "+12%", trend: "up", icon: "users", color: "#2196F3" },
-  { label: "Patroli Zinazoendelea", value: "23", change: "+5%", trend: "up", icon: "shield", color: "#4CAF50" },
+  { label: "Patroli Zinazoendelea", value: "23", change: "+5%", trend: "up", icon: "shield", color: "#10B981" },
   { label: "Matukio ya Leo", value: "34", change: "-8%", trend: "down", icon: "alert-triangle", color: "#FF9800" },
-  { label: "Citations za Leo", value: "89", change: "+15%", trend: "up", icon: "file-text", color: "#9C27B0" },
+  { label: "Citations za Leo", value: "89", change: "+15%", trend: "up", icon: "file-text", color: "#1E3A8A" },
 ];
 
 export const INCIDENT_TREND = [
@@ -29,9 +29,9 @@ export const INCIDENT_TREND = [
 
 export const OFFENSE_DISTRIBUTION = [
   { name: "Over Speeding", value: 342, color: "#2196F3" },
-  { name: "No Seatbelt", value: 218, color: "#4CAF50" },
+  { name: "No Seatbelt", value: 218, color: "#10B981" },
   { name: "Traffic Light", value: 156, color: "#FF9800" },
-  { name: "Phone While Driving", value: 98, color: "#9C27B0" },
+  { name: "Phone While Driving", value: 98, color: "#1E3A8A" },
   { name: "Other", value: 74, color: "#607D8B" },
 ];
 

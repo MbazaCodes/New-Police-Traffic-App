@@ -8,7 +8,7 @@ import { toast } from "@/hooks/use-toast";
 const STATUS_COLORS: Record<string, string> = {
   "Yanaendelea": "#FF9800",
   "Tatuliwa":    "#10B981",
-  "Mpya":        "#2563EB",
+  "Mpya":        "#2196F3",
   "Hatarini":    "#EF4444",
 };
 
@@ -31,7 +31,7 @@ export function IncidentViewScreen() {
   return (
     <div className="min-h-full bg-police">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] px-4 py-4">
+      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#2196F3] px-4 py-4">
         <button onClick={() => goBack()} className="mb-3 flex items-center gap-2 text-white/80">
           <ArrowLeft size={18} /> <span className="text-[13px]">Rudi</span>
         </button>
@@ -107,7 +107,7 @@ export function IncidentViewScreen() {
               setIncidentPrefill({ citizenName: "", citizenNida: "", citizenPhone: "", citizenAddress: incident.location });
               navigate("incident-detail");
             }}
-            className="w-full rounded-xl bg-[#2563EB] py-3 text-[14px] font-bold text-white active:scale-[0.98]"
+            className="w-full rounded-xl bg-[#2196F3] py-3 text-[14px] font-bold text-white active:scale-[0.98]"
           >
             <FileText size={16} className="mr-2 inline" /> Ongeza Ripoti Mpya kwa Tukio Hili
           </button>

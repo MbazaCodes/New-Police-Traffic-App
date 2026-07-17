@@ -109,7 +109,7 @@ export function CreateUserPage({ basePath }: { basePath: "/admin" | "/command" }
           <button
             onClick={handleSave}
             disabled={saving}
-            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#2196F3] px-4 py-2 text-[12px] font-semibold text-white hover:bg-[#1E88E5] disabled:opacity-60"
+            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#2196F3] px-4 py-2 text-[12px] font-semibold text-white hover:bg-[#2196F3] disabled:opacity-60"
           >
             <UserPlus size={14} /> {saving ? "Inahifadhi..." : "Save User"}
           </button>

@@ -46,7 +46,7 @@ export function TopAppBar({
             <button className="text-police">
               <Bell size={24} />
             </button>
-            <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+            <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
               3
             </span>
           </div>

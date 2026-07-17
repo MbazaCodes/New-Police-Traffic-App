@@ -280,7 +280,7 @@ export const CITIZEN_RESULT = {
   address: "House No. 45, Mbezi Beach, Kinondoni, Dar es Salaam",
   occupation: "Mfanyabiashara",
   status: "Mtu wa Kawaida",
-  statusColor: "#4CAF50",
+  statusColor: "#10B981",
   alerts: [] as string[],
   criminalRecord: {
     hasRecord: false,

@@ -80,7 +80,7 @@ export function ArrestFormScreen() {
   return (
     <div className="min-h-full bg-police">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#7C3AED] to-[#5B21B6] px-4 py-4">
+      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#1E3A8A] px-4 py-4">
         <button onClick={() => goBack()} className="mb-3 flex items-center gap-2 text-white/80">
           <ArrowLeft size={18} /> <span className="text-[13px]">Rudi Nyuma</span>
         </button>
@@ -95,14 +95,14 @@ export function ArrestFormScreen() {
 
       <div className="space-y-4 p-4">
         {/* Suspect details */}
-        <Section title="Taarifa za Mshukiwa" icon={<User size={16} />} color="#7C3AED">
+        <Section title="Taarifa za Mshukiwa" icon={<User size={16} />} color="#1E3A8A">
           <FInput label="Jina Kamili" required value={form.suspectName} onChange={set("suspectName")} placeholder="Jina na jina la ukoo" />
           <FInput label="Namba ya NIDA" value={form.nida} onChange={set("nida")} placeholder="19XXXXXXXXXXXXXX" />
           <div className="grid grid-cols-2 gap-3">
             <FInput label="Tarehe ya Kuzaliwa" value={form.dob} onChange={set("dob")} placeholder="DD/MM/YYYY" />
             <div>
               <label className="mb-1 block text-[12px] font-medium text-police-muted">Jinsia</label>
-              <select value={form.gender} onChange={set("gender")} className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:border-[#7C3AED] focus:outline-none">
+              <select value={form.gender} onChange={set("gender")} className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:border-[#1E3A8A] focus:outline-none">
                 <option>Mme</option><option>Mke</option>
               </select>
             </div>
@@ -161,7 +161,7 @@ export function ArrestFormScreen() {
                 <div key={i} className="relative h-16 w-16 overflow-hidden rounded-lg border border-police">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={src} alt="" className="h-full w-full object-cover" />
-                  <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))} className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#F44336]">
+                  <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))} className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#EF4444]">
                     <X size={10} className="text-white" />
                   </button>
                 </div>
@@ -176,13 +176,13 @@ export function ArrestFormScreen() {
         </Section>
 
         {/* Signing officer */}
-        <div className="rounded-2xl border border-[#7C3AED]/20 bg-[#7C3AED]/5 p-4">
+        <div className="rounded-2xl border border-[#1E3A8A]/20 bg-[#1E3A8A]/5 p-4">
           <p className="text-[12px] font-medium text-police-muted">Ofisa Aliyeandika Ripoti</p>
-          <p className="mt-1 text-[15px] font-bold text-[#7C3AED]">{OFFICER.shortName}</p>
+          <p className="mt-1 text-[15px] font-bold text-[#1E3A8A]">{OFFICER.shortName}</p>
           <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
         </div>
 
-        <button onClick={handleSubmit} className="w-full rounded-xl bg-[#7C3AED] py-3.5 text-[15px] font-bold text-white shadow-md shadow-[#7C3AED]/30 active:scale-[0.98]">
+        <button onClick={handleSubmit} className="w-full rounded-xl bg-[#1E3A8A] py-3.5 text-[15px] font-bold text-white shadow-md shadow-[#1E3A8A]/30 active:scale-[0.98]">
           Wasilisha Ripoti kwa Kamishna
         </button>
         <div className="h-4" />
@@ -219,7 +219,7 @@ function Row({ label, value, bold }: { label: string; value: string; bold?: bool
   return (
     <div className="flex items-center justify-between py-1 border-b border-police-soft last:border-0">
       <span className="text-[12px] text-police-muted">{label}</span>
-      <span className={`text-[12px] ${bold ? "font-bold text-[#7C3AED]" : "font-medium text-police"}`}>{value}</span>
+      <span className={`text-[12px] ${bold ? "font-bold text-[#1E3A8A]" : "font-medium text-police"}`}>{value}</span>
     </div>
   );
 }

@@ -71,9 +71,9 @@ const CLERK_NAV: { id: ClerkScreen; label: string; icon: typeof LayoutDashboard;
 function ClerkDashboard() {
   const stats = [
     { label: "Total Records", value: "2,847", icon: FileText, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400" },
-    { label: "Pending Review", value: "23", icon: Clock, color: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
-    { label: "Filed Today", value: "45", icon: CheckCircle2, color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" },
-    { label: "Exports This Week", value: "12", icon: Download, color: "bg-violet-500/15 text-violet-600 dark:text-violet-400" },
+    { label: "Pending Review", value: "23", icon: Clock, color: "bg-[#FF9800]/15 text-[#FF9800] " },
+    { label: "Filed Today", value: "45", icon: CheckCircle2, color: "bg-[#10B981]/15 text-[#10B981] " },
+    { label: "Exports This Week", value: "12", icon: Download, color: "bg-[#1E3A8A]/15 text-[#1E3A8A] dark:" },
   ];
 
   const recentActivity = [
@@ -86,10 +86,10 @@ function ClerkDashboard() {
   ];
 
   const typeColor: Record<string, string> = {
-    filed: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+    filed: "bg-[#10B981]/15 text-[#10B981] ",
     upload: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
-    export: "bg-violet-500/15 text-violet-600 dark:text-violet-400",
-    review: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+    export: "bg-[#1E3A8A]/15 text-[#1E3A8A] dark:",
+    review: "bg-[#FF9800]/15 text-[#FF9800] ",
     update: "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400",
     archive: "bg-slate-500/15 text-slate-600 dark:text-slate-400",
   };
@@ -154,10 +154,10 @@ function ClerkRecords() {
   ];
 
   const statusStyle: Record<string, string> = {
-    Filed: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-    "Under Review": "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+    Filed: "bg-[#10B981]/15 text-[#10B981] ",
+    "Under Review": "bg-[#FF9800]/15 text-[#FF9800] ",
     Archived: "bg-slate-500/15 text-slate-500",
-    Pending: "bg-red-500/15 text-red-600 dark:text-red-400",
+    Pending: "bg-[#EF4444]/100/15 text-[#EF4444] dark:text-[#EF4444]400",
   };
 
   return (
@@ -221,7 +221,7 @@ function ClerkDocuments() {
   ];
 
   const typeIcon: Record<string, typeof File> = { PDF: File, DOC: FileSpreadsheet };
-  const typeColor: Record<string, string> = { PDF: "bg-red-500/15 text-red-500", DOC: "bg-blue-500/15 text-blue-500" };
+  const typeColor: Record<string, string> = { PDF: "bg-[#EF4444]/100/15 text-[#EF4444]", DOC: "bg-blue-500/15 text-blue-500" };
 
   return (
     <div className="space-y-6">
@@ -293,7 +293,7 @@ function ClerkFileManagement() {
             <Search size={14} className="text-police-faint" />
             <input placeholder="Search files..." className="h-8 w-40 bg-transparent text-[13px] text-police placeholder:text-police-faint focus:outline-none sm:w-56" />
           </div>
-          <button className="flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3 py-2 text-[12px] font-semibold text-white shadow-md shadow-[#2196F3]/30 hover:bg-[#1976D2] transition">
+          <button className="flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3 py-2 text-[12px] font-semibold text-white shadow-md shadow-[#2196F3]/30 hover:bg-[#2196F3] transition">
             <Upload size={14} /> Upload
           </button>
         </div>
@@ -313,7 +313,7 @@ function ClerkFileManagement() {
                     className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-[13px] font-medium text-police hover:bg-police-muted transition"
                   >
                     {expanded ? <ChevronDown size={14} className="text-police-faint" /> : <ChevronRight size={14} className="text-police-faint" />}
-                    <FolderOpen size={16} className="text-amber-500" />
+                    <FolderOpen size={16} className="text-[#FF9800]" />
                     <span className="flex-1 truncate text-left">{f.name}</span>
                     <span className="text-[10px] text-police-faint">{f.files}</span>
                   </button>
@@ -339,7 +339,7 @@ function ClerkFileManagement() {
           <div className="space-y-2">
             {recentFiles.map((f, i) => (
               <div key={i} className="flex items-center gap-3 rounded-lg bg-police-muted/50 px-3 py-2.5 hover:bg-police-muted/80 transition">
-                <File size={18} className="shrink-0 text-red-500" />
+                <File size={18} className="shrink-0 text-[#EF4444]" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[13px] font-medium text-police">{f.name}</p>
                   <p className="text-[11px] text-police-faint">{f.path}</p>
@@ -370,9 +370,9 @@ function ClerkExports() {
   ];
 
   const statusStyle: Record<string, string> = {
-    Completed: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-    Failed: "bg-red-500/15 text-red-600 dark:text-red-400",
-    Processing: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+    Completed: "bg-[#10B981]/15 text-[#10B981] ",
+    Failed: "bg-[#EF4444]/100/15 text-[#EF4444] dark:text-[#EF4444]400",
+    Processing: "bg-[#FF9800]/15 text-[#FF9800] ",
   };
 
   return (
@@ -456,7 +456,7 @@ function ClerkReports() {
           <div key={s.label} className="rounded-xl bg-police-card p-4 shadow-sm">
             <p className="text-xs font-medium text-police-faint">{s.label}</p>
             <p className="mt-1 text-2xl font-bold text-police-navy">{s.value}</p>
-            <p className={`mt-1 text-[11px] font-medium ${s.positive ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
+            <p className={`mt-1 text-[11px] font-medium ${s.positive ? "text-[#10B981] " : "text-[#EF4444]"}`}>
               {s.change} from last period
             </p>
           </div>
@@ -469,7 +469,7 @@ function ClerkReports() {
         <div className="space-y-3">
           {recentReports.map((r, i) => (
             <div key={i} className="flex items-center gap-3 rounded-lg bg-police-muted/50 px-3 py-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-500/15 text-violet-600 dark:text-violet-400">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#1E3A8A]/15 text-[#1E3A8A] dark:">
                 <BarChart3 size={16} />
               </div>
               <div className="min-w-0 flex-1">
@@ -477,8 +477,8 @@ function ClerkReports() {
                 <p className="text-[11px] text-police-faint">{r.type} &middot; {r.date}</p>
               </div>
               <span className={`inline-flex shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                r.status === "Ready" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
-                r.status === "Generating" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
+                r.status === "Ready" ? "bg-[#10B981]/15 text-[#10B981] " :
+                r.status === "Generating" ? "bg-[#FF9800]/15 text-[#FF9800] " :
                 "bg-slate-500/15 text-slate-500"
               }`}>
                 {r.status}
@@ -574,7 +574,7 @@ function ClerkSettings() {
               <p className="text-[13px] font-medium text-police">Two-Factor Authentication</p>
               <p className="text-[11px] text-police-faint">Add extra layer of security</p>
             </div>
-            <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Enabled</span>
+            <span className="inline-flex items-center rounded-full bg-[#10B981]/15 px-2.5 py-0.5 text-[11px] font-semibold text-[#10B981] ">Enabled</span>
           </div>
           <div className="flex items-center justify-between">
             <div>
@@ -674,7 +674,7 @@ export function ClerkShell() {
                   <Icon size={18} />
                   <span className="flex-1 text-[13px] font-medium">{item.label}</span>
                   {item.badge && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#F44336] px-1 text-[10px] font-bold text-white">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[10px] font-bold text-white">
                       {item.badge}
                     </span>
                   )}
@@ -735,7 +735,7 @@ export function ClerkShell() {
             {/* Notifications */}
             <button className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police">
               <Bell size={18} />
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
                 2
               </span>
             </button>

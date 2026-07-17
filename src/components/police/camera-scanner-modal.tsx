@@ -233,7 +233,7 @@ export function CameraScannerModal() {
 
         {status === "success" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-white">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-500">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#10B981]">
               <CheckCircle2 size={48} />
             </div>
             <p className="text-[16px] font-bold">{result}</p>
@@ -275,7 +275,7 @@ export function CameraScannerModal() {
         {/* No camera / error state */}
         {(status === "no-camera" || status === "error") && !manualMode && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center text-white">
-            <AlertCircle size={48} className="text-orange-400" />
+            <AlertCircle size={48} className="text-[#FF9800]400" />
             <p className="text-[14px] font-semibold">{errorMsg || "Kamera haiwezekani"}</p>
             <button
               onClick={handleSimulate}

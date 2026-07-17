@@ -8,7 +8,7 @@ import { toast } from "@/hooks/use-toast";
 type FT = "all" | "person" | "car" | "device";
 type FS = "all" | "active" | "found";
 
-const TC: Record<string, string> = { person: "#EF4444", car: "#2196F3", device: "#9C27B0" };
+const TC: Record<string, string> = { person: "#EF4444", car: "#2196F3", device: "#1E3A8A" };
 const TL: Record<string, string> = { person: "Mtu", car: "Gari", device: "Kifaa" };
 const SC: Record<string, string> = { active: "#EF4444", found: "#10B981", closed: "#9E9E9E" };
 const SL: Record<string, string> = { active: "Inatafutwa", found: "Imepatikana", closed: "Imefungwa" };

@@ -20,8 +20,8 @@ import { toast } from "@/hooks/use-toast";
 type Officer = (typeof OFFICERS)[number];
 
 const STATUS_STYLES: Record<string, string> = {
-  active: "bg-green-500/15 text-green-500 border border-green-500/30",
-  break: "bg-orange-500/15 text-orange-500 border border-orange-500/30",
+  active: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
+  break: "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
   "off-duty": "bg-gray-500/15 text-gray-500 border border-gray-500/30",
 };
 
@@ -204,8 +204,8 @@ export function AdminOfficers() {
                   <td className="px-4 py-3 text-center font-semibold text-police-navy">
                     {o.patrols}
                   </td>
-                  <td className="px-4 py-3 text-center text-[#9C27B0]">{o.citations}</td>
-                  <td className="px-4 py-3 text-center text-orange-500">
+                  <td className="px-4 py-3 text-center text-[#1E3A8A]">{o.citations}</td>
+                  <td className="px-4 py-3 text-center text-[#FF9800]">
                     {o.incidents}
                   </td>
                   <td className="px-4 py-3 text-center text-police-muted">
@@ -325,13 +325,13 @@ function OfficerDrawer({
                 icon={<Shield size={14} />}
                 label="Patroli"
                 value={String(officer.patrols)}
-                color="#4CAF50"
+                color="#10B981"
               />
               <StatCard
                 icon={<FileText size={14} />}
                 label="Citations"
                 value={String(officer.citations)}
-                color="#9C27B0"
+                color="#1E3A8A"
               />
               <StatCard
                 icon={<AlertTriangle size={14} />}
@@ -357,7 +357,7 @@ function OfficerDrawer({
                   description: `Umeitisha ${officer.name} kwenye mawasiliano`,
                 });
               }}
-              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
             >
               Piga Simu
             </button>

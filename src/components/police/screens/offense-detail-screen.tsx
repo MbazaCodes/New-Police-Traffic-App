@@ -19,7 +19,7 @@ export function OffenseDetailScreen() {
 
   return (
     <div className="min-h-full bg-police">
-      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] px-4 py-4">
+      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#2196F3] px-4 py-4">
         <button onClick={() => goBack()} className="mb-3 flex items-center gap-2 text-white/80"><ArrowLeft size={18} /> <span className="text-[13px]">Rudi</span></button>
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15">
@@ -64,10 +64,10 @@ export function OffenseDetailScreen() {
 
         {/* Actions */}
         <div className="space-y-2">
-          <button onClick={() => navigate("citation")} className="w-full rounded-xl bg-[#2563EB] py-3 text-[14px] font-bold text-white active:scale-[0.98]">
+          <button onClick={() => navigate("citation")} className="w-full rounded-xl bg-[#2196F3] py-3 text-[14px] font-bold text-white active:scale-[0.98]">
             Toa Citation kwa Kosa Hili
           </button>
-          <button onClick={() => navigate("arrest-form")} className="w-full rounded-xl bg-[#7C3AED] py-3 text-[14px] font-bold text-white active:scale-[0.98]">
+          <button onClick={() => navigate("arrest-form")} className="w-full rounded-xl bg-[#1E3A8A] py-3 text-[14px] font-bold text-white active:scale-[0.98]">
             Fungua Fomu ya Kukamatwa
           </button>
           <button onClick={() => navigate("driver-points")} className="w-full rounded-xl border border-police py-3 text-[14px] font-semibold text-police active:scale-[0.98]">

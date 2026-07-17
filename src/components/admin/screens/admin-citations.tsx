@@ -15,8 +15,8 @@ const TABS = [
 ] as const;
 
 const STATUS_STYLES: Record<string, string> = {
-  paid: "bg-green-500/15 text-green-500 border border-green-500/30",
-  unpaid: "bg-red-500/15 text-red-500 border border-red-500/30",
+  paid: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
+  unpaid: "bg-[#EF4444]/100/15 text-[#EF4444] border border-[#EF4444]/500/30",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -110,7 +110,7 @@ export function AdminCitations() {
         </div>
         <button
           onClick={handleExportCsv}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#2196F3] px-3 py-2 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+          className="inline-flex items-center gap-2 rounded-lg bg-[#2196F3] px-3 py-2 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
         >
           <Download size={14} /> Hamisha CSV
         </button>
@@ -128,19 +128,19 @@ export function AdminCitations() {
           icon={<CheckCircle2 size={16} />}
           label="Zilizolipwa"
           value={String(stats.paid)}
-          color="#4CAF50"
+          color="#10B981"
         />
         <StatBox
           icon={<XCircle size={16} />}
           label="Haijalipwa"
           value={String(stats.unpaid)}
-          color="#F44336"
+          color="#EF4444"
         />
         <StatBox
           icon={<Wallet size={16} />}
           label="Jumla ya Fedha"
           value={`TZS ${stats.totalAmount.toLocaleString()}`}
-          color="#9C27B0"
+          color="#1E3A8A"
         />
       </div>
 
@@ -227,7 +227,7 @@ export function AdminCitations() {
                       {c.status === "unpaid" && (
                         <button
                           onClick={() => handleRemind(c)}
-                          className="flex items-center gap-1 rounded-lg bg-orange-500/15 px-2 py-1.5 text-[11px] font-semibold text-orange-500 hover:bg-orange-500/25"
+                          className="flex items-center gap-1 rounded-lg bg-[#FF9800]/15 px-2 py-1.5 text-[11px] font-semibold text-[#FF9800] hover:bg-[#FF9800]/25"
                           title="Tuma Ukumbusho"
                         >
                           <Bell size={12} /> Kumbusha
@@ -320,7 +320,7 @@ function CitationModal({
           </div>
 
           {citation.status === "unpaid" && (
-            <div className="rounded-lg border border-orange-500/30 bg-orange-500/5 p-3 text-[12px] text-orange-600">
+            <div className="rounded-lg border border-[#FF9800]/30 bg-[#FF9800]/5 p-3 text-[12px] text-[#FF9800]">
               <p className="font-semibold">Citation haijalipwa bado.</p>
               <p className="mt-0.5 text-[11px]">Ukumbusho wa SMS unaweza kutumwa kwa dereva.</p>
             </div>
@@ -338,7 +338,7 @@ function CitationModal({
                 onGoToDetail(citation.id);
                 onClose();
               }}
-              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
             >
               Ukurasa Kamili
             </button>

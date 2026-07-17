@@ -31,7 +31,7 @@ const DETAINED = DETAINED_CITIZENS.filter((d) => d.status === "held");
 
 const STATUS_COLOR = { active:"#10B981", patrol:"#2196F3", break:"#FF9800", "off-duty":"#9E9E9E" } as Record<string,string>;
 const STATUS_LABEL = { active:"Kazini", patrol:"Doria", break:"Mapumziko", "off-duty":"Nje" } as Record<string,string>;
-const TYPE_COLOR: Record<string,string> = { person:"#EF4444", car:"#2196F3", device:"#9C27B0" };
+const TYPE_COLOR: Record<string,string> = { person:"#EF4444", car:"#2196F3", device:"#1E3A8A" };
 
 export function CommissionerDashboard() {
   const { authRole, loginIdentifier } = usePoliceStore();
@@ -73,7 +73,7 @@ export function CommissionerDashboard() {
 
   const primaryKpis = [
     { label:"Maofisa Kazini",    value:String(myActive.length),           sub:`kati ya ${myOfficers.length}`,           color:"#2196F3", icon:<Users size={20}/>,        trend:"up"      },
-    { label:"Citations Leo",     value:String(CITATION_HISTORY.length),   sub:"trafiki — " + trafficCitations.length,  color:"#9C27B0", icon:<FileText size={20}/>,     trend:"up"      },
+    { label:"Citations Leo",     value:String(CITATION_HISTORY.length),   sub:"trafiki — " + trafficCitations.length,  color:"#1E3A8A", icon:<FileText size={20}/>,     trend:"up"      },
     { label:"Matukio (Jumla)",   value:String(GENERAL_INCIDENTS.length),  sub:"general polisi",                         color:"#FF9800", icon:<AlertTriangle size={20}/>, trend:"neutral" },
     { label:"Wanaotafutwa",      value:String(ACTIVE_MISSING.length),     sub:"watu + magari + vifaa",                  color:"#EF4444", icon:<Shield size={20}/>,       trend:"down"    },
   ];
@@ -140,7 +140,7 @@ export function CommissionerDashboard() {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{backgroundColor:`${k.color}15`,color:k.color}}>
                 {k.icon}
               </div>
-              <span className={`flex items-center gap-1 text-[11px] font-semibold ${k.trend==="up"?"text-green-600":k.trend==="down"?"text-red-500":"text-police-muted"}`}>
+              <span className={`flex items-center gap-1 text-[11px] font-semibold ${k.trend==="up"?"text-[#10B981]":k.trend==="down"?"text-[#EF4444]":"text-police-muted"}`}>
                 {k.trend==="up" ? <TrendingUp size={12}/> : k.trend==="down" ? <TrendingDown size={12}/> : null}
               </span>
             </div>
@@ -170,7 +170,7 @@ export function CommissionerDashboard() {
             </h2>
             <div className="grid grid-cols-2 gap-3 mb-4">
               {[
-                { label:"Citations Zote",  value:String(CITATION_HISTORY.length),  color:"#9C27B0" },
+                { label:"Citations Zote",  value:String(CITATION_HISTORY.length),  color:"#1E3A8A" },
                 { label:"Hazijalipwa",     value:String(CITATION_HISTORY.filter(c=>c.status==="Hajalipwa").length), color:"#EF4444" },
                 { label:"Jumla ya Faini",  value:`TZS ${(totalFines/1000).toFixed(0)}k`,  color:"#1E3A8A" },
                 { label:"Faini Hazijalipwa", value:`TZS ${(unpaidFines/1000).toFixed(0)}k`, color:"#FF9800" },
@@ -210,7 +210,7 @@ export function CommissionerDashboard() {
             <div className="grid grid-cols-3 gap-3 mb-4">
               {[
                 { label:"Matukio",    value:String(GENERAL_INCIDENTS.length),   color:"#FF9800" },
-                { label:"Makamato",   value:String(ARREST_RECORDS.length),      color:"#7C3AED" },
+                { label:"Makamato",   value:String(ARREST_RECORDS.length),      color:"#1E3A8A" },
                 { label:"Maonyo",     value:String(WARNING_RECORDS.length),     color:"#2196F3" },
               ].map((s) => (
                 <div key={s.label} className="rounded-xl bg-police-muted p-3 text-center">
@@ -385,7 +385,7 @@ export function CommissionerDashboard() {
               <div key={st.id} className="rounded-xl border border-police-soft p-3">
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-[13px] font-bold text-police">{st.name}</p>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold ${st.status==="active"?"bg-green-100 text-green-600":"bg-orange-100 text-orange-600"}`}>{st.status}</span>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold ${st.status==="active"?"bg-[#10B981]/15 text-[#10B981]":"bg-[#FF9800]/15 text-[#FF9800]"}`}>{st.status}</span>
                 </div>
                 <p className="mt-0.5 text-[10px] text-police-muted">{st.commissioner}</p>
                 <p className="text-[10px] text-police-faint">{st.address}</p>

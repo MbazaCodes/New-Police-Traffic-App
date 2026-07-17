@@ -22,8 +22,8 @@ import { toast } from "@/hooks/use-toast";
 import { useRecordsStore, type AdminStationRecord } from "@/store/records-store";
 
 const STATUS_STYLES: Record<string, string> = {
-  active: "bg-green-500/15 text-green-500 border border-green-500/30",
-  maintenance: "bg-orange-500/15 text-orange-500 border border-orange-500/30",
+  active: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
+  maintenance: "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -114,7 +114,7 @@ export function AdminStations() {
         </div>
         <button
           onClick={openCreate}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#1E88E5]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#2196F3]"
         >
           <Plus size={14} /> Ongeza Kituo
         </button>
@@ -132,7 +132,7 @@ export function AdminStations() {
           icon={<Shield size={18} />}
           label="Vinavyofanya Kazi"
           value={String(activeStations)}
-          color="#4CAF50"
+          color="#10B981"
         />
         <StatCard
           icon={<Pencil size={18} />}
@@ -144,7 +144,7 @@ export function AdminStations() {
           icon={<Users size={18} />}
           label="Jumla ya Maofisa"
           value={String(totalOfficers)}
-          color="#9C27B0"
+          color="#1E3A8A"
         />
       </div>
 
@@ -236,7 +236,7 @@ export function AdminStations() {
                     </a>
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <span className="inline-flex items-center gap-1 rounded-md bg-[#9C27B0]/15 px-2 py-0.5 text-[11px] font-bold text-[#9C27B0]">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-[#1E3A8A]/15 px-2 py-0.5 text-[11px] font-bold text-[#1E3A8A]">
                       <Users size={10} />
                       {s.officersCount}
                     </span>
@@ -442,8 +442,8 @@ function StationModal({
                   className={`flex-1 rounded-lg border px-3 py-2 text-[12px] font-semibold transition disabled:opacity-70 ${
                     status === st
                       ? st === "active"
-                        ? "border-green-500 bg-green-500/10 text-green-500"
-                        : "border-orange-500 bg-orange-500/10 text-orange-500"
+                        ? "border-[#10B981]/500 bg-[#10B981]/10 text-[#10B981]"
+                        : "border-[#FF9800] bg-[#FF9800]/10 text-[#FF9800]"
                       : "border-police-soft bg-police-input text-police-muted"
                   }`}
                 >
@@ -463,7 +463,7 @@ function StationModal({
               </button>
               <button
                 onClick={handleSave}
-                className="flex items-center justify-center gap-1.5 rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+                className="flex items-center justify-center gap-1.5 rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
               >
                 <Save size={13} /> Hifadhi
               </button>
@@ -472,7 +472,7 @@ function StationModal({
           {isView && (
             <button
               onClick={onClose}
-              className="mt-2 w-full rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+              className="mt-2 w-full rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
             >
               Funga
             </button>

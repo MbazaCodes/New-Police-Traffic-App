@@ -85,7 +85,7 @@ export function AdminSettings() {
         </div>
         <button
           onClick={handleSave}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#2196F3] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#1E88E5]"
+          className="inline-flex items-center gap-2 rounded-lg bg-[#2196F3] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#2196F3]"
         >
           <Save size={14} /> Hifadhi Mabadiliko
         </button>
@@ -145,7 +145,7 @@ export function AdminSettings() {
           icon={<Shield size={16} />}
           title="Usalama"
           description="Mipangilio ya usalama wa mfumo"
-          accent="#4CAF50"
+          accent="#10B981"
         >
           <ToggleRow
             label="Uthibitishaji wa Hatua Mbili (2FA)"
@@ -171,7 +171,7 @@ export function AdminSettings() {
             checked={ipRestriction}
             onChange={setIpRestriction}
           />
-          <div className="mt-2 flex items-center gap-2 rounded-lg border border-orange-500/30 bg-orange-500/10 p-3 text-[11px] text-orange-600 dark:text-orange-400">
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-[#FF9800]/30 bg-[#FF9800]/10 p-3 text-[11px] text-[#FF9800] dark:text-[#FF9800]400">
             <Lock size={14} className="shrink-0" />
             Badilisha nywila ya msimamizi kila baada ya siku 90 kwa usalama zaidi.
           </div>
@@ -218,7 +218,7 @@ export function AdminSettings() {
           icon={<Server size={16} />}
           title="Mfumo"
           description="Mipangilio ya mfumo na matengenezo"
-          accent="#9C27B0"
+          accent="#1E3A8A"
         >
           <ToggleRow
             label="Hali ya Matengenezo"
@@ -256,7 +256,7 @@ export function AdminSettings() {
         </p>
         <button
           onClick={handleSave}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#2196F3] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#1E88E5]"
+          className="inline-flex items-center gap-2 rounded-lg bg-[#2196F3] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#2196F3]"
         >
           <Save size={14} /> Hifadhi Sasa
         </button>
@@ -349,7 +349,7 @@ function SystemStat({
       <p className="text-[10px] uppercase text-police-faint">{label}</p>
       <p className="mt-0.5 flex items-center gap-1 text-[12px] font-semibold text-police">
         {status === "online" && (
-          <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+          <span className="h-1.5 w-1.5 rounded-full bg-[#10B981]" />
         )}
         {value}
       </p>

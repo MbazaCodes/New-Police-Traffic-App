@@ -88,7 +88,7 @@ export function VehicleInspectionScreen() {
                   <input
                     value={plate}
                     onChange={(e) => setPlate(e.target.value)}
-                    className="w-full rounded-md border-2 border-[#1A237E] bg-yellow-50 px-2.5 py-1 text-[16px] font-extrabold tracking-wider text-police-navy focus:outline-none"
+                    className="w-full rounded-md border-2 border-[#1E3A8A] bg-yellow-50 px-2.5 py-1 text-[16px] font-extrabold tracking-wider text-police-navy focus:outline-none"
                   />
                   <input
                     value={model}
@@ -105,7 +105,7 @@ export function VehicleInspectionScreen() {
                 </div>
               ) : (
                 <>
-                  <span className="inline-block rounded-md border-2 border-[#1A237E] bg-yellow-50 px-2.5 py-1 text-[16px] font-extrabold tracking-wider text-police-navy">
+                  <span className="inline-block rounded-md border-2 border-[#1E3A8A] bg-yellow-50 px-2.5 py-1 text-[16px] font-extrabold tracking-wider text-police-navy">
                     {plate}
                   </span>
                   <p className="mt-2 text-[13px] text-police-muted">
@@ -174,7 +174,7 @@ export function VehicleInspectionScreen() {
                 onClick={() => setOverloaded(false)}
                 className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition ${
                   !overloaded
-                    ? "bg-green-50 text-green-600"
+                    ? "bg-[#10B981]/10 text-[#10B981]"
                     : "bg-police-muted text-police-faint"
                 }`}
               >
@@ -185,7 +185,7 @@ export function VehicleInspectionScreen() {
                 onClick={() => setOverloaded(true)}
                 className={`flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition ${
                   overloaded
-                    ? "bg-red-50 text-red-600"
+                    ? "bg-[#EF4444]/10 text-[#EF4444]"
                     : "bg-police-muted text-police-faint"
                 }`}
               >
@@ -229,32 +229,32 @@ export function VehicleInspectionScreen() {
               onClick={() => setResult("pass")}
               className={`flex w-full items-center gap-3 rounded-xl border p-3 transition ${
                 computedResult === "pass"
-                  ? "border-green-200 bg-green-50"
+                  ? "border-[#10B981]/200 bg-[#10B981]/10"
                   : "border-police-soft bg-police-muted opacity-70"
               }`}
             >
-              <ShieldCheck size={24} className="text-green-600" />
+              <ShieldCheck size={24} className="text-[#10B981]" />
               <div className="flex-1 text-left">
-                <p className="text-[13px] font-bold text-green-700">Gari Halina Kasoro Kubwa</p>
+                <p className="text-[13px] font-bold text-[#10B981]700">Gari Halina Kasoro Kubwa</p>
                 <p className="text-[11px] text-police-muted">Gari linafaa kuendelea na safari</p>
               </div>
-              <CheckCircle2 size={20} className={`text-green-600 ${computedResult === "pass" ? "" : "opacity-30"}`} />
+              <CheckCircle2 size={20} className={`text-[#10B981] ${computedResult === "pass" ? "" : "opacity-30"}`} />
             </button>
             <button
               type="button"
               onClick={() => setResult("fail")}
               className={`flex w-full items-center gap-3 rounded-xl border p-3 transition ${
                 computedResult === "fail"
-                  ? "border-red-200 bg-red-50"
+                  ? "border-[#EF4444]/20 bg-[#EF4444]/10"
                   : "border-police-soft bg-police-muted opacity-70"
               }`}
             >
-              <ShieldAlert size={24} className="text-red-500" />
+              <ShieldAlert size={24} className="text-[#EF4444]" />
               <div className="flex-1 text-left">
-                <p className="text-[13px] font-bold text-red-600">Gari Lina Kasoro</p>
+                <p className="text-[13px] font-bold text-[#EF4444]">Gari Lina Kasoro</p>
                 <p className="text-[11px] text-police-muted">Lipaswe matengenezeko kabla ya kuendelea</p>
               </div>
-              <div className={`h-5 w-5 rounded-full border-2 ${computedResult === "fail" ? "border-red-600 bg-red-600" : "border-gray-300"}`} />
+              <div className={`h-5 w-5 rounded-full border-2 ${computedResult === "fail" ? "border-[#EF4444]/600 bg-[#EF4444]/600" : "border-gray-300"}`} />
             </button>
           </div>
         </div>
@@ -287,7 +287,7 @@ export function VehicleInspectionScreen() {
         {/* Submit */}
         <button
           onClick={handleSubmit}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1A237E] py-3.5 text-[15px] font-bold text-white shadow-md active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] py-3.5 text-[15px] font-bold text-white shadow-md active:scale-[0.98]"
         >
           <CheckCircle2 size={20} />
           Hifadhi na Kamaliza Ukaguzi
@@ -317,8 +317,8 @@ function ChecklistSection({
             <span
               className={`flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold ${
                 item.pass
-                  ? "bg-green-50 text-green-600"
-                  : "bg-orange-50 text-orange-500"
+                  ? "bg-[#10B981]/10 text-[#10B981]"
+                  : "bg-[#FF9800]/50 text-[#FF9800]"
               }`}
             >
               {item.pass ? <CheckCircle2 size={12} /> : <XCircle size={12} />}

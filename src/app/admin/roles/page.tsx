@@ -30,7 +30,7 @@ export default function RolesPage() {
     <div className="min-h-screen bg-police p-6">
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#7C3AED]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1E3A8A]">
             <Shield size={24} className="text-white" />
           </div>
           <div>
@@ -43,8 +43,8 @@ export default function RolesPage() {
           {/* Role list */}
           <div className="lg:col-span-1 space-y-2">
             {[...ROLE_HIERARCHY].reverse().map((role) => (
-              <button key={role} onClick={() => setSelected(selected === role ? null : role)} className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition ${selected === role ? "bg-[#7C3AED] text-white" : "bg-police-card text-police hover:bg-police-muted"}`}>
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${selected === role ? "bg-white/20 text-white" : "bg-[#7C3AED]/10 text-[#7C3AED]"}`}>
+              <button key={role} onClick={() => setSelected(selected === role ? null : role)} className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition ${selected === role ? "bg-[#1E3A8A] text-white" : "bg-police-card text-police hover:bg-police-muted"}`}>
+                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${selected === role ? "bg-white/20 text-white" : "bg-[#1E3A8A]/10 text-[#1E3A8A]"}`}>
                   {ROLE_HIERARCHY.indexOf(role) + 1}
                 </div>
                 <div className="flex-1">
@@ -61,7 +61,7 @@ export default function RolesPage() {
             {selected ? (
               <div className="rounded-2xl bg-police-card p-5 shadow-sm space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#7C3AED]/10"><Shield size={20} className="text-[#7C3AED]" /></div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1E3A8A]/10"><Shield size={20} className="text-[#1E3A8A]" /></div>
                   <div>
                     <h2 className="text-[16px] font-bold text-police">{selected}</h2>
                     <p className="text-[12px] text-police-muted">Kiwango: {ROLE_HIERARCHY.indexOf(selected) + 1} kati ya {ROLE_HIERARCHY.length}</p>

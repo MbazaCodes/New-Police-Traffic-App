@@ -133,7 +133,7 @@ export function WarningFormScreen() {
                   <div key={i} className="relative h-16 w-16 overflow-hidden rounded-lg border border-police">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={src} alt="" className="h-full w-full object-cover" />
-                    <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))} className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#F44336]"><X size={10} className="text-white" /></button>
+                    <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))} className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#EF4444]"><X size={10} className="text-white" /></button>
                   </div>
                 ))}
               </div>

@@ -9,7 +9,7 @@ function LoadingScreen() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-police">
       <div className="text-center">
-        <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-[#0070C0]/20 border-t-[#0070C0]" />
+        <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-[#2196F3]/20 border-t-[#2196F3]" />
         <p className="text-sm text-police-muted">Inapakia...</p>
       </div>
     </div>

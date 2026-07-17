@@ -255,7 +255,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
         <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#2196F3] to-transparent" />
         <svg className="absolute bottom-0 w-full" viewBox="0 0 400 200" preserveAspectRatio="none">
-          <polygon points="0,200 0,120 30,120 30,90 60,90 60,110 90,110 90,70 120,70 120,100 150,100 150,60 180,60 180,95 210,95 210,80 240,80 240,50 270,50 270,90 300,90 300,75 330,75 330,105 360,105 360,85 400,85 400,200" fill="#1A237E" />
+          <polygon points="0,200 0,120 30,120 30,90 60,90 60,110 90,110 90,70 120,70 120,100 150,100 150,60 180,60 180,95 210,95 210,80 240,80 240,50 270,50 270,90 300,90 300,75 330,75 330,105 360,105 360,85 400,85 400,200" fill="#1E3A8A" />
         </svg>
       </div>
 
@@ -263,7 +263,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       <div className="relative z-10 flex flex-1 flex-col items-center px-6 pb-8 pt-8">
         {/* Logo */}
         <div className="mt-2 flex flex-col items-center">
-          <div className="h-28 w-28 overflow-hidden rounded-full ring-4 ring-[#0070C0]/20">
+          <div className="h-28 w-28 overflow-hidden rounded-full ring-4 ring-[#2196F3]/20">
             <Image
               src="/police-logo.png"
               alt="Tanzania Police Force"
@@ -276,7 +276,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
           <h1 className="mt-4 text-center text-[22px] font-extrabold tracking-tight text-police-navy2">
             TANZANIA POLICE FORCE
           </h1>
-          <p className="mt-1 text-[13px] font-medium text-[#0070C0]">
+          <p className="mt-1 text-[13px] font-medium text-[#2196F3]">
             USALAMA WETU, JUKUMU LETU
           </p>
         </div>
@@ -299,7 +299,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                     <select
                       value={webRole}
                       onChange={(e) => setWebRole(e.target.value)}
-                      className="h-12 w-full appearance-none rounded-xl border border-police bg-police-card px-3 pr-10 text-[14px] text-police focus:border-[#0070C0] focus:outline-none focus:ring-2 focus:ring-[#0070C0]/20"
+                      className="h-12 w-full appearance-none rounded-xl border border-police bg-police-card px-3 pr-10 text-[14px] text-police focus:border-[#2196F3] focus:outline-none focus:ring-2 focus:ring-[#2196F3]/20"
                     >
                       {WEB_ROLES.map((r) => (
                         <option key={r.id} value={r.id}>
@@ -321,13 +321,13 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                         onClick={() => setRole(r.id)}
                         className={`flex items-center gap-2.5 rounded-xl border-2 p-2.5 text-left transition ${
                           active
-                            ? "border-[#0070C0] bg-[#0070C0]/5"
+                            ? "border-[#2196F3] bg-[#2196F3]/5"
                             : "border-gray-200 bg-white"
                         }`}
                       >
                         <Icon
                           size={18}
-                          className={active ? "text-[#0070C0]" : "text-gray-400"}
+                          className={active ? "text-[#2196F3]" : "text-gray-400"}
                         />
                         <div className="min-w-0">
                           <div
@@ -351,7 +351,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                   onClick={() => setMethod("username")}
                   className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${
                     method === "username"
-                      ? "bg-police-card text-[#0070C0] shadow-sm"
+                      ? "bg-police-card text-[#2196F3] shadow-sm"
                       : "text-police-muted"
                   }`}
                 >
@@ -361,7 +361,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                   onClick={() => setMethod("phone")}
                   className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${
                     method === "phone"
-                      ? "bg-police-card text-[#0070C0] shadow-sm"
+                      ? "bg-police-card text-[#2196F3] shadow-sm"
                       : "text-police-muted"
                   }`}
                 >
@@ -374,11 +374,11 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                 <label className="mb-1.5 block text-[13px] font-medium text-police-navy2">
                   {method === "username" ? "Username" : "Namba ya Simu"}
                 </label>
-                <div className="flex items-center gap-2 rounded-xl border border-police bg-police-card px-3 focus-within:border-[#0070C0] focus-within:ring-2 focus-within:ring-[#0070C0]/20">
+                <div className="flex items-center gap-2 rounded-xl border border-police bg-police-card px-3 focus-within:border-[#2196F3] focus-within:ring-2 focus-within:ring-[#2196F3]/20">
                   {method === "username" ? (
-                    <User size={20} className="text-[#0070C0]" />
+                    <User size={20} className="text-[#2196F3]" />
                   ) : (
-                    <Phone size={20} className="text-[#0070C0]" />
+                    <Phone size={20} className="text-[#2196F3]" />
                   )}
                   <input
                     value={identifier}
@@ -396,16 +396,16 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
               </div>
 
               {/* Info note */}
-              <div className="mt-3 flex items-start gap-2 rounded-xl bg-[#0070C0]/5 px-3 py-2.5">
-                <Smartphone size={16} className="mt-0.5 shrink-0 text-[#0070C0]" />
+              <div className="mt-3 flex items-start gap-2 rounded-xl bg-[#2196F3]/5 px-3 py-2.5">
+                <Smartphone size={16} className="mt-0.5 shrink-0 text-[#2196F3]" />
                 <p className="text-[11px] leading-snug text-police-muted">
                   OTP itatumwa kwa simu yako baada ya kuwasilisha.{" "}
-                  <span className="font-medium text-[#0070C0]">Hakuna password inahitajika.</span>
+                  <span className="font-medium text-[#2196F3]">Hakuna password inahitajika.</span>
                 </p>
               </div>
 
               {errorMsg && (
-                <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700">
+                <div className="mt-3 rounded-xl border border-[#EF4444]/20 bg-[#EF4444]/10 px-3 py-2 text-[12px] text-[#EF4444]700">
                   {errorMsg}
                 </div>
               )}
@@ -414,7 +414,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
               <button
                 onClick={sendOtp}
                 disabled={!identifier.trim() || sending}
-                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0070C0] py-3.5 text-[15px] font-bold text-white shadow-lg shadow-[#0070C0]/30 transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-3.5 text-[15px] font-bold text-white shadow-lg shadow-[#2196F3]/30 transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {sending ? (
                   <>
@@ -467,8 +467,8 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                     onKeyDown={(e) => handleOtpKey(idx, e)}
                     className={`h-12 w-full rounded-xl border-2 bg-police-card text-center text-[20px] font-bold text-police-navy2 focus:outline-none ${
                       digit
-                        ? "border-[#0070C0] bg-[#0070C0]/5"
-                        : "border-police focus:border-[#0070C0]"
+                        ? "border-[#2196F3] bg-[#2196F3]/5"
+                        : "border-police focus:border-[#2196F3]"
                     }`}
                   />
                 ))}
@@ -484,7 +484,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                 ) : (
                   <button
                     onClick={resendOtp}
-                    className="flex items-center gap-1 text-[12px] font-bold text-[#0070C0]"
+                    className="flex items-center gap-1 text-[12px] font-bold text-[#2196F3]"
                   >
                     <RefreshCw size={12} /> Tuma tena
                   </button>
@@ -495,7 +495,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
               <button
                 onClick={verifyOtp}
                 disabled={!otpComplete || verifying}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0070C0] py-3.5 text-[15px] font-bold text-white shadow-lg shadow-[#0070C0]/30 transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-3.5 text-[15px] font-bold text-white shadow-lg shadow-[#2196F3]/30 transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {verifying ? (
                   <>
@@ -512,7 +512,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
               </button>
 
               {errorMsg && (
-                <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700">
+                <div className="mt-3 rounded-xl border border-[#EF4444]/20 bg-[#EF4444]/10 px-3 py-2 text-[12px] text-[#EF4444]700">
                   {errorMsg}
                 </div>
               )}
@@ -522,9 +522,9 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
           {/* STEP 3: Success */}
           {step === "success" && (
             <div className="flex flex-col items-center py-6">
-              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-green-50">
-                <div className="absolute inset-0 animate-ping rounded-full bg-green-200 opacity-40" />
-                <CheckCircle2 size={48} className="text-green-500 relative z-10" />
+              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-[#10B981]/10">
+                <div className="absolute inset-0 animate-ping rounded-full bg-[#10B981]/200 opacity-40" />
+                <CheckCircle2 size={48} className="text-[#10B981] relative z-10" />
               </div>
               <h2 className="mt-4 text-[19px] font-bold text-police-navy2">Login Imefanikiwa!</h2>
               <p className="mt-1 text-center text-[13px] text-police-muted">
@@ -532,7 +532,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
               </p>
               <div className="mt-4 h-1.5 w-40 overflow-hidden rounded-full bg-police-muted">
                 <div
-                  className="h-full rounded-full bg-[#0070C0]"
+                  className="h-full rounded-full bg-[#2196F3]"
                   style={{ animation: "progress-fill 0.85s ease-in-out forwards" }}
                 />
               </div>

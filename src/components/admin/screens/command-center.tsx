@@ -71,9 +71,9 @@ const GRID_PATROL_STATUS = [
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const PATROL_STATUS_STYLE: Record<string, string> = {
-  active: "bg-green-500/15 text-green-500 border border-green-500/30",
-  sos: "bg-red-500/15 text-red-500 border border-red-500/30 animate-pulse",
-  break: "bg-orange-500/15 text-orange-500 border border-orange-500/30",
+  active: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
+  sos: "bg-[#EF4444]/100/15 text-[#EF4444] border border-[#EF4444]/500/30 animate-pulse",
+  break: "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
   "off-duty": "bg-gray-500/15 text-gray-400 border border-gray-500/20",
 };
 
@@ -86,15 +86,15 @@ const PATROL_STATUS_LABEL: Record<string, string> = {
 
 const RADIO_TYPE_STYLE: Record<string, string> = {
   report: "text-[#2196F3]",
-  dispatch: "text-[#9C27B0]",
-  sos: "text-red-500 font-bold",
-  broadcast: "text-orange-500",
+  dispatch: "text-[#1E3A8A]",
+  sos: "text-[#EF4444] font-bold",
+  broadcast: "text-[#FF9800]",
   status: "text-police-muted",
 };
 
 const PRIORITY_STYLE: Record<string, string> = {
-  high: "bg-red-500/15 text-red-500 border border-red-500/30",
-  medium: "bg-orange-500/15 text-orange-500 border border-orange-500/30",
+  high: "bg-[#EF4444]/100/15 text-[#EF4444] border border-[#EF4444]/500/30",
+  medium: "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
   low: "bg-blue-500/15 text-[#2196F3] border border-blue-500/30",
 };
 
@@ -115,10 +115,10 @@ function MapView({ patrols }: { patrols: typeof ACTIVE_PATROLS }) {
 
       {/* Roads - simplified DSM road mockup */}
       <svg className="absolute inset-0 h-full w-full opacity-20" preserveAspectRatio="none">
-        <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="#4CAF50" strokeWidth="1.5" />
-        <line x1="50%" y1="10%" x2="50%" y2="90%" stroke="#4CAF50" strokeWidth="1.5" />
-        <line x1="20%" y1="20%" x2="80%" y2="80%" stroke="#4CAF50" strokeWidth="1" />
-        <line x1="80%" y1="20%" x2="20%" y2="80%" stroke="#4CAF50" strokeWidth="1" />
+        <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="#10B981" strokeWidth="1.5" />
+        <line x1="50%" y1="10%" x2="50%" y2="90%" stroke="#10B981" strokeWidth="1.5" />
+        <line x1="20%" y1="20%" x2="80%" y2="80%" stroke="#10B981" strokeWidth="1" />
+        <line x1="80%" y1="20%" x2="20%" y2="80%" stroke="#10B981" strokeWidth="1" />
       </svg>
 
       {/* Patrol pins */}
@@ -135,9 +135,9 @@ function MapView({ patrols }: { patrols: typeof ACTIVE_PATROLS }) {
             style={{ left: `${Math.max(5, Math.min(90, x))}%`, top: `${Math.max(5, Math.min(85, y))}%`, transform: "translate(-50%, -50%)" }}
           >
             {isSos && (
-              <div className="absolute h-8 w-8 animate-ping rounded-full bg-red-500/40" />
+              <div className="absolute h-8 w-8 animate-ping rounded-full bg-[#EF4444]/100/40" />
             )}
-            <div className={`flex h-6 w-6 items-center justify-center rounded-full border-2 text-[9px] font-bold text-white ${isSos ? "border-red-500 bg-red-600" : "border-[#2196F3] bg-[#1A237E]"}`}>
+            <div className={`flex h-6 w-6 items-center justify-center rounded-full border-2 text-[9px] font-bold text-white ${isSos ? "border-[#EF4444]/500 bg-[#EF4444]/600" : "border-[#2196F3] bg-[#1E3A8A]"}`}>
               {i + 1}
             </div>
             <div className="mt-0.5 rounded bg-black/70 px-1 py-0.5 text-[8px] text-white whitespace-nowrap">
@@ -154,8 +154,8 @@ function MapView({ patrols }: { patrols: typeof ACTIVE_PATROLS }) {
       </div>
 
       {/* Live indicator */}
-      <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-lg bg-black/60 px-2 py-1 text-[10px] text-green-400">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+      <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-lg bg-black/60 px-2 py-1 text-[10px] text-[#10B981]400">
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#10B981]" />
         MOJA KWA MOJA
       </div>
     </div>
@@ -208,7 +208,7 @@ export function CommandCenter() {
           <p className="text-[13px] text-police-muted">Udhibiti wa moja kwa moja — Dar es Salaam</p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-lg bg-green-500/10 px-3 py-1.5 text-[12px] text-green-500 border border-green-500/20">
+          <div className="flex items-center gap-1.5 rounded-lg bg-[#10B981]/10 px-3 py-1.5 text-[12px] text-[#10B981] border border-[#10B981]/500/20">
             <Wifi size={13} />
             <span>Mawasiliano: Yakiwa</span>
           </div>
@@ -221,15 +221,15 @@ export function CommandCenter() {
 
       {/* SOS Banner */}
       {sosOfficer && (
-        <div className="flex items-center gap-3 rounded-xl border border-red-500/40 bg-red-500/10 p-4">
-          <div className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-red-500 text-white">
+        <div className="flex items-center gap-3 rounded-xl border border-[#EF4444]/500/40 bg-[#EF4444]/100/10 p-4">
+          <div className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#EF4444]/100 text-white">
             <Zap size={20} />
           </div>
           <div className="flex-1">
-            <p className="text-[14px] font-bold text-red-500">🚨 SIMU YA MSAADA — SOS</p>
-            <p className="text-[12px] text-red-400">
+            <p className="text-[14px] font-bold text-[#EF4444]">🚨 SIMU YA MSAADA — SOS</p>
+            <p className="text-[12px] text-[#EF4444]400">
               {sosOfficerId ? (
-                <Link href={`/command/officers/${encodeURIComponent(sosOfficerId)}`} className="font-semibold text-red-300 underline-offset-2 hover:underline">
+                <Link href={`/command/officers/${encodeURIComponent(sosOfficerId)}`} className="font-semibold text-[#EF4444]300 underline-offset-2 hover:underline">
                   {sosOfficer.officer}
                 </Link>
               ) : (
@@ -239,7 +239,7 @@ export function CommandCenter() {
           </div>
           <button
             onClick={() => setShowEmergency(true)}
-            className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-[13px] font-bold text-white hover:bg-red-600"
+            className="flex items-center gap-2 rounded-lg bg-[#EF4444]/100 px-4 py-2 text-[13px] font-bold text-white hover:bg-[#EF4444]/600"
           >
             <Phone size={14} />
             Piga Simu
@@ -251,9 +251,9 @@ export function CommandCenter() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           { label: "Maofisa Kazini", value: ACTIVE_PATROLS.filter((p) => p.status === "active").length.toString(), icon: Users, color: "#2196F3", screen: "officers" as AdminScreen },
-          { label: "Patroli Kazini", value: "23", icon: Shield, color: "#4CAF50", screen: "patrols" as AdminScreen },
+          { label: "Patroli Kazini", value: "23", icon: Shield, color: "#10B981", screen: "patrols" as AdminScreen },
           { label: "Matukio Yangu", value: LIVE_INCIDENTS.filter((i) => i.status !== "resolved").length.toString(), icon: AlertTriangle, color: "#FF9800", screen: "incidents" as AdminScreen },
-          { label: "Simu za SOS", value: "1", icon: Zap, color: "#F44336", screen: "alerts" as AdminScreen },
+          { label: "Simu za SOS", value: "1", icon: Zap, color: "#EF4444", screen: "alerts" as AdminScreen },
         ].map((kpi) => {
           const Icon = kpi.icon;
           return (
@@ -286,9 +286,9 @@ export function CommandCenter() {
             <div className="mb-2 flex items-center justify-between">
               <h2 className="text-[14px] font-bold text-police-navy">Ramani ya Moja kwa Moja</h2>
               <div className="flex items-center gap-3 text-[10px] text-police-muted">
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#1A237E]" />Kazini</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-red-500" />SOS</span>
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-orange-500" />Mapumziko</span>
+                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#1E3A8A]" />Kazini</span>
+                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#EF4444]/100" />SOS</span>
+                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#FF9800]" />Mapumziko</span>
               </div>
             </div>
             <div className="h-72">
@@ -316,7 +316,7 @@ export function CommandCenter() {
                     : "border-police-soft bg-police-muted/30 hover:border-police"
                 }`}
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1A237E] text-[10px] font-bold text-white">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1E3A8A] text-[10px] font-bold text-white">
                   {p.unit.split("-")[1]}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -352,7 +352,7 @@ export function CommandCenter() {
         <div className="rounded-xl bg-police-card p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-[14px] font-bold text-police-navy">Foleni ya Kutuma</h2>
-            <span className="rounded-md bg-orange-500/10 px-2 py-0.5 text-[11px] font-bold text-orange-500">
+            <span className="rounded-md bg-[#FF9800]/10 px-2 py-0.5 text-[11px] font-bold text-[#FF9800]">
               {dispatchQueue.filter((d) => d.unassigned).length} Kusubiri
             </span>
           </div>
@@ -373,13 +373,13 @@ export function CommandCenter() {
                       {d.location}
                     </p>
                     {!d.unassigned && (
-                      <p className="mt-0.5 text-[10px] text-green-500">→ {d.assignedTo}</p>
+                      <p className="mt-0.5 text-[10px] text-[#10B981]">→ {d.assignedTo}</p>
                     )}
                   </div>
                   {d.unassigned && (
                     <button
                       onClick={() => assignDispatch(d.id)}
-                      className="shrink-0 rounded-lg bg-[#1A237E] px-2 py-1.5 text-[10px] font-bold text-white hover:bg-[#2196F3]"
+                      className="shrink-0 rounded-lg bg-[#1E3A8A] px-2 py-1.5 text-[10px] font-bold text-white hover:bg-[#2196F3]"
                     >
                       <Send size={11} />
                     </button>
@@ -394,8 +394,8 @@ export function CommandCenter() {
         <div className="rounded-xl bg-police-card p-4 shadow-sm lg:col-span-2">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-[14px] font-bold text-police-navy">Kumbukumbu ya Redio</h2>
-            <div className="flex items-center gap-1.5 text-[11px] text-green-500">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+            <div className="flex items-center gap-1.5 text-[11px] text-[#10B981]">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#10B981]" />
               Inasikiliza
             </div>
           </div>
@@ -438,7 +438,7 @@ export function CommandCenter() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           {GRID_PATROL_STATUS.map((area) => {
             const pct = Math.round((area.active / area.patrols) * 100);
-            const color = pct >= 80 ? "#4CAF50" : pct >= 50 ? "#FF9800" : "#F44336";
+            const color = pct >= 80 ? "#10B981" : pct >= 50 ? "#FF9800" : "#EF4444";
             return (
               <button
                 key={area.area}
@@ -468,9 +468,9 @@ export function CommandCenter() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowEmergency(false)} aria-hidden />
           <div className="relative z-10 w-full max-w-sm overflow-hidden rounded-2xl bg-police-card shadow-2xl">
-            <div className="flex items-center justify-between border-b border-police-soft bg-red-500/10 p-4">
+            <div className="flex items-center justify-between border-b border-police-soft bg-[#EF4444]/100/10 p-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500/15 text-red-500">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#EF4444]/100/15 text-[#EF4444]">
                   <Phone size={18} />
                 </div>
                 <p className="text-[15px] font-bold text-police">Nambari za Dharura</p>
@@ -492,12 +492,12 @@ export function CommandCenter() {
                   className="flex items-center justify-between rounded-lg border border-police-soft bg-police-input p-3 transition hover:bg-police-muted"
                 >
                   <span className="text-[13px] font-semibold text-police">{e.label}</span>
-                  <span className="flex items-center gap-2 font-mono text-[14px] font-bold text-red-500">
+                  <span className="flex items-center gap-2 font-mono text-[14px] font-bold text-[#EF4444]">
                     {e.number} <Phone size={14} />
                   </span>
                 </a>
               ))}
-              <p className="mt-2 rounded-lg bg-red-500/5 p-2 text-center text-[11px] text-red-600">
+              <p className="mt-2 rounded-lg bg-[#EF4444]/100/5 p-2 text-center text-[11px] text-[#EF4444]">
                 Bonyeza nambari kupiga simu moja kwa moja
               </p>
             </div>

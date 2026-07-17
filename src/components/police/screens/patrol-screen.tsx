@@ -83,7 +83,7 @@ export function PatrolScreen() {
       <div className="space-y-4 p-4">
 
         {/* Timer Hero */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#2196F3] to-[#1976D2] p-5 shadow-lg">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#2196F3] to-[#2196F3] p-5 shadow-lg">
           <div className="flex flex-col items-center">
             <p className="text-[13px] font-medium text-white/80">
               {patrolActive ? "Patroli inaendelea..." : submitted ? "Patroli Imekamilika" : "Anza patroli yako"}
@@ -91,11 +91,11 @@ export function PatrolScreen() {
             <p className="mt-1 font-mono text-[40px] font-bold tracking-wider text-white">{formatTime(patrolElapsed)}</p>
             <div className="mt-4 flex gap-3">
               {!patrolActive ? (
-                <button onClick={handleStart} className="flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-[14px] font-bold text-[#1976D2] shadow-md active:scale-[0.97]">
-                  <Play size={16} fill="#1976D2" /> Anza Patroli
+                <button onClick={handleStart} className="flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-[14px] font-bold text-[#2196F3] shadow-md active:scale-[0.97]">
+                  <Play size={16} fill="#2196F3" /> Anza Patroli
                 </button>
               ) : (
-                <button onClick={handleStop} className="flex items-center gap-2 rounded-xl bg-[#F44336] px-6 py-2.5 text-[14px] font-bold text-white shadow-md active:scale-[0.97]">
+                <button onClick={handleStop} className="flex items-center gap-2 rounded-xl bg-[#EF4444] px-6 py-2.5 text-[14px] font-bold text-white shadow-md active:scale-[0.97]">
                   <Square size={16} fill="white" /> Maliza Patroli
                 </button>
               )}
@@ -103,8 +103,8 @@ export function PatrolScreen() {
           </div>
           {patrolActive && (
             <span className="absolute right-4 top-4 flex h-3 w-3">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-300 opacity-75" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-green-400" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#10B981]/300 opacity-75" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-[#10B981]/400" />
             </span>
           )}
         </div>
@@ -197,7 +197,7 @@ export function PatrolScreen() {
                       <div key={i} className="relative h-16 w-16 overflow-hidden rounded-lg border border-police">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={src} alt="" className="h-full w-full object-cover" />
-                        <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))} className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#F44336]"><X size={10} className="text-white" /></button>
+                        <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))} className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#EF4444]"><X size={10} className="text-white" /></button>
                       </div>
                     ))}
                   </div>

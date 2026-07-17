@@ -22,8 +22,8 @@ import { toast } from "@/hooks/use-toast";
 import { useRecordsStore, type AdminPostRecord } from "@/store/records-store";
 
 const STATUS_STYLES: Record<string, string> = {
-  active: "bg-green-500/15 text-green-500 border border-green-500/30",
-  inactive: "bg-red-500/15 text-red-500 border border-red-500/30",
+  active: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
+  inactive: "bg-[#EF4444]/100/15 text-[#EF4444] border border-[#EF4444]/500/30",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -33,7 +33,7 @@ const STATUS_LABEL: Record<string, string> = {
 
 const TYPE_STYLES: Record<string, string> = {
   Traffic: "bg-[#2196F3]/15 text-[#2196F3] border border-[#2196F3]/30",
-  Patrol: "bg-green-500/15 text-green-500 border border-green-500/30",
+  Patrol: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
 };
 
 const FILTER_TABS = [
@@ -120,7 +120,7 @@ export function AdminPosts() {
         <div className="flex items-center gap-2">
           <button
             onClick={openCreate}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#1E88E5]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#2196F3]"
           >
             <Plus size={14} /> Ongeza Posti (Modal)
           </button>
@@ -145,19 +145,19 @@ export function AdminPosts() {
           icon={<Shield size={18} />}
           label="Zinazofanya Kazi"
           value={String(activePosts)}
-          color="#4CAF50"
+          color="#10B981"
         />
         <StatCard
           icon={<Shield size={18} />}
           label="Zilizozimwa"
           value={String(inactivePosts)}
-          color="#F44336"
+          color="#EF4444"
         />
         <StatCard
           icon={<Users size={18} />}
           label="Jumla ya Maofisa"
           value={String(totalOfficers)}
-          color="#9C27B0"
+          color="#1E3A8A"
         />
       </div>
 
@@ -223,7 +223,7 @@ export function AdminPosts() {
                         className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${
                           p.type === "Traffic"
                             ? "bg-[#2196F3]/15 text-[#2196F3]"
-                            : "bg-green-500/15 text-green-500"
+                            : "bg-[#10B981]/15 text-[#10B981]"
                         }`}
                       >
                         {p.type === "Traffic" ? (
@@ -259,7 +259,7 @@ export function AdminPosts() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <span className="inline-flex items-center gap-1 rounded-md bg-[#9C27B0]/15 px-2 py-0.5 text-[11px] font-bold text-[#9C27B0]">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-[#1E3A8A]/15 px-2 py-0.5 text-[11px] font-bold text-[#1E3A8A]">
                       <Users size={10} />
                       {p.officersCount}
                     </span>
@@ -452,7 +452,7 @@ function PostModal({
                     type === t
                       ? t === "Traffic"
                         ? "border-[#2196F3] bg-[#2196F3]/10 text-[#2196F3]"
-                        : "border-green-500 bg-green-500/10 text-green-500"
+                        : "border-[#10B981]/500 bg-[#10B981]/10 text-[#10B981]"
                       : "border-police-soft bg-police-input text-police-muted"
                   }`}
                 >
@@ -481,7 +481,7 @@ function PostModal({
               </button>
               <button
                 onClick={handleSave}
-                className="flex items-center justify-center gap-1.5 rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+                className="flex items-center justify-center gap-1.5 rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
               >
                 <Save size={13} /> Hifadhi
               </button>
@@ -490,7 +490,7 @@ function PostModal({
           {isView && (
             <button
               onClick={onClose}
-              className="mt-2 w-full rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+              className="mt-2 w-full rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
             >
               Funga
             </button>

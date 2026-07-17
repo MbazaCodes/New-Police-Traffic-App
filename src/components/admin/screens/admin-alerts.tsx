@@ -23,7 +23,7 @@ const AUDIENCE_OPTIONS = [
 
 const PRIORITY_OPTIONS = [
   { id: "normal", label: "Kawaida", color: "#2196F3" },
-  { id: "high", label: "Muhimu", color: "#F44336" },
+  { id: "high", label: "Muhimu", color: "#EF4444" },
 ] as const;
 
 export function AdminAlerts() {
@@ -239,7 +239,7 @@ export function AdminAlerts() {
           <button
             onClick={handleSend}
             disabled={sending}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[#2196F3] py-3 text-[13px] font-semibold text-white transition hover:bg-[#1E88E5] disabled:opacity-60"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[#2196F3] py-3 text-[13px] font-semibold text-white transition hover:bg-[#2196F3] disabled:opacity-60"
           >
             <Send size={15} />
             {sending ? "Inatuma..." : "Tuma Tangazo"}
@@ -277,7 +277,7 @@ export function AdminAlerts() {
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
                         {a.priority === "high" ? (
-                          <AlertTriangle size={14} className="shrink-0 text-red-500" />
+                          <AlertTriangle size={14} className="shrink-0 text-[#EF4444]" />
                         ) : (
                           <Bell size={14} className="shrink-0 text-police-faint" />
                         )}
@@ -289,7 +289,7 @@ export function AdminAlerts() {
                       <span
                         className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${
                           a.priority === "high"
-                            ? "bg-red-500/15 text-red-500"
+                            ? "bg-[#EF4444]/100/15 text-[#EF4444]"
                             : "bg-[#2196F3]/15 text-[#2196F3]"
                         }`}
                       >
@@ -328,7 +328,7 @@ export function AdminAlerts() {
           <p className="mt-1 text-[11px] text-police-muted">Commissioner-only registry with shared communication alerts.</p>
 
           {!canManageMissingRegistry && (
-            <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-[11px] text-red-600">
+            <p className="mt-3 rounded-lg bg-[#EF4444]/10 px-3 py-2 text-[11px] text-[#EF4444]">
               Station Commissioner access only.
             </p>
           )}
@@ -348,7 +348,7 @@ export function AdminAlerts() {
             <button
               onClick={handleAddMissingAlert}
               disabled={!canManageMissingRegistry}
-              className="w-full rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5] disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3] disabled:cursor-not-allowed disabled:opacity-60"
             >
               Add Shared Alert
             </button>

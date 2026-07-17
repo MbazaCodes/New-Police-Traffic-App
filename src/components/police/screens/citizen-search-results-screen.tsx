@@ -111,11 +111,11 @@ export function CitizenSearchResultsScreen() {
     .toUpperCase();
 
   const statusBadgeBg =
-    r.statusColor === "#4CAF50"
-      ? "bg-green-50 text-green-600"
+    r.statusColor === "#10B981"
+      ? "bg-[#10B981]/10 text-[#10B981]"
       : r.statusColor === "#FF9800"
-        ? "bg-orange-50 text-orange-500"
-        : "bg-red-50 text-red-600";
+        ? "bg-[#FF9800]/50 text-[#FF9800]"
+        : "bg-[#EF4444]/10 text-[#EF4444]";
 
   return (
     <div className="min-h-full bg-police">
@@ -185,7 +185,7 @@ export function CitizenSearchResultsScreen() {
           {/* Citizen Header Card */}
           <div className="rounded-2xl bg-police-card p-4 shadow-sm">
             <div className="flex items-start gap-3">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] text-[22px] font-extrabold text-white ring-2 ring-[#3B82F6]/20">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#1E3A8A] to-[#2196F3] text-[22px] font-extrabold text-white ring-2 ring-[#2196F3]/20">
                 {initials}
               </div>
               <div className="min-w-0 flex-1">
@@ -213,15 +213,15 @@ export function CitizenSearchResultsScreen() {
 
           {/* Alert box (only if alerts exist) */}
           {(r.alerts.length > 0 || matchedAlerts.length > 0) && (
-            <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
+            <div className="rounded-2xl border border-[#EF4444]/20 bg-[#EF4444]/10 p-4">
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100">
-                  <AlertTriangle size={20} className="text-red-600" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EF4444]/15">
+                  <AlertTriangle size={20} className="text-[#EF4444]" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[13px] font-extrabold uppercase text-red-600">Alert</span>
-                    <span className="rounded bg-red-600 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+                    <span className="text-[13px] font-extrabold uppercase text-[#EF4444]">Alert</span>
+                    <span className="rounded bg-[#EF4444]/600 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
                       Tahadhari
                     </span>
                   </div>
@@ -229,7 +229,7 @@ export function CitizenSearchResultsScreen() {
                     {matchedAlerts[0]?.details ?? r.alerts[0]}
                   </p>
                   {matchedAlerts[0] && (
-                    <p className="mt-1 text-[11px] text-red-700">
+                    <p className="mt-1 text-[11px] text-[#EF4444]700">
                       {matchedAlerts[0].title} • {matchedAlerts[0].identifier}
                     </p>
                   )}
@@ -243,7 +243,7 @@ export function CitizenSearchResultsScreen() {
             <ActionButton
               icon={<FileText size={18} />}
               label="Rekodi Taarifa"
-              color="#2563EB"
+              color="#2196F3"
               onClick={handleRecordInfo}
             />
             <ActionButton
@@ -255,7 +255,7 @@ export function CitizenSearchResultsScreen() {
             <ActionButton
               icon={<Hand size={18} />}
               label="Kamata"
-              color="#F44336"
+              color="#EF4444"
               onClick={handleArrest}
             />
           </div>
@@ -280,11 +280,11 @@ export function CitizenSearchResultsScreen() {
             <div className="flex items-center justify-between">
               <span className="text-[12px] text-police-muted">Status ya Rekodi</span>
               {r.criminalRecord.hasRecord ? (
-                <span className="flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-600">
+                <span className="flex items-center gap-1 rounded-full bg-[#EF4444]/10 px-2.5 py-1 text-[11px] font-bold text-[#EF4444]">
                   <XCircle size={12} /> Ana Rekodi
                 </span>
               ) : (
-                <span className="flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-[11px] font-bold text-green-600">
+                <span className="flex items-center gap-1 rounded-full bg-[#10B981]/10 px-2.5 py-1 text-[11px] font-bold text-[#10B981]">
                   <CheckCircle2 size={12} /> Hakana Rekodi
                 </span>
               )}
@@ -333,10 +333,10 @@ export function CitizenSearchResultsScreen() {
                   <span
                     className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
                       doc.status === "Sahihi"
-                        ? "bg-green-50 text-green-600"
+                        ? "bg-[#10B981]/10 text-[#10B981]"
                         : doc.status === "Imeisha"
-                          ? "bg-orange-50 text-orange-500"
-                          : "bg-red-50 text-red-600"
+                          ? "bg-[#FF9800]/50 text-[#FF9800]"
+                          : "bg-[#EF4444]/10 text-[#EF4444]"
                     }`}
                   >
                     {doc.status}
@@ -394,7 +394,7 @@ export function CitizenSearchResultsScreen() {
                   >
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-[12px] font-bold text-police">{h.type}</p>
-                      <span className="rounded-full bg-[#3B82F6]/15 px-2 py-0.5 text-[10px] font-bold text-[#2563EB]">
+                      <span className="rounded-full bg-[#2196F3]/15 px-2 py-0.5 text-[10px] font-bold text-[#2196F3]">
                         {h.case}
                       </span>
                     </div>
@@ -416,7 +416,7 @@ export function CitizenSearchResultsScreen() {
 
           {/* Verified footer */}
           <div className="flex items-center justify-center gap-1.5 py-2 text-[11px] text-police-faint">
-            <ShieldCheck size={13} className="text-green-500" />
+            <ShieldCheck size={13} className="text-[#10B981]" />
             Taarifa zimehakikiwa kutoka NIDA & LINESS
           </div>
         </div>

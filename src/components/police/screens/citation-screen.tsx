@@ -145,7 +145,7 @@ export function CitationScreen() {
             </span>
             <button
               onClick={() => setIsOwner(!isOwner)}
-              className={`relative h-6 w-11 rounded-full transition ${isOwner ? "bg-green-500" : "bg-gray-300"}`}
+              className={`relative h-6 w-11 rounded-full transition ${isOwner ? "bg-[#10B981]" : "bg-gray-300"}`}
             >
               <span
                 className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition ${
@@ -156,8 +156,8 @@ export function CitationScreen() {
           </div>
 
           {!isOwner && (
-            <div className="rounded-xl border border-orange-200 bg-orange-50 p-2.5">
-              <p className="text-[11px] font-medium text-orange-600">
+            <div className="rounded-xl border border-[#FF9800]/200 bg-[#FF9800]/50 p-2.5">
+              <p className="text-[11px] font-medium text-[#FF9800]">
                 Dereva sio mwenye gari. Badilisha taarifa za dereva hapa chini.
               </p>
             </div>
@@ -222,7 +222,7 @@ export function CitationScreen() {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Eleza kwa kifupi kilichotokea..."
-              className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[12px] text-police placeholder:text-police-faint focus:border-[#1A237E] focus:outline-none"
+              className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[12px] text-police placeholder:text-police-faint focus:border-[#1E3A8A] focus:outline-none"
             />
           </div>
         </Section>
@@ -234,7 +234,7 @@ export function CitationScreen() {
             <div>
               <label className="mb-1 block text-[11px] font-medium text-police-muted">Hali ya Malipo</label>
               <div className="flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
-                <span className="h-10 flex-1 text-[12px] font-semibold text-orange-500">
+                <span className="h-10 flex-1 text-[12px] font-semibold text-[#FF9800]">
                   Inasubiri Malipo
                 </span>
                 <ChevronDown size={14} className="text-police-faint" />
@@ -256,13 +256,13 @@ export function CitationScreen() {
         <div className="flex gap-2.5 pt-1">
           <button
             onClick={handleSave}
-            className="flex-1 rounded-xl border-2 border-[#1A237E] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
+            className="flex-1 rounded-xl border-2 border-[#1E3A8A] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
           >
             <Save size={16} className="mr-1 inline" /> Hifadhi
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-[1.5] rounded-xl bg-[#1A237E] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]"
+            className="flex-[1.5] rounded-xl bg-[#1E3A8A] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]"
           >
             <Send size={16} className="mr-1 inline" /> Toa Citation
           </button>
@@ -318,7 +318,7 @@ function FormField({
       <div
         className={`flex items-center gap-2 rounded-xl border border-police px-3 ${
           readOnly ? "bg-police-muted" : "bg-police-input"
-        } focus-within:border-[#1A237E]`}
+        } focus-within:border-[#1E3A8A]`}
       >
         {icon && <span className="text-police-faint">{icon}</span>}
         <input

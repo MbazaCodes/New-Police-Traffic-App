@@ -26,7 +26,7 @@ export function BottomNav() {
             <div className="relative">
               <Icon size={24} strokeWidth={active ? 2.5 : 2} className={active ? "text-[#2196F3]" : "text-police-faint"} />
               {item.id === "alerts" && unread > 0 && (
-                <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+                <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
                   {unread > 9 ? "9+" : unread}
                 </span>
               )}

@@ -37,7 +37,7 @@ export function IncidentDetailPage({ incidentId, basePath }: { incidentId: strin
               <p className="font-mono text-[11px] text-police-faint">{incident.id}</p>
               <h1 className="text-xl font-bold text-police-navy">{incident.type}</h1>
             </div>
-            <span className="rounded-md bg-red-500/15 px-2 py-1 text-[10px] font-bold uppercase text-red-500">{incident.priority}</span>
+            <span className="rounded-md bg-[#EF4444]/100/15 px-2 py-1 text-[10px] font-bold uppercase text-[#EF4444]">{incident.priority}</span>
           </div>
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <p className="text-[13px] text-police-muted"><MapPin size={13} className="mr-1 inline" />{incident.location}</p>
@@ -50,7 +50,7 @@ export function IncidentDetailPage({ incidentId, basePath }: { incidentId: strin
             {incident.description}
           </div>
           <div className="mt-4 flex gap-2">
-            <button className="inline-flex items-center gap-1 rounded-lg bg-[#2196F3] px-3 py-2 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"><AlertTriangle size={13} /> Weka Kipaumbele</button>
+            <button className="inline-flex items-center gap-1 rounded-lg bg-[#2196F3] px-3 py-2 text-[12px] font-semibold text-white hover:bg-[#2196F3]"><AlertTriangle size={13} /> Weka Kipaumbele</button>
           </div>
         </div>
       </div>

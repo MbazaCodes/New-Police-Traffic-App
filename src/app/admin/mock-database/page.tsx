@@ -157,7 +157,7 @@ export default function MockDatabasePage() {
                         <td className="px-4 py-2 text-police-muted">{veh.color}</td>
                         <td className="px-4 py-2 text-police-muted">{veh.year}</td>
                         <td className="px-4 py-2 text-police-muted max-w-[130px] truncate">{veh.ownerName}</td>
-                        <td className="px-4 py-2"><span className={`rounded-full px-2 py-0.5 text-[9px] font-bold ${veh.insurance.valid ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>{veh.insurance.valid ? "Valid" : "Expired"}</span></td>
+                        <td className="px-4 py-2"><span className={`rounded-full px-2 py-0.5 text-[9px] font-bold ${veh.insurance.valid ? "bg-[#10B981]/15 text-[#10B981]" : "bg-[#EF4444]/15 text-[#EF4444]"}`}>{veh.insurance.valid ? "Valid" : "Expired"}</span></td>
                         <td className="px-4 py-2 font-bold" style={{ color: veh.outstandingFines > 0 ? "#EF4444" : "#10B981" }}>{veh.outstandingFines > 0 ? `TZS ${veh.outstandingFines.toLocaleString()}` : "Safi"}</td>
                       </tr>
                     );
@@ -249,7 +249,7 @@ export default function MockDatabasePage() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {filter(MISSING_RECORDS as unknown as Record<string, unknown>[]).map((m) => {
               const rec = m as typeof MISSING_RECORDS[0];
-              const tc = { person: "#EF4444", car: "#2196F3", device: "#9C27B0" };
+              const tc = { person: "#EF4444", car: "#2196F3", device: "#1E3A8A" };
               return (
                 <div key={rec.id} className="rounded-2xl bg-police-card p-4 shadow-sm">
                   <div className="flex items-start gap-3">

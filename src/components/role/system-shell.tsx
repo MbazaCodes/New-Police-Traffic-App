@@ -77,9 +77,9 @@ const SYSTEM_NAV: { id: SystemScreen; label: string; icon: typeof LayoutDashboar
 function SystemDashboard() {
   const systemStats = [
     { label: "CPU Usage", value: "45%", icon: Cpu, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400", bar: 45, barColor: "bg-blue-500" },
-    { label: "Memory Usage", value: "62%", icon: MemoryStick, color: "bg-violet-500/15 text-violet-600 dark:text-violet-400", bar: 62, barColor: "bg-violet-500" },
-    { label: "Uptime", value: "99.9%", icon: Zap, color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400", bar: 99.9, barColor: "bg-emerald-500" },
-    { label: "Active Users", value: "23", icon: Users, color: "bg-amber-500/15 text-amber-600 dark:text-amber-400", bar: 23, barColor: "bg-amber-500" },
+    { label: "Memory Usage", value: "62%", icon: MemoryStick, color: "bg-[#1E3A8A]/15 text-[#1E3A8A] ", bar: 62, barColor: "bg-[#1E3A8A]" },
+    { label: "Uptime", value: "99.9%", icon: Zap, color: "bg-[#10B981]/15 text-[#10B981] ", bar: 99.9, barColor: "bg-[#10B981]" },
+    { label: "Active Users", value: "23", icon: Users, color: "bg-[#FF9800]/15 text-[#FF9800] ", bar: 23, barColor: "bg-[#FF9800]" },
   ];
 
   const serverStatus = [
@@ -100,9 +100,9 @@ function SystemDashboard() {
   ];
 
   const eventColor: Record<string, string> = {
-    success: "bg-emerald-500",
-    warning: "bg-amber-500",
-    alert: "bg-red-500",
+    success: "bg-[#10B981]",
+    warning: "bg-[#FF9800]",
+    alert: "bg-[#EF4444]/100",
     info: "bg-blue-500",
   };
 
@@ -150,15 +150,15 @@ function SystemDashboard() {
               const Icon = s.icon;
               return (
                 <div key={s.name} className="flex items-center gap-3 rounded-lg bg-police-muted/50 px-3 py-2.5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#10B981]/15 text-[#10B981] ">
                     <Icon size={18} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-[13px] font-medium text-police">{s.name}</p>
                     <p className="text-[11px] text-police-faint">{s.region} &middot; Load: {s.load}</p>
                   </div>
-                  <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  <span className="flex items-center gap-1 text-[11px] font-semibold text-[#10B981] ">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#10B981]" />
                     {s.status}
                   </span>
                 </div>
@@ -207,15 +207,15 @@ function SystemUsers() {
   ];
 
   const statusDot: Record<string, string> = {
-    Online: "bg-emerald-500",
+    Online: "bg-[#10B981]",
     Offline: "bg-slate-400",
-    Away: "bg-amber-500",
+    Away: "bg-[#FF9800]",
   };
 
   const statusStyle: Record<string, string> = {
-    Online: "text-emerald-600 dark:text-emerald-400",
+    Online: "text-[#10B981] ",
     Offline: "text-slate-500",
-    Away: "text-amber-600 dark:text-amber-400",
+    Away: "text-[#FF9800] ",
   };
 
   return (
@@ -284,9 +284,9 @@ function SystemHealth() {
   ];
 
   const statusConfig: Record<string, { color: string; textColor: string; dot: string }> = {
-    Healthy: { color: "bg-emerald-500/15", textColor: "text-emerald-600 dark:text-emerald-400", dot: "bg-emerald-500" },
-    Warning: { color: "bg-amber-500/15", textColor: "text-amber-600 dark:text-amber-400", dot: "bg-amber-500" },
-    Critical: { color: "bg-red-500/15", textColor: "text-red-600 dark:text-red-400", dot: "bg-red-500" },
+    Healthy: { color: "bg-[#10B981]/15", textColor: "text-[#10B981] ", dot: "bg-[#10B981]" },
+    Warning: { color: "bg-[#FF9800]/15", textColor: "text-[#FF9800] ", dot: "bg-[#FF9800]" },
+    Critical: { color: "bg-[#EF4444]/100/15", textColor: "text-[#EF4444] dark:text-[#EF4444]400", dot: "bg-[#EF4444]/100" },
   };
 
   return (
@@ -346,8 +346,8 @@ function SystemUserManagement() {
   ];
 
   const statusStyle: Record<string, string> = {
-    Active: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-    Suspended: "bg-red-500/15 text-red-600 dark:text-red-400",
+    Active: "bg-[#10B981]/15 text-[#10B981] ",
+    Suspended: "bg-[#EF4444]/100/15 text-[#EF4444] dark:text-[#EF4444]400",
     Inactive: "bg-slate-500/15 text-slate-500",
   };
 
@@ -358,7 +358,7 @@ function SystemUserManagement() {
           <h2 className="text-xl font-bold text-police-navy">Usimamizi wa Watumiaji / User Management</h2>
           <p className="text-sm text-police-faint">Create, edit, and manage user accounts</p>
         </div>
-        <button className="flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-4 py-2 text-[12px] font-semibold text-white shadow-md shadow-[#2196F3]/30 hover:bg-[#1976D2] transition">
+        <button className="flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-4 py-2 text-[12px] font-semibold text-white shadow-md shadow-[#2196F3]/30 hover:bg-[#2196F3] transition">
           + Add User
         </button>
       </div>
@@ -412,7 +412,7 @@ function SystemIntegrations() {
       description: "Primary database and authentication backend",
       status: "Connected",
       icon: Database,
-      color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+      color: "bg-[#10B981]/15 text-[#10B981] ",
       details: { latency: "12ms", region: "Dodoma", version: "v2.39.3" },
     },
     {
@@ -420,7 +420,7 @@ function SystemIntegrations() {
       description: "Fine and fee payment processing via NMB & CRDB",
       status: "Connected",
       icon: CreditCard,
-      color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+      color: "bg-[#10B981]/15 text-[#10B981] ",
       details: { latency: "340ms", provider: "NMB / CRDB", version: "v1.8.0" },
     },
     {
@@ -428,7 +428,7 @@ function SystemIntegrations() {
       description: "Bulk SMS notifications via Vodacom & Airtel",
       status: "Degraded",
       icon: MessageSquare,
-      color: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+      color: "bg-[#FF9800]/15 text-[#FF9800] ",
       details: { latency: "1,200ms", provider: "Twilio TZ", version: "v3.2.1" },
     },
     {
@@ -436,21 +436,21 @@ function SystemIntegrations() {
       description: "Transaction emails and system alerts",
       status: "Connected",
       icon: Mail,
-      color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+      color: "bg-[#10B981]/15 text-[#10B981] ",
       details: { latency: "85ms", provider: "SendGrid", version: "v7.1.0" },
     },
   ];
 
   const statusDot: Record<string, string> = {
-    Connected: "bg-emerald-500",
-    Degraded: "bg-amber-500",
-    Disconnected: "bg-red-500",
+    Connected: "bg-[#10B981]",
+    Degraded: "bg-[#FF9800]",
+    Disconnected: "bg-[#EF4444]/100",
   };
 
   const statusTextColor: Record<string, string> = {
-    Connected: "text-emerald-600 dark:text-emerald-400",
-    Degraded: "text-amber-600 dark:text-amber-400",
-    Disconnected: "text-red-600 dark:text-red-400",
+    Connected: "text-[#10B981] ",
+    Degraded: "text-[#FF9800] ",
+    Disconnected: "text-[#EF4444] dark:text-[#EF4444]400",
   };
 
   return (
@@ -512,9 +512,9 @@ function SystemNotifications() {
   ];
 
   const severityConfig: Record<string, { icon: typeof AlertCircle; color: string }> = {
-    success: { icon: CheckCircle2, color: "bg-emerald-500/15 text-emerald-500" },
-    warning: { icon: AlertTriangle, color: "bg-amber-500/15 text-amber-500" },
-    alert: { icon: AlertCircle, color: "bg-red-500/15 text-red-500" },
+    success: { icon: CheckCircle2, color: "bg-[#10B981]/15 text-emerald-500" },
+    warning: { icon: AlertTriangle, color: "bg-[#FF9800]/15 text-[#FF9800]" },
+    alert: { icon: AlertCircle, color: "bg-[#EF4444]/100/15 text-[#EF4444]" },
     info: { icon: Activity, color: "bg-blue-500/15 text-blue-500" },
   };
 
@@ -630,7 +630,7 @@ function SystemSettings() {
               <p className="text-[13px] font-medium text-police">Maintenance Mode</p>
               <p className="text-[11px] text-police-faint">Disable user access during maintenance</p>
             </div>
-            <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Disabled</span>
+            <span className="inline-flex items-center rounded-full bg-[#10B981]/15 px-2.5 py-0.5 text-[11px] font-semibold text-[#10B981] ">Disabled</span>
           </div>
         </div>
       </div>
@@ -658,14 +658,14 @@ function SystemSettings() {
               <p className="text-[13px] font-medium text-police">Two-Factor Authentication</p>
               <p className="text-[11px] text-police-faint">Require 2FA for all admin roles</p>
             </div>
-            <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Enforced</span>
+            <span className="inline-flex items-center rounded-full bg-[#10B981]/15 px-2.5 py-0.5 text-[11px] font-semibold text-[#10B981] ">Enforced</span>
           </div>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[13px] font-medium text-police">IP Whitelist</p>
               <p className="text-[11px] text-police-faint">Restrict admin access to specific IPs</p>
             </div>
-            <span className="inline-flex items-center rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">5 IPs configured</span>
+            <span className="inline-flex items-center rounded-full bg-[#FF9800]/15 px-2.5 py-0.5 text-[11px] font-semibold text-[#FF9800] ">5 IPs configured</span>
           </div>
         </div>
       </div>
@@ -721,7 +721,7 @@ function SystemSettings() {
               <p className="text-[13px] font-medium text-police">Last Backup</p>
               <p className="text-[11px] text-police-faint">Most recent backup details</p>
             </div>
-            <span className="inline-flex items-center gap-1 text-[12px] font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1 text-[12px] font-medium text-[#10B981] ">
               <CheckCircle2 size={14} />
               2024-12-15 02:08 (4.2 GB)
             </span>
@@ -817,7 +817,7 @@ export function SystemShell() {
                   <Icon size={18} />
                   <span className="flex-1 text-[13px] font-medium">{item.label}</span>
                   {item.badge && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#F44336] px-1 text-[10px] font-bold text-white">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[10px] font-bold text-white">
                       {item.badge}
                     </span>
                   )}
@@ -878,7 +878,7 @@ export function SystemShell() {
             {/* Notifications */}
             <button className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police">
               <Bell size={18} />
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
                 4
               </span>
             </button>

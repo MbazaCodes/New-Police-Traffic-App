@@ -38,8 +38,8 @@ export function GeneralHomeScreen() {
   const todayPatrols = patrolRecords.filter((p) => p.date === todayStr).length;
 
   const homeStats = [
-    { label: "Matukio",    value: String(GENERAL_INCIDENTS.length),                             color: "#1A237E" },
-    { label: "Makamato",   value: String(ARREST_RECORDS.filter((a) => a.status === "held").length), color: "#7C3AED" },
+    { label: "Matukio",    value: String(GENERAL_INCIDENTS.length),                             color: "#1E3A8A" },
+    { label: "Makamato",   value: String(ARREST_RECORDS.filter((a) => a.status === "held").length), color: "#1E3A8A" },
     { label: "Maonyo",     value: String(WARNING_RECORDS.length),                               color: "#FF9800" },
     { label: "Patroli Leo", value: String(todayPatrols || "0"),                                 color: "#10B981" },
   ];
@@ -97,7 +97,7 @@ export function GeneralHomeScreen() {
   return (
     <div className="min-h-full bg-police">
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] px-4 pb-16 pt-2">
+      <div className="bg-gradient-to-br from-[#1E3A8A] to-[#2196F3] px-4 pb-16 pt-2">
         <div className="flex items-center justify-between pt-2">
           <div>
             <p className="text-[13px] text-white/80">Karibu,</p>
@@ -108,7 +108,7 @@ export function GeneralHomeScreen() {
             <button onClick={() => navigate("alerts")} className="relative">
               <Bell size={24} className="text-white" />
               {unread > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
                   {unread > 9 ? "9+" : unread}
                 </span>
               )}
@@ -123,11 +123,11 @@ export function GeneralHomeScreen() {
       {/* Hero Card */}
       <div className="-mt-10 px-4">
         <div className="flex flex-col items-center rounded-2xl bg-police-card p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
-          <div className="h-20 w-20 overflow-hidden rounded-full ring-2 ring-[#0070C0]/15">
+          <div className="h-20 w-20 overflow-hidden rounded-full ring-2 ring-[#2196F3]/15">
             <Image src="/police-logo.png" alt="TPF" width={80} height={80} className="h-full w-full object-cover" />
           </div>
           <h2 className="mt-3 text-[20px] font-extrabold tracking-tight text-[#1E3A8A]">TANZANIA POLICE FORCE</h2>
-          <p className="text-[13px] font-medium text-[#3B82F6]">USALAMA WETU, JUKUMU LETU</p>
+          <p className="text-[13px] font-medium text-[#2196F3]">USALAMA WETU, JUKUMU LETU</p>
         </div>
       </div>
 
@@ -144,7 +144,7 @@ export function GeneralHomeScreen() {
       {/* Quick Actions */}
       <div className="mt-4 px-4">
         <div className="grid grid-cols-2 gap-3">
-          <QA icon={<UserCheck size={26} className="text-[#3B82F6]" />} bg="#3B82F6" title="Tafuta Raia" subtitle="Tafuta raia kwa jina, NIDA au simu" onClick={() => navigate("citizen-search-results")} />
+          <QA icon={<UserCheck size={26} className="text-[#2196F3]" />} bg="#2196F3" title="Tafuta Raia" subtitle="Tafuta raia kwa jina, NIDA au simu" onClick={() => navigate("citizen-search-results")} />
           <QA icon={<AlertTriangle size={26} className="text-[#EF4444]" />} bg="#EF4444" title="Ripoti Tukio" subtitle="Rekodi tukio jipya la polisi" onClick={() => navigate("incident-detail")} />
         </div>
 
@@ -154,15 +154,15 @@ export function GeneralHomeScreen() {
       <div className="mt-4 px-4 pb-6">
         <div className="rounded-2xl bg-police-card p-4 shadow-[0_4px_12px_rgba(0,0,0,0.06)]">
           <h3 className="flex items-center gap-2 text-[17px] font-bold text-[#1E3A8A]">
-            <ShieldCheck size={20} className="text-[#3B82F6]" /> Utafutaji wa Raia
+            <ShieldCheck size={20} className="text-[#2196F3]" /> Utafutaji wa Raia
           </h3>
 
           {/* Mode toggle */}
           <div className="mt-3 flex gap-2">
-            <button onClick={() => switchMode("citizen")} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${searchMode === "citizen" ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}>
+            <button onClick={() => switchMode("citizen")} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${searchMode === "citizen" ? "bg-[#2196F3] text-white" : "bg-police-muted text-police-muted"}`}>
               <UserCheck size={13} /> Raia
             </button>
-            <button onClick={() => switchMode("serial")} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${searchMode === "serial" ? "bg-[#8B5CF6] text-white" : "bg-police-muted text-police-muted"}`}>
+            <button onClick={() => switchMode("serial")} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${searchMode === "serial" ? "bg-[#1E3A8A] text-white" : "bg-police-muted text-police-muted"}`}>
               <Package size={13} /> S/N Mali
             </button>
           </div>
@@ -171,7 +171,7 @@ export function GeneralHomeScreen() {
           {searchMode === "citizen" && (
             <div className="mt-2 flex gap-2">
               {(["name", "nida", "mobile"] as CitizenTab[]).map((t) => (
-                <button key={t} onClick={() => switchCitizenTab(t)} className={`flex-1 rounded-lg py-1.5 text-[11px] font-semibold transition ${citizenSearchType === t ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}>
+                <button key={t} onClick={() => switchCitizenTab(t)} className={`flex-1 rounded-lg py-1.5 text-[11px] font-semibold transition ${citizenSearchType === t ? "bg-[#2196F3] text-white" : "bg-police-muted text-police-muted"}`}>
                   {t === "name" ? "Jina" : t === "nida" ? "NIDA" : "Simu"}
                 </button>
               ))}
@@ -183,7 +183,7 @@ export function GeneralHomeScreen() {
 
           {/* Input + suggestions */}
           <div className="relative mt-2">
-            <div className={`flex items-center gap-2 rounded-xl border bg-police-input px-3 transition ${error ? "border-[#EF4444]" : "border-police focus-within:border-[#3B82F6]"}`}>
+            <div className={`flex items-center gap-2 rounded-xl border bg-police-input px-3 transition ${error ? "border-[#EF4444]" : "border-police focus-within:border-[#2196F3]"}`}>
               <Search size={18} className={error ? "text-[#EF4444]" : "text-police-faint"} />
               <input
                 ref={inputRef}
@@ -218,7 +218,7 @@ export function GeneralHomeScreen() {
             )}
           </div>
 
-          <button onClick={handleSearch} className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-[15px] font-bold text-white shadow-md active:scale-[0.98] transition ${!value.trim() ? "bg-[#3B82F6]/50" : "bg-[#3B82F6] shadow-[#3B82F6]/30"}`}>
+          <button onClick={handleSearch} className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-[15px] font-bold text-white shadow-md active:scale-[0.98] transition ${!value.trim() ? "bg-[#2196F3]/50" : "bg-[#2196F3] shadow-[#2196F3]/30"}`}>
             <Search size={18} /> Tafuta
           </button>
         </div>

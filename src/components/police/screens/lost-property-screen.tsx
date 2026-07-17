@@ -55,7 +55,7 @@ export function LostPropertyScreen() {
     const st = STATUS_MAP[selected.status as keyof typeof STATUS_MAP];
     return (
       <div className="min-h-full bg-police">
-        <div className="bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] px-4 py-4">
+        <div className="bg-gradient-to-r from-[#1E3A8A] to-[#2196F3] px-4 py-4">
           <button onClick={() => setSelected(null)} className="mb-3 flex items-center gap-2 text-white/80"><ArrowLeft size={18} /> <span className="text-[13px]">Rudi</span></button>
           <h1 className="text-[16px] font-bold text-white">{selected.id}</h1>
           <p className="text-[11px] text-white/70">{CAT_MAP[selected.category] ?? selected.category}</p>
@@ -95,7 +95,7 @@ export function LostPropertyScreen() {
 
   return (
     <div className="min-h-full bg-police">
-      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] px-4 py-4">
+      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#2196F3] px-4 py-4">
         <button onClick={() => goBack()} className="mb-3 flex items-center gap-2 text-white/80"><ArrowLeft size={18} /> <span className="text-[13px]">Rudi Nyuma</span></button>
         <h1 className="text-[18px] font-bold text-white">Mali Zilizopotea</h1>
         <p className="text-[11px] text-white/70">Tafuta kwa S/N, IMEI, maelezo au jina la mmiliki</p>

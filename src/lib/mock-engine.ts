@@ -122,7 +122,7 @@ export function getDashboardData(role: AppRole, region?: string) {
     kpis: [
       { label:"Maofisa Walioko Kazini",  value:String(officers.filter((u) => u.status==="active"||u.status==="patrol").length), sub:`kati ya ${officers.length}`,      color:"#2196F3" },
       { label:"Wanaotafutwa",            value:String(MISSING_RECORDS.filter((m) => m.status==="active").length),                sub:"watu, magari, vifaa",             color:"#EF4444" },
-      { label:"Vituo vya Polisi",        value:String(regionStations.length),                                                    sub:`${ADMIN_POSTS.length} posti`,     color:"#9C27B0" },
+      { label:"Vituo vya Polisi",        value:String(regionStations.length),                                                    sub:`${ADMIN_POSTS.length} posti`,     color:"#1E3A8A" },
       { label:"Mkoa Huu — Maofisa",      value:String(regionOfficers.length),                                                    sub:region ?? "Jumla",                 color:"#10B981" },
     ],
     officers: regionOfficers,

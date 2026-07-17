@@ -49,9 +49,9 @@ export function HomeScreen() {
   const arrestsCount = ARREST_RECORDS.filter((a) => a.status === "held").length;
 
   const homeStats = [
-    { label: "Makosa Yangu", value: String(CITATION_HISTORY.length), color: "#1A237E" },
+    { label: "Makosa Yangu", value: String(CITATION_HISTORY.length), color: "#1E3A8A" },
     { label: "Haijalipwa",   value: String(unpaidCount),             color: "#EF4444" },
-    { label: "Kizuizini",    value: String(arrestsCount),            color: "#7C3AED" },
+    { label: "Kizuizini",    value: String(arrestsCount),            color: "#1E3A8A" },
     { label: "Patroli Leo",  value: String(todayPatrols || PATROL_STATS[0].value), color: "#10B981" },
   ];
 
@@ -107,7 +107,7 @@ export function HomeScreen() {
   return (
     <div className="min-h-full bg-police">
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] px-4 pb-16 pt-2">
+      <div className="bg-gradient-to-br from-[#1E3A8A] to-[#2196F3] px-4 pb-16 pt-2">
         <div className="flex items-center justify-between pt-2">
           <div>
             <p className="text-[13px] text-white/80">Karibu,</p>
@@ -118,7 +118,7 @@ export function HomeScreen() {
             <button onClick={() => navigate("alerts")} className="relative">
               <Bell size={24} className="text-white" />
               {unread > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
                   {unread > 9 ? "9+" : unread}
                 </span>
               )}
@@ -133,11 +133,11 @@ export function HomeScreen() {
       {/* Hero Card */}
       <div className="-mt-10 px-4">
         <div className="flex flex-col items-center rounded-2xl bg-police-card p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
-          <div className="h-20 w-20 overflow-hidden rounded-full ring-2 ring-[#0070C0]/15">
+          <div className="h-20 w-20 overflow-hidden rounded-full ring-2 ring-[#2196F3]/15">
             <Image src="/police-logo.png" alt="TPF" width={80} height={80} className="h-full w-full object-cover" />
           </div>
           <h2 className="mt-3 text-[20px] font-extrabold tracking-tight text-[#1E3A8A]">TANZANIA POLICE FORCE</h2>
-          <p className="text-[13px] font-medium text-[#3B82F6]">USALAMA WETU, JUKUMU LETU</p>
+          <p className="text-[13px] font-medium text-[#2196F3]">USALAMA WETU, JUKUMU LETU</p>
         </div>
       </div>
 
@@ -154,7 +154,7 @@ export function HomeScreen() {
       {/* Quick Actions */}
       <div className="mt-4 px-4">
         <div className="grid grid-cols-2 gap-3">
-          <QA icon={<Camera size={26} className="text-[#3B82F6]" />} bg="#3B82F6" title="Soma Nambari" subtitle="Tumia kamera kusoma namba ya gari" onClick={() => openScanner("ocr")} />
+          <QA icon={<Camera size={26} className="text-[#2196F3]" />} bg="#2196F3" title="Soma Nambari" subtitle="Tumia kamera kusoma namba ya gari" onClick={() => openScanner("ocr")} />
           <QA icon={<ScanLine size={26} className="text-[#10B981]" />} bg="#10B981" title="Scan QR" subtitle="Changanya QR code ya hati au namba" onClick={() => openScanner("qr")} />
         </div>
 
@@ -168,7 +168,7 @@ export function HomeScreen() {
           {/* Tabs */}
           <div className="mt-3 flex gap-1.5">
             {TABS.map((t) => (
-              <button key={t.id} onClick={() => switchTab(t.id)} className={`flex-1 rounded-lg py-2 text-[11px] font-semibold transition ${tab === t.id ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}>
+              <button key={t.id} onClick={() => switchTab(t.id)} className={`flex-1 rounded-lg py-2 text-[11px] font-semibold transition ${tab === t.id ? "bg-[#2196F3] text-white" : "bg-police-muted text-police-muted"}`}>
                 {t.label}
               </button>
             ))}
@@ -179,7 +179,7 @@ export function HomeScreen() {
 
           {/* Input + suggestions */}
           <div className="relative mt-2">
-            <div className={`flex items-center gap-2 rounded-xl border bg-police-input px-3 transition ${error ? "border-[#EF4444]" : "border-police focus-within:border-[#3B82F6]"}`}>
+            <div className={`flex items-center gap-2 rounded-xl border bg-police-input px-3 transition ${error ? "border-[#EF4444]" : "border-police focus-within:border-[#2196F3]"}`}>
               <Search size={18} className={error ? "text-[#EF4444]" : "text-police-faint"} />
               <input
                 ref={inputRef}
@@ -222,7 +222,7 @@ export function HomeScreen() {
 
           <button
             onClick={handleSearch}
-            className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-[15px] font-bold text-white shadow-md active:scale-[0.98] transition ${!value.trim() ? "bg-[#3B82F6]/50" : "bg-[#3B82F6] shadow-[#3B82F6]/30"}`}
+            className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-[15px] font-bold text-white shadow-md active:scale-[0.98] transition ${!value.trim() ? "bg-[#2196F3]/50" : "bg-[#2196F3] shadow-[#2196F3]/30"}`}
           >
             <Search size={18} /> Tafuta
           </button>
@@ -234,7 +234,7 @@ export function HomeScreen() {
         <div className="rounded-2xl bg-police-card p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-[16px] font-bold text-police">Matukio ya Karibuni</h3>
-            <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2563EB]">Angalia Zote</button>
+            <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2196F3]">Angalia Zote</button>
           </div>
           {RECENT_OFFENSES.length === 0 ? (
             <p className="py-4 text-center text-[13px] text-police-muted">Hakuna matukio ya kuonyesha.</p>

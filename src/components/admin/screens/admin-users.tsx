@@ -16,11 +16,11 @@ import { toast } from "@/hooks/use-toast";
 import { useRecordsStore, type AdminUserRecord } from "@/store/records-store";
 
 const ROLE_STYLES: Record<string, string> = {
-  commander: "bg-purple-500/15 text-purple-500 border border-purple-500/30",
+  commander: "bg-[#1E3A8A]/15 text-[#1E3A8A] border border-[#1E3A8A]/30",
   admin: "bg-[#2196F3]/15 text-[#2196F3] border border-[#2196F3]/30",
-  regional: "bg-orange-500/15 text-orange-500 border border-orange-500/30",
-  "district-admin": "bg-green-500/15 text-green-500 border border-green-500/30",
-  commissioner: "bg-purple-500/15 text-purple-500 border border-purple-500/30",
+  regional: "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
+  "district-admin": "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
+  commissioner: "bg-[#1E3A8A]/15 text-[#1E3A8A] border border-[#1E3A8A]/30",
   "all-staffs": "bg-gray-500/15 text-gray-500 border border-gray-500/30",
 };
 
@@ -34,8 +34,8 @@ const ROLE_LABEL: Record<string, string> = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  active: "bg-green-500/15 text-green-500 border border-green-500/30",
-  suspended: "bg-red-500/15 text-red-500 border border-red-500/30",
+  active: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
+  suspended: "bg-[#EF4444]/100/15 text-[#EF4444] border border-[#EF4444]/500/30",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -89,7 +89,7 @@ export function AdminUsers() {
         </p>
         <button
           onClick={() => router.push(getAdminCreatePath(pathname, "users"))}
-          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#1E88E5]"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#2196F3]"
         >
           Ongeza User
         </button>
@@ -141,7 +141,7 @@ export function AdminUsers() {
                       <div
                         className={`flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold ${
                           u.role === "commander"
-                            ? "bg-purple-500/15 text-purple-500"
+                            ? "bg-[#1E3A8A]/15 text-[#1E3A8A]"
                             : "bg-[#2196F3]/15 text-[#2196F3]"
                         }`}
                       >
@@ -210,8 +210,8 @@ export function AdminUsers() {
                         }}
                         className={`flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-semibold ${
                           u.status === "active"
-                            ? "bg-red-500/15 text-red-500 hover:bg-red-500/25"
-                            : "bg-green-500/15 text-green-500 hover:bg-green-500/25"
+                            ? "bg-[#EF4444]/100/15 text-[#EF4444] hover:bg-[#EF4444]/100/25"
+                            : "bg-[#10B981]/15 text-[#10B981] hover:bg-[#10B981]/25"
                         }`}
                         title={u.status === "active" ? "Simsa" : "Rudisha"}
                       >
@@ -328,7 +328,7 @@ function EditUserModal({
                   className={`flex-1 rounded-lg border px-3 py-2 text-[12px] font-semibold transition ${
                     role === r
                       ? r === "commander"
-                        ? "border-purple-500 bg-purple-500/10 text-purple-500"
+                        ? "border-[#1E3A8A] bg-[#1E3A8A]/10 text-[#1E3A8A]"
                         : "border-[#2196F3] bg-[#2196F3]/10 text-[#2196F3]"
                       : "border-police-soft bg-police-input text-police-muted"
                   }`}
@@ -357,7 +357,7 @@ function EditUserModal({
                   role,
                 })
               }
-              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#1E88E5]"
+              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
             >
               Hifadhi
             </button>

@@ -71,7 +71,7 @@ export default function SimulationPage() {
 
   const allEvents = [...(events.length ? events : seedEvents), ...seedEvents].slice(0, 20);
 
-  const typeColor = { citation:"#2196F3", arrest:"#7C3AED", patrol:"#10B981", incident:"#FF9800", warning:"#FF9800", missing:"#EF4444", sos:"#EF4444" };
+  const typeColor = { citation:"#2196F3", arrest:"#1E3A8A", patrol:"#10B981", incident:"#FF9800", warning:"#FF9800", missing:"#EF4444", sos:"#EF4444" };
   const typeLabel = { citation:"Citation", arrest:"Kamato", patrol:"Patroli", incident:"Tukio", warning:"Onyo", missing:"Kutafuta", sos:"SOS" };
   const typeIcon = { citation:<FileText size={14} />, arrest:<User size={14} />, patrol:<Shield size={14} />, incident:<AlertTriangle size={14} />, warning:<AlertTriangle size={14} />, missing:<Radio size={14} />, sos:<AlertTriangle size={14} /> };
 
@@ -107,7 +107,7 @@ export default function SimulationPage() {
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
             { label:"Citations", value:CITATION_HISTORY.length, color:"#2196F3", icon:<FileText size={18}/> },
-            { label:"Makamato", value:ARREST_RECORDS.length, color:"#7C3AED", icon:<User size={18}/> },
+            { label:"Makamato", value:ARREST_RECORDS.length, color:"#1E3A8A", icon:<User size={18}/> },
             { label:"Matukio", value:GENERAL_INCIDENTS.length, color:"#FF9800", icon:<AlertTriangle size={18}/> },
             { label:"Maofisa Kazini", value:ROLE_USERS.filter(u=>u.status==="active"||u.status==="patrol").length, color:"#10B981", icon:<Shield size={18}/> },
           ].map((s) => (
