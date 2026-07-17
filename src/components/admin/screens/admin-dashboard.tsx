@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -11,6 +12,12 @@ import {
   TrendingDown,
   MapPin,
   Radio,
+  RefreshCw,
+  Activity,
+  Database,
+  Wifi,
+  BadgeDollarSign,
+  CheckCircle2,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -58,6 +65,89 @@ const STATUS_LABEL: Record<string, string> = {
 export function AdminDashboard() {
   const pathname = usePathname();
   const { setAdminScreen } = usePoliceStore();
+  const [simulationState, setSimulationState] = useState<{ running: boolean; startedAt: string | null; updatedAt: string } | null>(null);
+  const [mockSummary, setMockSummary] = useState<{ totalRecords: number; onlineOfficers: number; openCases: number; todayFines: number; syncEnabled: boolean; offlineEnabled: boolean } | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadDashboardStats() {
+      try {
+        const [simResponse, mockResponse] = await Promise.all([
+          fetch("/api/simulation/status", { cache: "no-store" }),
+          fetch("/api/mock-db/refresh", { method: "POST" }),
+        ]);
+
+        const simJson = await simResponse.json();
+        const mockJson = await mockResponse.json();
+
+        if (!active) return;
+
+        setSimulationState(simJson.data ?? null);
+        setMockSummary(mockJson.data?.summary ?? null);
+      } catch {
+        if (!active) return;
+        setSimulationState({ running: false, startedAt: null, updatedAt: new Date().toISOString() });
+        setMockSummary({ totalRecords: 0, onlineOfficers: 0, openCases: 0, todayFines: 0, syncEnabled: false, offlineEnabled: false });
+      }
+    }
+
+    void loadDashboardStats();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const dashboardCards = useMemo(() => {
+    const simulationActive = simulationState?.running ?? false;
+    const syncEnabled = mockSummary?.syncEnabled ?? false;
+
+    return [
+      {
+        label: "Simulation Status",
+        value: simulationActive ? "Running" : "Stopped",
+        meta: simulationState?.startedAt ? `Started ${new Date(simulationState.startedAt).toLocaleTimeString("sw-TZ", { hour: "2-digit", minute: "2-digit" })}` : "Not started",
+        icon: Activity,
+        tone: simulationActive ? "green" : "slate",
+      },
+      {
+        label: "Mock DB Records",
+        value: String(mockSummary?.totalRecords ?? 0),
+        meta: "Citizens, vehicles, officers, stations, cases",
+        icon: Database,
+        tone: "blue",
+      },
+      {
+        label: "Online Officers",
+        value: String(mockSummary?.onlineOfficers ?? 0),
+        meta: "Live duty status",
+        icon: Wifi,
+        tone: "emerald",
+      },
+      {
+        label: "Open Cases",
+        value: String(mockSummary?.openCases ?? 0),
+        meta: "Awaiting resolution",
+        icon: FileText,
+        tone: "orange",
+      },
+      {
+        label: "Today's Fines",
+        value: String(mockSummary?.todayFines ?? 0),
+        meta: "Collected citations",
+        icon: BadgeDollarSign,
+        tone: "violet",
+      },
+      {
+        label: "Sync Status",
+        value: syncEnabled ? "Synced" : "Offline",
+        meta: mockSummary?.offlineEnabled ? "Offline mode enabled" : "Live sync disabled",
+        icon: CheckCircle2,
+        tone: syncEnabled ? "green" : "slate",
+      },
+    ];
+  }, [mockSummary, simulationState]);
 
   return (
     <div className="space-y-5">
@@ -74,6 +164,35 @@ export function AdminDashboard() {
           <span>Mfumo wa Moja kwa Moja</span>
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
         </div>
+      </div>
+
+      {/* Simulation / DB cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {dashboardCards.map((card) => {
+          const Icon = card.icon;
+          const tones: Record<string, string> = {
+            green: "bg-green-500/15 text-green-600",
+            blue: "bg-[#2196F3]/15 text-[#2196F3]",
+            emerald: "bg-emerald-500/15 text-emerald-600",
+            orange: "bg-orange-500/15 text-orange-600",
+            violet: "bg-violet-500/15 text-violet-600",
+            slate: "bg-slate-500/15 text-slate-600",
+          };
+
+          return (
+            <div key={card.label} className="rounded-xl bg-police-card p-4 shadow-sm">
+              <div className="flex items-start justify-between">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${tones[card.tone] ?? tones.slate}`}>
+                  <Icon size={20} />
+                </div>
+                <RefreshCw size={14} className="text-police-faint" />
+              </div>
+              <p className="mt-3 text-2xl font-bold text-police-navy">{card.value}</p>
+              <p className="mt-0.5 text-[12px] font-semibold text-police">{card.label}</p>
+              <p className="mt-1 text-[11px] text-police-muted">{card.meta}</p>
+            </div>
+          );
+        })}
       </div>
 
       {/* KPI cards */}

@@ -1,13 +1,14 @@
 
-import { CONFIG } from '../config';
+import { CONFIG } from "../config";
+import { startSimulation } from "../../src/lib/simulation-state";
 
-export function start(){
+export async function start() {
+    if (!CONFIG.simulation) {
+        console.log("Simulation disabled");
+        return;
+    }
 
-    console.log(
-        'Simulation Started'
-    );
-
+    startSimulation();
+    console.log("Simulation Started");
 }
-
-start();
 

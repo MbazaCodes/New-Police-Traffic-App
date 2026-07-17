@@ -3,6 +3,9 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
 import { PwaRegister } from "@/components/pwa-register";
+import { bootstrap } from "@/bootstrap";
+
+bootstrap();
 
 const isAdminMode = process.env.NEXT_PUBLIC_APP_MODE === "admin";
 
