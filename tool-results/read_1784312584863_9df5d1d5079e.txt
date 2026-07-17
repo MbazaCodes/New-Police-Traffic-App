@@ -1,0 +1,764 @@
+     1→"use client";
+     2→
+     3→import { useState } from "react";
+     4→import Image from "next/image";
+     5→import {
+     6→  LayoutDashboard,
+     7→  FileText,
+     8→  FileCheck,
+     9→  FolderTree,
+    10→  Download,
+    11→  BarChart3,
+    12→  Settings,
+    13→  Bell,
+    14→  Search,
+    15→  Menu,
+    16→  X,
+    17→  Moon,
+    18→  Sun,
+    19→  ChevronDown,
+    20→  LogOut,
+    21→  Upload,
+    22→  Clock,
+    23→  File,
+    24→  FileSpreadsheet,
+    25→  Eye,
+    26→  CheckCircle2,
+    27→  FolderOpen,
+    28→  Folder,
+    29→  ChevronRight,
+    30→  Filter,
+    31→} from "lucide-react";
+    32→import { useTheme } from "next-themes";
+    33→import { usePoliceStore } from "@/store/police-store";
+    34→
+    35→/* ------------------------------------------------------------------ */
+    36→/*  ClerkScreen type                                                  */
+    37→/* ------------------------------------------------------------------ */
+    38→export type ClerkScreen =
+    39→  | "dashboard"
+    40→  | "records"
+    41→  | "documents"
+    42→  | "file-management"
+    43→  | "exports"
+    44→  | "reports"
+    45→  | "settings";
+    46→
+    47→const CLERK_USER = {
+    48→  shortName: "Insp. Fatma Hassan",
+    49→  rank: "Inspector",
+    50→  initials: "FH",
+    51→};
+    52→
+    53→/* ------------------------------------------------------------------ */
+    54→/*  Nav items                                                         */
+    55→/* ------------------------------------------------------------------ */
+    56→const CLERK_NAV: { id: ClerkScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
+    57→  { id: "dashboard", label: "Dashibodi", icon: LayoutDashboard },
+    58→  { id: "records", label: "Rekodi", icon: FileText },
+    59→  { id: "documents", label: "Hatika", icon: FileCheck },
+    60→  { id: "file-management", label: "Usimamizi wa Faili", icon: FolderTree },
+    61→  { id: "exports", label: "Uhamishaji", icon: Download, badge: 2 },
+    62→  { id: "reports", label: "Ripoti", icon: BarChart3 },
+    63→  { id: "settings", label: "Mipangilio", icon: Settings },
+    64→];
+    65→
+    66→/* ================================================================== */
+    67→/*  Screen Components                                                 */
+    68→/* ================================================================== */
+    69→
+    70→/* ---- ClerkDashboard ---- */
+    71→function ClerkDashboard() {
+    72→  const stats = [
+    73→    { label: "Total Records", value: "2,847", icon: FileText, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400" },
+    74→    { label: "Pending Review", value: "23", icon: Clock, color: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
+    75→    { label: "Filed Today", value: "45", icon: CheckCircle2, color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" },
+    76→    { label: "Exports This Week", value: "12", icon: Download, color: "bg-violet-500/15 text-violet-600 dark:text-violet-400" },
+    77→  ];
+    78→
+    79→  const recentActivity = [
+    80→    { action: "Record TPF-2024-8842 filed", user: "PC. Mwangi", time: "2 min ago", type: "filed" },
+    81→    { action: "Document DOC-3091 uploaded", user: "Cpl. Juma", time: "15 min ago", type: "upload" },
+    82→    { action: "Export #EXP-442 completed", user: "System", time: "32 min ago", type: "export" },
+    83→    { action: "Record TPF-2024-8841 reviewed", user: "Insp. Hassan", time: "1 hr ago", type: "review" },
+    84→    { action: "Case file C-2024-0561 updated", user: "Sgt. Kimaro", time: "2 hrs ago", type: "update" },
+    85→    { action: "Record TPF-2024-8840 archived", user: "PC. Rashid", time: "3 hrs ago", type: "archive" },
+    86→  ];
+    87→
+    88→  const typeColor: Record<string, string> = {
+    89→    filed: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+    90→    upload: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
+    91→    export: "bg-violet-500/15 text-violet-600 dark:text-violet-400",
+    92→    review: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+    93→    update: "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400",
+    94→    archive: "bg-slate-500/15 text-slate-600 dark:text-slate-400",
+    95→  };
+    96→
+    97→  return (
+    98→    <div className="space-y-6">
+    99→      <div>
+   100→        <h2 className="text-xl font-bold text-police-navy">Dashibodi / Dashboard</h2>
+   101→        <p className="text-sm text-police-faint">Karani Records Management Overview</p>
+   102→      </div>
+   103→
+   104→      {/* Stats Grid */}
+   105→      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+   106→        {stats.map((s) => {
+   107→          const Icon = s.icon;
+   108→          return (
+   109→            <div key={s.label} className="rounded-xl bg-police-card p-4 shadow-sm">
+   110→              <div className="flex items-center justify-between">
+   111→                <p className="text-xs font-medium text-police-faint">{s.label}</p>
+   112→                <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${s.color}`}>
+   113→                  <Icon size={16} />
+   114→                </div>
+   115→              </div>
+   116→              <p className="mt-2 text-2xl font-bold text-police-navy">{s.value}</p>
+   117→            </div>
+   118→          );
+   119→        })}
+   120→      </div>
+   121→
+   122→      {/* Recent Activity */}
+   123→      <div className="rounded-xl bg-police-card p-5 shadow-sm">
+   124→        <h3 className="mb-4 text-sm font-semibold text-police-navy">Recent Activity / Shughuli za Hivi Karibuni</h3>
+   125→        <div className="space-y-3">
+   126→          {recentActivity.map((a, i) => (
+   127→            <div key={i} className="flex items-center gap-3 rounded-lg bg-police-muted/50 px-3 py-2.5">
+   128→              <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold uppercase ${typeColor[a.type] ?? "bg-slate-100 text-slate-500"}`}>
+   129→                {a.type[0]}
+   130→              </div>
+   131→              <div className="min-w-0 flex-1">
+   132→                <p className="truncate text-[13px] font-medium text-police">{a.action}</p>
+   133→                <p className="text-[11px] text-police-faint">{a.user} &middot; {a.time}</p>
+   134→              </div>
+   135→            </div>
+   136→          ))}
+   137→        </div>
+   138→      </div>
+   139→    </div>
+   140→  );
+   141→}
+   142→
+   143→/* ---- ClerkRecords ---- */
+   144→function ClerkRecords() {
+   145→  const records = [
+   146→    { id: "TPF-2024-8842", type: "Case File", status: "Filed", date: "2024-12-15", officer: "PC. Mwangi", region: "Dar es Salaam" },
+   147→    { id: "TPF-2024-8841", type: "Incident", status: "Under Review", date: "2024-12-15", officer: "Sgt. Kimaro", region: "Dodoma" },
+   148→    { id: "TPF-2024-8840", type: "Citation", status: "Archived", date: "2024-12-14", officer: "Cpl. Juma", region: "Arusha" },
+   149→    { id: "TPF-2024-8839", type: "Case File", status: "Filed", date: "2024-12-14", officer: "PC. Rashid", region: "Mwanza" },
+   150→    { id: "TPF-2024-8838", type: "Arrest", status: "Pending", date: "2024-12-14", officer: "PC. Omary", region: "Mbeya" },
+   151→    { id: "TPF-2024-8837", type: "Incident", status: "Filed", date: "2024-12-13", officer: "Sgt. Massawe", region: "Tanga" },
+   152→    { id: "TPF-2024-8836", type: "Case File", status: "Under Review", date: "2024-12-13", officer: "PC. Saidi", region: "Zanzibar" },
+   153→    { id: "TPF-2024-8835", type: "Citation", status: "Filed", date: "2024-12-12", officer: "Cpl. Hamisi", region: "Morogoro" },
+   154→  ];
+   155→
+   156→  const statusStyle: Record<string, string> = {
+   157→    Filed: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+   158→    "Under Review": "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+   159→    Archived: "bg-slate-500/15 text-slate-500",
+   160→    Pending: "bg-red-500/15 text-red-600 dark:text-red-400",
+   161→  };
+   162→
+   163→  return (
+   164→    <div className="space-y-6">
+   165→      <div className="flex items-center justify-between">
+   166→        <div>
+   167→          <h2 className="text-xl font-bold text-police-navy">Rekodi / Records</h2>
+   168→          <p className="text-sm text-police-faint">Manage and review police records</p>
+   169→        </div>
+   170→        <div className="flex items-center gap-2 rounded-lg bg-police-muted px-3 py-1.5">
+   171→          <Filter size={14} className="text-police-faint" />
+   172→          <span className="text-xs text-police-faint">Filter</span>
+   173→        </div>
+   174→      </div>
+   175→
+   176→      <div className="overflow-x-auto rounded-xl bg-police-card shadow-sm">
+   177→        <table className="w-full text-left text-[13px]">
+   178→          <thead>
+   179→            <tr className="border-b border-police-muted text-police-faint">
+   180→              <th className="px-4 py-3 font-medium">Record ID</th>
+   181→              <th className="px-4 py-3 font-medium">Type</th>
+   182→              <th className="px-4 py-3 font-medium">Status</th>
+   183→              <th className="px-4 py-3 font-medium">Date</th>
+   184→              <th className="px-4 py-3 font-medium">Officer</th>
+   185→              <th className="px-4 py-3 font-medium">Region</th>
+   186→            </tr>
+   187→          </thead>
+   188→          <tbody>
+   189→            {records.map((r) => (
+   190→              <tr key={r.id} className="border-b border-police-muted/50 last:border-b-0 hover:bg-police-muted/30">
+   191→                <td className="px-4 py-3 font-mono text-xs font-semibold text-police">{r.id}</td>
+   192→                <td className="px-4 py-3 text-police">{r.type}</td>
+   193→                <td className="px-4 py-3">
+   194→                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusStyle[r.status] ?? ""}`}>
+   195→                    {r.status}
+   196→                  </span>
+   197→                </td>
+   198→                <td className="px-4 py-3 text-police-faint">{r.date}</td>
+   199→                <td className="px-4 py-3 text-police">{r.officer}</td>
+   200→                <td className="px-4 py-3 text-police-faint">{r.region}</td>
+   201→              </tr>
+   202→            ))}
+   203→          </tbody>
+   204→        </table>
+   205→      </div>
+   206→    </div>
+   207→  );
+   208→}
+   209→
+   210→/* ---- ClerkDocuments ---- */
+   211→function ClerkDocuments() {
+   212→  const documents = [
+   213→    { name: "Case Brief - TPF-2024-8842", type: "PDF", size: "2.4 MB", date: "2024-12-15", category: "Case Files" },
+   214→    { name: "Witness Statement - Mwangi", type: "DOC", size: "1.1 MB", date: "2024-12-15", category: "Statements" },
+   215→    { name: "Incident Report - Dodoma", type: "PDF", size: "3.8 MB", date: "2024-12-14", category: "Reports" },
+   216→    { name: "Evidence Log - Arusha", type: "PDF", size: "890 KB", date: "2024-12-14", category: "Evidence" },
+   217→    { name: "Citation Record - Batch 44", type: "DOC", size: "560 KB", date: "2024-12-13", category: "Citations" },
+   218→    { name: "Monthly Summary - Nov 2024", type: "PDF", size: "4.2 MB", date: "2024-12-12", category: "Reports" },
+   219→    { name: "Arrest Warrant - Omary", type: "PDF", size: "320 KB", date: "2024-12-11", category: "Legal" },
+   220→    { name: "Station Log - Kinondoni", type: "DOC", size: "1.8 MB", date: "2024-12-10", category: "Logs" },
+   221→  ];
+   222→
+   223→  const typeIcon: Record<string, typeof File> = { PDF: File, DOC: FileSpreadsheet };
+   224→  const typeColor: Record<string, string> = { PDF: "bg-red-500/15 text-red-500", DOC: "bg-blue-500/15 text-blue-500" };
+   225→
+   226→  return (
+   227→    <div className="space-y-6">
+   228→      <div>
+   229→        <h2 className="text-xl font-bold text-police-navy">Hatika / Documents</h2>
+   230→        <p className="text-sm text-police-faint">Manage uploaded documents and attachments</p>
+   231→      </div>
+   232→
+   233→      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+   234→        {documents.map((d, i) => {
+   235→          const Icon = typeIcon[d.type] ?? File;
+   236→          return (
+   237→            <div key={i} className="flex flex-col gap-3 rounded-xl bg-police-card p-4 shadow-sm transition hover:shadow-md">
+   238→              <div className="flex items-start gap-3">
+   239→                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${typeColor[d.type] ?? "bg-slate-100 text-slate-500"}`}>
+   240→                  <Icon size={20} />
+   241→                </div>
+   242→                <div className="min-w-0 flex-1">
+   243→                  <p className="truncate text-[13px] font-semibold text-police">{d.name}</p>
+   244→                  <p className="mt-0.5 text-[11px] text-police-faint">{d.category}</p>
+   245→                </div>
+   246→              </div>
+   247→              <div className="flex items-center justify-between text-[11px] text-police-faint">
+   248→                <span>{d.size}</span>
+   249→                <span>{d.date}</span>
+   250→              </div>
+   251→              <div className="flex items-center justify-between">
+   252→                <span className="inline-flex items-center rounded-full bg-police-muted px-2 py-0.5 text-[10px] font-semibold text-police-faint">{d.type}</span>
+   253→                <button className="flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+   254→                  <Eye size={12} /> View
+   255→                </button>
+   256→              </div>
+   257→            </div>
+   258→          );
+   259→        })}
+   260→      </div>
+   261→    </div>
+   262→  );
+   263→}
+   264→
+   265→/* ---- ClerkFileManagement ---- */
+   266→function ClerkFileManagement() {
+   267→  const folderTree = [
+   268→    { name: "Dar es Salaam Region", files: 142, subfolders: ["Kinondoni", "Ilala", "Temeke", "Kigamboni"] },
+   269→    { name: "Dodoma Region", files: 89, subfolders: ["Dodoma MC", "Kondoa", "Mpwapwa"] },
+   270→    { name: "Arusha Region", files: 67, subfolders: ["Arusha CC", "Moshi", "Karatu"] },
+   271→    { name: "Mwanza Region", files: 54, subfolders: ["Mwanza CC", "Misungwi", "Sengerema"] },
+   272→    { name: "Mbeya Region", files: 38, subfolders: ["Mbeya CC", "Songwe"] },
+   273→  ];
+   274→
+   275→  const recentFiles = [
+   276→    { name: "TPF-2024-8842-brief.pdf", path: "Dar es Salaam/Kinondoni/", size: "2.4 MB", date: "2024-12-15" },
+   277→    { name: "witness-mwangi.doc", path: "Dodoma/Dodoma MC/", size: "1.1 MB", date: "2024-12-15" },
+   278→    { name: "incident-dodoma-dec.pdf", path: "Dodoma/Dodoma MC/", size: "3.8 MB", date: "2024-12-14" },
+   279→    { name: "evidence-arusha.pdf", path: "Arusha/Arusha CC/", size: "890 KB", date: "2024-12-14" },
+   280→  ];
+   281→
+   282→  const [expandedFolder, setExpandedFolder] = useState<string | null>("Dar es Salaam Region");
+   283→
+   284→  return (
+   285→    <div className="space-y-6">
+   286→      <div className="flex items-center justify-between gap-4 flex-wrap">
+   287→        <div>
+   288→          <h2 className="text-xl font-bold text-police-navy">Usimamizi wa Faili / File Management</h2>
+   289→          <p className="text-sm text-police-faint">Browse, search, and organize case files</p>
+   290→        </div>
+   291→        <div className="flex items-center gap-2">
+   292→          <div className="flex items-center gap-2 rounded-xl bg-police-muted px-3">
+   293→            <Search size={14} className="text-police-faint" />
+   294→            <input placeholder="Search files..." className="h-8 w-40 bg-transparent text-[13px] text-police placeholder:text-police-faint focus:outline-none sm:w-56" />
+   295→          </div>
+   296→          <button className="flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3 py-2 text-[12px] font-semibold text-white shadow-md shadow-[#2196F3]/30 hover:bg-[#1976D2] transition">
+   297→            <Upload size={14} /> Upload
+   298→          </button>
+   299→        </div>
+   300→      </div>
+   301→
+   302→      <div className="grid gap-6 lg:grid-cols-3">
+   303→        {/* Folder Tree */}
+   304→        <div className="rounded-xl bg-police-card p-4 shadow-sm lg:col-span-1">
+   305→          <h3 className="mb-3 text-[13px] font-semibold text-police-navy">Folders / Vifungo</h3>
+   306→          <div className="max-h-96 space-y-1 overflow-y-auto">
+   307→            {folderTree.map((f) => {
+   308→              const expanded = expandedFolder === f.name;
+   309→              return (
+   310→                <div key={f.name}>
+   311→                  <button
+   312→                    onClick={() => setExpandedFolder(expanded ? null : f.name)}
+   313→                    className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-[13px] font-medium text-police hover:bg-police-muted transition"
+   314→                  >
+   315→                    {expanded ? <ChevronDown size={14} className="text-police-faint" /> : <ChevronRight size={14} className="text-police-faint" />}
+   316→                    <FolderOpen size={16} className="text-amber-500" />
+   317→                    <span className="flex-1 truncate text-left">{f.name}</span>
+   318→                    <span className="text-[10px] text-police-faint">{f.files}</span>
+   319→                  </button>
+   320→                  {expanded && f.subfolders.length > 0 && (
+   321→                    <div className="ml-6 space-y-0.5">
+   322→                      {f.subfolders.map((sf) => (
+   323→                        <div key={sf} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] text-police-faint hover:bg-police-muted/50 transition">
+   324→                          <Folder size={14} className="text-amber-400/70" />
+   325→                          {sf}
+   326→                        </div>
+   327→                      ))}
+   328→                    </div>
+   329→                  )}
+   330→                </div>
+   331→              );
+   332→            })}
+   333→          </div>
+   334→        </div>
+   335→
+   336→        {/* Recent Files */}
+   337→        <div className="rounded-xl bg-police-card p-4 shadow-sm lg:col-span-2">
+   338→          <h3 className="mb-3 text-[13px] font-semibold text-police-navy">Recent Files / Faili za Hivi Karibuni</h3>
+   339→          <div className="space-y-2">
+   340→            {recentFiles.map((f, i) => (
+   341→              <div key={i} className="flex items-center gap-3 rounded-lg bg-police-muted/50 px-3 py-2.5 hover:bg-police-muted/80 transition">
+   342→                <File size={18} className="shrink-0 text-red-500" />
+   343→                <div className="min-w-0 flex-1">
+   344→                  <p className="truncate text-[13px] font-medium text-police">{f.name}</p>
+   345→                  <p className="text-[11px] text-police-faint">{f.path}</p>
+   346→                </div>
+   347→                <div className="hidden sm:block text-right">
+   348→                  <p className="text-[11px] text-police-faint">{f.size}</p>
+   349→                  <p className="text-[11px] text-police-faint">{f.date}</p>
+   350→                </div>
+   351→              </div>
+   352→            ))}
+   353→          </div>
+   354→        </div>
+   355→      </div>
+   356→    </div>
+   357→  );
+   358→}
+   359→
+   360→/* ---- ClerkExports ---- */
+   361→function ClerkExports() {
+   362→  const exports = [
+   363→    { id: "EXP-442", type: "Case Records", format: "CSV", date: "2024-12-15 14:30", status: "Completed", records: 150 },
+   364→    { id: "EXP-441", type: "Monthly Report", format: "PDF", date: "2024-12-15 10:15", status: "Completed", records: 1 },
+   365→    { id: "EXP-440", type: "Citation Data", format: "Excel", date: "2024-12-14 16:45", status: "Completed", records: 234 },
+   366→    { id: "EXP-439", type: "Incident Log", format: "CSV", date: "2024-12-14 09:00", status: "Failed", records: 0 },
+   367→    { id: "EXP-438", type: "Officer Roster", format: "PDF", date: "2024-12-13 11:20", status: "Completed", records: 89 },
+   368→    { id: "EXP-437", type: "Arrest Records", format: "CSV", date: "2024-12-13 08:30", status: "Processing", records: 45 },
+   369→    { id: "EXP-436", type: "Evidence Inventory", format: "Excel", date: "2024-12-12 15:00", status: "Completed", records: 312 },
+   370→  ];
+   371→
+   372→  const statusStyle: Record<string, string> = {
+   373→    Completed: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+   374→    Failed: "bg-red-500/15 text-red-600 dark:text-red-400",
+   375→    Processing: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+   376→  };
+   377→
+   378→  return (
+   379→    <div className="space-y-6">
+   380→      <div>
+   381→        <h2 className="text-xl font-bold text-police-navy">Uhamishaji / Exports</h2>
+   382→        <p className="text-sm text-police-faint">Track and download exported data</p>
+   383→      </div>
+   384→
+   385→      <div className="overflow-x-auto rounded-xl bg-police-card shadow-sm">
+   386→        <table className="w-full text-left text-[13px]">
+   387→          <thead>
+   388→            <tr className="border-b border-police-muted text-police-faint">
+   389→              <th className="px-4 py-3 font-medium">Export ID</th>
+   390→              <th className="px-4 py-3 font-medium">Type</th>
+   391→              <th className="px-4 py-3 font-medium">Format</th>
+   392→              <th className="px-4 py-3 font-medium">Date</th>
+   393→              <th className="px-4 py-3 font-medium">Records</th>
+   394→              <th className="px-4 py-3 font-medium">Status</th>
+   395→              <th className="px-4 py-3 font-medium">Action</th>
+   396→            </tr>
+   397→          </thead>
+   398→          <tbody>
+   399→            {exports.map((e) => (
+   400→              <tr key={e.id} className="border-b border-police-muted/50 last:border-b-0 hover:bg-police-muted/30">
+   401→                <td className="px-4 py-3 font-mono text-xs font-semibold text-police">{e.id}</td>
+   402→                <td className="px-4 py-3 text-police">{e.type}</td>
+   403→                <td className="px-4 py-3 text-police-faint">{e.format}</td>
+   404→                <td className="px-4 py-3 text-police-faint">{e.date}</td>
+   405→                <td className="px-4 py-3 text-police">{e.records}</td>
+   406→                <td className="px-4 py-3">
+   407→                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusStyle[e.status] ?? ""}`}>
+   408→                    {e.status}
+   409→                  </span>
+   410→                </td>
+   411→                <td className="px-4 py-3">
+   412→                  {e.status === "Completed" ? (
+   413→                    <button className="flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+   414→                      <Download size={12} /> Download
+   415→                    </button>
+   416→                  ) : (
+   417→                    <span className="text-[12px] text-police-faint">—</span>
+   418→                  )}
+   419→                </td>
+   420→              </tr>
+   421→            ))}
+   422→          </tbody>
+   423→        </table>
+   424→      </div>
+   425→    </div>
+   426→  );
+   427→}
+   428→
+   429→/* ---- ClerkReports ---- */
+   430→function ClerkReports() {
+   431→  const summaryStats = [
+   432→    { label: "Reports Generated", value: "156", change: "+12%", positive: true },
+   433→    { label: "Records Filed (Month)", value: "423", change: "+8%", positive: true },
+   434→    { label: "Pending Reviews", value: "23", change: "-5%", positive: true },
+   435→    { label: "Avg Processing Time", value: "2.3 hrs", change: "+0.5 hrs", positive: false },
+   436→  ];
+   437→
+   438→  const recentReports = [
+   439→    { name: "Monthly Records Summary - December 2024", type: "Monthly", date: "2024-12-15", status: "Ready" },
+   440→    { name: "Quarterly Audit Report Q4 2024", type: "Quarterly", date: "2024-12-14", status: "Ready" },
+   441→    { name: "Region-wise Filing Statistics", type: "Analytical", date: "2024-12-13", status: "Ready" },
+   442→    { name: "Pending Review Backlog Report", type: "Operational", date: "2024-12-12", status: "Generating" },
+   443→    { name: "Annual Records Report 2024", type: "Annual", date: "2024-12-10", status: "Draft" },
+   444→  ];
+   445→
+   446→  return (
+   447→    <div className="space-y-6">
+   448→      <div>
+   449→        <h2 className="text-xl font-bold text-police-navy">Ripoti / Reports</h2>
+   450→        <p className="text-sm text-police-faint">View and generate records management reports</p>
+   451→      </div>
+   452→
+   453→      {/* Summary Stats */}
+   454→      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+   455→        {summaryStats.map((s) => (
+   456→          <div key={s.label} className="rounded-xl bg-police-card p-4 shadow-sm">
+   457→            <p className="text-xs font-medium text-police-faint">{s.label}</p>
+   458→            <p className="mt-1 text-2xl font-bold text-police-navy">{s.value}</p>
+   459→            <p className={`mt-1 text-[11px] font-medium ${s.positive ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
+   460→              {s.change} from last period
+   461→            </p>
+   462→          </div>
+   463→        ))}
+   464→      </div>
+   465→
+   466→      {/* Recent Reports */}
+   467→      <div className="rounded-xl bg-police-card p-5 shadow-sm">
+   468→        <h3 className="mb-4 text-[13px] font-semibold text-police-navy">Recent Reports / Ripoti za Hivi Karibuni</h3>
+   469→        <div className="space-y-3">
+   470→          {recentReports.map((r, i) => (
+   471→            <div key={i} className="flex items-center gap-3 rounded-lg bg-police-muted/50 px-3 py-2.5">
+   472→              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-500/15 text-violet-600 dark:text-violet-400">
+   473→                <BarChart3 size={16} />
+   474→              </div>
+   475→              <div className="min-w-0 flex-1">
+   476→                <p className="truncate text-[13px] font-medium text-police">{r.name}</p>
+   477→                <p className="text-[11px] text-police-faint">{r.type} &middot; {r.date}</p>
+   478→              </div>
+   479→              <span className={`inline-flex shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+   480→                r.status === "Ready" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+   481→                r.status === "Generating" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
+   482→                "bg-slate-500/15 text-slate-500"
+   483→              }`}>
+   484→                {r.status}
+   485→              </span>
+   486→              <button className="flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+   487→                <Download size={12} />
+   488→              </button>
+   489→            </div>
+   490→          ))}
+   491→        </div>
+   492→      </div>
+   493→    </div>
+   494→  );
+   495→}
+   496→
+   497→/* ---- ClerkSettings ---- */
+   498→function ClerkSettings() {
+   499→  return (
+   500→    <div className="space-y-6">
+   501→      <div>
+   502→        <h2 className="text-xl font-bold text-police-navy">Mipangilio / Settings</h2>
+   503→        <p className="text-sm text-police-faint">Configure your clerk workspace preferences</p>
+   504→      </div>
+   505→
+   506→      {/* General */}
+   507→      <div className="rounded-xl bg-police-card p-5 shadow-sm">
+   508→        <h3 className="mb-4 text-[14px] font-semibold text-police-navy">General / Jumla</h3>
+   509→        <div className="space-y-4">
+   510→          <div className="flex items-center justify-between">
+   511→            <div>
+   512→              <p className="text-[13px] font-medium text-police">Default Region</p>
+   513→              <p className="text-[11px] text-police-faint">Set your default region for filing</p>
+   514→            </div>
+   515→            <span className="rounded-lg bg-police-muted px-3 py-1.5 text-[12px] font-medium text-police">Dar es Salaam</span>
+   516→          </div>
+   517→          <div className="flex items-center justify-between">
+   518→            <div>
+   519→              <p className="text-[13px] font-medium text-police">Language</p>
+   520→              <p className="text-[11px] text-police-faint">Interface display language</p>
+   521→            </div>
+   522→            <span className="rounded-lg bg-police-muted px-3 py-1.5 text-[12px] font-medium text-police">Kiswahili</span>
+   523→          </div>
+   524→          <div className="flex items-center justify-between">
+   525→            <div>
+   526→              <p className="text-[13px] font-medium text-police">Records Per Page</p>
+   527→              <p className="text-[11px] text-police-faint">Number of records shown per page</p>
+   528→            </div>
+   529→            <span className="rounded-lg bg-police-muted px-3 py-1.5 text-[12px] font-medium text-police">25</span>
+   530→          </div>
+   531→        </div>
+   532→      </div>
+   533→
+   534→      {/* Notifications */}
+   535→      <div className="rounded-xl bg-police-card p-5 shadow-sm">
+   536→        <h3 className="mb-4 text-[14px] font-semibold text-police-navy">Notifications / Arifa</h3>
+   537→        <div className="space-y-4">
+   538→          <div className="flex items-center justify-between">
+   539→            <div>
+   540→              <p className="text-[13px] font-medium text-police">New Record Alerts</p>
+   541→              <p className="text-[11px] text-police-faint">Get notified when new records are filed</p>
+   542→            </div>
+   543→            <div className="h-6 w-10 rounded-full bg-[#2196F3] p-0.5 transition-colors">
+   544→              <div className="h-5 w-5 translate-x-4 rounded-full bg-white shadow transition-transform" />
+   545→            </div>
+   546→          </div>
+   547→          <div className="flex items-center justify-between">
+   548→            <div>
+   549→              <p className="text-[13px] font-medium text-police">Export Complete</p>
+   550→              <p className="text-[11px] text-police-faint">Notify when export finishes</p>
+   551→            </div>
+   552→            <div className="h-6 w-10 rounded-full bg-[#2196F3] p-0.5 transition-colors">
+   553→              <div className="h-5 w-5 translate-x-4 rounded-full bg-white shadow transition-transform" />
+   554→            </div>
+   555→          </div>
+   556→          <div className="flex items-center justify-between">
+   557→            <div>
+   558→              <p className="text-[13px] font-medium text-police">Review Reminders</p>
+   559→              <p className="text-[11px] text-police-faint">Daily reminder for pending reviews</p>
+   560→            </div>
+   561→            <div className="h-6 w-10 rounded-full bg-slate-300 p-0.5 transition-colors dark:bg-slate-600">
+   562→              <div className="h-5 w-5 rounded-full bg-white shadow transition-transform" />
+   563→            </div>
+   564→          </div>
+   565→        </div>
+   566→      </div>
+   567→
+   568→      {/* Security */}
+   569→      <div className="rounded-xl bg-police-card p-5 shadow-sm">
+   570→        <h3 className="mb-4 text-[14px] font-semibold text-police-navy">Security / Usalama</h3>
+   571→        <div className="space-y-4">
+   572→          <div className="flex items-center justify-between">
+   573→            <div>
+   574→              <p className="text-[13px] font-medium text-police">Two-Factor Authentication</p>
+   575→              <p className="text-[11px] text-police-faint">Add extra layer of security</p>
+   576→            </div>
+   577→            <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Enabled</span>
+   578→          </div>
+   579→          <div className="flex items-center justify-between">
+   580→            <div>
+   581→              <p className="text-[13px] font-medium text-police">Session Timeout</p>
+   582→              <p className="text-[11px] text-police-faint">Auto-logout after inactivity</p>
+   583→            </div>
+   584→            <span className="rounded-lg bg-police-muted px-3 py-1.5 text-[12px] font-medium text-police">30 minutes</span>
+   585→          </div>
+   586→          <div className="flex items-center justify-between">
+   587→            <div>
+   588→              <p className="text-[13px] font-medium text-police">Change Password</p>
+   589→              <p className="text-[11px] text-police-faint">Update your account password</p>
+   590→            </div>
+   591→            <button className="rounded-lg bg-police-muted px-3 py-1.5 text-[12px] font-medium text-police hover:bg-police-muted/80 transition">Update</button>
+   592→          </div>
+   593→        </div>
+   594→      </div>
+   595→    </div>
+   596→  );
+   597→}
+   598→
+   599→/* ================================================================== */
+   600→/*  Screen Router                                                     */
+   601→/* ================================================================== */
+   602→function renderClerkScreen(screen: ClerkScreen) {
+   603→  switch (screen) {
+   604→    case "dashboard":
+   605→      return <ClerkDashboard />;
+   606→    case "records":
+   607→      return <ClerkRecords />;
+   608→    case "documents":
+   609→      return <ClerkDocuments />;
+   610→    case "file-management":
+   611→      return <ClerkFileManagement />;
+   612→    case "exports":
+   613→      return <ClerkExports />;
+   614→    case "reports":
+   615→      return <ClerkReports />;
+   616→    case "settings":
+   617→      return <ClerkSettings />;
+   618→    default:
+   619→      return <ClerkDashboard />;
+   620→  }
+   621→}
+   622→
+   623→/* ================================================================== */
+   624→/*  ClerkShell                                                        */
+   625→/* ================================================================== */
+   626→export function ClerkShell() {
+   627→  const [clerkScreen, setClerkScreen] = useState<ClerkScreen>("dashboard");
+   628→  const [sidebarOpen, setSidebarOpen] = useState(false);
+   629→  const { theme, setTheme } = useTheme();
+   630→  const { logout } = usePoliceStore();
+   631→  const isDark = theme === "dark";
+   632→
+   633→  return (
+   634→    <div className="flex min-h-screen bg-police">
+   635→      {/* Sidebar */}
+   636→      <aside
+   637→        className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-[#0d1b3d] transition-transform duration-300 lg:static lg:translate-x-0 ${
+   638→          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+   639→        }`}
+   640→      >
+   641→        <div className="flex h-full flex-col">
+   642→          {/* Logo */}
+   643→          <div className="flex items-center gap-3 border-b border-white/10 p-4">
+   644→            <div className="h-10 w-10 overflow-hidden rounded-full ring-2 ring-[#2196F3]">
+   645→              <Image src="/police-logo.png" alt="TPF" width={40} height={40} className="h-full w-full object-cover" />
+   646→            </div>
+   647→            <div>
+   648→              <p className="text-[13px] font-bold text-white">TZ Police</p>
+   649→              <p className="text-[10px] text-white/60">Clerk / Karani</p>
+   650→            </div>
+   651→            <button onClick={() => setSidebarOpen(false)} className="ml-auto text-white/60 lg:hidden">
+   652→              <X size={20} />
+   653→            </button>
+   654→          </div>
+   655→
+   656→          {/* Nav */}
+   657→          <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+   658→            {CLERK_NAV.map((item) => {
+   659→              const active = clerkScreen === item.id;
+   660→              const Icon = item.icon;
+   661→              return (
+   662→                <button
+   663→                  key={item.id}
+   664→                  onClick={() => {
+   665→                    setClerkScreen(item.id);
+   666→                    setSidebarOpen(false);
+   667→                  }}
+   668→                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition ${
+   669→                    active
+   670→                      ? "bg-[#2196F3] text-white shadow-lg shadow-[#2196F3]/30"
+   671→                      : "text-white/70 hover:bg-white/10 hover:text-white"
+   672→                  }`}
+   673→                >
+   674→                  <Icon size={18} />
+   675→                  <span className="flex-1 text-[13px] font-medium">{item.label}</span>
+   676→                  {item.badge && (
+   677→                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#F44336] px-1 text-[10px] font-bold text-white">
+   678→                      {item.badge}
+   679→                    </span>
+   680→                  )}
+   681→                </button>
+   682→              );
+   683→            })}
+   684→          </nav>
+   685→
+   686→          {/* User */}
+   687→          <div className="border-t border-white/10 p-3">
+   688→            <div className="flex items-center gap-3 rounded-lg bg-white/5 p-2.5">
+   689→              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2196F3] text-[12px] font-bold text-white">
+   690→                {CLERK_USER.initials}
+   691→              </div>
+   692→              <div className="min-w-0 flex-1">
+   693→                <p className="truncate text-[12px] font-bold text-white">{CLERK_USER.shortName}</p>
+   694→                <p className="truncate text-[10px] text-white/50">{CLERK_USER.rank}</p>
+   695→              </div>
+   696→              <button onClick={logout} className="text-white/50 hover:text-white">
+   697→                <LogOut size={16} />
+   698→              </button>
+   699→            </div>
+   700→          </div>
+   701→        </div>
+   702→      </aside>
+   703→
+   704→      {/* Overlay for mobile */}
+   705→      {sidebarOpen && (
+   706→        <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)} />
+   707→      )}
+   708→
+   709→      {/* Main content */}
+   710→      <div className="flex min-w-0 flex-1 flex-col">
+   711→        {/* Top bar */}
+   712→        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-police bg-police-card px-4 py-3">
+   713→          <button onClick={() => setSidebarOpen(true)} className="text-police lg:hidden">
+   714→            <Menu size={24} />
+   715→          </button>
+   716→
+   717→          {/* Search */}
+   718→          <div className="hidden max-w-md flex-1 items-center gap-2 rounded-xl bg-police-muted px-3 sm:flex">
+   719→            <Search size={16} className="text-police-faint" />
+   720→            <input
+   721→              placeholder="Tafuta rekodi, hatika, faili..."
+   722→              className="h-9 flex-1 bg-transparent text-[13px] text-police placeholder:text-police-faint focus:outline-none"
+   723→            />
+   724→          </div>
+   725→
+   726→          <div className="ml-auto flex items-center gap-2">
+   727→            {/* Theme toggle */}
+   728→            <button
+   729→              onClick={() => setTheme(isDark ? "light" : "dark")}
+   730→              className="flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police-navy"
+   731→            >
+   732→              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+   733→            </button>
+   734→
+   735→            {/* Notifications */}
+   736→            <button className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police">
+   737→              <Bell size={18} />
+   738→              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+   739→                2
+   740→              </span>
+   741→            </button>
+   742→
+   743→            {/* User chip */}
+   744→            <div className="flex items-center gap-2 rounded-lg bg-police-muted px-2.5 py-1.5">
+   745→              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2196F3] text-[11px] font-bold text-white">
+   746→                {CLERK_USER.initials}
+   747→              </div>
+   748→              <div className="hidden sm:block">
+   749→                <p className="text-[12px] font-bold leading-tight text-police">{CLERK_USER.shortName}</p>
+   750→                <p className="text-[10px] leading-tight text-police-faint">{CLERK_USER.rank}</p>
+   751→              </div>
+   752→              <ChevronDown size={14} className="text-police-faint" />
+   753→            </div>
+   754→          </div>
+   755→        </header>
+   756→
+   757→        {/* Screen content */}
+   758→        <main key={clerkScreen} className="police-screen-enter flex-1 overflow-y-auto p-4 lg:p-6">
+   759→          {renderClerkScreen(clerkScreen)}
+   760→        </main>
+   761→      </div>
+   762→    </div>
+   763→  );
+   764→}
