@@ -147,13 +147,7 @@ export function GeneralHomeScreen() {
           <QA icon={<UserCheck size={26} className="text-[#3B82F6]" />} bg="#3B82F6" title="Tafuta Raia" subtitle="Tafuta raia kwa jina, NIDA au simu" onClick={() => navigate("citizen-search-results")} />
           <QA icon={<AlertTriangle size={26} className="text-[#EF4444]" />} bg="#EF4444" title="Ripoti Tukio" subtitle="Rekodi tukio jipya la polisi" onClick={() => navigate("incident-detail")} />
         </div>
-        <button onClick={() => navigate("mock-data-reference")} className="mt-3 flex w-full items-center justify-between rounded-2xl border border-[#1A237E]/15 bg-[#1A237E]/5 px-4 py-3 text-left active:scale-[0.99]">
-          <div>
-            <p className="text-[14px] font-bold text-[#1A237E]">Mock Data Reference</p>
-            <p className="text-[11px] text-police-muted">Tazama mifano ya jina, NIDA, simu na plate</p>
-          </div>
-          <ChevronRight size={18} className="text-[#1A237E]" />
-        </button>
+
       </div>
 
       {/* Search with validation */}
