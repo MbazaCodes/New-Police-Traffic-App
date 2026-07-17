@@ -5,8 +5,9 @@
 import { NextResponse } from "next/server";
 import { ADMIN_CITATIONS } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
+import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
+import { annotateRecordScope, getScopeContext } from "@/lib/scope";
 
 const citationsStore: typeof ADMIN_CITATIONS = [...ADMIN_CITATIONS];
 
@@ -23,8 +24,18 @@ export async function GET(request: Request) {
     const plate = url.searchParams.get("plate");
     const officer = url.searchParams.get("officer");
     const search = url.searchParams.get("search")?.toLowerCase() ?? "";
+    const scope = getScopeContext(session);
 
-    let result = [...citationsStore];
+    let result = citationsStore.map((c) =>
+      annotateRecordScope({
+        ...c,
+        ownerId: String(c.officer ?? ""),
+        region: "Dar es Salaam",
+        district: "Kinondoni",
+        station: "Oysterbay Station",
+      }, scope),
+    );
+    result = enforceDataScope(result, scope);
     if (status && status !== "all") {
       result = result.filter((c) => c.status === status);
     }
@@ -71,7 +82,8 @@ export async function POST(request: Request) {
       }
     }
 
-    const newCitation = {
+    const scope = getScopeContext(session);
+    const newCitation = annotateRecordScope({
       id: body.id ?? `CT-2026-${Math.floor(1000 + Math.random() * 9000)}`,
       plate: String(body.plate),
       offense: String(body.offense),
@@ -80,7 +92,9 @@ export async function POST(request: Request) {
       amount: String(body.amount),
       status: body.status ?? "unpaid",
       officer: body.officer ?? session!.user.name ?? "Unknown",
-    };
+      ownerId: session!.user.id,
+      isPublic: false,
+    }, scope);
     citationsStore.unshift(newCitation);
 
     logAction(

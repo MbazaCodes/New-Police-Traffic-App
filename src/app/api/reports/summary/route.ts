@@ -10,7 +10,8 @@ import {
   LIVE_INCIDENTS,
 } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
+import { enforceDataScope, requirePermission } from "@/lib/rbac";
+import { annotateRecordScope, getScopeContext } from "@/lib/scope";
 
 export async function GET() {
   try {
@@ -20,11 +21,45 @@ export async function GET() {
       return NextResponse.json({ error: check.error }, { status: check.status });
     }
 
+    const scope = getScopeContext(session);
+    const scopedRegions = enforceDataScope(
+      REGION_STATS.map((r) =>
+        annotateRecordScope(
+          {
+            ...r,
+            region: r.region,
+            district: r.region === "Dar es Salaam" ? "Kinondoni" : "Regional",
+            station: r.region === "Dar es Salaam" ? "Oysterbay Station" : `${r.region} Station`,
+            isPublic: true,
+          },
+          scope,
+        ),
+      ),
+      scope,
+    );
+
+    const scopedLiveIncidents = enforceDataScope(
+      LIVE_INCIDENTS.filter((i) => i.status !== "resolved").map((i) =>
+        annotateRecordScope(
+          {
+            ...i,
+            ownerId: String(i.officer ?? ""),
+            region: "Dar es Salaam",
+            district: "Kinondoni",
+            station: "Oysterbay Station",
+            isPublic: false,
+          },
+          scope,
+        ),
+      ),
+      scope,
+    );
+
     // Aggregate mock KPIs from existing data
-    const totalOfficers = REGION_STATS.reduce((sum, r) => sum + r.officers, 0);
-    const totalIncidents = REGION_STATS.reduce((sum, r) => sum + r.incidents, 0);
-    const totalCitations = REGION_STATS.reduce((sum, r) => sum + r.citations, 0);
-    const totalResolved = REGION_STATS.reduce((sum, r) => sum + r.resolved, 0);
+    const totalOfficers = scopedRegions.reduce((sum, r) => sum + Number(r.officers ?? 0), 0);
+    const totalIncidents = scopedRegions.reduce((sum, r) => sum + Number(r.incidents ?? 0), 0);
+    const totalCitations = scopedRegions.reduce((sum, r) => sum + Number(r.citations ?? 0), 0);
+    const totalResolved = scopedRegions.reduce((sum, r) => sum + Number(r.resolved ?? 0), 0);
     const resolutionRate = totalIncidents > 0 ? Math.round((totalResolved / totalIncidents) * 100) : 0;
 
     const summary = {
@@ -43,8 +78,8 @@ export async function GET() {
         offenseDistribution: OFFENSE_DISTRIBUTION,
       },
       distribution: {
-        regionStats: REGION_STATS,
-        liveIncidents: LIVE_INCIDENTS.filter((i) => i.status !== "resolved"),
+        regionStats: scopedRegions,
+        liveIncidents: scopedLiveIncidents,
       },
       generatedAt: new Date().toISOString(),
     };

@@ -4,14 +4,14 @@
 // so the UI can then call /api/auth/callback/credentials with the OTP.
 
 import { NextResponse } from "next/server";
-import { verifyOtp, MOCK_USERS } from "@/lib/auth";
+import { findUserByIdentifier, verifyOtp } from "@/lib/auth";
 import { logAction } from "@/lib/audit-log";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
     const identifier: string =
-      (body.identifier as string) || (body.username as string) || (body.email as string) || "";
+      (body.identifier as string) || (body.username as string) || (body.mobile as string) || (body.email as string) || "";
     const otp: string = (body.otp as string) || (body.code as string) || "";
 
     if (!identifier || !otp) {
@@ -21,19 +21,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = MOCK_USERS.find(
-      (u) =>
-        u.email.toLowerCase() === identifier.toLowerCase() ||
-        u.idNumber === identifier ||
-        u.id === identifier ||
-        u.phone === identifier,
-    );
+    const user = findUserByIdentifier(identifier);
 
     if (!user) {
       return NextResponse.json({ error: "Invalid identifier or OTP" }, { status: 404 });
     }
 
-    const ok = verifyOtp(user.email, otp);
+    const ok = verifyOtp(identifier, otp);
     if (!ok) {
       logAction(
         null,

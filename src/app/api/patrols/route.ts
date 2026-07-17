@@ -5,8 +5,9 @@
 import { NextResponse } from "next/server";
 import { ACTIVE_PATROLS } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
+import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
+import { annotateRecordScope, getScopeContext } from "@/lib/scope";
 
 const patrolsStore: typeof ACTIVE_PATROLS = [...ACTIVE_PATROLS];
 
@@ -22,8 +23,18 @@ export async function GET(request: Request) {
     const status = url.searchParams.get("status");
     const officer = url.searchParams.get("officer");
     const search = url.searchParams.get("search")?.toLowerCase() ?? "";
+    const scope = getScopeContext(session);
 
-    let result = [...patrolsStore];
+    let result = patrolsStore.map((p) =>
+      annotateRecordScope({
+        ...p,
+        ownerId: String(p.officer ?? ""),
+        region: "Dar es Salaam",
+        district: "Kinondoni",
+        station: "Oysterbay Station",
+      }, scope),
+    );
+    result = enforceDataScope(result, scope);
     if (status && status !== "all") {
       result = result.filter((p) => p.status === status);
     }
@@ -62,7 +73,8 @@ export async function POST(request: Request) {
     }
 
     const now = new Date();
-    const newPatrol = {
+    const scope = getScopeContext(session);
+    const newPatrol = annotateRecordScope({
       id: body.id ?? `PT-${Math.floor(100 + Math.random() * 900)}`,
       officer: body.officer ?? session!.user.name ?? "Unknown",
       area: String(body.area),
@@ -70,7 +82,9 @@ export async function POST(request: Request) {
       distance: "0 km",
       status: "active",
       progress: 0,
-    };
+      ownerId: session!.user.id,
+      isPublic: false,
+    }, scope);
     patrolsStore.unshift(newPatrol);
 
     logAction(

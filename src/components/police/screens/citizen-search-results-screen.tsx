@@ -50,6 +50,7 @@ export function CitizenSearchResultsScreen() {
     vehicles: [], devices: [], history: [], riskScore: 0, riskLevel: "—",
     documents: [] as {type:string;number:string;status:string}[],
   };
+  const documents = r.documents ?? [];
 
 
   const handleRecordInfo = () => {
@@ -66,7 +67,7 @@ export function CitizenSearchResultsScreen() {
     setWarningPrefill({
       recipientName: r.name,
       plate: r.vehicles[0]?.plate ?? "",
-      licenseNo: r.documents.find((d) => d.type.includes("Leseni"))?.number ?? "",
+      licenseNo: documents.find((d) => d.type.includes("Leseni"))?.number ?? "",
       phone: r.mobile,
     });
     navigate("warning-form");
@@ -78,7 +79,7 @@ export function CitizenSearchResultsScreen() {
       nida: r.nida,
       phone: r.mobile,
       plate: r.vehicles[0]?.plate ?? "",
-      licenseNo: r.documents.find((d) => d.type.includes("Leseni"))?.number ?? "",
+      licenseNo: documents.find((d) => d.type.includes("Leseni"))?.number ?? "",
     });
     navigate("arrest-form");
   };
@@ -320,7 +321,7 @@ export function CitizenSearchResultsScreen() {
             icon={<FileText size={18} className="text-police-navy" />}
           >
             <div className="space-y-2">
-              {r.documents.map((doc, i) => (
+              {documents.map((doc, i) => (
                 <div
                   key={i}
                   className="flex items-center justify-between rounded-xl border border-police-soft bg-police-muted p-2.5"

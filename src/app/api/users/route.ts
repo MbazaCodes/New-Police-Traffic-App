@@ -85,9 +85,11 @@ export async function POST(request: Request) {
     // Also push to the auth mock users table so the new user can log in.
     MOCK_USERS.push({
       id,
+      username: body.username ?? String(body.email).split("@")[0],
       name: newUser.name,
       email: newUser.email,
-      phone: body.phone ?? "",
+      mobile: body.mobile ?? body.phone ?? "",
+      phone: body.mobile ?? body.phone ?? "",
       idNumber: body.idNumber ?? id,
       station: newUser.station,
       role: body.role,

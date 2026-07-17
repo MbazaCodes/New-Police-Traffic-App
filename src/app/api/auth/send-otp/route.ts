@@ -2,14 +2,14 @@
 // Public endpoint (no session required).
 
 import { NextResponse } from "next/server";
-import { generateOtp, MOCK_USERS } from "@/lib/auth";
+import { findUserByIdentifier, generateOtp, isDemoMode, isOtpBypassEnabled } from "@/lib/auth";
 import { logAction } from "@/lib/audit-log";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
     const identifier: string =
-      (body.identifier as string) || (body.username as string) || (body.email as string) || "";
+      (body.identifier as string) || (body.username as string) || (body.mobile as string) || (body.email as string) || "";
 
     if (!identifier) {
       return NextResponse.json(
@@ -19,19 +19,13 @@ export async function POST(request: Request) {
     }
 
     // Resolve the user to know where to "send" the OTP
-    const user = MOCK_USERS.find(
-      (u) =>
-        u.email.toLowerCase() === identifier.toLowerCase() ||
-        u.idNumber === identifier ||
-        u.id === identifier ||
-        u.phone === identifier,
-    );
+    const user = findUserByIdentifier(identifier);
 
     // Always return success for security (don't leak which accounts exist),
     // but only actually generate a code if the user exists.
     let sentTo: string | null = null;
     if (user) {
-      const code = generateOtp(user.email);
+      const code = generateOtp(identifier);
       // In production: integrate SMS gateway (e.g. Africa's Talking) or
       // email provider here. For dev we just return the code in the
       // response so it can be auto-filled in the UI/tests.
@@ -49,7 +43,7 @@ export async function POST(request: Request) {
           ok: true,
           message: "OTP sent. Use the code to verify.",
           // dev-only: return the code so the API can be tested end-to-end
-          devOtp: code,
+          devOtp: isDemoMode() || isOtpBypassEnabled() ? code : undefined,
           sentTo: user.email.replace(/(.{2}).*(@.*)/, "$1***$2"),
         },
         { status: 200 },

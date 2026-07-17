@@ -25,6 +25,7 @@ export interface MockCitizen {
   licenseClass: string;
   passportNo: string;
   passportExpiry: string;
+  documents?: { type: string; number: string; status: string }[];
   // Vehicles
   vehicles: MockVehicle[];
   // Devices

@@ -155,6 +155,13 @@ export function HomeScreen() {
           <QA icon={<Camera size={26} className="text-[#3B82F6]" />} bg="#3B82F6" title="Soma Nambari" subtitle="Tumia kamera kusoma namba ya gari" onClick={() => openScanner("ocr")} />
           <QA icon={<ScanLine size={26} className="text-[#10B981]" />} bg="#10B981" title="Scan QR" subtitle="Changanya QR code ya hati au namba" onClick={() => openScanner("qr")} />
         </div>
+        <button onClick={() => navigate("mock-data-reference")} className="mt-3 flex w-full items-center justify-between rounded-2xl border border-[#1A237E]/15 bg-[#1A237E]/5 px-4 py-3 text-left active:scale-[0.99]">
+          <div>
+            <p className="text-[14px] font-bold text-[#1A237E]">Mock Data Reference</p>
+            <p className="text-[11px] text-police-muted">Angalia mifano ya jina, NIDA, simu, plate na leseni</p>
+          </div>
+          <ChevronRight size={18} className="text-[#1A237E]" />
+        </button>
       </div>
 
       {/* Search with validation */}

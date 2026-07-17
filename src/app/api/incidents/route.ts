@@ -5,8 +5,9 @@
 import { NextResponse } from "next/server";
 import { ADMIN_INCIDENTS } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
+import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
+import { annotateRecordScope, getScopeContext } from "@/lib/scope";
 
 const incidentsStore: typeof ADMIN_INCIDENTS = [...ADMIN_INCIDENTS];
 
@@ -23,8 +24,18 @@ export async function GET(request: Request) {
     const priority = url.searchParams.get("priority");
     const type = url.searchParams.get("type");
     const search = url.searchParams.get("search")?.toLowerCase() ?? "";
+    const scope = getScopeContext(session);
 
-    let result = [...incidentsStore];
+    let result = incidentsStore.map((i) =>
+      annotateRecordScope({
+        ...i,
+        ownerId: String(i.assignedTo ?? ""),
+        region: "Dar es Salaam",
+        district: "Kinondoni",
+        station: "Oysterbay Station",
+      }, scope),
+    );
+    result = enforceDataScope(result, scope);
     if (status && status !== "all") {
       result = result.filter((i) => i.status === status);
     }
@@ -72,7 +83,8 @@ export async function POST(request: Request) {
     }
 
     const now = new Date();
-    const newIncident = {
+    const scope = getScopeContext(session);
+    const newIncident = annotateRecordScope({
       id: body.id ?? `INC-2026-${Math.floor(1000 + Math.random() * 9000)}`,
       type: String(body.type),
       location: String(body.location),
@@ -82,7 +94,9 @@ export async function POST(request: Request) {
       priority: body.priority ?? "medium",
       assignedTo: body.assignedTo ?? session!.user.name ?? "Unassigned",
       description: String(body.description),
-    };
+      ownerId: session!.user.id,
+      isPublic: false,
+    }, scope);
     incidentsStore.unshift(newIncident);
 
     logAction(

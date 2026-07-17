@@ -78,12 +78,14 @@ export function PoliceIcon({
   className,
   size = 24,
   strokeWidth = 2,
+  style,
 }: {
   name: string;
   className?: string;
   size?: number;
   strokeWidth?: number;
+  style?: React.CSSProperties;
 }) {
   const Icon = ICON_MAP[name] ?? AlertTriangle;
-  return <Icon className={className} size={size} strokeWidth={strokeWidth} />;
+  return <Icon className={className} size={size} strokeWidth={strokeWidth} style={style} />;
 }

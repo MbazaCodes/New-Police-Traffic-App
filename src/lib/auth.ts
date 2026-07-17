@@ -1,5 +1,5 @@
 // NextAuth v4 configuration for TZ Police Digital Platform
-// Strategy: Credentials provider with OTP verification, JWT sessions (7-day expiry)
+// Strategy: Credentials provider with username/mobile + OTP verification, JWT sessions (7-day expiry)
 
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -11,11 +11,16 @@ import CredentialsProvider from "next-auth/providers/credentials";
 export const ROLES = [
   "SUPER_ADMIN",
   "COMMANDER",
+  "OFFICER",
+  "SYSTEM_ADMIN",
+  "NATIONAL_COMMANDER",
   "REGIONAL_COMMANDER",
   "DISTRICT_COMMANDER",
-  "OFFICER",
+  "STATION_COMMANDER",
   "TRAFFIC_OFFICER",
+  "GENERAL_OFFICER",
   "INVESTIGATOR",
+  "CLERK",
   "VIEWER",
 ] as const;
 
@@ -62,104 +67,176 @@ declare module "next-auth/jwt" {
 
 export interface MockUser {
   id: string;
+  username: string;
   name: string;
   email: string;
-  phone: string;
+  mobile: string;
+  phone?: string;
   idNumber: string;
   station: string;
+  region?: string;
+  district?: string;
   role: Role;
-  // In production this would be a hashed password or OTP secret. Mock only.
+  // In production this would be hashed and managed by IAM/IdP.
   password: string;
   status: "active" | "suspended";
 }
 
+const DEFAULT_PASSWORD = "demo123";
+
 export const MOCK_USERS: MockUser[] = [
   {
-    id: "ADM-001",
-    name: "CP. Saidi Waziri",
-    email: "saidi.waziri@polisi.go.tz",
-    phone: "0712 345 678",
+    id: "USR-SUPER-001",
+    username: "superadmin",
+    name: "Super Admin",
+    email: "superadmin@mock.local",
+    mobile: "255700000001",
     idNumber: "TP-SUP-001",
-    station: "Makao Makuu - Dar es Salaam",
+    station: "HQ",
+    region: "National",
+    district: "National",
     role: "SUPER_ADMIN",
-    password: "admin123",
+    password: DEFAULT_PASSWORD,
     status: "active",
   },
   {
-    id: "ADM-002",
-    name: "ACP. Mariam Juma",
-    email: "mariam.juma@polisi.go.tz",
-    phone: "0788 123 456",
-    idNumber: "TP-CMD-002",
-    station: "Makao Makuu - Dar es Salaam",
-    role: "COMMANDER",
-    password: "commander123",
+    id: "USR-SYSTEM-002",
+    username: "sysadmin",
+    name: "System Admin",
+    email: "sysadmin@mock.local",
+    mobile: "255700000002",
+    idNumber: "TP-SYS-002",
+    station: "HQ",
+    region: "National",
+    district: "National",
+    role: "SYSTEM_ADMIN",
+    password: DEFAULT_PASSWORD,
     status: "active",
   },
   {
-    id: "ADM-003",
-    name: "SP. Hamisi Ally",
-    email: "hamisi.ally@polisi.go.tz",
-    phone: "0755 111 222",
-    idNumber: "TP-RC-003",
-    station: "Mkoa wa Dar es Salaam",
+    id: "USR-NATIONAL-003",
+    username: "national.command",
+    name: "National Commander",
+    email: "national.command@mock.local",
+    mobile: "255700000003",
+    idNumber: "TP-NC-003",
+    station: "National Command",
+    region: "National",
+    district: "National",
+    role: "NATIONAL_COMMANDER",
+    password: DEFAULT_PASSWORD,
+    status: "active",
+  },
+  {
+    id: "USR-REGIONAL-004",
+    username: "rc.dar",
+    name: "Regional Commander Dar",
+    email: "rc.dar@mock.local",
+    mobile: "255700000004",
+    idNumber: "TP-RC-004",
+    station: "Regional HQ Dar",
+    region: "Dar es Salaam",
+    district: "Ilala",
     role: "REGIONAL_COMMANDER",
-    password: "regional123",
+    password: DEFAULT_PASSWORD,
     status: "active",
   },
   {
-    id: "ADM-004",
-    name: "CSP. Grace Mushi",
-    email: "grace.mushi@polisi.go.tz",
-    phone: "0766 987 654",
-    idNumber: "TP-DC-004",
-    station: "Mkoa wa Arusha",
+    id: "USR-DISTRICT-005",
+    username: "dc.ilala",
+    name: "District Commander Ilala",
+    email: "dc.ilala@mock.local",
+    mobile: "255700000005",
+    idNumber: "TP-DC-005",
+    station: "District HQ Ilala",
+    region: "Dar es Salaam",
+    district: "Ilala",
     role: "DISTRICT_COMMANDER",
-    password: "district123",
+    password: DEFAULT_PASSWORD,
     status: "active",
   },
   {
-    id: "TP123456",
-    name: "Insp. Juma Mwinyi",
-    email: "juma.mwinyi@polisi.go.tz",
-    phone: "0712 345 678",
-    idNumber: "TP123456",
-    station: "Kituo Kikuu cha Polisi Dar es Salaam",
+    id: "USR-STATION-006",
+    username: "sc.oysterbay",
+    name: "Station Commander Oysterbay",
+    email: "sc.oysterbay@mock.local",
+    mobile: "255700000006",
+    idNumber: "TP-SC-006",
+    station: "Oysterbay Station",
+    region: "Dar es Salaam",
+    district: "Kinondoni",
+    role: "STATION_COMMANDER",
+    password: DEFAULT_PASSWORD,
+    status: "active",
+  },
+  {
+    id: "USR-TRAFFIC-101",
+    username: "traffic.officer01",
+    name: "Traffic Officer 01",
+    email: "traffic.officer01@mock.local",
+    mobile: "255700000101",
+    idNumber: "TP-TR-101",
+    station: "Oysterbay Station",
+    region: "Dar es Salaam",
+    district: "Kinondoni",
     role: "TRAFFIC_OFFICER",
-    password: "officer123",
+    password: DEFAULT_PASSWORD,
     status: "active",
   },
   {
-    id: "TP345678",
-    name: "Insp. Grace Mushi",
-    email: "grace.mushi@polisi.go.tz",
-    phone: "0766 987 654",
-    idNumber: "TP345678",
-    station: "Kituo cha Kinondoni",
+    id: "USR-GENERAL-201",
+    username: "general.officer01",
+    name: "General Officer 01",
+    email: "general.officer01@mock.local",
+    mobile: "255700000201",
+    idNumber: "TP-GO-201",
+    station: "Oysterbay Station",
+    region: "Dar es Salaam",
+    district: "Kinondoni",
+    role: "GENERAL_OFFICER",
+    password: DEFAULT_PASSWORD,
+    status: "active",
+  },
+  {
+    id: "USR-INV-301",
+    username: "investigator01",
+    name: "Investigator 01",
+    email: "investigator01@mock.local",
+    mobile: "255700000301",
+    idNumber: "TP-INV-301",
+    station: "Oysterbay Station",
+    region: "Dar es Salaam",
+    district: "Kinondoni",
     role: "INVESTIGATOR",
-    password: "investigator123",
+    password: DEFAULT_PASSWORD,
     status: "active",
   },
   {
-    id: "TP678901",
-    name: "Insp. Hamisi Rashid",
-    email: "hamisi.rashid@polisi.go.tz",
-    phone: "0733 555 666",
-    idNumber: "TP678901",
-    station: "Kituo cha Ubungo",
-    role: "OFFICER",
-    password: "officer123",
+    id: "USR-CLERK-401",
+    username: "clerk01",
+    name: "Clerk 01",
+    email: "clerk01@mock.local",
+    mobile: "255700000401",
+    idNumber: "TP-CLK-401",
+    station: "Records Center",
+    region: "Dar es Salaam",
+    district: "Ilala",
+    role: "CLERK",
+    password: DEFAULT_PASSWORD,
     status: "active",
   },
   {
-    id: "ADM-005",
-    name: "SP. Emmanuel Joseph",
-    email: "emmanuel.joseph@polisi.go.tz",
-    phone: "0711 999 000",
-    idNumber: "TP-VW-005",
-    station: "Mkoa wa Mwanza",
+    id: "USR-VIEWER-501",
+    username: "viewer01",
+    name: "Viewer 01",
+    email: "viewer01@mock.local",
+    mobile: "255700000501",
+    idNumber: "TP-VW-501",
+    station: "HQ",
+    region: "National",
+    district: "National",
     role: "VIEWER",
-    password: "viewer123",
+    password: DEFAULT_PASSWORD,
     status: "active",
   },
 ];
@@ -175,12 +252,80 @@ export interface OtpRecord {
 }
 
 const otpStore = new Map<string, OtpRecord>();
+const OTP_BYPASS_CODES = new Set(["000000", "111111", "123456", "654321", "999999"]);
+
+export function isDemoMode(): boolean {
+  return process.env.DEMO_MODE === "true";
+}
+
+export function isOtpBypassEnabled(): boolean {
+  return process.env.OTP_BYPASS === "true" || process.env.NEXT_PUBLIC_OTP_BYPASS === "true";
+}
+
+export function normalizeIdentifier(identifier: string): string {
+  return identifier.trim().replace(/\s+/g, "");
+}
+
+export function findUserByIdentifier(identifier: string): MockUser | null {
+  const raw = identifier.trim();
+  const normalized = normalizeIdentifier(identifier);
+  const lower = raw.toLowerCase();
+
+  const user = MOCK_USERS.find((u) => {
+    const mobileNoSpace = normalizeIdentifier(u.mobile);
+    const phoneNoSpace = normalizeIdentifier(u.phone ?? "");
+    const localMobile = mobileNoSpace.startsWith("255") ? `0${mobileNoSpace.slice(3)}` : mobileNoSpace;
+    const localPhone = phoneNoSpace.startsWith("255") ? `0${phoneNoSpace.slice(3)}` : phoneNoSpace;
+    return (
+      u.username.toLowerCase() === lower ||
+      u.email.toLowerCase() === lower ||
+      u.id.toLowerCase() === lower ||
+      u.idNumber.toLowerCase() === lower ||
+      mobileNoSpace === normalized ||
+      localMobile === normalized ||
+      phoneNoSpace === normalized ||
+      localPhone === normalized
+    );
+  });
+
+  return user ?? null;
+}
+
+export function resolveDashboardRoute(role: Role): string {
+  const redirects: Record<Role, string> = {
+    SUPER_ADMIN: "/admin/dashboard",
+    COMMANDER: "/command/national/dashboard",
+    OFFICER: "/officer/traffic/home",
+    SYSTEM_ADMIN: "/system/dashboard",
+    NATIONAL_COMMANDER: "/command/national/dashboard",
+    REGIONAL_COMMANDER: "/command/regional/dashboard",
+    DISTRICT_COMMANDER: "/command/district/dashboard",
+    STATION_COMMANDER: "/command/station/dashboard",
+    TRAFFIC_OFFICER: "/officer/traffic/home",
+    GENERAL_OFFICER: "/officer/general/home",
+    INVESTIGATOR: "/investigator/cases",
+    CLERK: "/clerk/records",
+    VIEWER: "/dashboard",
+  };
+  return redirects[role];
+}
 
 export function generateOtp(identifier: string): string {
-  // Generate a deterministic 6-digit code for testing; in prod use random
+  const normalized = normalizeIdentifier(identifier);
+
+  if (isOtpBypassEnabled() && isDemoMode()) {
+    const code = "123456";
+    otpStore.set(normalized, {
+      identifier: normalized,
+      code,
+      expiresAt: Date.now() + 10 * 60 * 1000,
+    });
+    return code;
+  }
+
   const code = Math.floor(100000 + Math.random() * 900000).toString();
-  otpStore.set(identifier, {
-    identifier,
+  otpStore.set(normalized, {
+    identifier: normalized,
     code,
     expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
   });
@@ -188,15 +333,33 @@ export function generateOtp(identifier: string): string {
 }
 
 export function verifyOtp(identifier: string, code: string): boolean {
-  const record = otpStore.get(identifier);
+  const normalized = normalizeIdentifier(identifier);
+  const cleanCode = code.trim();
+
+  if (isOtpBypassEnabled() && OTP_BYPASS_CODES.has(cleanCode)) {
+    return true;
+  }
+
+  const record = otpStore.get(normalized);
   if (!record) return false;
   if (Date.now() > record.expiresAt) {
-    otpStore.delete(identifier);
+    otpStore.delete(normalized);
     return false;
   }
-  if (record.code !== code) return false;
-  otpStore.delete(identifier);
+  if (record.code !== cleanCode) return false;
+  otpStore.delete(normalized);
   return true;
+}
+
+export function createAuthPayload(user: MockUser) {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    idNumber: user.idNumber,
+    station: user.station,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -208,43 +371,37 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Police Credentials",
       credentials: {
-        username: { label: "Username / ID Number", type: "text" },
+        username: { label: "Username / Mobile / ID Number", type: "text" },
         password: { label: "Password", type: "password" },
         otp: { label: "OTP Code", type: "text" },
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) {
+        if (!credentials?.username) {
           return null;
         }
 
-        // 1. Lookup user by email, id, or idNumber
-        const user = MOCK_USERS.find(
-          (u) =>
-            u.email.toLowerCase() === credentials.username.toLowerCase() ||
-            u.idNumber === credentials.username ||
-            u.id === credentials.username,
-        );
+        const user = findUserByIdentifier(credentials.username);
 
         if (!user) return null;
         if (user.status === "suspended") return null;
-        if (user.password !== credentials.password) return null;
 
-        // 2. OTP verification — if OTP is provided, validate it.
-        // If OTP not provided, still allow (for development convenience);
-        // in production OTP would be required.
-        if (credentials.otp && credentials.otp.trim() !== "") {
-          const ok = verifyOtp(user.email, credentials.otp);
-          if (!ok) return null;
+        const hasPassword = Boolean(credentials.password?.trim());
+        const hasOtp = Boolean(credentials.otp?.trim());
+
+        // Backward compatibility: allow password-based auth for legacy clients.
+        if (hasPassword && user.password !== credentials.password) {
+          return null;
         }
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          idNumber: user.idNumber,
-          station: user.station,
-        };
+        // Primary flow: OTP is required unless in explicit demo bypass mode.
+        if (hasOtp) {
+          const otpOk = verifyOtp(credentials.username, credentials.otp ?? "");
+          if (!otpOk) return null;
+        } else if (!isOtpBypassEnabled()) {
+          return null;
+        }
+
+        return createAuthPayload(user);
       },
     }),
   ],

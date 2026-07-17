@@ -32,6 +32,7 @@ const ADMIN_ROLES = [
 ];
 
 export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }) {
+  const router = useRouter();
   const login = usePoliceStore((s) => s.login);
   const [step, setStep] = useState<Step>("credentials");
   const [method, setMethod] = useState<"username" | "phone">("username");

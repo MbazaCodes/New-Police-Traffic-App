@@ -30,6 +30,7 @@ import { EditProfileScreen } from "./screens/edit-profile-screen";
 import { IncidentViewScreen } from "./screens/incident-view-screen";
 import { AddVehicleScreen } from "./screens/add-vehicle-screen";
 import { AddCitizenScreen } from "./screens/add-citizen-screen";
+import { MockDataReferenceScreen } from "./screens/mock-data-reference-screen";
 import { CameraScannerModal } from "./camera-scanner-modal";
 import type { ScreenId } from "@/lib/police-data";
 
@@ -38,6 +39,7 @@ const NO_NAV_SCREENS: ScreenId[] = [
   "pf3", "citation", "history", "citizen-search-results",
   "arrest-form", "warning-form", "lost-property", "driver-points",
   "incident-detail", "offense-detail", "citation-detail", "edit-profile", "sos-request", "incident-view", "citizen-detail", "add-vehicle", "add-citizen",
+  "mock-data-reference",
 ];
 
 export function MobileShell() {
@@ -85,6 +87,7 @@ function renderScreen(screen: ScreenId, isGeneral = false) {
     case "incident-view":     return <IncidentViewScreen />;
     case "add-vehicle":       return <AddVehicleScreen />;
     case "add-citizen":       return <AddCitizenScreen />;
+    case "mock-data-reference": return <MockDataReferenceScreen />;
     case "patrol":            return <PatrolScreen />;
     case "alerts":            return <AlertsScreen />;
     case "profile":           return <ProfileScreen />;

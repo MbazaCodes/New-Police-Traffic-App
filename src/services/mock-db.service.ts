@@ -94,6 +94,7 @@ export async function loadMockDatabase() {
       todayFines,
       syncEnabled: process.env.NEXT_PUBLIC_SYNC === "true",
       offlineEnabled: process.env.NEXT_PUBLIC_OFFLINE === "true",
+      dataSource: "mock-database",
     },
   };
 }

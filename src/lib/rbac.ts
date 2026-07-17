@@ -1,5 +1,5 @@
 // RBAC (Role-Based Access Control) for TZ Police Digital Platform
-// Role hierarchy: SUPER_ADMIN > COMMANDER > REGIONAL_COMMANDER > DISTRICT_COMMANDER > OFFICER > TRAFFIC_OFFICER > INVESTIGATOR > VIEWER
+// Role hierarchy supports expanded government roles and legacy compatibility.
 
 import type { Session } from "next-auth";
 import type { Role } from "@/lib/auth";
@@ -10,11 +10,16 @@ import type { Role } from "@/lib/auth";
 
 export const ROLE_HIERARCHY: Role[] = [
   "VIEWER",
+  "CLERK",
   "INVESTIGATOR",
+  "GENERAL_OFFICER",
   "TRAFFIC_OFFICER",
   "OFFICER",
+  "STATION_COMMANDER",
   "DISTRICT_COMMANDER",
   "REGIONAL_COMMANDER",
+  "NATIONAL_COMMANDER",
+  "SYSTEM_ADMIN",
   "COMMANDER",
   "SUPER_ADMIN",
 ];
@@ -91,6 +96,38 @@ const PERMISSIONS: Record<Role, Partial<Record<Resource, ActionList>>> = {
     reports: ALL_ACTIONS,
     audit_logs: ["view"],
   },
+  SYSTEM_ADMIN: {
+    officers: ["view", "update"],
+    stations: ["view", "update"],
+    posts: ["view", "update"],
+    assignments: ["view", "create", "update"],
+    citations: ["view"],
+    incidents: ["view"],
+    patrols: ["view"],
+    alerts: ["view"],
+    search: ["view"],
+    users: ["view", "create", "update"],
+    pf3: ["view"],
+    inspections: ["view"],
+    reports: ["view"],
+    audit_logs: ["view"],
+  },
+  NATIONAL_COMMANDER: {
+    officers: ["view", "create", "update"],
+    citations: ["view", "create", "update"],
+    incidents: ["view", "create", "update", "delete"],
+    stations: ["view", "create", "update"],
+    posts: ["view", "create", "update", "delete"],
+    assignments: ["view", "create", "update", "delete"],
+    alerts: ["view", "create", "update"],
+    patrols: ["view", "create", "update"],
+    search: ["view", "manage"],
+    users: ["view", "create", "update"],
+    pf3: ["view", "create", "update"],
+    inspections: ["view", "create", "update"],
+    reports: ["view", "create", "update"],
+    audit_logs: ["view"],
+  },
   REGIONAL_COMMANDER: {
     officers: ["view", "create", "update"],
     citations: ["view", "create", "update"],
@@ -108,6 +145,22 @@ const PERMISSIONS: Record<Role, Partial<Record<Resource, ActionList>>> = {
     audit_logs: ["view"],
   },
   DISTRICT_COMMANDER: {
+    officers: ["view", "update"],
+    citations: ["view", "create", "update"],
+    incidents: ["view", "create", "update"],
+    stations: ["view"],
+    posts: ["view", "create", "update"],
+    assignments: ["view", "create", "update", "delete"],
+    alerts: ["view", "create"],
+    patrols: ["view", "create", "update"],
+    search: ["view"],
+    users: ["view"],
+    pf3: ["view", "create", "update"],
+    inspections: ["view", "create", "update"],
+    reports: ["view"],
+    audit_logs: ["view"],
+  },
+  STATION_COMMANDER: {
     officers: ["view", "update"],
     citations: ["view", "create", "update"],
     incidents: ["view", "create", "update"],
@@ -155,6 +208,22 @@ const PERMISSIONS: Record<Role, Partial<Record<Resource, ActionList>>> = {
     reports: [],
     audit_logs: [],
   },
+  GENERAL_OFFICER: {
+    officers: ["view"],
+    citations: ["view"],
+    incidents: ["view", "create", "update"],
+    stations: ["view"],
+    posts: ["view"],
+    assignments: ["view"],
+    alerts: ["view"],
+    patrols: ["view"],
+    search: ["view"],
+    users: [],
+    pf3: ["view"],
+    inspections: ["view"],
+    reports: ["view", "create"],
+    audit_logs: [],
+  },
   INVESTIGATOR: {
     officers: ["view"],
     citations: ["view"],
@@ -169,6 +238,22 @@ const PERMISSIONS: Record<Role, Partial<Record<Resource, ActionList>>> = {
     pf3: ["view", "create", "update"],
     inspections: ["view"],
     reports: ["view"],
+    audit_logs: [],
+  },
+  CLERK: {
+    officers: ["view"],
+    citations: ["view"],
+    incidents: ["view"],
+    stations: ["view"],
+    posts: ["view"],
+    assignments: ["view"],
+    alerts: ["view"],
+    patrols: ["view"],
+    search: ["view"],
+    users: ["view"],
+    pf3: ["view"],
+    inspections: ["view"],
+    reports: ["view", "create", "update"],
     audit_logs: [],
   },
   VIEWER: {
@@ -267,13 +352,61 @@ export const ADMIN_ROLES: Role[] = ["SUPER_ADMIN", "COMMANDER"];
 export const COMMAND_ROLES: Role[] = [
   "SUPER_ADMIN",
   "COMMANDER",
+  "SYSTEM_ADMIN",
+  "NATIONAL_COMMANDER",
   "REGIONAL_COMMANDER",
   "DISTRICT_COMMANDER",
+  "STATION_COMMANDER",
 ];
 
 // Convenience: officer-level roles (field operations)
 export const FIELD_ROLES: Role[] = [
   "OFFICER",
   "TRAFFIC_OFFICER",
+  "GENERAL_OFFICER",
   "INVESTIGATOR",
 ];
+
+export type ScopeContext = {
+  role: Role;
+  region?: string;
+  district?: string;
+  station?: string;
+  ownerId?: string;
+};
+
+export function enforceDataScope<T extends Record<string, unknown>>(
+  records: T[],
+  context: ScopeContext,
+): T[] {
+  const { role, region, district, station, ownerId } = context;
+
+  if (role === "SUPER_ADMIN" || role === "COMMANDER" || role === "SYSTEM_ADMIN" || role === "NATIONAL_COMMANDER") {
+    return records;
+  }
+
+  if (role === "REGIONAL_COMMANDER") {
+    return records.filter((r) => String(r.region ?? "") === String(region ?? ""));
+  }
+
+  if (role === "DISTRICT_COMMANDER") {
+    return records.filter((r) => String(r.district ?? "") === String(district ?? ""));
+  }
+
+  if (role === "STATION_COMMANDER") {
+    return records.filter((r) => String(r.station ?? "") === String(station ?? ""));
+  }
+
+  if (role === "TRAFFIC_OFFICER" || role === "GENERAL_OFFICER" || role === "OFFICER" || role === "INVESTIGATOR") {
+    return records.filter((r) => {
+      const owner = String(r.ownerId ?? r.officerId ?? r.assignedToId ?? r.createdBy ?? "");
+      return ownerId ? owner === ownerId : false;
+    });
+  }
+
+  if (role === "CLERK" || role === "VIEWER") {
+    return records.filter((r) => Boolean(r.isPublic));
+  }
+
+  return [];
+}

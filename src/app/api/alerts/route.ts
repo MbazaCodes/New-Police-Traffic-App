@@ -6,8 +6,9 @@ import { NextResponse } from "next/server";
 import { ALERTS } from "@/lib/police-data";
 import { ADMIN_ALERTS_HISTORY } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
+import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
+import { annotateRecordScope, getScopeContext } from "@/lib/scope";
 
 const alertsStore: typeof ALERTS = [...ALERTS];
 const alertHistoryStore: typeof ADMIN_ALERTS_HISTORY = [...ADMIN_ALERTS_HISTORY];
@@ -24,16 +25,37 @@ export async function GET(request: Request) {
     const category = url.searchParams.get("category"); // all | mine | important
     const audience = url.searchParams.get("audience");
     const history = url.searchParams.get("history") === "true";
+    const scope = getScopeContext(session);
 
     if (history) {
-      let hist = [...alertHistoryStore];
+      let hist = alertHistoryStore.map((h) =>
+        annotateRecordScope({
+          ...h,
+          ownerId: String(h.sentBy ?? ""),
+          isPublic: true,
+          region: "Dar es Salaam",
+          district: "Kinondoni",
+          station: "Oysterbay Station",
+        }, scope),
+      );
+      hist = enforceDataScope(hist, scope);
       if (audience && audience !== "all") {
         hist = hist.filter((h) => h.audience === audience);
       }
       return NextResponse.json({ data: hist, total: hist.length }, { status: 200 });
     }
 
-    let result = [...alertsStore];
+    let result = alertsStore.map((a) =>
+      annotateRecordScope({
+        ...a,
+        ownerId: String(a.source ?? ""),
+        isPublic: true,
+        region: "Dar es Salaam",
+        district: "Kinondoni",
+        station: "Oysterbay Station",
+      }, scope),
+    );
+    result = enforceDataScope(result, scope);
     if (category && category !== "all") {
       if (category === "important") {
         result = result.filter((a) => a.important);
@@ -73,7 +95,8 @@ export async function POST(request: Request) {
     }
 
     const now = new Date();
-    const newAlert = {
+    const scope = getScopeContext(session);
+    const newAlert = annotateRecordScope({
       id: alertsStore.length + 1,
       icon: body.icon ?? "alert-triangle",
       iconColor: body.priority === "high" ? "#F44336" : "#2196F3",
@@ -87,7 +110,9 @@ export async function POST(request: Request) {
       unread: true,
       category: "all" as const,
       important: body.priority === "high",
-    };
+      ownerId: session!.user.id,
+      isPublic: true,
+    }, scope);
     alertsStore.unshift(newAlert);
 
     const historyEntry = {
