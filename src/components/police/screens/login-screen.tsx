@@ -146,11 +146,10 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       }
 
       const apiRole = String(data?.user?.role ?? "");
-      if (mode === "admin" && apiRole && !roleMatchesSelection(webRole, apiRole)) {
-        setErrorMsg(`Akaunti hii ni ya role ${apiRole}. Tafadhali chagua role inayolingana.`);
-        return;
+      if (mode === "admin" && apiRole) {
+        // Auto-select the correct role from DB — no manual matching required
+        setWebRole(apiRole);
       }
-
       setAuthResolvedRole(apiRole || null);
 
       const devOtp = String(data?.auth?.devOtp ?? "").replace(/\D/g, "").slice(0, 6);
@@ -200,15 +199,14 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       const userRole = authResolvedRole ?? "";
 
       if (mode === "admin") {
-        const selectedWebRole = WEB_ROLES.find((r) => r.id === webRole) ?? WEB_ROLES[0];
-        if (userRole && !roleMatchesSelection(selectedWebRole.id, userRole)) {
-          setErrorMsg(`Umechagua ${selectedWebRole.id} lakini akaunti ni ${userRole}.`);
-          return;
-        }
-        // Login via Zustand — no NextAuth dependency
+        // Use the DB-resolved role — not the dropdown selection
+        const resolvedAuthRole = (userRole || webRole) as AuthRole;
+        const selectedWebRole = WEB_ROLES.find((r) => r.id === resolvedAuthRole) ?? WEB_ROLES[0];
+        saveLoginIdentifier(cleanIdentifier);
+        setLoginIdentifier(cleanIdentifier);
         setStep("success");
         setTimeout(() => {
-          loginAsRole(selectedWebRole.id as AuthRole);
+          loginAsRole(resolvedAuthRole);
         }, 900);
         return;
       }

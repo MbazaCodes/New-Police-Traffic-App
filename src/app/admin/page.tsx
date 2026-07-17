@@ -1,37 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { LoginScreen } from "@/components/police/screens/login-screen";
 import { StatusBar } from "@/components/police/status-bar";
 import { usePoliceStore } from "@/store/police-store";
 
-const IS_WEB = process.env.NEXT_PUBLIC_APP_MODE === "admin";
-
 export default function AdminPage() {
-  const { isAuthenticated, userRole } = usePoliceStore();
-  const [isWebMode, setIsWebMode] = useState(IS_WEB);
+  const { isAuthenticated, userRole, authRole } = usePoliceStore();
 
-  useEffect(() => {
-    const hostname = window.location.hostname.toLowerCase();
-    if (hostname.includes("admin-web")) {
-      setIsWebMode(true);
-    }
-  }, []);
+  // Always show admin login on the admin web domain
+  // userRole after loginAsRole is "admin" or "commander"
+  const isAdminRole = userRole === "admin" || userRole === "commander";
 
-  if (!isWebMode) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#0d1b3d] p-8 text-center">
-        <div className="text-5xl">🚫</div>
-        <h1 className="mt-4 text-[20px] font-bold text-white">Ukurasa Huu Haupatikani</h1>
-        <p className="mt-2 text-[13px] text-white/60">
-          Tafadhali tumia Dashibodi ya Utawala inayotolewa na mkurugenzi wako.
-        </p>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated || (userRole !== "admin" && userRole !== "commander")) {
+  if (!isAuthenticated || !isAdminRole) {
     return (
       <div className="min-h-screen bg-police">
         <div className="flex h-full min-h-screen flex-col overflow-hidden">

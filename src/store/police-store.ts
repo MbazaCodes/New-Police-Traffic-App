@@ -165,8 +165,11 @@ export const usePoliceStore = create<PoliceState>()(
       },
       loginAsRole: (authRole) => {
         const storeRole = authRoleToStoreRole(authRole);
-        const officerRole = normalizeOfficerRole(storeRole);
-        set({ isAuthenticated: true, userRole: officerRole, authRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
+        // Admin/commander roles must NOT be normalized through the officer normalizer
+        const finalRole: UserRole = (storeRole === "admin" || storeRole === "commander")
+          ? storeRole
+          : normalizeOfficerRole(storeRole);
+        set({ isAuthenticated: true, userRole: finalRole, authRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
       },
       logout: () => {
         if (typeof window !== "undefined") {
