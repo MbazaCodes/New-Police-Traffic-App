@@ -1,0 +1,1717 @@
+     1→'use client';
+     2→
+     3→import React, { useState, useMemo } from 'react';
+     4→import {
+     5→  StatCard,
+     6→  DataTable,
+     7→  PageHeader,
+     8→  SearchBar,
+     9→  ChartPlaceholder,
+    10→  ActivityFeed,
+    11→} from '@/components/shared/layout-components';
+    12→import {
+    13→  Card,
+    14→  CardContent,
+    15→  CardHeader,
+    16→  CardTitle,
+    17→  CardDescription,
+    18→} from '@/components/ui/card';
+    19→import { Button } from '@/components/ui/button';
+    20→import { Badge } from '@/components/ui/badge';
+    21→import { Input } from '@/components/ui/input';
+    22→import { Label } from '@/components/ui/label';
+    23→import { Switch } from '@/components/ui/switch';
+    24→import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+    25→import {
+    26→  Accordion,
+    27→  AccordionContent,
+    28→  AccordionItem,
+    29→  AccordionTrigger,
+    30→} from '@/components/ui/accordion';
+    31→import {
+    32→  Tabs,
+    33→  TabsContent,
+    34→  TabsList,
+    35→  TabsTrigger,
+    36→} from '@/components/ui/tabs';
+    37→import { Separator } from '@/components/ui/separator';
+    38→import { useAppStore } from '@/stores/app-store';
+    39→import {
+    40→  Bell,
+    41→  BellOff,
+    42→  AlertTriangle,
+    43→  Info,
+    44→  AlertCircle,
+    45→  CheckCircle2,
+    46→  CheckCheck,
+    47→  Filter,
+    48→  FileText,
+    49→  Clock,
+    50→  BarChart3,
+    51→  Shield,
+    52→  Sun,
+    53→  Moon,
+    54→  Globe,
+    55→  Mail,
+    56→  Smartphone,
+    57→  MessageSquare,
+    58→  Lock,
+    59→  KeyRound,
+    60→  Eye,
+    61→  EyeOff,
+    62→  Type,
+    63→  Minimize2,
+    64→  Monitor,
+    65→  HelpCircle,
+    66→  BookOpen,
+    67→  MessageCircle,
+    68→  Bug,
+    69→  Phone,
+    70→  ChevronRight,
+    71→  Search,
+    72→  FileUp,
+    73→  FolderOpen,
+    74→  HardDrive,
+    75→  Plus,
+    76→  Download,
+    77→  MoreVertical,
+    78→  Settings,
+    79→  User,
+    80→  CalendarDays,
+    81→  MapPin,
+    82→  Briefcase,
+    83→  Building2,
+    84→  Hash,
+    85→  ArrowUpRight,
+    86→  TrendingUp,
+    87→  Archive,
+    88→  FileCheck,
+    89→  Clock4,
+    90→  Inbox,
+    91→  ClipboardList,
+    92→  Upload,
+    93→  Folder,
+    94→  File,
+    95→  Trash2,
+    96→} from 'lucide-react';
+    97→
+    98→// ─── Notification Types & Mock Data ─────────────────────────────────────────
+    99→
+   100→interface Notification {
+   101→  id: string;
+   102→  icon: React.ReactNode;
+   103→  title: string;
+   104→  message: string;
+   105→  time: string;
+   106→  read: boolean;
+   107→  type: 'warning' | 'info' | 'danger' | 'success';
+   108→}
+   109→
+   110→const mockNotifications: Notification[] = [
+   111→  {
+   112→    id: 'n1',
+   113→    icon: <AlertTriangle className="h-4 w-4 text-yellow-500" />,
+   114→    title: 'System Maintenance Scheduled',
+   115→    message:
+   116→      'The platform will undergo scheduled maintenance on 15 Feb 2025 from 02:00–04:00 EAT. Please save your work before this time.',
+   117→    time: '10 minutes ago',
+   118→    read: false,
+   119→    type: 'warning',
+   120→  },
+   121→  {
+   122→    id: 'n2',
+   123→    icon: <Info className="h-4 w-4 text-blue-500" />,
+   124→    title: 'New Case Assigned',
+   125→    message:
+   126→      'Case #CR-2025-0387 "Robbery at Kijitonyama" has been assigned to your station for follow-up.',
+   127→    time: '1 hour ago',
+   128→    read: false,
+   129→    type: 'info',
+   130→  },
+   131→  {
+   132→    id: 'n3',
+   133→    icon: <AlertCircle className="h-4 w-4 text-red-500" />,
+   134→    title: 'Warrant Alert — High Priority',
+   135→    message:
+   136→      'An active arrest warrant (W-2025-0192) for suspect "Omary Said" has been issued. Immediate action required.',
+   137→    time: '2 hours ago',
+   138→    read: false,
+   139→    type: 'danger',
+   140→  },
+   141→  {
+   142→    id: 'n4',
+   143→    icon: <CheckCircle2 className="h-4 w-4 text-green-500" />,
+   144→    title: 'Report Approved',
+   145→    message:
+   146→      'Your Monthly Crime Report for January 2025 has been reviewed and approved by Regional Commander.',
+   147→    time: '5 hours ago',
+   148→    read: true,
+   149→    type: 'success',
+   150→  },
+   151→  {
+   152→    id: 'n5',
+   153→    icon: <Info className="h-4 w-4 text-blue-500" />,
+   154→    title: 'Policy Update',
+   155→    message:
+   156→      'New digital evidence handling procedures (Directive 12/2025) have been published. Please review before 28 Feb.',
+   157→    time: '1 day ago',
+   158→    read: true,
+   159→    type: 'info',
+   160→  },
+   161→  {
+   162→    id: 'n6',
+   163→    icon: <AlertTriangle className="h-4 w-4 text-yellow-500" />,
+   164→    title: 'Password Expiry Warning',
+   165→    message:
+   166→      'Your account password will expire in 7 days. Please update it in Settings to avoid being locked out.',
+   167→    time: '2 days ago',
+   168→    read: true,
+   169→    type: 'warning',
+   170→  },
+   171→  {
+   172→    id: 'n7',
+   173→    icon: <CheckCircle2 className="h-4 w-4 text-green-500" />,
+   174→    title: 'Filing Complete',
+   175→    message:
+   176→      'Case file #CF-2025-0105 has been successfully archived to the national records repository.',
+   177→    time: '3 days ago',
+   178→    read: true,
+   179→    type: 'success',
+   180→  },
+   181→];
+   182→
+   183→// ─── 1. NotificationsPage ───────────────────────────────────────────────────
+   184→
+   185→export function NotificationsPage() {
+   186→  const [notifications, setNotifications] =
+   187→    useState<Notification[]>(mockNotifications);
+   188→  const [activeTab, setActiveTab] = useState('all');
+   189→
+   190→  const filtered = useMemo(() => {
+   191→    switch (activeTab) {
+   192→      case 'unread':
+   193→        return notifications.filter((n) => !n.read);
+   194→      case 'warnings':
+   195→        return notifications.filter((n) => n.type === 'warning' || n.type === 'danger');
+   196→      case 'info':
+   197→        return notifications.filter((n) => n.type === 'info' || n.type === 'success');
+   198→      default:
+   199→        return notifications;
+   200→    }
+   201→  }, [notifications, activeTab]);
+   202→
+   203→  const unreadCount = notifications.filter((n) => !n.read).length;
+   204→
+   205→  const markAllRead = () => {
+   206→    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+   207→  };
+   208→
+   209→  const toggleRead = (id: string) => {
+   210→    setNotifications((prev) =>
+   211→      prev.map((n) => (n.id === id ? { ...n, read: !n.read } : n)),
+   212→    );
+   213→  };
+   214→
+   215→  return (
+   216→    <div className="space-y-6">
+   217→      <PageHeader
+   218→        title="Notifications"
+   219→        description={`${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}`}
+   220→        actions={
+   221→          <Button
+   222→            variant="outline"
+   223→            size="sm"
+   224→            onClick={markAllRead}
+   225→            disabled={unreadCount === 0}
+   226→          >
+   227→            <CheckCheck className="h-4 w-4 mr-2" />
+   228→            Mark all as read
+   229→          </Button>
+   230→        }
+   231→      />
+   232→
+   233→      <Tabs value={activeTab} onValueChange={setActiveTab}>
+   234→        <TabsList>
+   235→          <TabsTrigger value="all">
+   236→            All
+   237→            <Badge variant="secondary" className="ml-1.5 text-[10px] px-1.5">
+   238→              {notifications.length}
+   239→            </Badge>
+   240→          </TabsTrigger>
+   241→          <TabsTrigger value="unread">
+   242→            Unread
+   243→            {unreadCount > 0 && (
+   244→              <Badge variant="destructive" className="ml-1.5 text-[10px] px-1.5">
+   245→                {unreadCount}
+   246→              </Badge>
+   247→            )}
+   248→          </TabsTrigger>
+   249→          <TabsTrigger value="warnings">Warnings</TabsTrigger>
+   250→          <TabsTrigger value="info">Info</TabsTrigger>
+   251→        </TabsList>
+   252→
+   253→        <TabsContent value={activeTab} className="mt-4">
+   254→          {filtered.length === 0 ? (
+   255→            <Card>
+   256→              <CardContent className="py-12 text-center">
+   257→                <BellOff className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+   258→                <p className="text-sm font-medium">No notifications</p>
+   259→                <p className="text-xs text-muted-foreground mt-1">
+   260→                  You&apos;re all caught up!
+   261→                </p>
+   262→              </CardContent>
+   263→            </Card>
+   264→          ) : (
+   265→            <div className="space-y-2">
+   266→              {filtered.map((notification) => (
+   267→                <Card
+   268→                  key={notification.id}
+   269→                  className={`cursor-pointer transition-colors hover:bg-muted/50 ${
+   270→                    !notification.read ? 'border-l-4 border-l-primary' : ''
+   271→                  }`}
+   272→                  onClick={() => toggleRead(notification.id)}
+   273→                >
+   274→                  <CardContent className="p-4 flex items-start gap-3">
+   275→                    <div className="mt-0.5 shrink-0">{notification.icon}</div>
+   276→                    <div className="flex-1 min-w-0 space-y-1">
+   277→                      <div className="flex items-center justify-between gap-2">
+   278→                        <p
+   279→                          className={`text-sm font-medium truncate ${
+   280→                            !notification.read ? '' : 'text-muted-foreground'
+   281→                          }`}
+   282→                        >
+   283→                          {notification.title}
+   284→                        </p>
+   285→                        <div className="flex items-center gap-2 shrink-0">
+   286→                          {!notification.read && (
+   287→                            <span className="h-2 w-2 rounded-full bg-primary" />
+   288→                          )}
+   289→                          <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+   290→                            {notification.time}
+   291→                          </span>
+   292→                        </div>
+   293→                      </div>
+   294→                      <p className="text-xs text-muted-foreground leading-relaxed">
+   295→                        {notification.message}
+   296→                      </p>
+   297→                    </div>
+   298→                  </CardContent>
+   299→                </Card>
+   300→              ))}
+   301→            </div>
+   302→          )}
+   303→        </TabsContent>
+   304→      </Tabs>
+   305→    </div>
+   306→  );
+   307→}
+   308→
+   309→// ─── 2. SettingsPage ────────────────────────────────────────────────────────
+   310→
+   311→export function SettingsPage() {
+   312→  const [darkMode, setDarkMode] = useState(false);
+   313→  const [language, setLanguage] = useState<'en' | 'sw'>('en');
+   314→  const [emailNotif, setEmailNotif] = useState(true);
+   315→  const [pushNotif, setPushNotif] = useState(true);
+   316→  const [smsNotif, setSmsNotif] = useState(false);
+   317→  const [twoFactor, setTwoFactor] = useState(false);
+   318→  const [compactMode, setCompactMode] = useState(false);
+   319→  const [fontSize, setFontSize] = useState('medium');
+   320→  const [showPassword, setShowPassword] = useState(false);
+   321→
+   322→  return (
+   323→    <div className="space-y-6">
+   324→      <PageHeader title="Settings" description="Manage your account preferences" />
+   325→
+   326→      <div className="grid gap-6 max-w-2xl">
+   327→        {/* Appearance */}
+   328→        <Card>
+   329→          <CardHeader>
+   330→            <CardTitle className="text-base flex items-center gap-2">
+   331→              <Sun className="h-4 w-4" />
+   332→              Appearance
+   333→            </CardTitle>
+   334→            <CardDescription>
+   335→              Customize the look and feel of the platform
+   336→            </CardDescription>
+   337→          </CardHeader>
+   338→          <CardContent className="space-y-5">
+   339→            <div className="flex items-center justify-between">
+   340→              <div className="space-y-0.5">
+   341→                <Label className="text-sm font-medium">Theme</Label>
+   342→                <p className="text-xs text-muted-foreground">
+   343→                  Switch between light and dark mode
+   344→                </p>
+   345→              </div>
+   346→              <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
+   347→                <Button
+   348→                  variant={darkMode ? 'ghost' : 'default'}
+   349→                  size="sm"
+   350→                  className="h-7 text-xs"
+   351→                  onClick={() => setDarkMode(false)}
+   352→                >
+   353→                  <Sun className="h-3.5 w-3.5 mr-1" />
+   354→                  Light
+   355→                </Button>
+   356→                <Button
+   357→                  variant={darkMode ? 'default' : 'ghost'}
+   358→                  size="sm"
+   359→                  className="h-7 text-xs"
+   360→                  onClick={() => setDarkMode(true)}
+   361→                >
+   362→                  <Moon className="h-3.5 w-3.5 mr-1" />
+   363→                  Dark
+   364→                </Button>
+   365→              </div>
+   366→            </div>
+   367→            <Separator />
+   368→            <div className="flex items-center justify-between">
+   369→              <div className="space-y-0.5">
+   370→                <Label className="text-sm font-medium">Language</Label>
+   371→                <p className="text-xs text-muted-foreground">
+   372→                  Choose your preferred language
+   373→                </p>
+   374→              </div>
+   375→              <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
+   376→                <Button
+   377→                  variant={language === 'en' ? 'default' : 'ghost'}
+   378→                  size="sm"
+   379→                  className="h-7 text-xs"
+   380→                  onClick={() => setLanguage('en')}
+   381→                >
+   382→                  <Globe className="h-3.5 w-3.5 mr-1" />
+   383→                  English
+   384→                </Button>
+   385→                <Button
+   386→                  variant={language === 'sw' ? 'default' : 'ghost'}
+   387→                  size="sm"
+   388→                  className="h-7 text-xs"
+   389→                  onClick={() => setLanguage('sw')}
+   390→                >
+   391→                  <Globe className="h-3.5 w-3.5 mr-1" />
+   392→                  Kiswahili
+   393→                </Button>
+   394→              </div>
+   395→            </div>
+   396→          </CardContent>
+   397→        </Card>
+   398→
+   399→        {/* Notifications */}
+   400→        <Card>
+   401→          <CardHeader>
+   402→            <CardTitle className="text-base flex items-center gap-2">
+   403→              <Bell className="h-4 w-4" />
+   404→              Notifications
+   405→            </CardTitle>
+   406→            <CardDescription>
+   407→              Control how you receive notifications
+   408→            </CardDescription>
+   409→          </CardHeader>
+   410→          <CardContent className="space-y-5">
+   411→            <div className="flex items-center justify-between">
+   412→              <div className="flex items-center gap-3">
+   413→                <div className="p-2 rounded-lg bg-muted">
+   414→                  <Mail className="h-4 w-4 text-muted-foreground" />
+   415→                </div>
+   416→                <div className="space-y-0.5">
+   417→                  <Label className="text-sm font-medium">Email Notifications</Label>
+   418→                  <p className="text-xs text-muted-foreground">
+   419→                    Receive updates via email
+   420→                  </p>
+   421→                </div>
+   422→              </div>
+   423→              <Switch checked={emailNotif} onCheckedChange={setEmailNotif} />
+   424→            </div>
+   425→            <Separator />
+   426→            <div className="flex items-center justify-between">
+   427→              <div className="flex items-center gap-3">
+   428→                <div className="p-2 rounded-lg bg-muted">
+   429→                  <Smartphone className="h-4 w-4 text-muted-foreground" />
+   430→                </div>
+   431→                <div className="space-y-0.5">
+   432→                  <Label className="text-sm font-medium">Push Notifications</Label>
+   433→                  <p className="text-xs text-muted-foreground">
+   434→                    Browser and device push alerts
+   435→                  </p>
+   436→                </div>
+   437→              </div>
+   438→              <Switch checked={pushNotif} onCheckedChange={setPushNotif} />
+   439→            </div>
+   440→            <Separator />
+   441→            <div className="flex items-center justify-between">
+   442→              <div className="flex items-center gap-3">
+   443→                <div className="p-2 rounded-lg bg-muted">
+   444→                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
+   445→                </div>
+   446→                <div className="space-y-0.5">
+   447→                  <Label className="text-sm font-medium">SMS Notifications</Label>
+   448→                  <p className="text-xs text-muted-foreground">
+   449→                    Critical alerts via SMS
+   450→                  </p>
+   451→                </div>
+   452→              </div>
+   453→              <Switch checked={smsNotif} onCheckedChange={setSmsNotif} />
+   454→            </div>
+   455→          </CardContent>
+   456→        </Card>
+   457→
+   458→        {/* Security */}
+   459→        <Card>
+   460→          <CardHeader>
+   461→            <CardTitle className="text-base flex items-center gap-2">
+   462→              <Shield className="h-4 w-4" />
+   463→              Security
+   464→            </CardTitle>
+   465→            <CardDescription>
+   466→              Protect your account
+   467→            </CardDescription>
+   468→          </CardHeader>
+   469→          <CardContent className="space-y-5">
+   470→            <div className="space-y-3">
+   471→              <Label className="text-sm font-medium">Change Password</Label>
+   472→              <div className="space-y-2">
+   473→                <div className="relative">
+   474→                  <Input
+   475→                    type={showPassword ? 'text' : 'password'}
+   476→                    placeholder="Current password"
+   477→                    className="pr-10"
+   478→                  />
+   479→                  <Button
+   480→                    variant="ghost"
+   481→                    size="sm"
+   482→                    className="absolute right-0 top-0 h-full px-3"
+   483→                    onClick={() => setShowPassword(!showPassword)}
+   484→                  >
+   485→                    {showPassword ? (
+   486→                      <EyeOff className="h-4 w-4" />
+   487→                    ) : (
+   488→                      <Eye className="h-4 w-4" />
+   489→                    )}
+   490→                  </Button>
+   491→                </div>
+   492→                <Input type="password" placeholder="New password" />
+   493→                <Input type="password" placeholder="Confirm new password" />
+   494→              </div>
+   495→              <Button size="sm">Update Password</Button>
+   496→            </div>
+   497→            <Separator />
+   498→            <div className="flex items-center justify-between">
+   499→              <div className="flex items-center gap-3">
+   500→                <div className="p-2 rounded-lg bg-muted">
+   501→                  <KeyRound className="h-4 w-4 text-muted-foreground" />
+   502→                </div>
+   503→                <div className="space-y-0.5">
+   504→                  <Label className="text-sm font-medium">
+   505→                    Two-Factor Authentication
+   506→                  </Label>
+   507→                  <p className="text-xs text-muted-foreground">
+   508→                    Add an extra layer of security with 2FA
+   509→                  </p>
+   510→                </div>
+   511→              </div>
+   512→              <Switch checked={twoFactor} onCheckedChange={setTwoFactor} />
+   513→            </div>
+   514→            {twoFactor && (
+   515→              <div className="ml-11 p-3 bg-muted/50 rounded-lg border">
+   516→                <p className="text-xs text-muted-foreground">
+   517→                  <Lock className="h-3 w-3 inline mr-1" />
+   518→                  Two-factor authentication is <strong>enabled</strong>. Use your
+   519→                  authenticator app to generate codes.
+   520→                </p>
+   521→              </div>
+   522→            )}
+   523→          </CardContent>
+   524→        </Card>
+   525→
+   526→        {/* Display */}
+   527→        <Card>
+   528→          <CardHeader>
+   529→            <CardTitle className="text-base flex items-center gap-2">
+   530→              <Monitor className="h-4 w-4" />
+   531→              Display
+   532→            </CardTitle>
+   533→            <CardDescription>
+   534→              Adjust display preferences
+   535→            </CardDescription>
+   536→          </CardHeader>
+   537→          <CardContent className="space-y-5">
+   538→            <div className="flex items-center justify-between">
+   539→              <div className="flex items-center gap-3">
+   540→                <div className="p-2 rounded-lg bg-muted">
+   541→                  <Type className="h-4 w-4 text-muted-foreground" />
+   542→                </div>
+   543→                <div className="space-y-0.5">
+   544→                  <Label className="text-sm font-medium">Font Size</Label>
+   545→                  <p className="text-xs text-muted-foreground">
+   546→                    Adjust the text size
+   547→                  </p>
+   548→                </div>
+   549→              </div>
+   550→              <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
+   551→                {['small', 'medium', 'large'].map((size) => (
+   552→                  <Button
+   553→                    key={size}
+   554→                    variant={fontSize === size ? 'default' : 'ghost'}
+   555→                    size="sm"
+   556→                    className="h-7 text-xs capitalize"
+   557→                    onClick={() => setFontSize(size)}
+   558→                  >
+   559→                    {size}
+   560→                  </Button>
+   561→                ))}
+   562→              </div>
+   563→            </div>
+   564→            <Separator />
+   565→            <div className="flex items-center justify-between">
+   566→              <div className="flex items-center gap-3">
+   567→                <div className="p-2 rounded-lg bg-muted">
+   568→                  <Minimize2 className="h-4 w-4 text-muted-foreground" />
+   569→                </div>
+   570→                <div className="space-y-0.5">
+   571→                  <Label className="text-sm font-medium">Compact Mode</Label>
+   572→                  <p className="text-xs text-muted-foreground">
+   573→                    Reduce spacing for more content on screen
+   574→                  </p>
+   575→                </div>
+   576→              </div>
+   577→              <Switch checked={compactMode} onCheckedChange={setCompactMode} />
+   578→            </div>
+   579→          </CardContent>
+   580→        </Card>
+   581→
+   582→        {/* About */}
+   583→        <Card>
+   584→          <CardHeader>
+   585→            <CardTitle className="text-base flex items-center gap-2">
+   586→              <Info className="h-4 w-4" />
+   587→              About
+   588→            </CardTitle>
+   589→            <CardDescription>Application information</CardDescription>
+   590→          </CardHeader>
+   591→          <CardContent>
+   592→            <div className="space-y-3 text-sm">
+   593→              <div className="flex justify-between">
+   594→                <span className="text-muted-foreground">Application</span>
+   595→                <span className="font-medium">Tanzania Police Digital Platform</span>
+   596→              </div>
+   597→              <Separator />
+   598→              <div className="flex justify-between">
+   599→                <span className="text-muted-foreground">Version</span>
+   600→                <span className="font-medium">2.4.1</span>
+   601→              </div>
+   602→              <Separator />
+   603→              <div className="flex justify-between">
+   604→                <span className="text-muted-foreground">Build</span>
+   605→                <span className="font-medium">#20250210-rel</span>
+   606→              </div>
+   607→              <Separator />
+   608→              <div className="flex justify-between">
+   609→                <span className="text-muted-foreground">Environment</span>
+   610→                <Badge variant="outline" className="text-[11px]">
+   611→                  Production
+   612→                </Badge>
+   613→              </div>
+   614→              <Separator />
+   615→              <div className="flex justify-between">
+   616→                <span className="text-muted-foreground">Last Updated</span>
+   617→                <span className="font-medium">10 Feb 2025</span>
+   618→              </div>
+   619→            </div>
+   620→          </CardContent>
+   621→        </Card>
+   622→      </div>
+   623→    </div>
+   624→  );
+   625→}
+   626→
+   627→// ─── 3. ProfilePage ─────────────────────────────────────────────────────────
+   628→
+   629→export function ProfilePage() {
+   630→  const user = useAppStore((s) => s.user);
+   631→
+   632→  if (!user) {
+   633→    return (
+   634→      <div className="space-y-6">
+   635→        <PageHeader title="Profile" description="Your account information" />
+   636→        <Card>
+   637→          <CardContent className="py-12 text-center">
+   638→            <User className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+   639→            <p className="text-sm text-muted-foreground">No user data available</p>
+   640→          </CardContent>
+   641→        </Card>
+   642→      </div>
+   643→    );
+   644→  }
+   645→
+   646→  const initials = user.name
+   647→    .split(' ')
+   648→    .map((n) => n[0])
+   649→    .join('')
+   650→    .toUpperCase()
+   651→    .slice(0, 2);
+   652→
+   653→  return (
+   654→    <div className="space-y-6">
+   655→      <PageHeader
+   656→        title="Profile"
+   657→        description="Your account information"
+   658→        actions={
+   659→          <Button variant="outline" size="sm">
+   660→            <Settings className="h-4 w-4 mr-2" />
+   661→            Edit Profile
+   662→          </Button>
+   663→        }
+   664→      />
+   665→
+   666→      <div className="grid gap-6 md:grid-cols-3">
+   667→        {/* Profile Card */}
+   668→        <Card className="md:col-span-1">
+   669→          <CardContent className="pt-6 flex flex-col items-center text-center space-y-4">
+   670→            <Avatar className="h-20 w-20">
+   671→              <AvatarFallback className="text-xl bg-primary text-primary-foreground font-bold">
+   672→                {initials}
+   673→              </AvatarFallback>
+   674→            </Avatar>
+   675→            <div>
+   676→              <h3 className="text-lg font-semibold">{user.name}</h3>
+   677→              <p className="text-sm text-muted-foreground">{user.rank}</p>
+   678→              <Badge variant="outline" className="mt-2 text-xs">
+   679→                <Hash className="h-3 w-3 mr-1" />
+   680→                {user.badgeNumber}
+   681→              </Badge>
+   682→            </div>
+   683→            <div className="w-full space-y-2 text-sm">
+   684→              <div className="flex items-center gap-2 text-muted-foreground">
+   685→                <Building2 className="h-4 w-4 shrink-0" />
+   686→                <span className="truncate">{user.station}</span>
+   687→              </div>
+   688→              <div className="flex items-center gap-2 text-muted-foreground">
+   689→                <MapPin className="h-4 w-4 shrink-0" />
+   690→                <span className="truncate">
+   691→                  {user.district}, {user.region}
+   692→                </span>
+   693→              </div>
+   694→            </div>
+   695→          </CardContent>
+   696→        </Card>
+   697→
+   698→        {/* Details Cards */}
+   699→        <div className="md:col-span-2 space-y-6">
+   700→          {/* Contact Information */}
+   701→          <Card>
+   702→            <CardHeader className="pb-3">
+   703→              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+   704→                <Phone className="h-4 w-4" />
+   705→                Contact Information
+   706→              </CardTitle>
+   707→            </CardHeader>
+   708→            <CardContent>
+   709→              <div className="grid gap-4 sm:grid-cols-2">
+   710→                <div className="space-y-1">
+   711→                  <Label className="text-xs text-muted-foreground">Phone</Label>
+   712→                  <p className="text-sm font-medium">
+   713→                    +255 {Math.floor(600000000 + Math.random() * 99999999)}
+   714→                  </p>
+   715→                </div>
+   716→                <div className="space-y-1">
+   717→                  <Label className="text-xs text-muted-foreground">Email</Label>
+   718→                  <p className="text-sm font-medium">
+   719→                    {user.name.toLowerCase().replace(' ', '.')}@police.go.tz
+   720→                  </p>
+   721→                </div>
+   722→              </div>
+   723→            </CardContent>
+   724→          </Card>
+   725→
+   726→          {/* Station Details */}
+   727→          <Card>
+   728→            <CardHeader className="pb-3">
+   729→              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+   730→                <Building2 className="h-4 w-4" />
+   731→                Station Details
+   732→              </CardTitle>
+   733→            </CardHeader>
+   734→            <CardContent>
+   735→              <div className="grid gap-4 sm:grid-cols-3">
+   736→                <div className="space-y-1">
+   737→                  <Label className="text-xs text-muted-foreground">Station</Label>
+   738→                  <p className="text-sm font-medium">{user.station}</p>
+   739→                </div>
+   740→                <div className="space-y-1">
+   741→                  <Label className="text-xs text-muted-foreground">Region</Label>
+   742→                  <p className="text-sm font-medium">{user.region}</p>
+   743→                </div>
+   744→                <div className="space-y-1">
+   745→                  <Label className="text-xs text-muted-foreground">District</Label>
+   746→                  <p className="text-sm font-medium">{user.district}</p>
+   747→                </div>
+   748→              </div>
+   749→            </CardContent>
+   750→          </Card>
+   751→
+   752→          {/* Account Information */}
+   753→          <Card>
+   754→            <CardHeader className="pb-3">
+   755→              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+   756→                <Briefcase className="h-4 w-4" />
+   757→                Account Information
+   758→              </CardTitle>
+   759→            </CardHeader>
+   760→            <CardContent>
+   761→              <div className="grid gap-4 sm:grid-cols-3">
+   762→                <div className="space-y-1">
+   763→                  <Label className="text-xs text-muted-foreground">Role</Label>
+   764→                  <p className="text-sm font-medium">
+   765→                    {user.role.replace(/_/g, ' ')}
+   766→                  </p>
+   767→                </div>
+   768→                <div className="space-y-1">
+   769→                  <Label className="text-xs text-muted-foreground">Member Since</Label>
+   770→                  <p className="text-sm font-medium">15 Mar 2021</p>
+   771→                </div>
+   772→                <div className="space-y-1">
+   773→                  <Label className="text-xs text-muted-foreground">Last Login</Label>
+   774→                  <p className="text-sm font-medium">Today, 08:32 EAT</p>
+   775→                </div>
+   776→              </div>
+   777→            </CardContent>
+   778→          </Card>
+   779→        </div>
+   780→      </div>
+   781→    </div>
+   782→  );
+   783→}
+   784→
+   785→// ─── 4. HelpPage ────────────────────────────────────────────────────────────
+   786→
+   787→const faqItems = [
+   788→  {
+   789→    question: 'How do I reset my password?',
+   790→    answer:
+   791→      'Navigate to Settings → Security → Change Password. Enter your current password, then set a new one. If you have forgotten your current password, contact your station administrator or the IT helpdesk at 0800-780-111.',
+   792→  },
+   793→  {
+   794→    question: 'How do I file a new case report?',
+   795→    answer:
+   796→      'Go to your dashboard and click "New Report" or navigate to the Reports section. Fill in the required fields including incident details, parties involved, and any evidence descriptions. Submit for review by your station commander.',
+   797→  },
+   798→  {
+   799→    question: 'Can I access the system from my mobile device?',
+   800→    answer:
+   801→      'Yes. Traffic and General Officers can use the mobile-optimized PWA interface. Other roles can access the full desktop version through any modern web browser on tablets or phones. Bookmarks are supported for quick access.',
+   802→  },
+   803→  {
+   804→    question: 'How do I search for a citizen or vehicle record?',
+   805→    answer:
+   806→      'Use the Search panel in your sidebar. Select the appropriate search type (Citizen, Vehicle, etc.), enter the known details (name, ID number, registration plate), and click Search. Results will display matching records with full details.',
+   807→  },
+   808→  {
+   809→    question: 'What do the different report statuses mean?',
+   810→    answer:
+   811→      'Draft: Report is being prepared. Pending Review: Awaiting commander approval. Approved: Report has been accepted. Archived: Report is stored for long-term reference. Rejected: Report was returned for corrections.',
+   812→  },
+   813→  {
+   814→    question: 'Who can view classified CID intelligence?',
+   815→    answer:
+   816→      'CID intelligence panels and investigation details are restricted to CID personnel and commanders with appropriate clearance levels. Access is enforced through role-based permissions managed by the System Administrator.',
+   817→  },
+   818→];
+   819→
+   820→export function HelpPage() {
+   821→  const [searchQuery, setSearchQuery] = useState('');
+   822→
+   823→  const filteredFaq = useMemo(() => {
+   824→    if (!searchQuery.trim()) return faqItems;
+   825→    const q = searchQuery.toLowerCase();
+   826→    return faqItems.filter(
+   827→      (item) =>
+   828→        item.question.toLowerCase().includes(q) ||
+   829→        item.answer.toLowerCase().includes(q),
+   830→    );
+   831→  }, [searchQuery]);
+   832→
+   833→  return (
+   834→    <div className="space-y-6">
+   835→      <PageHeader
+   836→        title="Help & Support"
+   837→        description="Find answers and get assistance"
+   838→      />
+   839→
+   840→      {/* Search Bar */}
+   841→      <Card>
+   842→        <CardContent className="p-4">
+   843→          <div className="relative">
+   844→            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+   845→            <Input
+   846→              placeholder="Search help articles..."
+   847→              value={searchQuery}
+   848→              onChange={(e) => setSearchQuery(e.target.value)}
+   849→              className="pl-10"
+   850→            />
+   851→          </div>
+   852→        </CardContent>
+   853→      </Card>
+   854→
+   855→      <div className="grid gap-6 lg:grid-cols-3">
+   856→        {/* FAQ */}
+   857→        <div className="lg:col-span-2">
+   858→          <Card>
+   859→            <CardHeader>
+   860→              <CardTitle className="text-base flex items-center gap-2">
+   861→                <HelpCircle className="h-4 w-4" />
+   862→                Frequently Asked Questions
+   863→              </CardTitle>
+   864→            </CardHeader>
+   865→            <CardContent>
+   866→              {filteredFaq.length === 0 ? (
+   867→                <p className="text-sm text-muted-foreground text-center py-6">
+   868→                  No matching help articles found.
+   869→                </p>
+   870→              ) : (
+   871→                <Accordion type="single" collapsible className="w-full">
+   872→                  {filteredFaq.map((item, i) => (
+   873→                    <AccordionItem key={i} value={`faq-${i}`}>
+   874→                      <AccordionTrigger className="text-sm text-left">
+   875→                        {item.question}
+   876→                      </AccordionTrigger>
+   877→                      <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
+   878→                        {item.answer}
+   879→                      </AccordionContent>
+   880→                    </AccordionItem>
+   881→                  ))}
+   882→                </Accordion>
+   883→              )}
+   884→            </CardContent>
+   885→          </Card>
+   886→        </div>
+   887→
+   888→        {/* Sidebar */}
+   889→        <div className="space-y-6">
+   890→          {/* Quick Links */}
+   891→          <Card>
+   892→            <CardHeader className="pb-3">
+   893→              <CardTitle className="text-sm font-semibold">Quick Links</CardTitle>
+   894→            </CardHeader>
+   895→            <CardContent className="space-y-2">
+   896→              <Button
+   897→                variant="ghost"
+   898→                className="w-full justify-between text-sm h-auto py-2.5"
+   899→              >
+   900→                <span className="flex items-center gap-2">
+   901→                  <BookOpen className="h-4 w-4" />
+   902→                  User Manual
+   903→                </span>
+   904→                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+   905→              </Button>
+   906→              <Button
+   907→                variant="ghost"
+   908→                className="w-full justify-between text-sm h-auto py-2.5"
+   909→              >
+   910→                <span className="flex items-center gap-2">
+   911→                  <MessageCircle className="h-4 w-4" />
+   912→                  Contact Support
+   913→                </span>
+   914→                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+   915→              </Button>
+   916→              <Button
+   917→                variant="ghost"
+   918→                className="w-full justify-between text-sm h-auto py-2.5"
+   919→              >
+   920→                <span className="flex items-center gap-2">
+   921→                  <Bug className="h-4 w-4" />
+   922→                  Report a Bug
+   923→                </span>
+   924→                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+   925→              </Button>
+   926→            </CardContent>
+   927→          </Card>
+   928→
+   929→          {/* Emergency Contacts */}
+   930→          <Card>
+   931→            <CardHeader className="pb-3">
+   932→              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+   933→                <Phone className="h-4 w-4 text-red-500" />
+   934→                Emergency Contacts
+   935→              </CardTitle>
+   936→            </CardHeader>
+   937→            <CardContent className="space-y-3">
+   938→              <div className="flex items-center justify-between">
+   939→                <div>
+   940→                  <p className="text-sm font-medium">Emergency Hotline</p>
+   941→                  <p className="text-xs text-muted-foreground">24/7</p>
+   942→                </div>
+   943→                <Badge variant="destructive" className="text-[11px]">
+   944→                  112 / 999
+   945→                </Badge>
+   946→              </div>
+   947→              <Separator />
+   948→              <div className="flex items-center justify-between">
+   949→                <div>
+   950→                  <p className="text-sm font-medium">IT Helpdesk</p>
+   951→                  <p className="text-xs text-muted-foreground">Mon–Fri 08:00–17:00</p>
+   952→                </div>
+   953→                <Badge variant="outline" className="text-[11px]">
+   954→                  0800-780-111
+   955→                </Badge>
+   956→              </div>
+   957→              <Separator />
+   958→              <div className="flex items-center justify-between">
+   959→                <div>
+   960→                  <p className="text-sm font-medium">System Admin</p>
+   961→                  <p className="text-xs text-muted-foreground">Technical issues</p>
+   962→                </div>
+   963→                <Badge variant="outline" className="text-[11px]">
+   964→                  Ext. 2045
+   965→                </Badge>
+   966→              </div>
+   967→            </CardContent>
+   968→          </Card>
+   969→        </div>
+   970→      </div>
+   971→    </div>
+   972→  );
+   973→}
+   974→
+   975→// ─── 5. ReportsPage ─────────────────────────────────────────────────────────
+   976→
+   977→interface ReportItem {
+   978→  id: string;
+   979→  title: string;
+   980→  date: string;
+   981→  type: string;
+   982→  status: 'Approved' | 'Pending' | 'Draft' | 'Rejected' | 'Archived';
+   983→}
+   984→
+   985→const mockReports: ReportItem[] = [
+   986→  {
+   987→    id: 'r1',
+   988→    title: 'Monthly Crime Report — January 2025',
+   989→    date: '01 Feb 2025',
+   990→    type: 'Crime',
+   991→    status: 'Approved',
+   992→  },
+   993→  {
+   994→    id: 'r2',
+   995→    title: 'Traffic Statistics — Q4 2024',
+   996→    date: '15 Jan 2025',
+   997→    type: 'Traffic',
+   998→    status: 'Approved',
+   999→  },
+  1000→  {
+  1001→    id: 'r3',
+  1002→    title: 'Officer Performance Review — Dec 2024',
+  1003→    date: '10 Jan 2025',
+  1004→    type: 'Personnel',
+  1005→    status: 'Pending',
+  1006→  },
+  1007→  {
+  1008→    id: 'r4',
+  1009→    title: 'Case Summary — Armed Robbery Wave',
+  1010→    date: '28 Dec 2024',
+  1011→    type: 'Crime',
+  1012→    status: 'Approved',
+  1013→  },
+  1014→  {
+  1015→    id: 'r5',
+  1016→    title: 'Station Resource Allocation Report',
+  1017→    date: '20 Dec 2024',
+  1018→    type: 'Administrative',
+  1019→    status: 'Draft',
+  1020→  },
+  1021→  {
+  1022→    id: 'r6',
+  1023→    title: 'Community Policing Feedback — Nov 2024',
+  1024→    date: '05 Dec 2024',
+  1025→    type: 'Community',
+  1026→    status: 'Rejected',
+  1027→  },
+  1028→  {
+  1029→    id: 'r7',
+  1030→    title: 'Annual Crime Trends Analysis 2024',
+  1031→    date: '30 Nov 2024',
+  1032→    type: 'Crime',
+  1033→    status: 'Archived',
+  1034→  },
+  1035→  {
+  1036→    id: 'r8',
+  1037→    title: 'Equipment Inventory Audit',
+  1038→    date: '15 Nov 2024',
+  1039→    type: 'Administrative',
+  1040→    status: 'Approved',
+  1041→  },
+  1042→];
+  1043→
+  1044→const statusColorMap: Record<string, string> = {
+  1045→  Approved: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+  1046→  Pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+  1047→  Draft: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400',
+  1048→  Rejected: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+  1049→  Archived: 'bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400',
+  1050→};
+  1051→
+  1052→interface ReportsPageProps {
+  1053→  readOnly?: boolean;
+  1054→}
+  1055→
+  1056→export function ReportsPage({ readOnly = false }: ReportsPageProps) {
+  1057→  const [typeFilter, setTypeFilter] = useState('all');
+  1058→  const [searchQuery, setSearchQuery] = useState('');
+  1059→
+  1060→  const types = useMemo(
+  1061→    () => ['all', ...Array.from(new Set(mockReports.map((r) => r.type)))],
+  1062→    [],
+  1063→  );
+  1064→
+  1065→  const filtered = useMemo(() => {
+  1066→    let result = mockReports;
+  1067→    if (typeFilter !== 'all') {
+  1068→      result = result.filter((r) => r.type === typeFilter);
+  1069→    }
+  1070→    if (searchQuery.trim()) {
+  1071→      const q = searchQuery.toLowerCase();
+  1072→      result = result.filter(
+  1073→        (r) =>
+  1074→          r.title.toLowerCase().includes(q) ||
+  1075→          r.type.toLowerCase().includes(q) ||
+  1076→          r.status.toLowerCase().includes(q),
+  1077→      );
+  1078→    }
+  1079→    return result;
+  1080→  }, [typeFilter, searchQuery]);
+  1081→
+  1082→  return (
+  1083→    <div className="space-y-6">
+  1084→      <PageHeader
+  1085→        title="Reports"
+  1086→        description="View and manage reports"
+  1087→        actions={
+  1088→          !readOnly ? (
+  1089→            <Button size="sm">
+  1090→              <Plus className="h-4 w-4 mr-2" />
+  1091→              Generate New Report
+  1092→            </Button>
+  1093→          ) : undefined
+  1094→        }
+  1095→      />
+  1096→
+  1097→      {/* Filters */}
+  1098→      <div className="flex flex-col sm:flex-row gap-3">
+  1099→        <div className="relative flex-1">
+  1100→          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+  1101→          <Input
+  1102→            placeholder="Search reports..."
+  1103→            value={searchQuery}
+  1104→            onChange={(e) => setSearchQuery(e.target.value)}
+  1105→            className="pl-10"
+  1106→          />
+  1107→        </div>
+  1108→        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+  1109→          <Filter className="h-4 w-4 text-muted-foreground shrink-0" />
+  1110→          {types.map((type) => (
+  1111→            <Button
+  1112→              key={type}
+  1113→              variant={typeFilter === type ? 'default' : 'outline'}
+  1114→              size="sm"
+  1115→              className="h-8 text-xs whitespace-nowrap"
+  1116→              onClick={() => setTypeFilter(type)}
+  1117→            >
+  1118→              {type === 'all' ? 'All Types' : type}
+  1119→            </Button>
+  1120→          ))}
+  1121→        </div>
+  1122→      </div>
+  1123→
+  1124→      {/* Reports List */}
+  1125→      <div className="space-y-2">
+  1126→        {filtered.length === 0 ? (
+  1127→          <Card>
+  1128→            <CardContent className="py-12 text-center">
+  1129→              <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+  1130→              <p className="text-sm font-medium">No reports found</p>
+  1131→              <p className="text-xs text-muted-foreground mt-1">
+  1132→                Try adjusting your filters
+  1133→              </p>
+  1134→            </CardContent>
+  1135→          </Card>
+  1136→        ) : (
+  1137→          filtered.map((report) => (
+  1138→            <Card
+  1139→              key={report.id}
+  1140→              className="hover:bg-muted/50 transition-colors"
+  1141→            >
+  1142→              <CardContent className="p-4 flex items-center justify-between gap-4">
+  1143→                <div className="flex items-start gap-3 min-w-0 flex-1">
+  1144→                  <div className="mt-0.5 p-2 rounded-lg bg-muted shrink-0">
+  1145→                    <FileText className="h-4 w-4 text-muted-foreground" />
+  1146→                  </div>
+  1147→                  <div className="min-w-0 space-y-1">
+  1148→                    <p className="text-sm font-medium truncate">
+  1149→                      {report.title}
+  1150→                    </p>
+  1151→                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+  1152→                      <span className="flex items-center gap-1">
+  1153→                        <CalendarDays className="h-3 w-3" />
+  1154→                        {report.date}
+  1155→                      </span>
+  1156→                      <span>•</span>
+  1157→                      <Badge
+  1158→                        variant="outline"
+  1159→                        className="text-[10px] px-1.5 py-0"
+  1160→                      >
+  1161→                        {report.type}
+  1162→                      </Badge>
+  1163→                    </div>
+  1164→                  </div>
+  1165→                </div>
+  1166→                <div className="flex items-center gap-3 shrink-0">
+  1167→                  <Badge
+  1168→                    variant="secondary"
+  1169→                    className={`text-[11px] ${statusColorMap[report.status] || ''}`}
+  1170→                  >
+  1171→                    {report.status}
+  1172→                  </Badge>
+  1173→                  {!readOnly && (
+  1174→                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+  1175→                      <MoreVertical className="h-4 w-4" />
+  1176→                    </Button>
+  1177→                  )}
+  1178→                </div>
+  1179→              </CardContent>
+  1180→            </Card>
+  1181→          ))
+  1182→        )}
+  1183→      </div>
+  1184→    </div>
+  1185→  );
+  1186→}
+  1187→
+  1188→// ─── 6. ClerkDashboard ──────────────────────────────────────────────────────
+  1189→
+  1190→export function ClerkDashboard() {
+  1191→  return (
+  1192→    <div className="space-y-6">
+  1193→      <PageHeader
+  1194→        title="Clerk Dashboard"
+  1195→        description="Records and filing overview"
+  1196→      />
+  1197→
+  1198→      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  1199→        <StatCard
+  1200→          title="Pending Records"
+  1201→          value={23}
+  1202→          subtitle="Awaiting processing"
+  1203→          icon={<Inbox className="h-5 w-5" />}
+  1204→          color="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+  1205→          trend={{ value: 8, label: 'from yesterday' }}
+  1206→        />
+  1207→        <StatCard
+  1208→          title="Files Processed Today"
+  1209→          value={47}
+  1210→          subtitle="Daily throughput"
+  1211→          icon={<FileCheck className="h-5 w-5" />}
+  1212→          color="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+  1213→          trend={{ value: 12, label: 'vs last week' }}
+  1214→        />
+  1215→        <StatCard
+  1216→          title="Overdue Items"
+  1217→          value={5}
+  1218→          subtitle="Past deadline"
+  1219→          icon={<Clock4 className="h-5 w-5" />}
+  1220→          color="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+  1221→          trend={{ value: -25, label: 'vs last week' }}
+  1222→        />
+  1223→        <StatCard
+  1224→          title="Filing Queue"
+  1225→          value={112}
+  1226→          subtitle="Total in system"
+  1227→          icon={<ClipboardList className="h-5 w-5" />}
+  1228→          color="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+  1229→        />
+  1230→      </div>
+  1231→
+  1232→      <div className="grid gap-6 lg:grid-cols-2">
+  1233→        <ChartPlaceholder title="Weekly Filing Activity" type="bar" height="h-56" />
+  1234→        <ActivityFeed
+  1235→          items={[
+  1236→            {
+  1237→              id: 'a1',
+  1238→              title: 'Case file CF-2025-0112 filed',
+  1239→              description: 'Robbery case — Kijitonyama',
+  1240→              time: '15 min ago',
+  1241→              type: 'success',
+  1242→            },
+  1243→            {
+  1244→              id: 'a2',
+  1245→              title: 'New record awaiting review',
+  1246→              description: 'Traffic violation TV-2025-0456',
+  1247→              time: '1 hour ago',
+  1248→              type: 'info',
+  1249→            },
+  1250→            {
+  1251→              id: 'a3',
+  1252→              title: 'Overdue: Case CF-2025-0089',
+  1253→              description: 'Filing deadline was 3 days ago',
+  1254→              time: '2 hours ago',
+  1255→              type: 'danger',
+  1256→            },
+  1257→            {
+  1258→              id: 'a4',
+  1259→              title: 'Batch export completed',
+  1260→              description: '42 records exported to CSV',
+  1261→              time: '4 hours ago',
+  1262→              type: 'success',
+  1263→            },
+  1264→            {
+  1265→              id: 'a5',
+  1266→              title: 'Storage warning: 85% used',
+  1267→              description: 'Consider archiving older files',
+  1268→              time: 'Yesterday',
+  1269→              type: 'warning',
+  1270→            },
+  1271→          ]}
+  1272→        />
+  1273→      </div>
+  1274→
+  1275→      <DataTable
+  1276→        title="Recent Records"
+  1277→        columns={['Record ID', 'Type', 'Status', 'Date', 'Action']}
+  1278→        rows={[
+  1279→          ['REC-2025-0301', 'Case File', 'Filed', '10 Feb 2025', 'View'],
+  1280→          ['REC-2025-0300', 'Traffic', 'Pending', '10 Feb 2025', 'Process'],
+  1281→          ['REC-2025-0299', 'Personnel', 'Archived', '09 Feb 2025', 'View'],
+  1282→          ['REC-2025-0298', 'Case File', 'Pending', '09 Feb 2025', 'Process'],
+  1283→          ['REC-2025-0297', 'Administrative', 'Filed', '08 Feb 2025', 'View'],
+  1284→        ]}
+  1285→      />
+  1286→    </div>
+  1287→  );
+  1288→}
+  1289→
+  1290→// ─── 7. ClerkRecords ────────────────────────────────────────────────────────
+  1291→
+  1292→export function ClerkRecords() {
+  1293→  const [searchQuery, setSearchQuery] = useState('');
+  1294→  const [statusFilter, setStatusFilter] = useState('all');
+  1295→
+  1296→  const allRecords = [
+  1297→    { id: 'REC-2025-0301', title: 'Armed Robbery — Kijitonyama', type: 'Case File', status: 'Filed', date: '10 Feb 2025' },
+  1298→    { id: 'REC-2025-0300', title: 'Traffic Violation TV-0456', type: 'Traffic', status: 'Pending', date: '10 Feb 2025' },
+  1299→    { id: 'REC-2025-0299', title: 'Officer Transfer Request', type: 'Personnel', status: 'Archived', date: '09 Feb 2025' },
+  1300→    { id: 'REC-2025-0298', title: 'Assault Case — Sakina', type: 'Case File', status: 'Pending', date: '09 Feb 2025' },
+  1301→    { id: 'REC-2025-0297', title: 'Monthly Station Report', type: 'Administrative', status: 'Filed', date: '08 Feb 2025' },
+  1302→    { id: 'REC-2025-0296', title: 'Vehicle Theft — Njiro', type: 'Case File', status: 'Pending', date: '08 Feb 2025' },
+  1303→    { id: 'REC-2025-0295', title: 'Drug Possession — Sekei', type: 'Case File', status: 'Filed', date: '07 Feb 2025' },
+  1304→    { id: 'REC-2025-0294', title: 'Domestic Dispute — Moshono', type: 'Case File', status: 'Archived', date: '07 Feb 2025' },
+  1305→    { id: 'REC-2025-0293', title: 'PF3 Form #3012', type: 'Traffic', status: 'Filed', date: '06 Feb 2025' },
+  1306→    { id: 'REC-2025-0292', title: 'Equipment Procurement', type: 'Administrative', status: 'Pending', date: '06 Feb 2025' },
+  1307→  ];
+  1308→
+  1309→  const filtered = useMemo(() => {
+  1310→    let result = allRecords;
+  1311→    if (statusFilter !== 'all') {
+  1312→      result = result.filter((r) => r.status === statusFilter);
+  1313→    }
+  1314→    if (searchQuery.trim()) {
+  1315→      const q = searchQuery.toLowerCase();
+  1316→      result = result.filter(
+  1317→        (r) =>
+  1318→          r.title.toLowerCase().includes(q) ||
+  1319→          r.id.toLowerCase().includes(q) ||
+  1320→          r.type.toLowerCase().includes(q),
+  1321→      );
+  1322→    }
+  1323→    return result;
+  1324→  }, [statusFilter, searchQuery]);
+  1325→
+  1326→  const recordStatusColor: Record<string, string> = {
+  1327→    Pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+  1328→    Filed: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+  1329→    Archived: 'bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400',
+  1330→  };
+  1331→
+  1332→  return (
+  1333→    <div className="space-y-6">
+  1334→      <PageHeader
+  1335→        title="Records Management"
+  1336→        description="Search, view, and manage all records"
+  1337→        actions={
+  1338→          <Button size="sm">
+  1339→            <Plus className="h-4 w-4 mr-2" />
+  1340→            New Record
+  1341→          </Button>
+  1342→        }
+  1343→      />
+  1344→
+  1345→      <div className="flex flex-col sm:flex-row gap-3">
+  1346→        <div className="relative flex-1">
+  1347→          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+  1348→          <Input
+  1349→            placeholder="Search records by ID, title, or type..."
+  1350→            value={searchQuery}
+  1351→            onChange={(e) => setSearchQuery(e.target.value)}
+  1352→            className="pl-10"
+  1353→          />
+  1354→        </div>
+  1355→        <div className="flex items-center gap-2">
+  1356→          <Filter className="h-4 w-4 text-muted-foreground shrink-0" />
+  1357→          {['all', 'Pending', 'Filed', 'Archived'].map((s) => (
+  1358→            <Button
+  1359→              key={s}
+  1360→              variant={statusFilter === s ? 'default' : 'outline'}
+  1361→              size="sm"
+  1362→              className="h-8 text-xs"
+  1363→              onClick={() => setStatusFilter(s)}
+  1364→            >
+  1365→              {s === 'all' ? 'All' : s}
+  1366→            </Button>
+  1367→          ))}
+  1368→        </div>
+  1369→      </div>
+  1370→
+  1371→      <div className="space-y-2 max-h-[600px] overflow-y-auto">
+  1372→        {filtered.length === 0 ? (
+  1373→          <Card>
+  1374→            <CardContent className="py-12 text-center">
+  1375→              <Archive className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+  1376→              <p className="text-sm font-medium">No records found</p>
+  1377→              <p className="text-xs text-muted-foreground mt-1">
+  1378→                Try adjusting your search or filters
+  1379→              </p>
+  1380→            </CardContent>
+  1381→          </Card>
+  1382→        ) : (
+  1383→          filtered.map((record) => (
+  1384→            <Card
+  1385→              key={record.id}
+  1386→              className="hover:bg-muted/50 transition-colors"
+  1387→            >
+  1388→              <CardContent className="p-4 flex items-center justify-between gap-4">
+  1389→                <div className="flex items-start gap-3 min-w-0 flex-1">
+  1390→                  <div className="mt-0.5 p-2 rounded-lg bg-muted shrink-0">
+  1391→                    <FileText className="h-4 w-4 text-muted-foreground" />
+  1392→                  </div>
+  1393→                  <div className="min-w-0 space-y-1">
+  1394→                    <p className="text-sm font-medium truncate">
+  1395→                      {record.title}
+  1396→                    </p>
+  1397→                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+  1398→                      <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+  1399→                        {record.id}
+  1400→                      </Badge>
+  1401→                      <span>•</span>
+  1402→                      <span>{record.type}</span>
+  1403→                      <span>•</span>
+  1404→                      <span className="flex items-center gap-1">
+  1405→                        <CalendarDays className="h-3 w-3" />
+  1406→                        {record.date}
+  1407→                      </span>
+  1408→                    </div>
+  1409→                  </div>
+  1410→                </div>
+  1411→                <Badge
+  1412→                  variant="secondary"
+  1413→                  className={`text-[11px] shrink-0 ${recordStatusColor[record.status] || ''}`}
+  1414→                >
+  1415→                  {record.status}
+  1416→                </Badge>
+  1417→              </CardContent>
+  1418→            </Card>
+  1419→          ))
+  1420→        )}
+  1421→      </div>
+  1422→    </div>
+  1423→  );
+  1424→}
+  1425→
+  1426→// ─── 8. ClerkFileManagement ─────────────────────────────────────────────────
+  1427→
+  1428→export function ClerkFileManagement() {
+  1429→  const categories = [
+  1430→    { name: 'Case Files', count: 234, icon: <FileText className="h-4 w-4" />, color: 'text-orange-600 bg-orange-100 dark:bg-orange-900/30' },
+  1431→    { name: 'Traffic Records', count: 189, icon: <ClipboardList className="h-4 w-4" />, color: 'text-blue-600 bg-blue-100 dark:bg-blue-900/30' },
+  1432→    { name: 'Personnel Files', count: 67, icon: <User className="h-4 w-4" />, color: 'text-green-600 bg-green-100 dark:bg-green-900/30' },
+  1433→    { name: 'Administrative', count: 145, icon: <FolderOpen className="h-4 w-4" />, color: 'text-purple-600 bg-purple-100 dark:bg-purple-900/30' },
+  1434→    { name: 'Evidence Documents', count: 98, icon: <Archive className="h-4 w-4" />, color: 'text-red-600 bg-red-100 dark:bg-red-900/30' },
+  1435→    { name: 'Correspondence', count: 312, icon: <Mail className="h-4 w-4" />, color: 'text-teal-600 bg-teal-100 dark:bg-teal-900/30' },
+  1436→  ];
+  1437→
+  1438→  const recentFiles = [
+  1439→    { name: 'Case_CF-2025-0112.pdf', size: '2.4 MB', date: 'Today, 10:23', status: 'uploaded' },
+  1440→    { name: 'Traffic_TV-0456_form.pdf', size: '890 KB', date: 'Today, 09:15', status: 'uploaded' },
+  1441→    { name: 'Station_Report_Jan2025.xlsx', size: '1.1 MB', date: 'Yesterday', status: 'archived' },
+  1442→    { name: 'Officer_Photos_batch3.zip', size: '15.2 MB', date: '2 days ago', status: 'uploaded' },
+  1443→    { name: 'Evidence_Photos_C089.zip', size: '8.7 MB', date: '3 days ago', status: 'archived' },
+  1444→    { name: 'Policy_Directive_12_2025.pdf', size: '340 KB', date: '4 days ago', status: 'uploaded' },
+  1445→  ];
+  1446→
+  1447→  const storageUsed = 68.5;
+  1448→  const storageTotal = 100;
+  1449→
+  1450→  return (
+  1451→    <div className="space-y-6">
+  1452→      <PageHeader
+  1453→        title="File Management"
+  1454→        description="Upload, organize, and manage files"
+  1455→        actions={
+  1456→          <Button size="sm">
+  1457→            <Upload className="h-4 w-4 mr-2" />
+  1458→            Upload Files
+  1459→          </Button>
+  1460→        }
+  1461→      />
+  1462→
+  1463→      {/* Storage Usage */}
+  1464→      <Card>
+  1465→        <CardContent className="p-4">
+  1466→          <div className="flex items-center justify-between mb-2">
+  1467→            <div className="flex items-center gap-2 text-sm font-medium">
+  1468→              <HardDrive className="h-4 w-4 text-muted-foreground" />
+  1469→              Storage Usage
+  1470→            </div>
+  1471→            <span className="text-xs text-muted-foreground">
+  1472→              {storageUsed} GB / {storageTotal} GB
+  1473→            </span>
+  1474→          </div>
+  1475→          <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+  1476→            <div
+  1477→              className="h-full bg-primary rounded-full transition-all"
+  1478→              style={{ width: `${(storageUsed / storageTotal) * 100}%` }}
+  1479→            />
+  1480→          </div>
+  1481→          <p className="text-[11px] text-muted-foreground mt-1.5">
+  1482→            {storageTotal - storageUsed} GB remaining — 1,045 files total
+  1483→          </p>
+  1484→        </CardContent>
+  1485→      </Card>
+  1486→
+  1487→      {/* Categories */}
+  1488→      <div>
+  1489→        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+  1490→          <FolderOpen className="h-4 w-4" />
+  1491→          File Categories
+  1492→        </h3>
+  1493→        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+  1494→          {categories.map((cat) => (
+  1495→            <Card
+  1496→              key={cat.name}
+  1497→              className="hover:bg-muted/50 transition-colors cursor-pointer"
+  1498→            >
+  1499→              <CardContent className="p-4 flex items-center gap-3">
+  1500→                <div className={`p-2.5 rounded-lg ${cat.color}`}>
+  1501→                  {cat.icon}
+  1502→                </div>
+  1503→                <div className="flex-1 min-w-0">
+  1504→                  <p className="text-sm font-medium truncate">{cat.name}</p>
+  1505→                  <p className="text-xs text-muted-foreground">
+  1506→                    {cat.count} files
+  1507→                  </p>
+  1508→                </div>
+  1509→                <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+  1510→              </CardContent>
+  1511→            </Card>
+  1512→          ))}
+  1513→        </div>
+  1514→      </div>
+  1515→
+  1516→      {/* Upload Area */}
+  1517→      <Card className="border-dashed">
+  1518→        <CardContent className="py-10 flex flex-col items-center text-center">
+  1519→          <div className="p-4 rounded-full bg-muted mb-3">
+  1520→            <FileUp className="h-6 w-6 text-muted-foreground" />
+  1521→          </div>
+  1522→          <p className="text-sm font-medium">Drag and drop files here</p>
+  1523→          <p className="text-xs text-muted-foreground mt-1">
+  1524→            or click to browse — PDF, DOCX, XLSX, JPG, PNG up to 25 MB
+  1525→          </p>
+  1526→          <Button variant="outline" size="sm" className="mt-3">
+  1527→            <Upload className="h-4 w-4 mr-2" />
+  1528→            Browse Files
+  1529→          </Button>
+  1530→        </CardContent>
+  1531→      </Card>
+  1532→
+  1533→      {/* Recent Files */}
+  1534→      <Card>
+  1535→        <CardHeader className="pb-3">
+  1536→          <div className="flex items-center justify-between">
+  1537→            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+  1538→              <Clock className="h-4 w-4" />
+  1539→              Recent Files
+  1540→            </CardTitle>
+  1541→            <Button variant="ghost" size="sm" className="text-xs">
+  1542→              View All
+  1543→            </Button>
+  1544→          </div>
+  1545→        </CardHeader>
+  1546→        <CardContent>
+  1547→          <div className="space-y-2 max-h-64 overflow-y-auto">
+  1548→            {recentFiles.map((file, i) => (
+  1549→              <div
+  1550→                key={i}
+  1551→                className="flex items-center justify-between gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
+  1552→              >
+  1553→                <div className="flex items-center gap-3 min-w-0">
+  1554→                  <div className="p-1.5 rounded bg-muted shrink-0">
+  1555→                    <File className="h-4 w-4 text-muted-foreground" />
+  1556→                  </div>
+  1557→                  <div className="min-w-0">
+  1558→                    <p className="text-xs font-medium truncate">{file.name}</p>
+  1559→                    <p className="text-[11px] text-muted-foreground">
+  1560→                      {file.size} • {file.date}
+  1561→                    </p>
+  1562→                  </div>
+  1563→                </div>
+  1564→                <div className="flex items-center gap-1 shrink-0">
+  1565→                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+  1566→                    <Download className="h-3.5 w-3.5" />
+  1567→                  </Button>
+  1568→                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground hover:text-red-600">
+  1569→                    <Trash2 className="h-3.5 w-3.5" />
+  1570→                  </Button>
+  1571→                </div>
+  1572→              </div>
+  1573→            ))}
+  1574→          </div>
+  1575→        </CardContent>
+  1576→      </Card>
+  1577→    </div>
+  1578→  );
+  1579→}
+  1580→
+  1581→// ─── 9. ClerkReports ────────────────────────────────────────────────────────
+  1582→
+  1583→export function ClerkReports() {
+  1584→  return <ReportsPage />;
+  1585→}
+  1586→
+  1587→// ─── 10. ViewerDashboard ────────────────────────────────────────────────────
+  1588→
+  1589→export function ViewerDashboard() {
+  1590→  return (
+  1591→    <div className="space-y-6">
+  1592→      <PageHeader
+  1593→        title="Dashboard"
+  1594→        description="Read-only overview of station activity"
+  1595→      />
+  1596→
+  1597→      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  1598→        <StatCard
+  1599→          title="Total Cases"
+  1600→          value={1,247}
+  1601→          subtitle="This quarter"
+  1602→          icon={<FileText className="h-5 w-5" />}
+  1603→          trend={{ value: 5.2, label: 'vs last quarter' }}
+  1604→        />
+  1605→        <StatCard
+  1606→          title="Active Officers"
+  1607→          value={38}
+  1608→          subtitle="On duty today"
+  1609→          icon={<User className="h-5 w-5" />}
+  1610→          color="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+  1611→        />
+  1612→        <StatCard
+  1613→          title="Pending Reports"
+  1614→          value={12}
+  1615→          subtitle="Awaiting review"
+  1616→          icon={<Clock className="h-5 w-5" />}
+  1617→          color="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+  1618→        />
+  1619→        <StatCard
+  1620→          title="Crime Rate"
+  1621→          value="-3.8%"
+  1622→          subtitle="vs last month"
+  1623→          icon={<TrendingUp className="h-5 w-5" />}
+  1624→          color="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+  1625→          trend={{ value: -3.8, label: 'decrease in crime' }}
+  1626→        />
+  1627→      </div>
+  1628→
+  1629→      <div className="grid gap-6 lg:grid-cols-2">
+  1630→        <ChartPlaceholder title="Monthly Crime Trends" type="line" height="h-56" />
+  1631→        <ChartPlaceholder title="Cases by Category" type="pie" height="h-56" />
+  1632→      </div>
+  1633→
+  1634→      {/* Announcements */}
+  1635→      <Card>
+  1636→        <CardHeader className="pb-3">
+  1637→          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+  1638→            <Bell className="h-4 w-4" />
+  1639→            Announcements
+  1640→          </CardTitle>
+  1641→        </CardHeader>
+  1642→        <CardContent>
+  1643→          <div className="space-y-3 max-h-64 overflow-y-auto">
+  1644→            {[
+  1645→              {
+  1646→                title: 'Directive 12/2025 — Digital Evidence Handling',
+  1647→                desc: 'All officers must follow updated digital evidence procedures effective immediately.',
+  1648→                date: '08 Feb 2025',
+  1649→                type: 'info' as const,
+  1650→              },
+  1651→              {
+  1652→                title: 'Regional Training — Community Policing',
+  1653→                desc: 'Mandatory training for all station officers on 20 Feb 2025 at Regional HQ.',
+  1654→                date: '05 Feb 2025',
+  1655→                type: 'warning' as const,
+  1656→              },
+  1657→              {
+  1658→                title: 'System Maintenance — 15 Feb 2025',
+  1659→                desc: 'Platform will be unavailable from 02:00–04:00 EAT for scheduled upgrades.',
+  1660→                date: '03 Feb 2025',
+  1661→                type: 'warning' as const,
+  1662→              },
+  1663→              {
+  1664→                title: 'Q4 2024 Performance Reports Published',
+  1665→                desc: 'Station performance rankings and individual reports are now available.',
+  1666→                date: '01 Feb 2025',
+  1667→                type: 'success' as const,
+  1668→              },
+  1669→            ].map((item, i) => (
+  1670→              <div
+  1671→                key={i}
+  1672→                className="flex items-start gap-3 p-3 rounded-lg bg-muted/50"
+  1673→              >
+  1674→                <div
+  1675→                  className={`mt-0.5 h-2 w-2 rounded-full shrink-0 ${
+  1676→                    item.type === 'info'
+  1677→                      ? 'bg-blue-500'
+  1678→                      : item.type === 'warning'
+  1679→                        ? 'bg-yellow-500'
+  1680→                        : 'bg-green-500'
+  1681→                  }`}
+  1682→                />
+  1683→                <div className="flex-1 min-w-0">
+  1684→                  <p className="text-sm font-medium">{item.title}</p>
+  1685→                  <p className="text-xs text-muted-foreground mt-0.5">
+  1686→                    {item.desc}
+  1687→                  </p>
+  1688→                  <p className="text-[10px] text-muted-foreground mt-1">
+  1689→                    {item.date}
+  1690→                  </p>
+  1691→                </div>
+  1692→              </div>
+  1693→            ))}
+  1694→          </div>
+  1695→        </CardContent>
+  1696→      </Card>
+  1697→
+  1698→      <DataTable
+  1699→        title="Recent Reports"
+  1700→        columns={['Report', 'Date', 'Type', 'Status']}
+  1701→        rows={[
+  1702→          ['Monthly Crime Report — Jan 2025', '01 Feb 2025', 'Crime', 'Approved'],
+  1703→          ['Traffic Statistics — Q4 2024', '15 Jan 2025', 'Traffic', 'Approved'],
+  1704→          ['Officer Performance — Dec 2024', '10 Jan 2025', 'Personnel', 'Pending'],
+  1705→          ['Case Summary — Robbery Wave', '28 Dec 2024', 'Crime', 'Approved'],
+  1706→          ['Community Policing Feedback', '20 Dec 2024', 'Community', 'Approved'],
+  1707→        ]}
+  1708→      />
+  1709→    </div>
+  1710→  );
+  1711→}
+  1712→
+  1713→// ─── 11. ViewerReports ──────────────────────────────────────────────────────
+  1714→
+  1715→export function ViewerReports() {
+  1716→  return <ReportsPage readOnly />;
+  1717→}

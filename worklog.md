@@ -208,3 +208,20 @@ Stage Summary:
 4. Loading skeletons — Add skeleton states for pages
 5. Real form validation — Add validation to traffic stop, accident report, incident report forms
 6. Backend API integration — Connect key operations to API routes
+---
+Task ID: r3-3+r3-4
+Agent: general-purpose
+Task: Fix profile pages and add toast notifications
+
+Work Log:
+- Fixed SharedProfile in commander-pages.tsx to use store user data
+- Fixed ProfilePage in shared-pages.tsx to use store user data
+- Added toast notifications to TrafficStopPage (citation issued)
+- Added toast notifications to TrafficFine (payment collected)
+- Added toast notifications to AdminUsers (user created)
+- Added toast notifications to SettingsPage (password updated, 2FA toggle)
+- ESLint: 0 errors
+
+Stage Summary:
+- All profile pages now display actual logged-in user data
+- Key action buttons now provide toast feedback
