@@ -101,12 +101,12 @@ export function SearchResultsScreen() {
           {isTraffic && (
             <div className="mt-2 w-full rounded-2xl border border-[#2563EB]/30 bg-[#2563EB]/5 p-4">
               <p className="text-[13px] font-bold text-[#2563EB]">Sajili Gari Jipya</p>
-              <p className="text-[11px] text-police-muted mt-1">Gari hili halijasajiliwa. Unaweza kurekodi citation bila data kamili.</p>
+              <p className="text-[11px] text-police-muted mt-1">Gari hili halijasajiliwa. Sajili kwanza ili citation na historia ziweze kuhifadhiwa vizuri.</p>
               <button
-                onClick={() => { setCitationPrefill({ plate: searchQuery.toUpperCase(), model: "", color: "", vehicleType: "", driverName: "", driverLicense: "", driverPhone: "", driverNida: "" }); navigate("citation"); }}
+                onClick={() => navigate("add-vehicle")}
                 className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2563EB] py-2.5 text-[13px] font-bold text-white"
               >
-                <Plus size={15} /> Toa Citation Bila Rekodi
+                <Plus size={15} /> Sajili Gari Hili Mfumoni
               </button>
             </div>
           )}

@@ -423,3 +423,127 @@ export function universalSearch(query: string): { citizen: MockCitizen | null; v
   const device   = lookupDevice(q);
   return { citizen, vehicle, device };
 }
+
+// ── IN-SESSION NEW RECORDS (added by officers during session) ─
+export interface NewVehicleRecord {
+  id: string;
+  plate: string;
+  model: string;
+  type: string;
+  color: string;
+  year: string;
+  ownerName: string;
+  ownerNida: string;
+  ownerPhone: string;
+  ownerLicense: string;
+  station: string;
+  addedBy: string;
+  addedAt: string;
+  notes: string;
+}
+
+export interface NewCitizenRecord {
+  id: string;
+  name: string;
+  nida: string;
+  mobile: string;
+  gender: string;
+  dob: string;
+  address: string;
+  occupation: string;
+  station: string;
+  addedBy: string;
+  addedAt: string;
+  notes: string;
+}
+
+// In-memory store for officer-added records (session only)
+export const newVehicleRecords: NewVehicleRecord[] = [];
+export const newCitizenRecords: NewCitizenRecord[] = [];
+
+export function saveNewVehicle(r: Omit<NewVehicleRecord, "id" | "addedAt">): NewVehicleRecord {
+  const record = { ...r, id: `VEH-NEW-${Date.now()}`, addedAt: new Date().toISOString() };
+  newVehicleRecords.unshift(record);
+  return record;
+}
+
+export function saveNewCitizen(r: Omit<NewCitizenRecord, "id" | "addedAt">): NewCitizenRecord {
+  const record = { ...r, id: `CIT-NEW-${Date.now()}`, addedAt: new Date().toISOString() };
+  newCitizenRecords.unshift(record);
+  return record;
+}
+
+// ── INPUT VALIDATION HELPERS ──────────────────────────────────
+export type ValidationResult = { valid: boolean; error: string };
+
+/** Tanzania plate: T NNN XYZ or T NNN XYZW — flexible */
+export function validatePlate(v: string): ValidationResult {
+  const clean = v.trim().toUpperCase().replace(/\s+/g, " ");
+  if (!clean) return { valid: false, error: "Ingiza namba ya gari" };
+  // TZ plates: T followed by 3 digits and 2-4 letters, with optional space
+  if (!/^T\s?\d{2,4}\s?[A-Z]{2,4}$/.test(clean.replace(/\s/g, "")))
+    return { valid: false, error: "Fomati sahihi: T 001 ABC au T123ABC" };
+  return { valid: true, error: "" };
+}
+
+/** Tanzania driving license: DL + 6+ digits + TZ */
+export function validateLicense(v: string): ValidationResult {
+  const clean = v.trim().toUpperCase();
+  if (!clean) return { valid: false, error: "Ingiza namba ya leseni" };
+  if (!/^DL\d{6,}TZ$/.test(clean))
+    return { valid: false, error: "Fomati sahihi: DL001001TZ" };
+  return { valid: true, error: "" };
+}
+
+/** Tanzania NIDA: 15 digits */
+export function validateNida(v: string): ValidationResult {
+  const clean = v.trim().replace(/\s/g, "");
+  if (!clean) return { valid: false, error: "Ingiza namba ya NIDA" };
+  if (!/^\d{15}$/.test(clean))
+    return { valid: false, error: "NIDA lazima iwe na tarakimu 15" };
+  return { valid: true, error: "" };
+}
+
+/** Tanzania mobile: 07XX or 06XX, 10 digits */
+export function validateMobile(v: string): ValidationResult {
+  const clean = v.trim().replace(/[\s\-]/g, "");
+  if (!clean) return { valid: false, error: "Ingiza namba ya simu" };
+  if (!/^(07|06)\d{8}$/.test(clean))
+    return { valid: false, error: "Fomati sahihi: 0712345678 au 0712 345 678" };
+  return { valid: true, error: "" };
+}
+
+/** Serial/IMEI: at least 8 chars */
+export function validateSerial(v: string): ValidationResult {
+  const clean = v.trim();
+  if (!clean) return { valid: false, error: "Ingiza namba ya serial au IMEI" };
+  if (clean.length < 8)
+    return { valid: false, error: "Namba ya serial lazima iwe na herufi angalau 8" };
+  return { valid: true, error: "" };
+}
+
+/** Name: at least 3 chars, two words */
+export function validateName(v: string): ValidationResult {
+  const clean = v.trim();
+  if (!clean) return { valid: false, error: "Ingiza jina la mtu" };
+  if (clean.length < 3) return { valid: false, error: "Jina ni fupi sana" };
+  if (!clean.includes(" ")) return { valid: false, error: "Ingiza jina na jina la ukoo" };
+  return { valid: true, error: "" };
+}
+
+/** Get suggestions from mock data based on partial input */
+export function getSuggestions(query: string, type: "plate" | "license" | "nida" | "name" | "mobile" | "serial"): string[] {
+  const q = query.trim().toLowerCase();
+  if (!q || q.length < 2) return [];
+  if (type === "plate") return MOCK_VEHICLES.map((v) => v.plate).filter((p) => p.toLowerCase().replace(/\s/g, "").includes(q.replace(/\s/g, ""))).slice(0, 4);
+  if (type === "license") return MOCK_CITIZENS.map((c) => c.licenseNo).filter((l) => l.toLowerCase().includes(q)).slice(0, 4);
+  if (type === "nida") return MOCK_CITIZENS.map((c) => c.nida).filter((n) => n.includes(q)).slice(0, 4);
+  if (type === "name") return MOCK_CITIZENS.map((c) => c.name).filter((n) => n.toLowerCase().includes(q)).slice(0, 5);
+  if (type === "mobile") return MOCK_CITIZENS.map((c) => c.mobile).filter((m) => m.replace(/\s/g, "").includes(q.replace(/\s/g, ""))).slice(0, 4);
+  if (type === "serial") {
+    const sn = MOCK_DEVICES.map((d) => d.serialNo).filter((s) => s.toLowerCase().includes(q));
+    const imei = MOCK_DEVICES.map((d) => d.imei).filter((i) => i !== "N/A" && i.includes(q));
+    return [...sn, ...imei].slice(0, 4);
+  }
+  return [];
+}

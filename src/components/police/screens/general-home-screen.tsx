@@ -1,51 +1,100 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Bell, Search, X, ChevronRight, UserCheck, AlertTriangle, ShieldCheck, Package } from "lucide-react";
+import { Bell, Search, X, ChevronRight, UserCheck, AlertTriangle, ShieldCheck, Package, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { OFFICER, ARREST_RECORDS, WARNING_RECORDS, GENERAL_INCIDENTS } from "@/lib/police-data";
-import { toast } from "@/hooks/use-toast";
+import { validateName, validateNida, validateMobile, validateSerial, getSuggestions } from "@/lib/mock-database";
 
 type SearchMode = "citizen" | "serial";
+type CitizenTab = "name" | "nida" | "mobile";
+
+const CITIZEN_HINTS: Record<CitizenTab, string> = {
+  name:   "Jina la kwanza na jina la ukoo: Juma Mwinyi",
+  nida:   "Tarakimu 15: 199012031234567",
+  mobile: "Namba ya simu: 0712 345 678",
+};
+
+const CITIZEN_PLACEHOLDERS: Record<CitizenTab, string> = {
+  name:   "Juma Khamis Mwinyi",
+  nida:   "199012031234567",
+  mobile: "0712 345 678",
+};
 
 export function GeneralHomeScreen() {
   const { citizenSearchType, setCitizenSearchType, navigate, runSearch, setSearchEntity, unreadAlertCount, patrolRecords } = usePoliceStore();
-  const [searchValue, setSearchValue] = useState("");
+  const [value, setValue] = useState("");
   const [searchMode, setSearchMode] = useState<SearchMode>("citizen");
+  const [error, setError] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const unread = unreadAlertCount();
   const todayStr = new Date().toLocaleDateString("sw-TZ");
   const todayPatrols = patrolRecords.filter((p) => p.date === todayStr).length;
 
   const homeStats = [
-    { label: "Matukio", value: String(GENERAL_INCIDENTS.length), color: "#1A237E" },
-    { label: "Makamato", value: String(ARREST_RECORDS.filter((a) => a.status === "held").length), color: "#7C3AED" },
-    { label: "Maonyo", value: String(WARNING_RECORDS.length), color: "#FF9800" },
-    { label: "Patroli Leo", value: String(todayPatrols || "0"), color: "#10B981" },
+    { label: "Matukio",    value: String(GENERAL_INCIDENTS.length),                             color: "#1A237E" },
+    { label: "Makamato",   value: String(ARREST_RECORDS.filter((a) => a.status === "held").length), color: "#7C3AED" },
+    { label: "Maonyo",     value: String(WARNING_RECORDS.length),                               color: "#FF9800" },
+    { label: "Patroli Leo", value: String(todayPatrols || "0"),                                 color: "#10B981" },
   ];
 
-  const placeholder =
-    searchMode === "serial"
-      ? "S/N au IMEI — SM-S928B / 358423..."
-      : citizenSearchType === "name" ? "Juma Mwinyi"
-      : citizenSearchType === "nida" ? "1990123456789"
-      : "0712345678";
+  useEffect(() => {
+    setError("");
+    if (!value.trim()) { setSuggestions([]); return; }
+    let type: Parameters<typeof getSuggestions>[1] = "name";
+    if (searchMode === "serial") type = "serial";
+    else if (citizenSearchType === "nida") type = "nida";
+    else if (citizenSearchType === "mobile") type = "mobile";
+    const s = getSuggestions(value, type);
+    setSuggestions(s);
+    setShowSuggestions(s.length > 0);
+  }, [value, searchMode, citizenSearchType]);
+
+  const validate = (): boolean => {
+    let r;
+    if (searchMode === "serial") r = validateSerial(value);
+    else if (citizenSearchType === "nida") r = validateNida(value);
+    else if (citizenSearchType === "mobile") r = validateMobile(value);
+    else r = validateName(value);
+    if (!r.valid) { setError(r.error); return false; }
+    setError("");
+    return true;
+  };
 
   const handleSearch = () => {
-    if (!searchValue.trim()) {
-      toast({ title: "Tafadhali andika neno la utafutaji", description: searchMode === "serial" ? "Weka nambari ya serial au IMEI." : "Weka jina, NIDA, au namba ya simu." });
-      return;
-    }
-    if (searchMode === "serial") { runSearch(searchValue); navigate("lost-property"); return; }
+    if (!validate()) return;
+    setShowSuggestions(false);
+    if (searchMode === "serial") { runSearch(value); navigate("lost-property"); return; }
     setSearchEntity("person");
-    runSearch(searchValue);
+    runSearch(value);
     navigate("citizen-search-results");
   };
 
+  const pickSuggestion = (s: string) => {
+    setValue(s);
+    setShowSuggestions(false);
+    setError("");
+    inputRef.current?.focus();
+  };
+
+  const switchMode = (m: SearchMode) => { setSearchMode(m); setValue(""); setError(""); setSuggestions([]); };
+  const switchCitizenTab = (t: CitizenTab) => { setCitizenSearchType(t); setValue(""); setError(""); setSuggestions([]); };
+
+  const hint = searchMode === "serial"
+    ? "Mfano: SM-S928B-TZ-001 au IMEI: 358423092847001"
+    : CITIZEN_HINTS[citizenSearchType as CitizenTab];
+
+  const placeholder = searchMode === "serial"
+    ? "SM-S928B-TZ-001 / 358423092847001"
+    : CITIZEN_PLACEHOLDERS[citizenSearchType as CitizenTab];
+
   return (
     <div className="min-h-full bg-police">
-      {/* Gradient Header */}
+      {/* Header */}
       <div className="bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] px-4 pb-16 pt-2">
         <div className="flex items-center justify-between pt-2">
           <div>
@@ -98,34 +147,75 @@ export function GeneralHomeScreen() {
         </div>
       </div>
 
-      {/* Search */}
+      {/* Search with validation */}
       <div className="mt-4 px-4 pb-6">
         <div className="rounded-2xl bg-police-card p-4 shadow-[0_4px_12px_rgba(0,0,0,0.06)]">
           <h3 className="flex items-center gap-2 text-[17px] font-bold text-[#1E3A8A]">
-            <ShieldCheck size={20} className="text-[#3B82F6]" />
-            Utafutaji wa Raia
+            <ShieldCheck size={20} className="text-[#3B82F6]" /> Utafutaji wa Raia
           </h3>
+
+          {/* Mode toggle */}
           <div className="mt-3 flex gap-2">
-            <button onClick={() => { setSearchMode("citizen"); setSearchValue(""); }} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${searchMode === "citizen" ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}>
+            <button onClick={() => switchMode("citizen")} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${searchMode === "citizen" ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}>
               <UserCheck size={13} /> Raia
             </button>
-            <button onClick={() => { setSearchMode("serial"); setSearchValue(""); }} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${searchMode === "serial" ? "bg-[#8B5CF6] text-white" : "bg-police-muted text-police-muted"}`}>
+            <button onClick={() => switchMode("serial")} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${searchMode === "serial" ? "bg-[#8B5CF6] text-white" : "bg-police-muted text-police-muted"}`}>
               <Package size={13} /> S/N Mali
             </button>
           </div>
+
+          {/* Citizen sub-tabs */}
           {searchMode === "citizen" && (
             <div className="mt-2 flex gap-2">
-              {([{ id: "name", label: "Jina" }, { id: "nida", label: "NIDA" }, { id: "mobile", label: "Simu" }] as const).map((tab) => (
-                <button key={tab.id} onClick={() => setCitizenSearchType(tab.id)} className={`flex-1 rounded-lg py-2 text-[12px] font-semibold transition ${citizenSearchType === tab.id ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}>{tab.label}</button>
+              {(["name", "nida", "mobile"] as CitizenTab[]).map((t) => (
+                <button key={t} onClick={() => switchCitizenTab(t)} className={`flex-1 rounded-lg py-1.5 text-[11px] font-semibold transition ${citizenSearchType === t ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}>
+                  {t === "name" ? "Jina" : t === "nida" ? "NIDA" : "Simu"}
+                </button>
               ))}
             </div>
           )}
-          <div className="mt-3 flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
-            <Search size={18} className="text-police-faint" />
-            <input value={searchValue} onChange={(e) => setSearchValue(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder={placeholder} className="h-11 flex-1 bg-transparent text-[15px] font-medium text-police placeholder:text-police-faint focus:outline-none" />
-            {searchValue && <button onClick={() => setSearchValue("")} className="text-police-faint"><X size={16} /></button>}
+
+          {/* Hint */}
+          <p className="mt-2 text-[10px] text-police-faint">{hint}</p>
+
+          {/* Input + suggestions */}
+          <div className="relative mt-2">
+            <div className={`flex items-center gap-2 rounded-xl border bg-police-input px-3 transition ${error ? "border-[#EF4444]" : "border-police focus-within:border-[#3B82F6]"}`}>
+              <Search size={18} className={error ? "text-[#EF4444]" : "text-police-faint"} />
+              <input
+                ref={inputRef}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                placeholder={placeholder}
+                className="h-11 flex-1 bg-transparent text-[15px] font-medium text-police placeholder:text-police-faint focus:outline-none"
+              />
+              {value && <button onClick={() => { setValue(""); setError(""); setSuggestions([]); }} className="text-police-faint"><X size={16} /></button>}
+            </div>
+
+            {error && (
+              <div className="mt-1.5 flex items-center gap-1.5">
+                <AlertCircle size={13} className="shrink-0 text-[#EF4444]" />
+                <p className="text-[11px] font-medium text-[#EF4444]">{error}</p>
+              </div>
+            )}
+
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-police bg-police-card shadow-lg">
+                <p className="px-3 py-1.5 text-[9px] font-bold uppercase tracking-wide text-police-faint">Matokeo yanayowezekana</p>
+                {suggestions.map((s) => (
+                  <button key={s} onMouseDown={() => pickSuggestion(s)} className="flex w-full items-center gap-2 px-3 py-2.5 text-left hover:bg-police-muted">
+                    <Search size={13} className="shrink-0 text-police-faint" />
+                    <span className="text-[13px] font-medium text-police">{s}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-          <button onClick={handleSearch} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3 text-[15px] font-bold text-white shadow-md shadow-[#3B82F6]/30 active:scale-[0.98]">
+
+          <button onClick={handleSearch} className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-[15px] font-bold text-white shadow-md active:scale-[0.98] transition ${!value.trim() ? "bg-[#3B82F6]/50" : "bg-[#3B82F6] shadow-[#3B82F6]/30"}`}>
             <Search size={18} /> Tafuta
           </button>
         </div>

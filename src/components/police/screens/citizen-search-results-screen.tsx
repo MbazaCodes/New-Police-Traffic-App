@@ -164,8 +164,8 @@ export function CitizenSearchResultsScreen() {
           </button>
           <div className="mt-2 w-full rounded-2xl border border-[#10B981]/30 bg-[#10B981]/5 p-4 text-left">
             <p className="text-[13px] font-bold text-[#10B981]">Mtu Hajasajiliwa Mfumoni</p>
-            <p className="text-[11px] text-police-muted mt-1">Unaweza kurekodi tukio au fomu ya kukamatwa na taarifa unazozijua.</p>
-            <button onClick={() => navigate("incident-detail")} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#10B981] py-2.5 text-[13px] font-bold text-white">
+            <p className="text-[11px] text-police-muted mt-1">Sajili raia mpya mfumoni. Baadaye unaweza kurekodi tukio au makosa yake.</p>
+            <button onClick={() => navigate("add-citizen")} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#10B981] py-2.5 text-[13px] font-bold text-white">
               Rekodi Tukio Jipya
             </button>
             <button onClick={() => { setWarningPrefill({ recipientName: searchQuery, plate: "", licenseNo: "", phone: "" }); navigate("warning-form"); }} className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-[#FF9800] py-2.5 text-[13px] font-semibold text-[#FF9800]">

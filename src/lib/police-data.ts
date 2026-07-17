@@ -24,7 +24,9 @@ export type ScreenId =
   | "edit-profile"
   | "sos-request"
   | "incident-view"
-  | "citizen-detail";
+  | "citizen-detail"
+  | "add-vehicle"
+  | "add-citizen";
 
 export const OFFICER = {
   name: "Cprl. Juma Mwinyi",

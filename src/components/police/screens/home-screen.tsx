@@ -1,45 +1,110 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Bell, Search, Camera, ScanLine, ChevronRight, X } from "lucide-react";
+import { Bell, Search, Camera, ScanLine, ChevronRight, X, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { OFFICER, RECENT_OFFENSES, CITATION_HISTORY, ARREST_RECORDS, PATROL_STATS } from "@/lib/police-data";
 import { PoliceIcon } from "../police-icons";
+import {
+  validatePlate, validateLicense, validateNida,
+  getSuggestions,
+} from "@/lib/mock-database";
+
+type Tab = "plate" | "license" | "nida";
+
+const TABS: { id: Tab; label: string }[] = [
+  { id: "plate",   label: "Namba Gari" },
+  { id: "license", label: "Leseni" },
+  { id: "nida",    label: "NIDA" },
+];
+
+const PLACEHOLDERS: Record<Tab, string> = {
+  plate:   "T 001 ABC",
+  license: "DL001001TZ",
+  nida:    "199012031234567",
+};
+
+const HINT_LABELS: Record<Tab, string> = {
+  plate:   "Mfano: T 001 ABC au T001ABC",
+  license: "Mfano: DL001001TZ",
+  nida:    "Tarakimu 15: 199012031234567",
+};
 
 export function HomeScreen() {
   const { searchTab, setSearchTab, navigate, openScanner, runSearch, setSearchEntity, setSelectedOffense, unreadAlertCount, patrolRecords } = usePoliceStore();
-  const [searchValue, setSearchValue] = useState("");
+  const tab = searchTab as Tab;
+  const [value, setValue] = useState("");
+  const [error, setError] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const unread = unreadAlertCount();
   const todayStr = new Date().toLocaleDateString("sw-TZ");
   const todayPatrols = patrolRecords.filter((p) => p.date === todayStr).length;
-  const unpaidCount = CITATION_HISTORY.filter((c) => c.status === "Hajalipwa").length;
+  const unpaidCount  = CITATION_HISTORY.filter((c) => c.status === "Hajalipwa").length;
   const arrestsCount = ARREST_RECORDS.filter((a) => a.status === "held").length;
 
   const homeStats = [
     { label: "Makosa Yangu", value: String(CITATION_HISTORY.length), color: "#1A237E" },
-    { label: "Haijalipwa", value: String(unpaidCount), color: "#EF4444" },
-    { label: "Kizuizini", value: String(arrestsCount), color: "#7C3AED" },
-    { label: "Patroli Leo", value: String(todayPatrols || PATROL_STATS[0].value), color: "#10B981" },
+    { label: "Haijalipwa",   value: String(unpaidCount),             color: "#EF4444" },
+    { label: "Kizuizini",    value: String(arrestsCount),            color: "#7C3AED" },
+    { label: "Patroli Leo",  value: String(todayPatrols || PATROL_STATS[0].value), color: "#10B981" },
   ];
 
+  // Validate on change
+  useEffect(() => {
+    setError("");
+    if (!value.trim()) { setSuggestions([]); return; }
+    // Live suggestions
+    const type = tab === "plate" ? "plate" : tab === "license" ? "license" : "nida";
+    const s = getSuggestions(value, type);
+    setSuggestions(s);
+    setShowSuggestions(s.length > 0);
+  }, [value, tab]);
+
+  const validate = (): boolean => {
+    let r;
+    if (tab === "plate")   r = validatePlate(value);
+    else if (tab === "license") r = validateLicense(value);
+    else r = validateNida(value);
+    if (!r.valid) { setError(r.error); return false; }
+    setError("");
+    return true;
+  };
+
   const handleSearch = () => {
-    if (!searchValue.trim()) return;
-    if (searchTab === "nida") {
+    if (!validate()) return;
+    setShowSuggestions(false);
+    if (tab === "nida") {
       setSearchEntity("person");
-      runSearch(searchValue);
+      runSearch(value);
       navigate("citizen-search-results");
     } else {
       setSearchEntity("car");
-      runSearch(searchValue);
+      runSearch(value);
       navigate("search-results");
     }
   };
 
+  const pickSuggestion = (s: string) => {
+    setValue(s);
+    setShowSuggestions(false);
+    setError("");
+    inputRef.current?.focus();
+  };
+
+  const switchTab = (t: Tab) => {
+    setSearchTab(t);
+    setValue("");
+    setError("");
+    setSuggestions([]);
+  };
+
   return (
     <div className="min-h-full bg-police">
-      {/* Gradient Header */}
+      {/* Header */}
       <div className="bg-gradient-to-br from-[#1E3A8A] to-[#3B82F6] px-4 pb-16 pt-2">
         <div className="flex items-center justify-between pt-2">
           <div>
@@ -74,7 +139,7 @@ export function HomeScreen() {
         </div>
       </div>
 
-      {/* Live Stats */}
+      {/* Stats */}
       <div className="mt-4 grid grid-cols-4 gap-2 px-4">
         {homeStats.map((s) => (
           <div key={s.label} className="flex flex-col items-center rounded-xl bg-police-card p-2.5 shadow-sm">
@@ -92,33 +157,70 @@ export function HomeScreen() {
         </div>
       </div>
 
-      {/* Quick Search */}
+      {/* Search with validation */}
       <div className="mt-4 px-4">
         <div className="rounded-2xl bg-police-card p-4 shadow-[0_4px_12px_rgba(0,0,0,0.06)]">
           <h3 className="text-[17px] font-bold text-[#1E3A8A]">Utafutaji wa Haraka</h3>
-          <div className="mt-3 flex gap-1.5 overflow-x-auto">
-            {([
-              { id: "plate", label: "Namba Gari" },
-              { id: "license", label: "Leseni" },
-              { id: "nida", label: "NIDA" },
-            ] as const).map((tab) => (
-              <button key={tab.id} onClick={() => setSearchTab(tab.id)} className={`shrink-0 rounded-lg px-3 py-2 text-[11px] font-semibold transition ${searchTab === tab.id ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}>
-                {tab.label}
+
+          {/* Tabs */}
+          <div className="mt-3 flex gap-1.5">
+            {TABS.map((t) => (
+              <button key={t.id} onClick={() => switchTab(t.id)} className={`flex-1 rounded-lg py-2 text-[11px] font-semibold transition ${tab === t.id ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}>
+                {t.label}
               </button>
             ))}
           </div>
-          <div className="mt-3 flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
-            <Search size={18} className="text-police-faint" />
-            <input
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              placeholder={searchTab === "plate" ? "T123ABC" : searchTab === "license" ? "DL123456789TZ" : "1990123456789"}
-              className="h-11 flex-1 bg-transparent text-[15px] font-medium text-police placeholder:text-police-faint focus:outline-none"
-            />
-            {searchValue && <button onClick={() => setSearchValue("")} className="text-police-faint"><X size={16} /></button>}
+
+          {/* Hint */}
+          <p className="mt-2 text-[10px] text-police-faint">{HINT_LABELS[tab]}</p>
+
+          {/* Input + suggestions */}
+          <div className="relative mt-2">
+            <div className={`flex items-center gap-2 rounded-xl border bg-police-input px-3 transition ${error ? "border-[#EF4444]" : "border-police focus-within:border-[#3B82F6]"}`}>
+              <Search size={18} className={error ? "text-[#EF4444]" : "text-police-faint"} />
+              <input
+                ref={inputRef}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                placeholder={PLACEHOLDERS[tab]}
+                className="h-11 flex-1 bg-transparent text-[15px] font-medium text-police placeholder:text-police-faint focus:outline-none uppercase"
+              />
+              {value && (
+                <button onClick={() => { setValue(""); setError(""); setSuggestions([]); }} className="text-police-faint">
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            {/* Error message */}
+            {error && (
+              <div className="mt-1.5 flex items-center gap-1.5">
+                <AlertCircle size={13} className="shrink-0 text-[#EF4444]" />
+                <p className="text-[11px] font-medium text-[#EF4444]">{error}</p>
+              </div>
+            )}
+
+            {/* Suggestions dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-police bg-police-card shadow-lg">
+                <p className="px-3 py-1.5 text-[9px] font-bold uppercase tracking-wide text-police-faint">Matokeo yanayowezekana</p>
+                {suggestions.map((s) => (
+                  <button key={s} onMouseDown={() => pickSuggestion(s)} className="flex w-full items-center gap-2 px-3 py-2.5 text-left hover:bg-police-muted active:bg-police-muted">
+                    <Search size={13} className="shrink-0 text-police-faint" />
+                    <span className="text-[13px] font-medium text-police">{s}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-          <button onClick={handleSearch} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3 text-[15px] font-bold text-white shadow-md shadow-[#3B82F6]/30 active:scale-[0.98]">
+
+          <button
+            onClick={handleSearch}
+            className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-[15px] font-bold text-white shadow-md active:scale-[0.98] transition ${!value.trim() ? "bg-[#3B82F6]/50" : "bg-[#3B82F6] shadow-[#3B82F6]/30"}`}
+          >
             <Search size={18} /> Tafuta
           </button>
         </div>
