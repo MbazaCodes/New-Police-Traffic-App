@@ -36,7 +36,7 @@ export function ProfileScreen() {
               </p>
               <button
                 onClick={() =>
-                  toast({ title: "Hariri Profaili", description: "Fomu ya kuhariri profaili itafunguka." })
+                  navigate("edit-profile")
                 }
                 className="mt-2 inline-flex items-center gap-1 rounded-lg border border-[#2196F3] px-3 py-1 text-[11px] font-semibold text-[#2196F3]"
               >

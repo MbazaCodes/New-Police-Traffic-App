@@ -13,12 +13,12 @@ const WARNING_OFFENSES = [
 ];
 
 export function WarningFormScreen() {
-  const { goBack } = usePoliceStore();
+  const { goBack, warningPrefill, setWarningPrefill } = usePoliceStore();
   const [submitted, setSubmitted] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
-    recipientName: "", plate: "", licenseNo: "", offense: "",
+    recipientName: warningPrefill?.recipientName ?? "", plate: warningPrefill?.plate ?? "", licenseNo: warningPrefill?.licenseNo ?? "", offense: "",
     warningType: "traffic", location: "", notes: "", acknowledged: false,
   });
 
@@ -35,6 +35,7 @@ export function WarningFormScreen() {
       toast({ title: "Kosa", description: "Jaza jina na kosa.", variant: "destructive" }); return;
     }
     setSubmitted(true);
+    setWarningPrefill(null);
     toast({ title: "Onyo Limetolewa ✓", description: `Onyo kwa ${form.recipientName} limesajiliwa.` });
   };
 

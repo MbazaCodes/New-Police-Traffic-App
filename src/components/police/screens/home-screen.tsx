@@ -4,14 +4,38 @@ import { useState } from "react";
 import Image from "next/image";
 import { Bell, Search, Camera, ScanLine, ChevronRight, X } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { OFFICER, HOME_STATS, RECENT_OFFENSES } from "@/lib/police-data";
+import { OFFICER, RECENT_OFFENSES, CITATION_HISTORY, ARREST_RECORDS, PATROL_STATS } from "@/lib/police-data";
 import { PoliceIcon } from "../police-icons";
 
 export function HomeScreen() {
-  const { searchTab, setSearchTab, navigate, openScanner, runSearch, setSearchEntity, setSelectedOffense } = usePoliceStore();
+  const { searchTab, setSearchTab, navigate, openScanner, runSearch, setSearchEntity, setSelectedOffense, unreadAlertCount, patrolRecords } = usePoliceStore();
   const [searchValue, setSearchValue] = useState("");
 
-  const currentEntity = searchTab === "nida" ? "person" : "car";
+  const unread = unreadAlertCount();
+  const todayStr = new Date().toLocaleDateString("sw-TZ");
+  const todayPatrols = patrolRecords.filter((p) => p.date === todayStr).length;
+  const unpaidCount = CITATION_HISTORY.filter((c) => c.status === "Hajalipwa").length;
+  const arrestsCount = ARREST_RECORDS.filter((a) => a.status === "held").length;
+
+  const homeStats = [
+    { label: "Makosa Yangu", value: String(CITATION_HISTORY.length), color: "#1A237E" },
+    { label: "Haijalipwa", value: String(unpaidCount), color: "#EF4444" },
+    { label: "Kizuizini", value: String(arrestsCount), color: "#7C3AED" },
+    { label: "Patroli Leo", value: String(todayPatrols || PATROL_STATS[0].value), color: "#10B981" },
+  ];
+
+  const handleSearch = () => {
+    if (!searchValue.trim()) return;
+    if (searchTab === "nida") {
+      setSearchEntity("person");
+      runSearch(searchValue);
+      navigate("citizen-search-results");
+    } else {
+      setSearchEntity("car");
+      runSearch(searchValue);
+      navigate("search-results");
+    }
+  };
 
   return (
     <div className="min-h-full bg-police">
@@ -24,10 +48,14 @@ export function HomeScreen() {
             <p className="text-[11px] text-white/70">{OFFICER.station}</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="relative">
+            <button onClick={() => navigate("alerts")} className="relative">
               <Bell size={24} className="text-white" />
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">3</span>
-            </div>
+              {unread > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F44336] px-1 text-[9px] font-bold text-white">
+                  {unread > 9 ? "9+" : unread}
+                </span>
+              )}
+            </button>
             <div className="h-10 w-10 overflow-hidden rounded-full ring-2 ring-white/60">
               <Image src="/police-logo.png" alt="Avatar" width={40} height={40} className="h-full w-full object-cover" />
             </div>
@@ -35,7 +63,7 @@ export function HomeScreen() {
         </div>
       </div>
 
-      {/* Hero Banner Card */}
+      {/* Hero Card */}
       <div className="-mt-10 px-4">
         <div className="flex flex-col items-center rounded-2xl bg-police-card p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
           <div className="h-20 w-20 overflow-hidden rounded-full ring-2 ring-[#0070C0]/15">
@@ -46,11 +74,11 @@ export function HomeScreen() {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Live Stats */}
       <div className="mt-4 grid grid-cols-4 gap-2 px-4">
-        {HOME_STATS.map((s) => (
+        {homeStats.map((s) => (
           <div key={s.label} className="flex flex-col items-center rounded-xl bg-police-card p-2.5 shadow-sm">
-            <span className="text-[16px] font-bold" style={{ color: s.color }}>{s.value}</span>
+            <span className="text-[17px] font-bold" style={{ color: s.color }}>{s.value}</span>
             <span className="mt-0.5 text-center text-[8px] leading-tight text-police-muted">{s.label}</span>
           </div>
         ))}
@@ -59,8 +87,8 @@ export function HomeScreen() {
       {/* Quick Actions */}
       <div className="mt-4 px-4">
         <div className="grid grid-cols-2 gap-3">
-          <QuickAction icon={<Camera size={26} className="text-[#3B82F6]" />} bg="#3B82F6" title="Soma Nambari" subtitle="Tumia kamera kusoma namba ya gari" onClick={() => openScanner("ocr")} />
-          <QuickAction icon={<ScanLine size={26} className="text-[#10B981]" />} bg="#10B981" title="Scan QR" subtitle="Changanya QR code ya hati au namba" onClick={() => openScanner("qr")} />
+          <QA icon={<Camera size={26} className="text-[#3B82F6]" />} bg="#3B82F6" title="Soma Nambari" subtitle="Tumia kamera kusoma namba ya gari" onClick={() => openScanner("ocr")} />
+          <QA icon={<ScanLine size={26} className="text-[#10B981]" />} bg="#10B981" title="Scan QR" subtitle="Changanya QR code ya hati au namba" onClick={() => openScanner("qr")} />
         </div>
       </div>
 
@@ -74,11 +102,7 @@ export function HomeScreen() {
               { id: "license", label: "Leseni" },
               { id: "nida", label: "NIDA" },
             ] as const).map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setSearchTab(tab.id)}
-                className={`shrink-0 rounded-lg px-3 py-2 text-[11px] font-semibold transition ${searchTab === tab.id ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}
-              >
+              <button key={tab.id} onClick={() => setSearchTab(tab.id)} className={`shrink-0 rounded-lg px-3 py-2 text-[11px] font-semibold transition ${searchTab === tab.id ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}>
                 {tab.label}
               </button>
             ))}
@@ -88,25 +112,13 @@ export function HomeScreen() {
             <input
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && searchValue.trim()) {
-                  setSearchEntity(currentEntity);
-                  runSearch(searchValue);
-                  navigate("search-results");
-                }
-              }}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               placeholder={searchTab === "plate" ? "T123ABC" : searchTab === "license" ? "DL123456789TZ" : "1990123456789"}
               className="h-11 flex-1 bg-transparent text-[15px] font-medium text-police placeholder:text-police-faint focus:outline-none"
             />
             {searchValue && <button onClick={() => setSearchValue("")} className="text-police-faint"><X size={16} /></button>}
           </div>
-          <button
-            onClick={() => {
-              if (searchValue.trim()) { setSearchEntity(currentEntity); runSearch(searchValue); }
-              navigate("search-results");
-            }}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3 text-[15px] font-bold text-white shadow-md shadow-[#3B82F6]/30 active:scale-[0.98]"
-          >
+          <button onClick={handleSearch} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3 text-[15px] font-bold text-white shadow-md shadow-[#3B82F6]/30 active:scale-[0.98]">
             <Search size={18} /> Tafuta
           </button>
         </div>
@@ -119,35 +131,35 @@ export function HomeScreen() {
             <h3 className="text-[16px] font-bold text-police">Matukio ya Karibuni</h3>
             <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2563EB]">Angalia Zote</button>
           </div>
-          <div className="space-y-2.5">
-            {RECENT_OFFENSES.slice(0, 3).map((o) => (
-              <button
-                key={o.id}
-                onClick={() => { setSelectedOffense(o.id); navigate("offense-detail"); }}
-                className="flex w-full items-center gap-3 rounded-xl border border-police-soft p-2.5 text-left active:scale-[0.99]"
-              >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: `${o.iconColor}18` }}>
-                  <PoliceIcon name={o.icon} size={20} className="" style={{ color: o.iconColor }} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="truncate text-[13px] font-bold text-police">{o.name}</p>
-                    <span className="shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold text-white" style={{ backgroundColor: o.statusColor }}>{o.status}</span>
+          {RECENT_OFFENSES.length === 0 ? (
+            <p className="py-4 text-center text-[13px] text-police-muted">Hakuna matukio ya kuonyesha.</p>
+          ) : (
+            <div className="space-y-2.5">
+              {RECENT_OFFENSES.slice(0, 3).map((o) => (
+                <button key={o.id} onClick={() => { setSelectedOffense(o.id); navigate("offense-detail"); }} className="flex w-full items-center gap-3 rounded-xl border border-police-soft p-2.5 text-left active:scale-[0.99]">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: `${o.iconColor}18` }}>
+                    <PoliceIcon name={o.icon} size={20} className="" style={{ color: o.iconColor }} />
                   </div>
-                  <p className="mt-0.5 text-[10px] text-police-muted">{o.date} • {o.location}</p>
-                  <p className="mt-0.5 text-[11px] font-bold text-police">{o.fine}</p>
-                </div>
-                <ChevronRight size={16} className="shrink-0 text-police-faint" />
-              </button>
-            ))}
-          </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="truncate text-[13px] font-bold text-police">{o.name}</p>
+                      <span className="shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold text-white" style={{ backgroundColor: o.statusColor }}>{o.status}</span>
+                    </div>
+                    <p className="mt-0.5 text-[10px] text-police-muted">{o.date} • {o.location}</p>
+                    <p className="mt-0.5 text-[11px] font-bold text-police">{o.fine}</p>
+                  </div>
+                  <ChevronRight size={16} className="shrink-0 text-police-faint" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function QuickAction({ icon, bg, title, subtitle, onClick }: { icon: React.ReactNode; bg: string; title: string; subtitle: string; onClick?: () => void }) {
+function QA({ icon, bg, title, subtitle, onClick }: { icon: React.ReactNode; bg: string; title: string; subtitle: string; onClick?: () => void }) {
   return (
     <button onClick={onClick} className="flex flex-col items-start rounded-2xl bg-police-card p-4 text-left shadow-[0_4px_12px_rgba(0,0,0,0.06)] active:scale-[0.98]">
       <div className="flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: `${bg}15` }}>{icon}</div>

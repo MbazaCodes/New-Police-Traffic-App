@@ -13,13 +13,13 @@ const OFFENSE_CATEGORIES = [
 ];
 
 export function ArrestFormScreen() {
-  const { goBack } = usePoliceStore();
+  const { goBack, arrestPrefill, setArrestPrefill } = usePoliceStore();
   const [submitted, setSubmitted] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
-    suspectName: "", nida: "", dob: "", gender: "Mme", address: "", phone: "",
+    suspectName: arrestPrefill?.suspectName ?? "", nida: arrestPrefill?.nida ?? "", dob: "", gender: "Mme", address: "", phone: arrestPrefill?.phone ?? "",
     occupation: "", offense: "", offenseDetails: "", arrestLocation: "",
     cell: "", courtDate: "", nextOfKin: "", nextOfKinPhone: "", medicalStatus: "Nzuri",
     notes: "",
@@ -41,6 +41,7 @@ export function ArrestFormScreen() {
       toast({ title: "Kosa", description: "Jaza sehemu zote zinazohitajika (*)", variant: "destructive" }); return;
     }
     setSubmitted(true);
+    setArrestPrefill(null);
     toast({ title: "Fomu Imewasilishwa ✓", description: `Ripoti ya kukamatwa kwa ${form.suspectName} imewasilishwa kwa Kamishna.` });
   };
 

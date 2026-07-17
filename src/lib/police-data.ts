@@ -19,7 +19,10 @@ export type ScreenId =
   | "lost-property"
   | "driver-points"
   | "incident-detail"
-  | "offense-detail";
+  | "offense-detail"
+  | "citation-detail"
+  | "edit-profile"
+  | "sos-request";
 
 export const OFFICER = {
   name: "Cprl. Juma Mwinyi",

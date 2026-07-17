@@ -16,8 +16,8 @@ import {
   Wallet,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { useRecordsStore } from "@/store/records-store";
-import { SEARCH_RESULT, OFFICER } from "@/lib/police-data";
+
+import { SEARCH_RESULT } from "@/lib/police-data";
 import { findMatchingMissingAlerts } from "@/lib/shared-missing-alerts";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, SearchX } from "lucide-react";
@@ -29,8 +29,8 @@ export function SearchResultsScreen() {
   const searchQuery = usePoliceStore((s) => s.searchQuery);
   const searchEntity = usePoliceStore((s) => s.searchEntity);
   const setCitationPrefill = usePoliceStore((s) => s.setCitationPrefill);
-  const addWarning = useRecordsStore((s) => s.addWarning);
-  const addArrest = useRecordsStore((s) => s.addArrest);
+  const setArrestPrefill = usePoliceStore((s) => s.setArrestPrefill);
+  const setWarningPrefill = usePoliceStore((s) => s.setWarningPrefill);
   const r = SEARCH_RESULT;
 
   const matchedAlerts = useMemo(() => {
@@ -67,37 +67,26 @@ export function SearchResultsScreen() {
     navigate("citation");
   };
 
-  const now = new Date();
-  const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
 
   const handleAddWarning = () => {
-    addWarning({
-      citizenName: r.driver.name,
-      citizenNida: r.driver.nida,
-      citizenPhone: r.driver.mobile,
-      reason: "Onyo la trafiki — onyo limetolewa kutoka matokeo ya utafutaji",
-      location: "Morogoro Road, DSM",
-      date: today,
-      officer: OFFICER.name,
+    setWarningPrefill({
+      recipientName: r.driver.name,
+      plate: r.plate,
+      licenseNo: r.driver.license,
+      phone: r.driver.mobile,
     });
-    toast({ title: "Onyo Limetolewa", description: "Onyo limewasilishwa kwa dereva." });
-    setTimeout(() => goBack(), 800);
+    navigate("warning-form");
   };
 
   const handleArrest = () => {
-    addArrest({
+    setArrestPrefill({
       suspectName: r.driver.name,
-      suspectNida: r.driver.nida,
-      suspectPhone: r.driver.mobile,
-      reason: "Kizuizi kimewekwa kutoka matokeo ya utafutaji",
-      location: "Morogoro Road, DSM",
-      date: today,
-      time: now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }),
-      officer: OFFICER.name,
-      station: OFFICER.station,
+      nida: r.driver.nida,
+      phone: r.driver.mobile,
+      plate: r.plate,
+      licenseNo: r.driver.license,
     });
-    toast({ title: "Kizuizi Kimewekwa", description: "Mchakato wa kizuizi umeanzishwa." });
-    setTimeout(() => goBack(), 800);
+    navigate("arrest-form");
   };
 
   return (
