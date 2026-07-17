@@ -231,6 +231,19 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
     void sendOtp();
   };
 
+  const openExternalApp = (url: string) => {
+    if (typeof window === "undefined") return;
+
+    const openedWindow = window.open(url, "_blank", "noopener,noreferrer");
+    if (openedWindow) {
+      openedWindow.opener = null;
+      return;
+    }
+
+    // Fallback for PWA contexts where opening a new tab is blocked.
+    window.location.assign(url);
+  };
+
   const otpComplete = otp.join("").length === 6;
   const maskedIdentifier =
     method === "phone"
@@ -531,6 +544,10 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
               href="https://tz-police-pwa.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => {
+                e.preventDefault();
+                openExternalApp("https://tz-police-pwa.vercel.app");
+              }}
               className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#1E3A8A]/30 bg-[#1E3A8A]/5 py-3 text-[13px] font-semibold text-[#1E3A8A] transition active:scale-[0.98] dark:border-white/10 dark:bg-white/5 dark:text-white/70"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -543,6 +560,10 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
               href="https://tz-police-admin-web.vercel.app/admin"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => {
+                e.preventDefault();
+                openExternalApp("https://tz-police-admin-web.vercel.app/admin");
+              }}
               className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#1E3A8A]/30 bg-[#1E3A8A]/5 py-3 text-[13px] font-semibold text-[#1E3A8A] transition active:scale-[0.98] dark:border-white/10 dark:bg-white/5 dark:text-white/70"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
