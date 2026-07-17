@@ -1,0 +1,29 @@
+﻿{
+    "profile":  "QA",
+    "seed":  2601,
+    "counts":  {
+                   "years":  10,
+                   "citizens":  5000,
+                   "officers":  150,
+                   "vehicles":  2500,
+                   "licenses":  2000,
+                   "fines":  11000,
+                   "cases":  2750,
+                   "wanted":  250,
+                   "insurance":  2500,
+                   "payments":  9500,
+                   "cctv":  12500,
+                   "gps":  40000,
+                   "notifications":  15000,
+                   "audit_logs":  60000,
+                   "sessions":  3250,
+                   "evidence":  3500,
+                   "courts":  1750
+               },
+    "distribution":  {
+                         "valid":  85,
+                         "warning":  10,
+                         "corrupted":  5
+                     },
+    "started_at":  "2026-07-17 09:26:29"
+}

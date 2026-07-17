@@ -1,0 +1,10002 @@
+﻿[
+    {
+        "id":  1,
+        "citizen_id":  1,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  2,
+        "citizen_id":  2,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  3,
+        "citizen_id":  3,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  4,
+        "citizen_id":  4,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  5,
+        "citizen_id":  5,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  6,
+        "citizen_id":  6,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  7,
+        "citizen_id":  7,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  8,
+        "citizen_id":  8,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  9,
+        "citizen_id":  9,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  10,
+        "citizen_id":  10,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  11,
+        "citizen_id":  11,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  12,
+        "citizen_id":  12,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  13,
+        "citizen_id":  13,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  14,
+        "citizen_id":  14,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  15,
+        "citizen_id":  15,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  16,
+        "citizen_id":  16,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  17,
+        "citizen_id":  17,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  18,
+        "citizen_id":  18,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  19,
+        "citizen_id":  19,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  20,
+        "citizen_id":  20,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  21,
+        "citizen_id":  21,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  22,
+        "citizen_id":  22,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  23,
+        "citizen_id":  23,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  24,
+        "citizen_id":  24,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  25,
+        "citizen_id":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  26,
+        "citizen_id":  26,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  27,
+        "citizen_id":  27,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  28,
+        "citizen_id":  28,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  29,
+        "citizen_id":  29,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  30,
+        "citizen_id":  30,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  31,
+        "citizen_id":  31,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  32,
+        "citizen_id":  32,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  33,
+        "citizen_id":  33,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  34,
+        "citizen_id":  34,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  35,
+        "citizen_id":  35,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  36,
+        "citizen_id":  36,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  37,
+        "citizen_id":  37,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  38,
+        "citizen_id":  38,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  39,
+        "citizen_id":  39,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  40,
+        "citizen_id":  40,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  41,
+        "citizen_id":  41,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  42,
+        "citizen_id":  42,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  43,
+        "citizen_id":  43,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  44,
+        "citizen_id":  44,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  45,
+        "citizen_id":  45,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  46,
+        "citizen_id":  46,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  47,
+        "citizen_id":  47,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  48,
+        "citizen_id":  48,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  49,
+        "citizen_id":  49,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  50,
+        "citizen_id":  50,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  51,
+        "citizen_id":  51,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  52,
+        "citizen_id":  52,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  53,
+        "citizen_id":  53,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  54,
+        "citizen_id":  54,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  55,
+        "citizen_id":  55,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  56,
+        "citizen_id":  56,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  57,
+        "citizen_id":  57,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  58,
+        "citizen_id":  58,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  59,
+        "citizen_id":  59,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  60,
+        "citizen_id":  60,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  61,
+        "citizen_id":  61,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  62,
+        "citizen_id":  62,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  63,
+        "citizen_id":  63,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  64,
+        "citizen_id":  64,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  65,
+        "citizen_id":  65,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  66,
+        "citizen_id":  66,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  67,
+        "citizen_id":  67,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  68,
+        "citizen_id":  68,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  69,
+        "citizen_id":  69,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  70,
+        "citizen_id":  70,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  71,
+        "citizen_id":  71,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  72,
+        "citizen_id":  72,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  73,
+        "citizen_id":  73,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  74,
+        "citizen_id":  74,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  75,
+        "citizen_id":  75,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  76,
+        "citizen_id":  76,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  77,
+        "citizen_id":  77,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  78,
+        "citizen_id":  78,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  79,
+        "citizen_id":  79,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  80,
+        "citizen_id":  80,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  81,
+        "citizen_id":  81,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  82,
+        "citizen_id":  82,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  83,
+        "citizen_id":  83,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  84,
+        "citizen_id":  84,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  85,
+        "citizen_id":  85,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  86,
+        "citizen_id":  86,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  87,
+        "citizen_id":  87,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  88,
+        "citizen_id":  88,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  89,
+        "citizen_id":  89,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  90,
+        "citizen_id":  90,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  91,
+        "citizen_id":  91,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  92,
+        "citizen_id":  92,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  93,
+        "citizen_id":  93,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  94,
+        "citizen_id":  94,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  95,
+        "citizen_id":  95,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  96,
+        "citizen_id":  96,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  97,
+        "citizen_id":  97,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  98,
+        "citizen_id":  98,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  99,
+        "citizen_id":  99,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  100,
+        "citizen_id":  100,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  101,
+        "citizen_id":  101,
+        "status":  "FAKE"
+    },
+    {
+        "id":  102,
+        "citizen_id":  102,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  103,
+        "citizen_id":  103,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  104,
+        "citizen_id":  104,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  105,
+        "citizen_id":  105,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  106,
+        "citizen_id":  106,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  107,
+        "citizen_id":  107,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  108,
+        "citizen_id":  108,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  109,
+        "citizen_id":  109,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  110,
+        "citizen_id":  110,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  111,
+        "citizen_id":  111,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  112,
+        "citizen_id":  112,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  113,
+        "citizen_id":  113,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  114,
+        "citizen_id":  114,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  115,
+        "citizen_id":  115,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  116,
+        "citizen_id":  116,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  117,
+        "citizen_id":  117,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  118,
+        "citizen_id":  118,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  119,
+        "citizen_id":  119,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  120,
+        "citizen_id":  120,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  121,
+        "citizen_id":  121,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  122,
+        "citizen_id":  122,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  123,
+        "citizen_id":  123,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  124,
+        "citizen_id":  124,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  125,
+        "citizen_id":  125,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  126,
+        "citizen_id":  126,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  127,
+        "citizen_id":  127,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  128,
+        "citizen_id":  128,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  129,
+        "citizen_id":  129,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  130,
+        "citizen_id":  130,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  131,
+        "citizen_id":  131,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  132,
+        "citizen_id":  132,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  133,
+        "citizen_id":  133,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  134,
+        "citizen_id":  134,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  135,
+        "citizen_id":  135,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  136,
+        "citizen_id":  136,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  137,
+        "citizen_id":  137,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  138,
+        "citizen_id":  138,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  139,
+        "citizen_id":  139,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  140,
+        "citizen_id":  140,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  141,
+        "citizen_id":  141,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  142,
+        "citizen_id":  142,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  143,
+        "citizen_id":  143,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  144,
+        "citizen_id":  144,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  145,
+        "citizen_id":  145,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  146,
+        "citizen_id":  146,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  147,
+        "citizen_id":  147,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  148,
+        "citizen_id":  148,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  149,
+        "citizen_id":  149,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  150,
+        "citizen_id":  150,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  151,
+        "citizen_id":  151,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  152,
+        "citizen_id":  152,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  153,
+        "citizen_id":  153,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  154,
+        "citizen_id":  154,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  155,
+        "citizen_id":  155,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  156,
+        "citizen_id":  156,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  157,
+        "citizen_id":  157,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  158,
+        "citizen_id":  158,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  159,
+        "citizen_id":  159,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  160,
+        "citizen_id":  160,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  161,
+        "citizen_id":  161,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  162,
+        "citizen_id":  162,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  163,
+        "citizen_id":  163,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  164,
+        "citizen_id":  164,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  165,
+        "citizen_id":  165,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  166,
+        "citizen_id":  166,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  167,
+        "citizen_id":  167,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  168,
+        "citizen_id":  168,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  169,
+        "citizen_id":  169,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  170,
+        "citizen_id":  170,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  171,
+        "citizen_id":  171,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  172,
+        "citizen_id":  172,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  173,
+        "citizen_id":  173,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  174,
+        "citizen_id":  174,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  175,
+        "citizen_id":  175,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  176,
+        "citizen_id":  176,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  177,
+        "citizen_id":  177,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  178,
+        "citizen_id":  178,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  179,
+        "citizen_id":  179,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  180,
+        "citizen_id":  180,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  181,
+        "citizen_id":  181,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  182,
+        "citizen_id":  182,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  183,
+        "citizen_id":  183,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  184,
+        "citizen_id":  184,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  185,
+        "citizen_id":  185,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  186,
+        "citizen_id":  186,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  187,
+        "citizen_id":  187,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  188,
+        "citizen_id":  188,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  189,
+        "citizen_id":  189,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  190,
+        "citizen_id":  190,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  191,
+        "citizen_id":  191,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  192,
+        "citizen_id":  192,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  193,
+        "citizen_id":  193,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  194,
+        "citizen_id":  194,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  195,
+        "citizen_id":  195,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  196,
+        "citizen_id":  196,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  197,
+        "citizen_id":  197,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  198,
+        "citizen_id":  198,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  199,
+        "citizen_id":  199,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  200,
+        "citizen_id":  200,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  201,
+        "citizen_id":  201,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  202,
+        "citizen_id":  202,
+        "status":  "FAKE"
+    },
+    {
+        "id":  203,
+        "citizen_id":  203,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  204,
+        "citizen_id":  204,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  205,
+        "citizen_id":  205,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  206,
+        "citizen_id":  206,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  207,
+        "citizen_id":  207,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  208,
+        "citizen_id":  208,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  209,
+        "citizen_id":  209,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  210,
+        "citizen_id":  210,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  211,
+        "citizen_id":  211,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  212,
+        "citizen_id":  212,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  213,
+        "citizen_id":  213,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  214,
+        "citizen_id":  214,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  215,
+        "citizen_id":  215,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  216,
+        "citizen_id":  216,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  217,
+        "citizen_id":  217,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  218,
+        "citizen_id":  218,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  219,
+        "citizen_id":  219,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  220,
+        "citizen_id":  220,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  221,
+        "citizen_id":  221,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  222,
+        "citizen_id":  222,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  223,
+        "citizen_id":  223,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  224,
+        "citizen_id":  224,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  225,
+        "citizen_id":  225,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  226,
+        "citizen_id":  226,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  227,
+        "citizen_id":  227,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  228,
+        "citizen_id":  228,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  229,
+        "citizen_id":  229,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  230,
+        "citizen_id":  230,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  231,
+        "citizen_id":  231,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  232,
+        "citizen_id":  232,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  233,
+        "citizen_id":  233,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  234,
+        "citizen_id":  234,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  235,
+        "citizen_id":  235,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  236,
+        "citizen_id":  236,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  237,
+        "citizen_id":  237,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  238,
+        "citizen_id":  238,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  239,
+        "citizen_id":  239,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  240,
+        "citizen_id":  240,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  241,
+        "citizen_id":  241,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  242,
+        "citizen_id":  242,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  243,
+        "citizen_id":  243,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  244,
+        "citizen_id":  244,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  245,
+        "citizen_id":  245,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  246,
+        "citizen_id":  246,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  247,
+        "citizen_id":  247,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  248,
+        "citizen_id":  248,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  249,
+        "citizen_id":  249,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  250,
+        "citizen_id":  250,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  251,
+        "citizen_id":  251,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  252,
+        "citizen_id":  252,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  253,
+        "citizen_id":  253,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  254,
+        "citizen_id":  254,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  255,
+        "citizen_id":  255,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  256,
+        "citizen_id":  256,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  257,
+        "citizen_id":  257,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  258,
+        "citizen_id":  258,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  259,
+        "citizen_id":  259,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  260,
+        "citizen_id":  260,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  261,
+        "citizen_id":  261,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  262,
+        "citizen_id":  262,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  263,
+        "citizen_id":  263,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  264,
+        "citizen_id":  264,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  265,
+        "citizen_id":  265,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  266,
+        "citizen_id":  266,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  267,
+        "citizen_id":  267,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  268,
+        "citizen_id":  268,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  269,
+        "citizen_id":  269,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  270,
+        "citizen_id":  270,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  271,
+        "citizen_id":  271,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  272,
+        "citizen_id":  272,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  273,
+        "citizen_id":  273,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  274,
+        "citizen_id":  274,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  275,
+        "citizen_id":  275,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  276,
+        "citizen_id":  276,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  277,
+        "citizen_id":  277,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  278,
+        "citizen_id":  278,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  279,
+        "citizen_id":  279,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  280,
+        "citizen_id":  280,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  281,
+        "citizen_id":  281,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  282,
+        "citizen_id":  282,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  283,
+        "citizen_id":  283,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  284,
+        "citizen_id":  284,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  285,
+        "citizen_id":  285,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  286,
+        "citizen_id":  286,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  287,
+        "citizen_id":  287,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  288,
+        "citizen_id":  288,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  289,
+        "citizen_id":  289,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  290,
+        "citizen_id":  290,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  291,
+        "citizen_id":  291,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  292,
+        "citizen_id":  292,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  293,
+        "citizen_id":  293,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  294,
+        "citizen_id":  294,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  295,
+        "citizen_id":  295,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  296,
+        "citizen_id":  296,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  297,
+        "citizen_id":  297,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  298,
+        "citizen_id":  298,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  299,
+        "citizen_id":  299,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  300,
+        "citizen_id":  300,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  301,
+        "citizen_id":  301,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  302,
+        "citizen_id":  302,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  303,
+        "citizen_id":  303,
+        "status":  "FAKE"
+    },
+    {
+        "id":  304,
+        "citizen_id":  304,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  305,
+        "citizen_id":  305,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  306,
+        "citizen_id":  306,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  307,
+        "citizen_id":  307,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  308,
+        "citizen_id":  308,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  309,
+        "citizen_id":  309,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  310,
+        "citizen_id":  310,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  311,
+        "citizen_id":  311,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  312,
+        "citizen_id":  312,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  313,
+        "citizen_id":  313,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  314,
+        "citizen_id":  314,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  315,
+        "citizen_id":  315,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  316,
+        "citizen_id":  316,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  317,
+        "citizen_id":  317,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  318,
+        "citizen_id":  318,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  319,
+        "citizen_id":  319,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  320,
+        "citizen_id":  320,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  321,
+        "citizen_id":  321,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  322,
+        "citizen_id":  322,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  323,
+        "citizen_id":  323,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  324,
+        "citizen_id":  324,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  325,
+        "citizen_id":  325,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  326,
+        "citizen_id":  326,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  327,
+        "citizen_id":  327,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  328,
+        "citizen_id":  328,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  329,
+        "citizen_id":  329,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  330,
+        "citizen_id":  330,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  331,
+        "citizen_id":  331,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  332,
+        "citizen_id":  332,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  333,
+        "citizen_id":  333,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  334,
+        "citizen_id":  334,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  335,
+        "citizen_id":  335,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  336,
+        "citizen_id":  336,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  337,
+        "citizen_id":  337,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  338,
+        "citizen_id":  338,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  339,
+        "citizen_id":  339,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  340,
+        "citizen_id":  340,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  341,
+        "citizen_id":  341,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  342,
+        "citizen_id":  342,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  343,
+        "citizen_id":  343,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  344,
+        "citizen_id":  344,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  345,
+        "citizen_id":  345,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  346,
+        "citizen_id":  346,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  347,
+        "citizen_id":  347,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  348,
+        "citizen_id":  348,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  349,
+        "citizen_id":  349,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  350,
+        "citizen_id":  350,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  351,
+        "citizen_id":  351,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  352,
+        "citizen_id":  352,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  353,
+        "citizen_id":  353,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  354,
+        "citizen_id":  354,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  355,
+        "citizen_id":  355,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  356,
+        "citizen_id":  356,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  357,
+        "citizen_id":  357,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  358,
+        "citizen_id":  358,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  359,
+        "citizen_id":  359,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  360,
+        "citizen_id":  360,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  361,
+        "citizen_id":  361,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  362,
+        "citizen_id":  362,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  363,
+        "citizen_id":  363,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  364,
+        "citizen_id":  364,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  365,
+        "citizen_id":  365,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  366,
+        "citizen_id":  366,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  367,
+        "citizen_id":  367,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  368,
+        "citizen_id":  368,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  369,
+        "citizen_id":  369,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  370,
+        "citizen_id":  370,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  371,
+        "citizen_id":  371,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  372,
+        "citizen_id":  372,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  373,
+        "citizen_id":  373,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  374,
+        "citizen_id":  374,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  375,
+        "citizen_id":  375,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  376,
+        "citizen_id":  376,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  377,
+        "citizen_id":  377,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  378,
+        "citizen_id":  378,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  379,
+        "citizen_id":  379,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  380,
+        "citizen_id":  380,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  381,
+        "citizen_id":  381,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  382,
+        "citizen_id":  382,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  383,
+        "citizen_id":  383,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  384,
+        "citizen_id":  384,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  385,
+        "citizen_id":  385,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  386,
+        "citizen_id":  386,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  387,
+        "citizen_id":  387,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  388,
+        "citizen_id":  388,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  389,
+        "citizen_id":  389,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  390,
+        "citizen_id":  390,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  391,
+        "citizen_id":  391,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  392,
+        "citizen_id":  392,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  393,
+        "citizen_id":  393,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  394,
+        "citizen_id":  394,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  395,
+        "citizen_id":  395,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  396,
+        "citizen_id":  396,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  397,
+        "citizen_id":  397,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  398,
+        "citizen_id":  398,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  399,
+        "citizen_id":  399,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  400,
+        "citizen_id":  400,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  401,
+        "citizen_id":  401,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  402,
+        "citizen_id":  402,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  403,
+        "citizen_id":  403,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  404,
+        "citizen_id":  404,
+        "status":  "FAKE"
+    },
+    {
+        "id":  405,
+        "citizen_id":  405,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  406,
+        "citizen_id":  406,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  407,
+        "citizen_id":  407,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  408,
+        "citizen_id":  408,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  409,
+        "citizen_id":  409,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  410,
+        "citizen_id":  410,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  411,
+        "citizen_id":  411,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  412,
+        "citizen_id":  412,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  413,
+        "citizen_id":  413,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  414,
+        "citizen_id":  414,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  415,
+        "citizen_id":  415,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  416,
+        "citizen_id":  416,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  417,
+        "citizen_id":  417,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  418,
+        "citizen_id":  418,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  419,
+        "citizen_id":  419,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  420,
+        "citizen_id":  420,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  421,
+        "citizen_id":  421,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  422,
+        "citizen_id":  422,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  423,
+        "citizen_id":  423,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  424,
+        "citizen_id":  424,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  425,
+        "citizen_id":  425,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  426,
+        "citizen_id":  426,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  427,
+        "citizen_id":  427,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  428,
+        "citizen_id":  428,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  429,
+        "citizen_id":  429,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  430,
+        "citizen_id":  430,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  431,
+        "citizen_id":  431,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  432,
+        "citizen_id":  432,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  433,
+        "citizen_id":  433,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  434,
+        "citizen_id":  434,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  435,
+        "citizen_id":  435,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  436,
+        "citizen_id":  436,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  437,
+        "citizen_id":  437,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  438,
+        "citizen_id":  438,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  439,
+        "citizen_id":  439,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  440,
+        "citizen_id":  440,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  441,
+        "citizen_id":  441,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  442,
+        "citizen_id":  442,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  443,
+        "citizen_id":  443,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  444,
+        "citizen_id":  444,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  445,
+        "citizen_id":  445,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  446,
+        "citizen_id":  446,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  447,
+        "citizen_id":  447,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  448,
+        "citizen_id":  448,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  449,
+        "citizen_id":  449,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  450,
+        "citizen_id":  450,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  451,
+        "citizen_id":  451,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  452,
+        "citizen_id":  452,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  453,
+        "citizen_id":  453,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  454,
+        "citizen_id":  454,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  455,
+        "citizen_id":  455,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  456,
+        "citizen_id":  456,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  457,
+        "citizen_id":  457,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  458,
+        "citizen_id":  458,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  459,
+        "citizen_id":  459,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  460,
+        "citizen_id":  460,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  461,
+        "citizen_id":  461,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  462,
+        "citizen_id":  462,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  463,
+        "citizen_id":  463,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  464,
+        "citizen_id":  464,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  465,
+        "citizen_id":  465,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  466,
+        "citizen_id":  466,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  467,
+        "citizen_id":  467,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  468,
+        "citizen_id":  468,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  469,
+        "citizen_id":  469,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  470,
+        "citizen_id":  470,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  471,
+        "citizen_id":  471,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  472,
+        "citizen_id":  472,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  473,
+        "citizen_id":  473,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  474,
+        "citizen_id":  474,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  475,
+        "citizen_id":  475,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  476,
+        "citizen_id":  476,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  477,
+        "citizen_id":  477,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  478,
+        "citizen_id":  478,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  479,
+        "citizen_id":  479,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  480,
+        "citizen_id":  480,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  481,
+        "citizen_id":  481,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  482,
+        "citizen_id":  482,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  483,
+        "citizen_id":  483,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  484,
+        "citizen_id":  484,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  485,
+        "citizen_id":  485,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  486,
+        "citizen_id":  486,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  487,
+        "citizen_id":  487,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  488,
+        "citizen_id":  488,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  489,
+        "citizen_id":  489,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  490,
+        "citizen_id":  490,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  491,
+        "citizen_id":  491,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  492,
+        "citizen_id":  492,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  493,
+        "citizen_id":  493,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  494,
+        "citizen_id":  494,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  495,
+        "citizen_id":  495,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  496,
+        "citizen_id":  496,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  497,
+        "citizen_id":  497,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  498,
+        "citizen_id":  498,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  499,
+        "citizen_id":  499,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  500,
+        "citizen_id":  500,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  501,
+        "citizen_id":  501,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  502,
+        "citizen_id":  502,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  503,
+        "citizen_id":  503,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  504,
+        "citizen_id":  504,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  505,
+        "citizen_id":  505,
+        "status":  "FAKE"
+    },
+    {
+        "id":  506,
+        "citizen_id":  506,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  507,
+        "citizen_id":  507,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  508,
+        "citizen_id":  508,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  509,
+        "citizen_id":  509,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  510,
+        "citizen_id":  510,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  511,
+        "citizen_id":  511,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  512,
+        "citizen_id":  512,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  513,
+        "citizen_id":  513,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  514,
+        "citizen_id":  514,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  515,
+        "citizen_id":  515,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  516,
+        "citizen_id":  516,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  517,
+        "citizen_id":  517,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  518,
+        "citizen_id":  518,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  519,
+        "citizen_id":  519,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  520,
+        "citizen_id":  520,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  521,
+        "citizen_id":  521,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  522,
+        "citizen_id":  522,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  523,
+        "citizen_id":  523,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  524,
+        "citizen_id":  524,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  525,
+        "citizen_id":  525,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  526,
+        "citizen_id":  526,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  527,
+        "citizen_id":  527,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  528,
+        "citizen_id":  528,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  529,
+        "citizen_id":  529,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  530,
+        "citizen_id":  530,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  531,
+        "citizen_id":  531,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  532,
+        "citizen_id":  532,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  533,
+        "citizen_id":  533,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  534,
+        "citizen_id":  534,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  535,
+        "citizen_id":  535,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  536,
+        "citizen_id":  536,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  537,
+        "citizen_id":  537,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  538,
+        "citizen_id":  538,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  539,
+        "citizen_id":  539,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  540,
+        "citizen_id":  540,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  541,
+        "citizen_id":  541,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  542,
+        "citizen_id":  542,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  543,
+        "citizen_id":  543,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  544,
+        "citizen_id":  544,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  545,
+        "citizen_id":  545,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  546,
+        "citizen_id":  546,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  547,
+        "citizen_id":  547,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  548,
+        "citizen_id":  548,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  549,
+        "citizen_id":  549,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  550,
+        "citizen_id":  550,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  551,
+        "citizen_id":  551,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  552,
+        "citizen_id":  552,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  553,
+        "citizen_id":  553,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  554,
+        "citizen_id":  554,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  555,
+        "citizen_id":  555,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  556,
+        "citizen_id":  556,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  557,
+        "citizen_id":  557,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  558,
+        "citizen_id":  558,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  559,
+        "citizen_id":  559,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  560,
+        "citizen_id":  560,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  561,
+        "citizen_id":  561,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  562,
+        "citizen_id":  562,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  563,
+        "citizen_id":  563,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  564,
+        "citizen_id":  564,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  565,
+        "citizen_id":  565,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  566,
+        "citizen_id":  566,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  567,
+        "citizen_id":  567,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  568,
+        "citizen_id":  568,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  569,
+        "citizen_id":  569,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  570,
+        "citizen_id":  570,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  571,
+        "citizen_id":  571,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  572,
+        "citizen_id":  572,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  573,
+        "citizen_id":  573,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  574,
+        "citizen_id":  574,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  575,
+        "citizen_id":  575,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  576,
+        "citizen_id":  576,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  577,
+        "citizen_id":  577,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  578,
+        "citizen_id":  578,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  579,
+        "citizen_id":  579,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  580,
+        "citizen_id":  580,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  581,
+        "citizen_id":  581,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  582,
+        "citizen_id":  582,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  583,
+        "citizen_id":  583,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  584,
+        "citizen_id":  584,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  585,
+        "citizen_id":  585,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  586,
+        "citizen_id":  586,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  587,
+        "citizen_id":  587,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  588,
+        "citizen_id":  588,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  589,
+        "citizen_id":  589,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  590,
+        "citizen_id":  590,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  591,
+        "citizen_id":  591,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  592,
+        "citizen_id":  592,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  593,
+        "citizen_id":  593,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  594,
+        "citizen_id":  594,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  595,
+        "citizen_id":  595,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  596,
+        "citizen_id":  596,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  597,
+        "citizen_id":  597,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  598,
+        "citizen_id":  598,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  599,
+        "citizen_id":  599,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  600,
+        "citizen_id":  600,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  601,
+        "citizen_id":  601,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  602,
+        "citizen_id":  602,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  603,
+        "citizen_id":  603,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  604,
+        "citizen_id":  604,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  605,
+        "citizen_id":  605,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  606,
+        "citizen_id":  606,
+        "status":  "FAKE"
+    },
+    {
+        "id":  607,
+        "citizen_id":  607,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  608,
+        "citizen_id":  608,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  609,
+        "citizen_id":  609,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  610,
+        "citizen_id":  610,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  611,
+        "citizen_id":  611,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  612,
+        "citizen_id":  612,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  613,
+        "citizen_id":  613,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  614,
+        "citizen_id":  614,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  615,
+        "citizen_id":  615,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  616,
+        "citizen_id":  616,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  617,
+        "citizen_id":  617,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  618,
+        "citizen_id":  618,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  619,
+        "citizen_id":  619,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  620,
+        "citizen_id":  620,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  621,
+        "citizen_id":  621,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  622,
+        "citizen_id":  622,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  623,
+        "citizen_id":  623,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  624,
+        "citizen_id":  624,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  625,
+        "citizen_id":  625,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  626,
+        "citizen_id":  626,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  627,
+        "citizen_id":  627,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  628,
+        "citizen_id":  628,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  629,
+        "citizen_id":  629,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  630,
+        "citizen_id":  630,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  631,
+        "citizen_id":  631,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  632,
+        "citizen_id":  632,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  633,
+        "citizen_id":  633,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  634,
+        "citizen_id":  634,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  635,
+        "citizen_id":  635,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  636,
+        "citizen_id":  636,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  637,
+        "citizen_id":  637,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  638,
+        "citizen_id":  638,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  639,
+        "citizen_id":  639,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  640,
+        "citizen_id":  640,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  641,
+        "citizen_id":  641,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  642,
+        "citizen_id":  642,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  643,
+        "citizen_id":  643,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  644,
+        "citizen_id":  644,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  645,
+        "citizen_id":  645,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  646,
+        "citizen_id":  646,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  647,
+        "citizen_id":  647,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  648,
+        "citizen_id":  648,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  649,
+        "citizen_id":  649,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  650,
+        "citizen_id":  650,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  651,
+        "citizen_id":  651,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  652,
+        "citizen_id":  652,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  653,
+        "citizen_id":  653,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  654,
+        "citizen_id":  654,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  655,
+        "citizen_id":  655,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  656,
+        "citizen_id":  656,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  657,
+        "citizen_id":  657,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  658,
+        "citizen_id":  658,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  659,
+        "citizen_id":  659,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  660,
+        "citizen_id":  660,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  661,
+        "citizen_id":  661,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  662,
+        "citizen_id":  662,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  663,
+        "citizen_id":  663,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  664,
+        "citizen_id":  664,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  665,
+        "citizen_id":  665,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  666,
+        "citizen_id":  666,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  667,
+        "citizen_id":  667,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  668,
+        "citizen_id":  668,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  669,
+        "citizen_id":  669,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  670,
+        "citizen_id":  670,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  671,
+        "citizen_id":  671,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  672,
+        "citizen_id":  672,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  673,
+        "citizen_id":  673,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  674,
+        "citizen_id":  674,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  675,
+        "citizen_id":  675,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  676,
+        "citizen_id":  676,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  677,
+        "citizen_id":  677,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  678,
+        "citizen_id":  678,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  679,
+        "citizen_id":  679,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  680,
+        "citizen_id":  680,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  681,
+        "citizen_id":  681,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  682,
+        "citizen_id":  682,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  683,
+        "citizen_id":  683,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  684,
+        "citizen_id":  684,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  685,
+        "citizen_id":  685,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  686,
+        "citizen_id":  686,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  687,
+        "citizen_id":  687,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  688,
+        "citizen_id":  688,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  689,
+        "citizen_id":  689,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  690,
+        "citizen_id":  690,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  691,
+        "citizen_id":  691,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  692,
+        "citizen_id":  692,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  693,
+        "citizen_id":  693,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  694,
+        "citizen_id":  694,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  695,
+        "citizen_id":  695,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  696,
+        "citizen_id":  696,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  697,
+        "citizen_id":  697,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  698,
+        "citizen_id":  698,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  699,
+        "citizen_id":  699,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  700,
+        "citizen_id":  700,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  701,
+        "citizen_id":  701,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  702,
+        "citizen_id":  702,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  703,
+        "citizen_id":  703,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  704,
+        "citizen_id":  704,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  705,
+        "citizen_id":  705,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  706,
+        "citizen_id":  706,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  707,
+        "citizen_id":  707,
+        "status":  "FAKE"
+    },
+    {
+        "id":  708,
+        "citizen_id":  708,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  709,
+        "citizen_id":  709,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  710,
+        "citizen_id":  710,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  711,
+        "citizen_id":  711,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  712,
+        "citizen_id":  712,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  713,
+        "citizen_id":  713,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  714,
+        "citizen_id":  714,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  715,
+        "citizen_id":  715,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  716,
+        "citizen_id":  716,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  717,
+        "citizen_id":  717,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  718,
+        "citizen_id":  718,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  719,
+        "citizen_id":  719,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  720,
+        "citizen_id":  720,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  721,
+        "citizen_id":  721,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  722,
+        "citizen_id":  722,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  723,
+        "citizen_id":  723,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  724,
+        "citizen_id":  724,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  725,
+        "citizen_id":  725,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  726,
+        "citizen_id":  726,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  727,
+        "citizen_id":  727,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  728,
+        "citizen_id":  728,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  729,
+        "citizen_id":  729,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  730,
+        "citizen_id":  730,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  731,
+        "citizen_id":  731,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  732,
+        "citizen_id":  732,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  733,
+        "citizen_id":  733,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  734,
+        "citizen_id":  734,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  735,
+        "citizen_id":  735,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  736,
+        "citizen_id":  736,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  737,
+        "citizen_id":  737,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  738,
+        "citizen_id":  738,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  739,
+        "citizen_id":  739,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  740,
+        "citizen_id":  740,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  741,
+        "citizen_id":  741,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  742,
+        "citizen_id":  742,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  743,
+        "citizen_id":  743,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  744,
+        "citizen_id":  744,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  745,
+        "citizen_id":  745,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  746,
+        "citizen_id":  746,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  747,
+        "citizen_id":  747,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  748,
+        "citizen_id":  748,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  749,
+        "citizen_id":  749,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  750,
+        "citizen_id":  750,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  751,
+        "citizen_id":  751,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  752,
+        "citizen_id":  752,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  753,
+        "citizen_id":  753,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  754,
+        "citizen_id":  754,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  755,
+        "citizen_id":  755,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  756,
+        "citizen_id":  756,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  757,
+        "citizen_id":  757,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  758,
+        "citizen_id":  758,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  759,
+        "citizen_id":  759,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  760,
+        "citizen_id":  760,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  761,
+        "citizen_id":  761,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  762,
+        "citizen_id":  762,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  763,
+        "citizen_id":  763,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  764,
+        "citizen_id":  764,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  765,
+        "citizen_id":  765,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  766,
+        "citizen_id":  766,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  767,
+        "citizen_id":  767,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  768,
+        "citizen_id":  768,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  769,
+        "citizen_id":  769,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  770,
+        "citizen_id":  770,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  771,
+        "citizen_id":  771,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  772,
+        "citizen_id":  772,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  773,
+        "citizen_id":  773,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  774,
+        "citizen_id":  774,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  775,
+        "citizen_id":  775,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  776,
+        "citizen_id":  776,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  777,
+        "citizen_id":  777,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  778,
+        "citizen_id":  778,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  779,
+        "citizen_id":  779,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  780,
+        "citizen_id":  780,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  781,
+        "citizen_id":  781,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  782,
+        "citizen_id":  782,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  783,
+        "citizen_id":  783,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  784,
+        "citizen_id":  784,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  785,
+        "citizen_id":  785,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  786,
+        "citizen_id":  786,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  787,
+        "citizen_id":  787,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  788,
+        "citizen_id":  788,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  789,
+        "citizen_id":  789,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  790,
+        "citizen_id":  790,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  791,
+        "citizen_id":  791,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  792,
+        "citizen_id":  792,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  793,
+        "citizen_id":  793,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  794,
+        "citizen_id":  794,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  795,
+        "citizen_id":  795,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  796,
+        "citizen_id":  796,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  797,
+        "citizen_id":  797,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  798,
+        "citizen_id":  798,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  799,
+        "citizen_id":  799,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  800,
+        "citizen_id":  800,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  801,
+        "citizen_id":  801,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  802,
+        "citizen_id":  802,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  803,
+        "citizen_id":  803,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  804,
+        "citizen_id":  804,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  805,
+        "citizen_id":  805,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  806,
+        "citizen_id":  806,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  807,
+        "citizen_id":  807,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  808,
+        "citizen_id":  808,
+        "status":  "FAKE"
+    },
+    {
+        "id":  809,
+        "citizen_id":  809,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  810,
+        "citizen_id":  810,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  811,
+        "citizen_id":  811,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  812,
+        "citizen_id":  812,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  813,
+        "citizen_id":  813,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  814,
+        "citizen_id":  814,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  815,
+        "citizen_id":  815,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  816,
+        "citizen_id":  816,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  817,
+        "citizen_id":  817,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  818,
+        "citizen_id":  818,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  819,
+        "citizen_id":  819,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  820,
+        "citizen_id":  820,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  821,
+        "citizen_id":  821,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  822,
+        "citizen_id":  822,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  823,
+        "citizen_id":  823,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  824,
+        "citizen_id":  824,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  825,
+        "citizen_id":  825,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  826,
+        "citizen_id":  826,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  827,
+        "citizen_id":  827,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  828,
+        "citizen_id":  828,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  829,
+        "citizen_id":  829,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  830,
+        "citizen_id":  830,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  831,
+        "citizen_id":  831,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  832,
+        "citizen_id":  832,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  833,
+        "citizen_id":  833,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  834,
+        "citizen_id":  834,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  835,
+        "citizen_id":  835,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  836,
+        "citizen_id":  836,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  837,
+        "citizen_id":  837,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  838,
+        "citizen_id":  838,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  839,
+        "citizen_id":  839,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  840,
+        "citizen_id":  840,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  841,
+        "citizen_id":  841,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  842,
+        "citizen_id":  842,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  843,
+        "citizen_id":  843,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  844,
+        "citizen_id":  844,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  845,
+        "citizen_id":  845,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  846,
+        "citizen_id":  846,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  847,
+        "citizen_id":  847,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  848,
+        "citizen_id":  848,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  849,
+        "citizen_id":  849,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  850,
+        "citizen_id":  850,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  851,
+        "citizen_id":  851,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  852,
+        "citizen_id":  852,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  853,
+        "citizen_id":  853,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  854,
+        "citizen_id":  854,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  855,
+        "citizen_id":  855,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  856,
+        "citizen_id":  856,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  857,
+        "citizen_id":  857,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  858,
+        "citizen_id":  858,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  859,
+        "citizen_id":  859,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  860,
+        "citizen_id":  860,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  861,
+        "citizen_id":  861,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  862,
+        "citizen_id":  862,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  863,
+        "citizen_id":  863,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  864,
+        "citizen_id":  864,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  865,
+        "citizen_id":  865,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  866,
+        "citizen_id":  866,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  867,
+        "citizen_id":  867,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  868,
+        "citizen_id":  868,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  869,
+        "citizen_id":  869,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  870,
+        "citizen_id":  870,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  871,
+        "citizen_id":  871,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  872,
+        "citizen_id":  872,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  873,
+        "citizen_id":  873,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  874,
+        "citizen_id":  874,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  875,
+        "citizen_id":  875,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  876,
+        "citizen_id":  876,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  877,
+        "citizen_id":  877,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  878,
+        "citizen_id":  878,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  879,
+        "citizen_id":  879,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  880,
+        "citizen_id":  880,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  881,
+        "citizen_id":  881,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  882,
+        "citizen_id":  882,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  883,
+        "citizen_id":  883,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  884,
+        "citizen_id":  884,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  885,
+        "citizen_id":  885,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  886,
+        "citizen_id":  886,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  887,
+        "citizen_id":  887,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  888,
+        "citizen_id":  888,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  889,
+        "citizen_id":  889,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  890,
+        "citizen_id":  890,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  891,
+        "citizen_id":  891,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  892,
+        "citizen_id":  892,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  893,
+        "citizen_id":  893,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  894,
+        "citizen_id":  894,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  895,
+        "citizen_id":  895,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  896,
+        "citizen_id":  896,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  897,
+        "citizen_id":  897,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  898,
+        "citizen_id":  898,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  899,
+        "citizen_id":  899,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  900,
+        "citizen_id":  900,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  901,
+        "citizen_id":  901,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  902,
+        "citizen_id":  902,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  903,
+        "citizen_id":  903,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  904,
+        "citizen_id":  904,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  905,
+        "citizen_id":  905,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  906,
+        "citizen_id":  906,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  907,
+        "citizen_id":  907,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  908,
+        "citizen_id":  908,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  909,
+        "citizen_id":  909,
+        "status":  "FAKE"
+    },
+    {
+        "id":  910,
+        "citizen_id":  910,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  911,
+        "citizen_id":  911,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  912,
+        "citizen_id":  912,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  913,
+        "citizen_id":  913,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  914,
+        "citizen_id":  914,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  915,
+        "citizen_id":  915,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  916,
+        "citizen_id":  916,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  917,
+        "citizen_id":  917,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  918,
+        "citizen_id":  918,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  919,
+        "citizen_id":  919,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  920,
+        "citizen_id":  920,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  921,
+        "citizen_id":  921,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  922,
+        "citizen_id":  922,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  923,
+        "citizen_id":  923,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  924,
+        "citizen_id":  924,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  925,
+        "citizen_id":  925,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  926,
+        "citizen_id":  926,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  927,
+        "citizen_id":  927,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  928,
+        "citizen_id":  928,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  929,
+        "citizen_id":  929,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  930,
+        "citizen_id":  930,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  931,
+        "citizen_id":  931,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  932,
+        "citizen_id":  932,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  933,
+        "citizen_id":  933,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  934,
+        "citizen_id":  934,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  935,
+        "citizen_id":  935,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  936,
+        "citizen_id":  936,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  937,
+        "citizen_id":  937,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  938,
+        "citizen_id":  938,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  939,
+        "citizen_id":  939,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  940,
+        "citizen_id":  940,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  941,
+        "citizen_id":  941,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  942,
+        "citizen_id":  942,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  943,
+        "citizen_id":  943,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  944,
+        "citizen_id":  944,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  945,
+        "citizen_id":  945,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  946,
+        "citizen_id":  946,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  947,
+        "citizen_id":  947,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  948,
+        "citizen_id":  948,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  949,
+        "citizen_id":  949,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  950,
+        "citizen_id":  950,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  951,
+        "citizen_id":  951,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  952,
+        "citizen_id":  952,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  953,
+        "citizen_id":  953,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  954,
+        "citizen_id":  954,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  955,
+        "citizen_id":  955,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  956,
+        "citizen_id":  956,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  957,
+        "citizen_id":  957,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  958,
+        "citizen_id":  958,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  959,
+        "citizen_id":  959,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  960,
+        "citizen_id":  960,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  961,
+        "citizen_id":  961,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  962,
+        "citizen_id":  962,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  963,
+        "citizen_id":  963,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  964,
+        "citizen_id":  964,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  965,
+        "citizen_id":  965,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  966,
+        "citizen_id":  966,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  967,
+        "citizen_id":  967,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  968,
+        "citizen_id":  968,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  969,
+        "citizen_id":  969,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  970,
+        "citizen_id":  970,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  971,
+        "citizen_id":  971,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  972,
+        "citizen_id":  972,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  973,
+        "citizen_id":  973,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  974,
+        "citizen_id":  974,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  975,
+        "citizen_id":  975,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  976,
+        "citizen_id":  976,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  977,
+        "citizen_id":  977,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  978,
+        "citizen_id":  978,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  979,
+        "citizen_id":  979,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  980,
+        "citizen_id":  980,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  981,
+        "citizen_id":  981,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  982,
+        "citizen_id":  982,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  983,
+        "citizen_id":  983,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  984,
+        "citizen_id":  984,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  985,
+        "citizen_id":  985,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  986,
+        "citizen_id":  986,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  987,
+        "citizen_id":  987,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  988,
+        "citizen_id":  988,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  989,
+        "citizen_id":  989,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  990,
+        "citizen_id":  990,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  991,
+        "citizen_id":  991,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  992,
+        "citizen_id":  992,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  993,
+        "citizen_id":  993,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  994,
+        "citizen_id":  994,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  995,
+        "citizen_id":  995,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  996,
+        "citizen_id":  996,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  997,
+        "citizen_id":  997,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  998,
+        "citizen_id":  998,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  999,
+        "citizen_id":  999,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1000,
+        "citizen_id":  1000,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1001,
+        "citizen_id":  1001,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1002,
+        "citizen_id":  1002,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1003,
+        "citizen_id":  1003,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1004,
+        "citizen_id":  1004,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1005,
+        "citizen_id":  1005,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1006,
+        "citizen_id":  1006,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1007,
+        "citizen_id":  1007,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1008,
+        "citizen_id":  1008,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1009,
+        "citizen_id":  1009,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1010,
+        "citizen_id":  1010,
+        "status":  "FAKE"
+    },
+    {
+        "id":  1011,
+        "citizen_id":  1011,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1012,
+        "citizen_id":  1012,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1013,
+        "citizen_id":  1013,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1014,
+        "citizen_id":  1014,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1015,
+        "citizen_id":  1015,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1016,
+        "citizen_id":  1016,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1017,
+        "citizen_id":  1017,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1018,
+        "citizen_id":  1018,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1019,
+        "citizen_id":  1019,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1020,
+        "citizen_id":  1020,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1021,
+        "citizen_id":  1021,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1022,
+        "citizen_id":  1022,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1023,
+        "citizen_id":  1023,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1024,
+        "citizen_id":  1024,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1025,
+        "citizen_id":  1025,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1026,
+        "citizen_id":  1026,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1027,
+        "citizen_id":  1027,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1028,
+        "citizen_id":  1028,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1029,
+        "citizen_id":  1029,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1030,
+        "citizen_id":  1030,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1031,
+        "citizen_id":  1031,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1032,
+        "citizen_id":  1032,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1033,
+        "citizen_id":  1033,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1034,
+        "citizen_id":  1034,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1035,
+        "citizen_id":  1035,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1036,
+        "citizen_id":  1036,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1037,
+        "citizen_id":  1037,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1038,
+        "citizen_id":  1038,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1039,
+        "citizen_id":  1039,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1040,
+        "citizen_id":  1040,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1041,
+        "citizen_id":  1041,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1042,
+        "citizen_id":  1042,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1043,
+        "citizen_id":  1043,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1044,
+        "citizen_id":  1044,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1045,
+        "citizen_id":  1045,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1046,
+        "citizen_id":  1046,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1047,
+        "citizen_id":  1047,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1048,
+        "citizen_id":  1048,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1049,
+        "citizen_id":  1049,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1050,
+        "citizen_id":  1050,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1051,
+        "citizen_id":  1051,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1052,
+        "citizen_id":  1052,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1053,
+        "citizen_id":  1053,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1054,
+        "citizen_id":  1054,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1055,
+        "citizen_id":  1055,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1056,
+        "citizen_id":  1056,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1057,
+        "citizen_id":  1057,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1058,
+        "citizen_id":  1058,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1059,
+        "citizen_id":  1059,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1060,
+        "citizen_id":  1060,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1061,
+        "citizen_id":  1061,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1062,
+        "citizen_id":  1062,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1063,
+        "citizen_id":  1063,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1064,
+        "citizen_id":  1064,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1065,
+        "citizen_id":  1065,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1066,
+        "citizen_id":  1066,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1067,
+        "citizen_id":  1067,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1068,
+        "citizen_id":  1068,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1069,
+        "citizen_id":  1069,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1070,
+        "citizen_id":  1070,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1071,
+        "citizen_id":  1071,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1072,
+        "citizen_id":  1072,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1073,
+        "citizen_id":  1073,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1074,
+        "citizen_id":  1074,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1075,
+        "citizen_id":  1075,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1076,
+        "citizen_id":  1076,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1077,
+        "citizen_id":  1077,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1078,
+        "citizen_id":  1078,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1079,
+        "citizen_id":  1079,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1080,
+        "citizen_id":  1080,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1081,
+        "citizen_id":  1081,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1082,
+        "citizen_id":  1082,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1083,
+        "citizen_id":  1083,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1084,
+        "citizen_id":  1084,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1085,
+        "citizen_id":  1085,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1086,
+        "citizen_id":  1086,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1087,
+        "citizen_id":  1087,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1088,
+        "citizen_id":  1088,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1089,
+        "citizen_id":  1089,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1090,
+        "citizen_id":  1090,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1091,
+        "citizen_id":  1091,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1092,
+        "citizen_id":  1092,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1093,
+        "citizen_id":  1093,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1094,
+        "citizen_id":  1094,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1095,
+        "citizen_id":  1095,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1096,
+        "citizen_id":  1096,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1097,
+        "citizen_id":  1097,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1098,
+        "citizen_id":  1098,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1099,
+        "citizen_id":  1099,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1100,
+        "citizen_id":  1100,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1101,
+        "citizen_id":  1101,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1102,
+        "citizen_id":  1102,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1103,
+        "citizen_id":  1103,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1104,
+        "citizen_id":  1104,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1105,
+        "citizen_id":  1105,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1106,
+        "citizen_id":  1106,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1107,
+        "citizen_id":  1107,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1108,
+        "citizen_id":  1108,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1109,
+        "citizen_id":  1109,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1110,
+        "citizen_id":  1110,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1111,
+        "citizen_id":  1111,
+        "status":  "FAKE"
+    },
+    {
+        "id":  1112,
+        "citizen_id":  1112,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1113,
+        "citizen_id":  1113,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1114,
+        "citizen_id":  1114,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1115,
+        "citizen_id":  1115,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1116,
+        "citizen_id":  1116,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1117,
+        "citizen_id":  1117,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1118,
+        "citizen_id":  1118,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1119,
+        "citizen_id":  1119,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1120,
+        "citizen_id":  1120,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1121,
+        "citizen_id":  1121,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1122,
+        "citizen_id":  1122,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1123,
+        "citizen_id":  1123,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1124,
+        "citizen_id":  1124,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1125,
+        "citizen_id":  1125,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1126,
+        "citizen_id":  1126,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1127,
+        "citizen_id":  1127,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1128,
+        "citizen_id":  1128,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1129,
+        "citizen_id":  1129,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1130,
+        "citizen_id":  1130,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1131,
+        "citizen_id":  1131,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1132,
+        "citizen_id":  1132,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1133,
+        "citizen_id":  1133,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1134,
+        "citizen_id":  1134,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1135,
+        "citizen_id":  1135,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1136,
+        "citizen_id":  1136,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1137,
+        "citizen_id":  1137,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1138,
+        "citizen_id":  1138,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1139,
+        "citizen_id":  1139,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1140,
+        "citizen_id":  1140,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1141,
+        "citizen_id":  1141,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1142,
+        "citizen_id":  1142,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1143,
+        "citizen_id":  1143,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1144,
+        "citizen_id":  1144,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1145,
+        "citizen_id":  1145,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1146,
+        "citizen_id":  1146,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1147,
+        "citizen_id":  1147,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1148,
+        "citizen_id":  1148,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1149,
+        "citizen_id":  1149,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1150,
+        "citizen_id":  1150,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1151,
+        "citizen_id":  1151,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1152,
+        "citizen_id":  1152,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1153,
+        "citizen_id":  1153,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1154,
+        "citizen_id":  1154,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1155,
+        "citizen_id":  1155,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1156,
+        "citizen_id":  1156,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1157,
+        "citizen_id":  1157,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1158,
+        "citizen_id":  1158,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1159,
+        "citizen_id":  1159,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1160,
+        "citizen_id":  1160,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1161,
+        "citizen_id":  1161,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1162,
+        "citizen_id":  1162,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1163,
+        "citizen_id":  1163,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1164,
+        "citizen_id":  1164,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1165,
+        "citizen_id":  1165,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1166,
+        "citizen_id":  1166,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1167,
+        "citizen_id":  1167,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1168,
+        "citizen_id":  1168,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1169,
+        "citizen_id":  1169,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1170,
+        "citizen_id":  1170,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1171,
+        "citizen_id":  1171,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1172,
+        "citizen_id":  1172,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1173,
+        "citizen_id":  1173,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1174,
+        "citizen_id":  1174,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1175,
+        "citizen_id":  1175,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1176,
+        "citizen_id":  1176,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1177,
+        "citizen_id":  1177,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1178,
+        "citizen_id":  1178,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1179,
+        "citizen_id":  1179,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1180,
+        "citizen_id":  1180,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1181,
+        "citizen_id":  1181,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1182,
+        "citizen_id":  1182,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1183,
+        "citizen_id":  1183,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1184,
+        "citizen_id":  1184,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1185,
+        "citizen_id":  1185,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1186,
+        "citizen_id":  1186,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1187,
+        "citizen_id":  1187,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1188,
+        "citizen_id":  1188,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1189,
+        "citizen_id":  1189,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1190,
+        "citizen_id":  1190,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1191,
+        "citizen_id":  1191,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1192,
+        "citizen_id":  1192,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1193,
+        "citizen_id":  1193,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1194,
+        "citizen_id":  1194,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1195,
+        "citizen_id":  1195,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1196,
+        "citizen_id":  1196,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1197,
+        "citizen_id":  1197,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1198,
+        "citizen_id":  1198,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1199,
+        "citizen_id":  1199,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1200,
+        "citizen_id":  1200,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1201,
+        "citizen_id":  1201,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1202,
+        "citizen_id":  1202,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1203,
+        "citizen_id":  1203,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1204,
+        "citizen_id":  1204,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1205,
+        "citizen_id":  1205,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1206,
+        "citizen_id":  1206,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1207,
+        "citizen_id":  1207,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1208,
+        "citizen_id":  1208,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1209,
+        "citizen_id":  1209,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1210,
+        "citizen_id":  1210,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1211,
+        "citizen_id":  1211,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1212,
+        "citizen_id":  1212,
+        "status":  "FAKE"
+    },
+    {
+        "id":  1213,
+        "citizen_id":  1213,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1214,
+        "citizen_id":  1214,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1215,
+        "citizen_id":  1215,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1216,
+        "citizen_id":  1216,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1217,
+        "citizen_id":  1217,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1218,
+        "citizen_id":  1218,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1219,
+        "citizen_id":  1219,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1220,
+        "citizen_id":  1220,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1221,
+        "citizen_id":  1221,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1222,
+        "citizen_id":  1222,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1223,
+        "citizen_id":  1223,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1224,
+        "citizen_id":  1224,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1225,
+        "citizen_id":  1225,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1226,
+        "citizen_id":  1226,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1227,
+        "citizen_id":  1227,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1228,
+        "citizen_id":  1228,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1229,
+        "citizen_id":  1229,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1230,
+        "citizen_id":  1230,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1231,
+        "citizen_id":  1231,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1232,
+        "citizen_id":  1232,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1233,
+        "citizen_id":  1233,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1234,
+        "citizen_id":  1234,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1235,
+        "citizen_id":  1235,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1236,
+        "citizen_id":  1236,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1237,
+        "citizen_id":  1237,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1238,
+        "citizen_id":  1238,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1239,
+        "citizen_id":  1239,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1240,
+        "citizen_id":  1240,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1241,
+        "citizen_id":  1241,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1242,
+        "citizen_id":  1242,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1243,
+        "citizen_id":  1243,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1244,
+        "citizen_id":  1244,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1245,
+        "citizen_id":  1245,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1246,
+        "citizen_id":  1246,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1247,
+        "citizen_id":  1247,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1248,
+        "citizen_id":  1248,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1249,
+        "citizen_id":  1249,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1250,
+        "citizen_id":  1250,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1251,
+        "citizen_id":  1251,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1252,
+        "citizen_id":  1252,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1253,
+        "citizen_id":  1253,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1254,
+        "citizen_id":  1254,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1255,
+        "citizen_id":  1255,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1256,
+        "citizen_id":  1256,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1257,
+        "citizen_id":  1257,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1258,
+        "citizen_id":  1258,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1259,
+        "citizen_id":  1259,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1260,
+        "citizen_id":  1260,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1261,
+        "citizen_id":  1261,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1262,
+        "citizen_id":  1262,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1263,
+        "citizen_id":  1263,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1264,
+        "citizen_id":  1264,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1265,
+        "citizen_id":  1265,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1266,
+        "citizen_id":  1266,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1267,
+        "citizen_id":  1267,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1268,
+        "citizen_id":  1268,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1269,
+        "citizen_id":  1269,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1270,
+        "citizen_id":  1270,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1271,
+        "citizen_id":  1271,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1272,
+        "citizen_id":  1272,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1273,
+        "citizen_id":  1273,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1274,
+        "citizen_id":  1274,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1275,
+        "citizen_id":  1275,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1276,
+        "citizen_id":  1276,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1277,
+        "citizen_id":  1277,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1278,
+        "citizen_id":  1278,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1279,
+        "citizen_id":  1279,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1280,
+        "citizen_id":  1280,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1281,
+        "citizen_id":  1281,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1282,
+        "citizen_id":  1282,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1283,
+        "citizen_id":  1283,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1284,
+        "citizen_id":  1284,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1285,
+        "citizen_id":  1285,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1286,
+        "citizen_id":  1286,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1287,
+        "citizen_id":  1287,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1288,
+        "citizen_id":  1288,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1289,
+        "citizen_id":  1289,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1290,
+        "citizen_id":  1290,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1291,
+        "citizen_id":  1291,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1292,
+        "citizen_id":  1292,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1293,
+        "citizen_id":  1293,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1294,
+        "citizen_id":  1294,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1295,
+        "citizen_id":  1295,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1296,
+        "citizen_id":  1296,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1297,
+        "citizen_id":  1297,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1298,
+        "citizen_id":  1298,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1299,
+        "citizen_id":  1299,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1300,
+        "citizen_id":  1300,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1301,
+        "citizen_id":  1301,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1302,
+        "citizen_id":  1302,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1303,
+        "citizen_id":  1303,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1304,
+        "citizen_id":  1304,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1305,
+        "citizen_id":  1305,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1306,
+        "citizen_id":  1306,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1307,
+        "citizen_id":  1307,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1308,
+        "citizen_id":  1308,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1309,
+        "citizen_id":  1309,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1310,
+        "citizen_id":  1310,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1311,
+        "citizen_id":  1311,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1312,
+        "citizen_id":  1312,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1313,
+        "citizen_id":  1313,
+        "status":  "FAKE"
+    },
+    {
+        "id":  1314,
+        "citizen_id":  1314,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1315,
+        "citizen_id":  1315,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1316,
+        "citizen_id":  1316,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1317,
+        "citizen_id":  1317,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1318,
+        "citizen_id":  1318,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1319,
+        "citizen_id":  1319,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1320,
+        "citizen_id":  1320,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1321,
+        "citizen_id":  1321,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1322,
+        "citizen_id":  1322,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1323,
+        "citizen_id":  1323,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1324,
+        "citizen_id":  1324,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1325,
+        "citizen_id":  1325,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1326,
+        "citizen_id":  1326,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1327,
+        "citizen_id":  1327,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1328,
+        "citizen_id":  1328,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1329,
+        "citizen_id":  1329,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1330,
+        "citizen_id":  1330,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1331,
+        "citizen_id":  1331,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1332,
+        "citizen_id":  1332,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1333,
+        "citizen_id":  1333,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1334,
+        "citizen_id":  1334,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1335,
+        "citizen_id":  1335,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1336,
+        "citizen_id":  1336,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1337,
+        "citizen_id":  1337,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1338,
+        "citizen_id":  1338,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1339,
+        "citizen_id":  1339,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1340,
+        "citizen_id":  1340,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1341,
+        "citizen_id":  1341,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1342,
+        "citizen_id":  1342,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1343,
+        "citizen_id":  1343,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1344,
+        "citizen_id":  1344,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1345,
+        "citizen_id":  1345,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1346,
+        "citizen_id":  1346,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1347,
+        "citizen_id":  1347,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1348,
+        "citizen_id":  1348,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1349,
+        "citizen_id":  1349,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1350,
+        "citizen_id":  1350,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1351,
+        "citizen_id":  1351,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1352,
+        "citizen_id":  1352,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1353,
+        "citizen_id":  1353,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1354,
+        "citizen_id":  1354,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1355,
+        "citizen_id":  1355,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1356,
+        "citizen_id":  1356,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1357,
+        "citizen_id":  1357,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1358,
+        "citizen_id":  1358,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1359,
+        "citizen_id":  1359,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1360,
+        "citizen_id":  1360,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1361,
+        "citizen_id":  1361,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1362,
+        "citizen_id":  1362,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1363,
+        "citizen_id":  1363,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1364,
+        "citizen_id":  1364,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1365,
+        "citizen_id":  1365,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1366,
+        "citizen_id":  1366,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1367,
+        "citizen_id":  1367,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1368,
+        "citizen_id":  1368,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1369,
+        "citizen_id":  1369,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1370,
+        "citizen_id":  1370,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1371,
+        "citizen_id":  1371,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1372,
+        "citizen_id":  1372,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1373,
+        "citizen_id":  1373,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1374,
+        "citizen_id":  1374,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1375,
+        "citizen_id":  1375,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1376,
+        "citizen_id":  1376,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1377,
+        "citizen_id":  1377,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1378,
+        "citizen_id":  1378,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1379,
+        "citizen_id":  1379,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1380,
+        "citizen_id":  1380,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1381,
+        "citizen_id":  1381,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1382,
+        "citizen_id":  1382,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1383,
+        "citizen_id":  1383,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1384,
+        "citizen_id":  1384,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1385,
+        "citizen_id":  1385,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1386,
+        "citizen_id":  1386,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1387,
+        "citizen_id":  1387,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1388,
+        "citizen_id":  1388,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1389,
+        "citizen_id":  1389,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1390,
+        "citizen_id":  1390,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1391,
+        "citizen_id":  1391,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1392,
+        "citizen_id":  1392,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1393,
+        "citizen_id":  1393,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1394,
+        "citizen_id":  1394,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1395,
+        "citizen_id":  1395,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1396,
+        "citizen_id":  1396,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1397,
+        "citizen_id":  1397,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1398,
+        "citizen_id":  1398,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1399,
+        "citizen_id":  1399,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1400,
+        "citizen_id":  1400,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1401,
+        "citizen_id":  1401,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1402,
+        "citizen_id":  1402,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1403,
+        "citizen_id":  1403,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1404,
+        "citizen_id":  1404,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1405,
+        "citizen_id":  1405,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1406,
+        "citizen_id":  1406,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1407,
+        "citizen_id":  1407,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1408,
+        "citizen_id":  1408,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1409,
+        "citizen_id":  1409,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1410,
+        "citizen_id":  1410,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1411,
+        "citizen_id":  1411,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1412,
+        "citizen_id":  1412,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1413,
+        "citizen_id":  1413,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1414,
+        "citizen_id":  1414,
+        "status":  "FAKE"
+    },
+    {
+        "id":  1415,
+        "citizen_id":  1415,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1416,
+        "citizen_id":  1416,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1417,
+        "citizen_id":  1417,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1418,
+        "citizen_id":  1418,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1419,
+        "citizen_id":  1419,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1420,
+        "citizen_id":  1420,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1421,
+        "citizen_id":  1421,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1422,
+        "citizen_id":  1422,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1423,
+        "citizen_id":  1423,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1424,
+        "citizen_id":  1424,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1425,
+        "citizen_id":  1425,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1426,
+        "citizen_id":  1426,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1427,
+        "citizen_id":  1427,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1428,
+        "citizen_id":  1428,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1429,
+        "citizen_id":  1429,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1430,
+        "citizen_id":  1430,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1431,
+        "citizen_id":  1431,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1432,
+        "citizen_id":  1432,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1433,
+        "citizen_id":  1433,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1434,
+        "citizen_id":  1434,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1435,
+        "citizen_id":  1435,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1436,
+        "citizen_id":  1436,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1437,
+        "citizen_id":  1437,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1438,
+        "citizen_id":  1438,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1439,
+        "citizen_id":  1439,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1440,
+        "citizen_id":  1440,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1441,
+        "citizen_id":  1441,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1442,
+        "citizen_id":  1442,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1443,
+        "citizen_id":  1443,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1444,
+        "citizen_id":  1444,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1445,
+        "citizen_id":  1445,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1446,
+        "citizen_id":  1446,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1447,
+        "citizen_id":  1447,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1448,
+        "citizen_id":  1448,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1449,
+        "citizen_id":  1449,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1450,
+        "citizen_id":  1450,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1451,
+        "citizen_id":  1451,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1452,
+        "citizen_id":  1452,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1453,
+        "citizen_id":  1453,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1454,
+        "citizen_id":  1454,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1455,
+        "citizen_id":  1455,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1456,
+        "citizen_id":  1456,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1457,
+        "citizen_id":  1457,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1458,
+        "citizen_id":  1458,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1459,
+        "citizen_id":  1459,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1460,
+        "citizen_id":  1460,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1461,
+        "citizen_id":  1461,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1462,
+        "citizen_id":  1462,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1463,
+        "citizen_id":  1463,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1464,
+        "citizen_id":  1464,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1465,
+        "citizen_id":  1465,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1466,
+        "citizen_id":  1466,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1467,
+        "citizen_id":  1467,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1468,
+        "citizen_id":  1468,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1469,
+        "citizen_id":  1469,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1470,
+        "citizen_id":  1470,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1471,
+        "citizen_id":  1471,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1472,
+        "citizen_id":  1472,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1473,
+        "citizen_id":  1473,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1474,
+        "citizen_id":  1474,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1475,
+        "citizen_id":  1475,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1476,
+        "citizen_id":  1476,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1477,
+        "citizen_id":  1477,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1478,
+        "citizen_id":  1478,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1479,
+        "citizen_id":  1479,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1480,
+        "citizen_id":  1480,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1481,
+        "citizen_id":  1481,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1482,
+        "citizen_id":  1482,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1483,
+        "citizen_id":  1483,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1484,
+        "citizen_id":  1484,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1485,
+        "citizen_id":  1485,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1486,
+        "citizen_id":  1486,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1487,
+        "citizen_id":  1487,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1488,
+        "citizen_id":  1488,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1489,
+        "citizen_id":  1489,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1490,
+        "citizen_id":  1490,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1491,
+        "citizen_id":  1491,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1492,
+        "citizen_id":  1492,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1493,
+        "citizen_id":  1493,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1494,
+        "citizen_id":  1494,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1495,
+        "citizen_id":  1495,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1496,
+        "citizen_id":  1496,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1497,
+        "citizen_id":  1497,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1498,
+        "citizen_id":  1498,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1499,
+        "citizen_id":  1499,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1500,
+        "citizen_id":  1500,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1501,
+        "citizen_id":  1501,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1502,
+        "citizen_id":  1502,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1503,
+        "citizen_id":  1503,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1504,
+        "citizen_id":  1504,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1505,
+        "citizen_id":  1505,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1506,
+        "citizen_id":  1506,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1507,
+        "citizen_id":  1507,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1508,
+        "citizen_id":  1508,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1509,
+        "citizen_id":  1509,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1510,
+        "citizen_id":  1510,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1511,
+        "citizen_id":  1511,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1512,
+        "citizen_id":  1512,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1513,
+        "citizen_id":  1513,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1514,
+        "citizen_id":  1514,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1515,
+        "citizen_id":  1515,
+        "status":  "FAKE"
+    },
+    {
+        "id":  1516,
+        "citizen_id":  1516,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1517,
+        "citizen_id":  1517,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1518,
+        "citizen_id":  1518,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1519,
+        "citizen_id":  1519,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1520,
+        "citizen_id":  1520,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1521,
+        "citizen_id":  1521,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1522,
+        "citizen_id":  1522,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1523,
+        "citizen_id":  1523,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1524,
+        "citizen_id":  1524,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1525,
+        "citizen_id":  1525,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1526,
+        "citizen_id":  1526,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1527,
+        "citizen_id":  1527,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1528,
+        "citizen_id":  1528,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1529,
+        "citizen_id":  1529,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1530,
+        "citizen_id":  1530,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1531,
+        "citizen_id":  1531,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1532,
+        "citizen_id":  1532,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1533,
+        "citizen_id":  1533,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1534,
+        "citizen_id":  1534,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1535,
+        "citizen_id":  1535,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1536,
+        "citizen_id":  1536,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1537,
+        "citizen_id":  1537,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1538,
+        "citizen_id":  1538,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1539,
+        "citizen_id":  1539,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1540,
+        "citizen_id":  1540,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1541,
+        "citizen_id":  1541,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1542,
+        "citizen_id":  1542,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1543,
+        "citizen_id":  1543,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1544,
+        "citizen_id":  1544,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1545,
+        "citizen_id":  1545,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1546,
+        "citizen_id":  1546,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1547,
+        "citizen_id":  1547,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1548,
+        "citizen_id":  1548,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1549,
+        "citizen_id":  1549,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1550,
+        "citizen_id":  1550,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1551,
+        "citizen_id":  1551,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1552,
+        "citizen_id":  1552,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1553,
+        "citizen_id":  1553,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1554,
+        "citizen_id":  1554,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1555,
+        "citizen_id":  1555,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1556,
+        "citizen_id":  1556,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1557,
+        "citizen_id":  1557,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1558,
+        "citizen_id":  1558,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1559,
+        "citizen_id":  1559,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1560,
+        "citizen_id":  1560,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1561,
+        "citizen_id":  1561,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1562,
+        "citizen_id":  1562,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1563,
+        "citizen_id":  1563,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1564,
+        "citizen_id":  1564,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1565,
+        "citizen_id":  1565,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1566,
+        "citizen_id":  1566,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1567,
+        "citizen_id":  1567,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1568,
+        "citizen_id":  1568,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1569,
+        "citizen_id":  1569,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1570,
+        "citizen_id":  1570,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1571,
+        "citizen_id":  1571,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1572,
+        "citizen_id":  1572,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1573,
+        "citizen_id":  1573,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1574,
+        "citizen_id":  1574,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1575,
+        "citizen_id":  1575,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1576,
+        "citizen_id":  1576,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1577,
+        "citizen_id":  1577,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1578,
+        "citizen_id":  1578,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1579,
+        "citizen_id":  1579,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1580,
+        "citizen_id":  1580,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1581,
+        "citizen_id":  1581,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1582,
+        "citizen_id":  1582,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1583,
+        "citizen_id":  1583,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1584,
+        "citizen_id":  1584,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1585,
+        "citizen_id":  1585,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1586,
+        "citizen_id":  1586,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1587,
+        "citizen_id":  1587,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1588,
+        "citizen_id":  1588,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1589,
+        "citizen_id":  1589,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1590,
+        "citizen_id":  1590,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1591,
+        "citizen_id":  1591,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1592,
+        "citizen_id":  1592,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1593,
+        "citizen_id":  1593,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1594,
+        "citizen_id":  1594,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1595,
+        "citizen_id":  1595,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1596,
+        "citizen_id":  1596,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1597,
+        "citizen_id":  1597,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1598,
+        "citizen_id":  1598,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1599,
+        "citizen_id":  1599,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1600,
+        "citizen_id":  1600,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1601,
+        "citizen_id":  1601,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1602,
+        "citizen_id":  1602,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1603,
+        "citizen_id":  1603,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1604,
+        "citizen_id":  1604,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1605,
+        "citizen_id":  1605,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1606,
+        "citizen_id":  1606,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1607,
+        "citizen_id":  1607,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1608,
+        "citizen_id":  1608,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1609,
+        "citizen_id":  1609,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1610,
+        "citizen_id":  1610,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1611,
+        "citizen_id":  1611,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1612,
+        "citizen_id":  1612,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1613,
+        "citizen_id":  1613,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1614,
+        "citizen_id":  1614,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1615,
+        "citizen_id":  1615,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1616,
+        "citizen_id":  1616,
+        "status":  "FAKE"
+    },
+    {
+        "id":  1617,
+        "citizen_id":  1617,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1618,
+        "citizen_id":  1618,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1619,
+        "citizen_id":  1619,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1620,
+        "citizen_id":  1620,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1621,
+        "citizen_id":  1621,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1622,
+        "citizen_id":  1622,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1623,
+        "citizen_id":  1623,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1624,
+        "citizen_id":  1624,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1625,
+        "citizen_id":  1625,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1626,
+        "citizen_id":  1626,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1627,
+        "citizen_id":  1627,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1628,
+        "citizen_id":  1628,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1629,
+        "citizen_id":  1629,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1630,
+        "citizen_id":  1630,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1631,
+        "citizen_id":  1631,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1632,
+        "citizen_id":  1632,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1633,
+        "citizen_id":  1633,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1634,
+        "citizen_id":  1634,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1635,
+        "citizen_id":  1635,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1636,
+        "citizen_id":  1636,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1637,
+        "citizen_id":  1637,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1638,
+        "citizen_id":  1638,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1639,
+        "citizen_id":  1639,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1640,
+        "citizen_id":  1640,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1641,
+        "citizen_id":  1641,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1642,
+        "citizen_id":  1642,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1643,
+        "citizen_id":  1643,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1644,
+        "citizen_id":  1644,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1645,
+        "citizen_id":  1645,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1646,
+        "citizen_id":  1646,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1647,
+        "citizen_id":  1647,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1648,
+        "citizen_id":  1648,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1649,
+        "citizen_id":  1649,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1650,
+        "citizen_id":  1650,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1651,
+        "citizen_id":  1651,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1652,
+        "citizen_id":  1652,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1653,
+        "citizen_id":  1653,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1654,
+        "citizen_id":  1654,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1655,
+        "citizen_id":  1655,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1656,
+        "citizen_id":  1656,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1657,
+        "citizen_id":  1657,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1658,
+        "citizen_id":  1658,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1659,
+        "citizen_id":  1659,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1660,
+        "citizen_id":  1660,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1661,
+        "citizen_id":  1661,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1662,
+        "citizen_id":  1662,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1663,
+        "citizen_id":  1663,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1664,
+        "citizen_id":  1664,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1665,
+        "citizen_id":  1665,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1666,
+        "citizen_id":  1666,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1667,
+        "citizen_id":  1667,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1668,
+        "citizen_id":  1668,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1669,
+        "citizen_id":  1669,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1670,
+        "citizen_id":  1670,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1671,
+        "citizen_id":  1671,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1672,
+        "citizen_id":  1672,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1673,
+        "citizen_id":  1673,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1674,
+        "citizen_id":  1674,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1675,
+        "citizen_id":  1675,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1676,
+        "citizen_id":  1676,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1677,
+        "citizen_id":  1677,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1678,
+        "citizen_id":  1678,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1679,
+        "citizen_id":  1679,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1680,
+        "citizen_id":  1680,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1681,
+        "citizen_id":  1681,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1682,
+        "citizen_id":  1682,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1683,
+        "citizen_id":  1683,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1684,
+        "citizen_id":  1684,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1685,
+        "citizen_id":  1685,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1686,
+        "citizen_id":  1686,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1687,
+        "citizen_id":  1687,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1688,
+        "citizen_id":  1688,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1689,
+        "citizen_id":  1689,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1690,
+        "citizen_id":  1690,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1691,
+        "citizen_id":  1691,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1692,
+        "citizen_id":  1692,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1693,
+        "citizen_id":  1693,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1694,
+        "citizen_id":  1694,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1695,
+        "citizen_id":  1695,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1696,
+        "citizen_id":  1696,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1697,
+        "citizen_id":  1697,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1698,
+        "citizen_id":  1698,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1699,
+        "citizen_id":  1699,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1700,
+        "citizen_id":  1700,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1701,
+        "citizen_id":  1701,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1702,
+        "citizen_id":  1702,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1703,
+        "citizen_id":  1703,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1704,
+        "citizen_id":  1704,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1705,
+        "citizen_id":  1705,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1706,
+        "citizen_id":  1706,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1707,
+        "citizen_id":  1707,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1708,
+        "citizen_id":  1708,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1709,
+        "citizen_id":  1709,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1710,
+        "citizen_id":  1710,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1711,
+        "citizen_id":  1711,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1712,
+        "citizen_id":  1712,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1713,
+        "citizen_id":  1713,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1714,
+        "citizen_id":  1714,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1715,
+        "citizen_id":  1715,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1716,
+        "citizen_id":  1716,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1717,
+        "citizen_id":  1717,
+        "status":  "FAKE"
+    },
+    {
+        "id":  1718,
+        "citizen_id":  1718,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1719,
+        "citizen_id":  1719,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1720,
+        "citizen_id":  1720,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1721,
+        "citizen_id":  1721,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1722,
+        "citizen_id":  1722,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1723,
+        "citizen_id":  1723,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1724,
+        "citizen_id":  1724,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1725,
+        "citizen_id":  1725,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1726,
+        "citizen_id":  1726,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1727,
+        "citizen_id":  1727,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1728,
+        "citizen_id":  1728,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1729,
+        "citizen_id":  1729,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1730,
+        "citizen_id":  1730,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1731,
+        "citizen_id":  1731,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1732,
+        "citizen_id":  1732,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1733,
+        "citizen_id":  1733,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1734,
+        "citizen_id":  1734,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1735,
+        "citizen_id":  1735,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1736,
+        "citizen_id":  1736,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1737,
+        "citizen_id":  1737,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1738,
+        "citizen_id":  1738,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1739,
+        "citizen_id":  1739,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1740,
+        "citizen_id":  1740,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1741,
+        "citizen_id":  1741,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1742,
+        "citizen_id":  1742,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1743,
+        "citizen_id":  1743,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1744,
+        "citizen_id":  1744,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1745,
+        "citizen_id":  1745,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1746,
+        "citizen_id":  1746,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1747,
+        "citizen_id":  1747,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1748,
+        "citizen_id":  1748,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1749,
+        "citizen_id":  1749,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1750,
+        "citizen_id":  1750,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1751,
+        "citizen_id":  1751,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1752,
+        "citizen_id":  1752,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1753,
+        "citizen_id":  1753,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1754,
+        "citizen_id":  1754,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1755,
+        "citizen_id":  1755,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1756,
+        "citizen_id":  1756,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1757,
+        "citizen_id":  1757,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1758,
+        "citizen_id":  1758,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1759,
+        "citizen_id":  1759,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1760,
+        "citizen_id":  1760,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1761,
+        "citizen_id":  1761,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1762,
+        "citizen_id":  1762,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1763,
+        "citizen_id":  1763,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1764,
+        "citizen_id":  1764,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1765,
+        "citizen_id":  1765,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1766,
+        "citizen_id":  1766,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1767,
+        "citizen_id":  1767,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1768,
+        "citizen_id":  1768,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1769,
+        "citizen_id":  1769,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1770,
+        "citizen_id":  1770,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1771,
+        "citizen_id":  1771,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1772,
+        "citizen_id":  1772,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1773,
+        "citizen_id":  1773,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1774,
+        "citizen_id":  1774,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1775,
+        "citizen_id":  1775,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1776,
+        "citizen_id":  1776,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1777,
+        "citizen_id":  1777,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1778,
+        "citizen_id":  1778,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1779,
+        "citizen_id":  1779,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1780,
+        "citizen_id":  1780,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1781,
+        "citizen_id":  1781,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1782,
+        "citizen_id":  1782,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1783,
+        "citizen_id":  1783,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1784,
+        "citizen_id":  1784,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1785,
+        "citizen_id":  1785,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1786,
+        "citizen_id":  1786,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1787,
+        "citizen_id":  1787,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1788,
+        "citizen_id":  1788,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1789,
+        "citizen_id":  1789,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1790,
+        "citizen_id":  1790,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1791,
+        "citizen_id":  1791,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1792,
+        "citizen_id":  1792,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1793,
+        "citizen_id":  1793,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1794,
+        "citizen_id":  1794,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1795,
+        "citizen_id":  1795,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1796,
+        "citizen_id":  1796,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1797,
+        "citizen_id":  1797,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1798,
+        "citizen_id":  1798,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1799,
+        "citizen_id":  1799,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1800,
+        "citizen_id":  1800,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1801,
+        "citizen_id":  1801,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1802,
+        "citizen_id":  1802,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1803,
+        "citizen_id":  1803,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1804,
+        "citizen_id":  1804,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1805,
+        "citizen_id":  1805,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1806,
+        "citizen_id":  1806,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1807,
+        "citizen_id":  1807,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1808,
+        "citizen_id":  1808,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1809,
+        "citizen_id":  1809,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1810,
+        "citizen_id":  1810,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1811,
+        "citizen_id":  1811,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1812,
+        "citizen_id":  1812,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1813,
+        "citizen_id":  1813,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1814,
+        "citizen_id":  1814,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1815,
+        "citizen_id":  1815,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1816,
+        "citizen_id":  1816,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1817,
+        "citizen_id":  1817,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1818,
+        "citizen_id":  1818,
+        "status":  "FAKE"
+    },
+    {
+        "id":  1819,
+        "citizen_id":  1819,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1820,
+        "citizen_id":  1820,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1821,
+        "citizen_id":  1821,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1822,
+        "citizen_id":  1822,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1823,
+        "citizen_id":  1823,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1824,
+        "citizen_id":  1824,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1825,
+        "citizen_id":  1825,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1826,
+        "citizen_id":  1826,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1827,
+        "citizen_id":  1827,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1828,
+        "citizen_id":  1828,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1829,
+        "citizen_id":  1829,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1830,
+        "citizen_id":  1830,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1831,
+        "citizen_id":  1831,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1832,
+        "citizen_id":  1832,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1833,
+        "citizen_id":  1833,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1834,
+        "citizen_id":  1834,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1835,
+        "citizen_id":  1835,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1836,
+        "citizen_id":  1836,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1837,
+        "citizen_id":  1837,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1838,
+        "citizen_id":  1838,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1839,
+        "citizen_id":  1839,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1840,
+        "citizen_id":  1840,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1841,
+        "citizen_id":  1841,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1842,
+        "citizen_id":  1842,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1843,
+        "citizen_id":  1843,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1844,
+        "citizen_id":  1844,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1845,
+        "citizen_id":  1845,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1846,
+        "citizen_id":  1846,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1847,
+        "citizen_id":  1847,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1848,
+        "citizen_id":  1848,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1849,
+        "citizen_id":  1849,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1850,
+        "citizen_id":  1850,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1851,
+        "citizen_id":  1851,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1852,
+        "citizen_id":  1852,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1853,
+        "citizen_id":  1853,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1854,
+        "citizen_id":  1854,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1855,
+        "citizen_id":  1855,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1856,
+        "citizen_id":  1856,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1857,
+        "citizen_id":  1857,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1858,
+        "citizen_id":  1858,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1859,
+        "citizen_id":  1859,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1860,
+        "citizen_id":  1860,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1861,
+        "citizen_id":  1861,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1862,
+        "citizen_id":  1862,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1863,
+        "citizen_id":  1863,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1864,
+        "citizen_id":  1864,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1865,
+        "citizen_id":  1865,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1866,
+        "citizen_id":  1866,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1867,
+        "citizen_id":  1867,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1868,
+        "citizen_id":  1868,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1869,
+        "citizen_id":  1869,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1870,
+        "citizen_id":  1870,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1871,
+        "citizen_id":  1871,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1872,
+        "citizen_id":  1872,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1873,
+        "citizen_id":  1873,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1874,
+        "citizen_id":  1874,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1875,
+        "citizen_id":  1875,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1876,
+        "citizen_id":  1876,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1877,
+        "citizen_id":  1877,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1878,
+        "citizen_id":  1878,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1879,
+        "citizen_id":  1879,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1880,
+        "citizen_id":  1880,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1881,
+        "citizen_id":  1881,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1882,
+        "citizen_id":  1882,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1883,
+        "citizen_id":  1883,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1884,
+        "citizen_id":  1884,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1885,
+        "citizen_id":  1885,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1886,
+        "citizen_id":  1886,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1887,
+        "citizen_id":  1887,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1888,
+        "citizen_id":  1888,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1889,
+        "citizen_id":  1889,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1890,
+        "citizen_id":  1890,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1891,
+        "citizen_id":  1891,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1892,
+        "citizen_id":  1892,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1893,
+        "citizen_id":  1893,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1894,
+        "citizen_id":  1894,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1895,
+        "citizen_id":  1895,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1896,
+        "citizen_id":  1896,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1897,
+        "citizen_id":  1897,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1898,
+        "citizen_id":  1898,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1899,
+        "citizen_id":  1899,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1900,
+        "citizen_id":  1900,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1901,
+        "citizen_id":  1901,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1902,
+        "citizen_id":  1902,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1903,
+        "citizen_id":  1903,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1904,
+        "citizen_id":  1904,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1905,
+        "citizen_id":  1905,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1906,
+        "citizen_id":  1906,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1907,
+        "citizen_id":  1907,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1908,
+        "citizen_id":  1908,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1909,
+        "citizen_id":  1909,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1910,
+        "citizen_id":  1910,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1911,
+        "citizen_id":  1911,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1912,
+        "citizen_id":  1912,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1913,
+        "citizen_id":  1913,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1914,
+        "citizen_id":  1914,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1915,
+        "citizen_id":  1915,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1916,
+        "citizen_id":  1916,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1917,
+        "citizen_id":  1917,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1918,
+        "citizen_id":  1918,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1919,
+        "citizen_id":  1919,
+        "status":  "FAKE"
+    },
+    {
+        "id":  1920,
+        "citizen_id":  1920,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1921,
+        "citizen_id":  1921,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1922,
+        "citizen_id":  1922,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1923,
+        "citizen_id":  1923,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1924,
+        "citizen_id":  1924,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1925,
+        "citizen_id":  1925,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1926,
+        "citizen_id":  1926,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1927,
+        "citizen_id":  1927,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1928,
+        "citizen_id":  1928,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1929,
+        "citizen_id":  1929,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1930,
+        "citizen_id":  1930,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1931,
+        "citizen_id":  1931,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1932,
+        "citizen_id":  1932,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1933,
+        "citizen_id":  1933,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1934,
+        "citizen_id":  1934,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1935,
+        "citizen_id":  1935,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1936,
+        "citizen_id":  1936,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1937,
+        "citizen_id":  1937,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1938,
+        "citizen_id":  1938,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1939,
+        "citizen_id":  1939,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1940,
+        "citizen_id":  1940,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1941,
+        "citizen_id":  1941,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1942,
+        "citizen_id":  1942,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1943,
+        "citizen_id":  1943,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1944,
+        "citizen_id":  1944,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1945,
+        "citizen_id":  1945,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1946,
+        "citizen_id":  1946,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1947,
+        "citizen_id":  1947,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1948,
+        "citizen_id":  1948,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1949,
+        "citizen_id":  1949,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1950,
+        "citizen_id":  1950,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1951,
+        "citizen_id":  1951,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1952,
+        "citizen_id":  1952,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1953,
+        "citizen_id":  1953,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1954,
+        "citizen_id":  1954,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1955,
+        "citizen_id":  1955,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1956,
+        "citizen_id":  1956,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1957,
+        "citizen_id":  1957,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1958,
+        "citizen_id":  1958,
+        "status":  "REVOKED"
+    },
+    {
+        "id":  1959,
+        "citizen_id":  1959,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1960,
+        "citizen_id":  1960,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1961,
+        "citizen_id":  1961,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1962,
+        "citizen_id":  1962,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1963,
+        "citizen_id":  1963,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1964,
+        "citizen_id":  1964,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1965,
+        "citizen_id":  1965,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1966,
+        "citizen_id":  1966,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1967,
+        "citizen_id":  1967,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1968,
+        "citizen_id":  1968,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1969,
+        "citizen_id":  1969,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1970,
+        "citizen_id":  1970,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1971,
+        "citizen_id":  1971,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1972,
+        "citizen_id":  1972,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1973,
+        "citizen_id":  1973,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1974,
+        "citizen_id":  1974,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1975,
+        "citizen_id":  1975,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1976,
+        "citizen_id":  1976,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1977,
+        "citizen_id":  1977,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1978,
+        "citizen_id":  1978,
+        "status":  "SUSPENDED"
+    },
+    {
+        "id":  1979,
+        "citizen_id":  1979,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1980,
+        "citizen_id":  1980,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1981,
+        "citizen_id":  1981,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1982,
+        "citizen_id":  1982,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1983,
+        "citizen_id":  1983,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1984,
+        "citizen_id":  1984,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1985,
+        "citizen_id":  1985,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1986,
+        "citizen_id":  1986,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1987,
+        "citizen_id":  1987,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1988,
+        "citizen_id":  1988,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1989,
+        "citizen_id":  1989,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1990,
+        "citizen_id":  1990,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1991,
+        "citizen_id":  1991,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1992,
+        "citizen_id":  1992,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1993,
+        "citizen_id":  1993,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1994,
+        "citizen_id":  1994,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1995,
+        "citizen_id":  1995,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1996,
+        "citizen_id":  1996,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  1997,
+        "citizen_id":  1997,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1998,
+        "citizen_id":  1998,
+        "status":  "ACTIVE"
+    },
+    {
+        "id":  1999,
+        "citizen_id":  1999,
+        "status":  "EXPIRED"
+    },
+    {
+        "id":  2000,
+        "citizen_id":  2000,
+        "status":  "ACTIVE"
+    }
+]

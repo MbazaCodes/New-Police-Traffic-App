@@ -1,0 +1,601 @@
+﻿"id","case_number","citizen_id","officer_id","station_id","case_type","summary","status","opened_at","closed_at"
+"1","TZP-2026-000001","1","1","1","Public Safety Violation","Synthetic case summary 1","OPEN","4/25/2026 3:00:00 AM",
+"2","TZP-2026-000002","2","2","2","Public Safety Violation","Synthetic case summary 2","UNDER_INVESTIGATION","6/30/2026 11:00:00 PM",
+"3","TZP-2026-000003","3","3","3","Vehicle Theft","Synthetic case summary 3","CLOSED","5/17/2026 4:00:00 PM","7/1/2026 4:00:00 PM"
+"4","TZP-2026-000004","4","4","4","Traffic Collision","Synthetic case summary 4","OPEN","4/3/2026 9:00:00 AM",
+"5","TZP-2026-000005","5","5","5","Traffic Collision","Synthetic case summary 5","UNDER_INVESTIGATION","6/27/2026 8:00:00 PM",
+"6","TZP-2026-000006","6","6","6","Hit and Run","Synthetic case summary 6","CLOSED","11/16/2026 10:00:00 PM","12/5/2026 10:00:00 PM"
+"7","TZP-2026-000007","7","7","7","Traffic Collision","Synthetic case summary 7","OPEN","3/2/2026 9:00:00 PM",
+"8","TZP-2026-000008","8","8","8","Public Safety Violation","Synthetic case summary 8","UNDER_INVESTIGATION","4/7/2026 8:00:00 AM",
+"9","TZP-2026-000009","9","9","9","Traffic Collision","Synthetic case summary 9","CLOSED","8/10/2026 3:00:00 PM","8/27/2026 3:00:00 PM"
+"10","TZP-2026-000010","10","10","10","Vehicle Theft","Synthetic case summary 10","OPEN","1/5/2026 6:00:00 PM",
+"11","TZP-2026-000011","11","11","11","Traffic Collision","Synthetic case summary 11","UNDER_INVESTIGATION","8/15/2026 9:00:00 PM",
+"12","TZP-2026-000012","12","12","12","Hit and Run","Synthetic case summary 12","CLOSED","12/21/2026 12:00:00 PM","2/17/2027 12:00:00 PM"
+"13","TZP-2026-000013","13","13","13","Vehicle Theft","Synthetic case summary 13","OPEN","2/26/2026 9:00:00 AM",
+"14","TZP-2026-000014","14","14","14","Hit and Run","Synthetic case summary 14","UNDER_INVESTIGATION","5/24/2026 12:00:00 AM",
+"15","TZP-2026-000015","15","15","15","License Fraud","Synthetic case summary 15","CLOSED","6/26/2026 9:00:00 PM","8/12/2026 9:00:00 PM"
+"16","TZP-2026-000016","16","16","16","Public Safety Violation","Synthetic case summary 16","OPEN","7/31/2026 9:00:00 AM",
+"17","TZP-2026-000017","17","17","17","Vehicle Theft","Synthetic case summary 17","UNDER_INVESTIGATION","11/1/2026 2:00:00 AM",
+"18","TZP-2026-000018","18","18","18","Traffic Collision","Synthetic case summary 18","CLOSED","12/23/2026 1:00:00 PM","12/31/2026 1:00:00 PM"
+"19","TZP-2026-000019","19","19","19","Vehicle Theft","Synthetic case summary 19","OPEN","5/3/2026 5:00:00 PM",
+"20","TZP-2026-000020","20","20","20","Vehicle Theft","Synthetic case summary 20","UNDER_INVESTIGATION","7/23/2026 11:00:00 AM",
+"21","TZP-2026-000021","21","21","1","License Fraud","Synthetic case summary 21","CLOSED","12/6/2026 1:00:00 PM","1/10/2027 1:00:00 PM"
+"22","TZP-2026-000022","22","22","2","Public Safety Violation","Synthetic case summary 22","OPEN","2/28/2026 8:00:00 AM",
+"23","TZP-2026-000023","23","23","3","License Fraud","Synthetic case summary 23","UNDER_INVESTIGATION","1/29/2026 2:00:00 AM",
+"24","TZP-2026-000024","24","24","4","Public Safety Violation","Synthetic case summary 24","CLOSED","5/15/2026 6:00:00 PM","5/29/2026 6:00:00 PM"
+"25","TZP-2026-000025","25","25","5","Public Safety Violation","Synthetic case summary 25","OPEN","5/13/2026 4:00:00 PM",
+"26","TZP-2026-000026","26","26","6","License Fraud","Synthetic case summary 26","UNDER_INVESTIGATION","7/4/2026 2:00:00 PM",
+"27","TZP-2026-000027","27","27","7","Vehicle Theft","Synthetic case summary 27","CLOSED","10/27/2026 3:00:00 PM","11/27/2026 3:00:00 PM"
+"28","TZP-2026-000028","28","28","8","Vehicle Theft","Synthetic case summary 28","OPEN","2/15/2026 10:00:00 AM",
+"29","TZP-2026-000029","29","29","9","Vehicle Theft","Synthetic case summary 29","UNDER_INVESTIGATION","11/6/2026 9:00:00 PM",
+"30","TZP-2026-000030","30","30","10","Vehicle Theft","Synthetic case summary 30","CLOSED","12/19/2026 11:00:00 PM","2/12/2027 11:00:00 PM"
+"31","TZP-2026-000031","31","31","11","Hit and Run","Synthetic case summary 31","OPEN","6/14/2026 10:00:00 PM",
+"32","TZP-2026-000032","32","32","12","Hit and Run","Synthetic case summary 32","UNDER_INVESTIGATION","1/6/2026 2:00:00 PM",
+"33","TZP-2026-000033","33","33","13","Hit and Run","Synthetic case summary 33","CLOSED","6/4/2026 8:00:00 PM","7/17/2026 8:00:00 PM"
+"34","TZP-2026-000034","34","34","14","Hit and Run","Synthetic case summary 34","OPEN","1/17/2026 4:00:00 AM",
+"35","TZP-2026-000035","35","35","15","License Fraud","Synthetic case summary 35","UNDER_INVESTIGATION","2/20/2026 6:00:00 PM",
+"36","TZP-2026-000036","36","36","16","Public Safety Violation","Synthetic case summary 36","CLOSED","11/7/2026 9:00:00 PM","1/2/2027 9:00:00 PM"
+"37","TZP-2026-000037","37","1","17","Traffic Collision","Synthetic case summary 37","OPEN","8/30/2026 6:00:00 AM",
+"38","TZP-2026-000038","38","2","18","License Fraud","Synthetic case summary 38","UNDER_INVESTIGATION","2/1/2026 3:00:00 PM",
+"39","TZP-2026-000039","39","3","19","License Fraud","Synthetic case summary 39","CLOSED","12/3/2026 2:00:00 AM","12/14/2026 2:00:00 AM"
+"40","TZP-2026-000040","40","4","20","Public Safety Violation","Synthetic case summary 40","OPEN","10/28/2026 9:00:00 AM",
+"41","TZP-2026-000041","41","5","1","Vehicle Theft","Synthetic case summary 41","UNDER_INVESTIGATION","9/4/2026 12:00:00 PM",
+"42","TZP-2026-000042","42","6","2","Hit and Run","Synthetic case summary 42","CLOSED","5/17/2026 8:00:00 PM","7/8/2026 8:00:00 PM"
+"43","TZP-2026-000043","43","7","3","Public Safety Violation","Synthetic case summary 43","OPEN","3/16/2026 10:00:00 PM",
+"44","TZP-2026-000044","44","8","4","Public Safety Violation","Synthetic case summary 44","UNDER_INVESTIGATION","3/15/2026 10:00:00 AM",
+"45","TZP-2026-000045","45","9","5","Hit and Run","Synthetic case summary 45","CLOSED","2/10/2026 6:00:00 AM","2/16/2026 6:00:00 AM"
+"46","TZP-2026-000046","46","10","6","Traffic Collision","Synthetic case summary 46","OPEN","7/31/2026 1:00:00 AM",
+"47","TZP-2026-000047","47","11","7","Traffic Collision","Synthetic case summary 47","UNDER_INVESTIGATION","1/29/2026 9:00:00 PM",
+"48","TZP-2026-000048","48","12","8","Public Safety Violation","Synthetic case summary 48","CLOSED","11/16/2026 5:00:00 AM","12/9/2026 5:00:00 AM"
+"49","TZP-2026-000049","49","13","9","License Fraud","Synthetic case summary 49","OPEN","4/29/2026 7:00:00 AM",
+"50","TZP-2026-000050","50","14","10","License Fraud","Synthetic case summary 50","UNDER_INVESTIGATION","1/17/2026 11:00:00 AM",
+"51","TZP-2026-000051","51","15","11","Hit and Run","Synthetic case summary 51","CLOSED","5/3/2026 3:00:00 PM","6/8/2026 3:00:00 PM"
+"52","TZP-2026-000052","52","16","12","Traffic Collision","Synthetic case summary 52","OPEN","4/6/2026 11:00:00 PM",
+"53","TZP-2026-000053","53","17","13","License Fraud","Synthetic case summary 53","UNDER_INVESTIGATION","7/29/2026 3:00:00 PM",
+"54","TZP-2026-000054","54","18","14","License Fraud","Synthetic case summary 54","CLOSED","5/9/2026 8:00:00 PM","6/16/2026 8:00:00 PM"
+"55","TZP-2026-000055","55","19","15","Traffic Collision","Synthetic case summary 55","OPEN","8/16/2026 3:00:00 PM",
+"56","TZP-2026-000056","56","20","16","License Fraud","Synthetic case summary 56","UNDER_INVESTIGATION","12/5/2026 2:00:00 AM",
+"57","TZP-2026-000057","57","21","17","Hit and Run","Synthetic case summary 57","CLOSED","5/13/2026 6:00:00 PM","6/29/2026 6:00:00 PM"
+"58","TZP-2026-000058","58","22","18","Vehicle Theft","Synthetic case summary 58","OPEN","7/26/2026 3:00:00 AM",
+"59","TZP-2026-000059","59","23","19","Public Safety Violation","Synthetic case summary 59","UNDER_INVESTIGATION","12/29/2026 1:00:00 AM",
+"60","TZP-2026-000060","60","24","20","License Fraud","Synthetic case summary 60","CLOSED","4/6/2026 9:00:00 PM","5/18/2026 9:00:00 PM"
+"61","TZP-2026-000061","61","25","1","License Fraud","Synthetic case summary 61","OPEN","8/5/2026 11:00:00 AM",
+"62","TZP-2026-000062","62","26","2","Vehicle Theft","Synthetic case summary 62","UNDER_INVESTIGATION","10/9/2026 11:00:00 PM",
+"63","TZP-2026-000063","63","27","3","Traffic Collision","Synthetic case summary 63","CLOSED","1/12/2026 10:00:00 AM","2/7/2026 10:00:00 AM"
+"64","TZP-2026-000064","64","28","4","License Fraud","Synthetic case summary 64","OPEN","10/27/2026 12:00:00 AM",
+"65","TZP-2026-000065","65","29","5","License Fraud","Synthetic case summary 65","UNDER_INVESTIGATION","8/30/2026 6:00:00 AM",
+"66","TZP-2026-000066","66","30","6","License Fraud","Synthetic case summary 66","CLOSED","4/15/2026 6:00:00 PM","6/10/2026 6:00:00 PM"
+"67","TZP-2026-000067","67","31","7","Public Safety Violation","Synthetic case summary 67","OPEN","4/15/2026 1:00:00 PM",
+"68","TZP-2026-000068","68","32","8","Traffic Collision","Synthetic case summary 68","UNDER_INVESTIGATION","3/28/2026 6:00:00 PM",
+"69","TZP-2026-000069","69","33","9","License Fraud","Synthetic case summary 69","CLOSED","7/7/2026 12:00:00 AM","8/8/2026 12:00:00 AM"
+"70","TZP-2026-000070","70","34","10","Traffic Collision","Synthetic case summary 70","OPEN","6/16/2026 11:00:00 AM",
+"71","TZP-2026-000071","71","35","11","Traffic Collision","Synthetic case summary 71","UNDER_INVESTIGATION","11/3/2026 2:00:00 AM",
+"72","TZP-2026-000072","72","36","12","Vehicle Theft","Synthetic case summary 72","CLOSED","12/20/2026 6:00:00 AM","2/13/2027 6:00:00 AM"
+"73","TZP-2026-000073","73","1","13","Hit and Run","Synthetic case summary 73","OPEN","9/26/2026 9:00:00 PM",
+"74","TZP-2026-000074","74","2","14","Vehicle Theft","Synthetic case summary 74","UNDER_INVESTIGATION","8/11/2026 1:00:00 PM",
+"75","TZP-2026-000075","75","3","15","Hit and Run","Synthetic case summary 75","CLOSED","7/14/2026 7:00:00 PM","8/26/2026 7:00:00 PM"
+"76","TZP-2026-000076","76","4","16","Public Safety Violation","Synthetic case summary 76","OPEN","8/10/2026 12:00:00 PM",
+"77","TZP-2026-000077","77","5","17","Traffic Collision","Synthetic case summary 77","UNDER_INVESTIGATION","12/25/2026 12:00:00 PM",
+"78","TZP-2026-000078","78","6","18","Public Safety Violation","Synthetic case summary 78","CLOSED","8/12/2026 10:00:00 AM","8/14/2026 10:00:00 AM"
+"79","TZP-2026-000079","79","7","19","Public Safety Violation","Synthetic case summary 79","OPEN","1/26/2026 11:00:00 PM",
+"80","TZP-2026-000080","80","8","20","Hit and Run","Synthetic case summary 80","UNDER_INVESTIGATION","9/10/2026 5:00:00 PM",
+"81","TZP-2026-000081","81","9","1","Traffic Collision","Synthetic case summary 81","CLOSED","11/22/2026 6:00:00 PM","12/24/2026 6:00:00 PM"
+"82","TZP-2026-000082","82","10","2","Public Safety Violation","Synthetic case summary 82","OPEN","9/16/2026 12:00:00 AM",
+"83","TZP-2026-000083","83","11","3","Hit and Run","Synthetic case summary 83","UNDER_INVESTIGATION","6/6/2026 11:00:00 PM",
+"84","TZP-2026-000084","84","12","4","Hit and Run","Synthetic case summary 84","CLOSED","3/18/2026 5:00:00 AM","4/28/2026 5:00:00 AM"
+"85","TZP-2026-000085","85","13","5","Hit and Run","Synthetic case summary 85","OPEN","8/5/2026 4:00:00 PM",
+"86","TZP-2026-000086","86","14","6","Public Safety Violation","Synthetic case summary 86","UNDER_INVESTIGATION","2/28/2026 3:00:00 AM",
+"87","TZP-2026-000087","87","15","7","Traffic Collision","Synthetic case summary 87","CLOSED","7/13/2026 3:00:00 AM","8/2/2026 3:00:00 AM"
+"88","TZP-2026-000088","88","16","8","Hit and Run","Synthetic case summary 88","OPEN","7/17/2026 12:00:00 PM",
+"89","TZP-2026-000089","89","17","9","License Fraud","Synthetic case summary 89","UNDER_INVESTIGATION","1/22/2026 10:00:00 AM",
+"90","TZP-2026-000090","90","18","10","Traffic Collision","Synthetic case summary 90","CLOSED","12/24/2026 3:00:00 PM","2/15/2027 3:00:00 PM"
+"91","TZP-2026-000091","91","19","11","Hit and Run","Synthetic case summary 91","OPEN","8/24/2026 6:00:00 PM",
+"92","TZP-2026-000092","92","20","12","Vehicle Theft","Synthetic case summary 92","UNDER_INVESTIGATION","8/12/2026 3:00:00 PM",
+"93","TZP-2026-000093","93","21","13","Traffic Collision","Synthetic case summary 93","CLOSED","9/3/2026 12:00:00 PM","11/1/2026 12:00:00 PM"
+"94","TZP-2026-000094","94","22","14","License Fraud","Synthetic case summary 94","OPEN","10/31/2026 8:00:00 AM",
+"95","TZP-2026-000095","95","23","15","Hit and Run","Synthetic case summary 95","UNDER_INVESTIGATION","10/21/2026 6:00:00 AM",
+"96","TZP-2026-000096","96","24","16","License Fraud","Synthetic case summary 96","CLOSED","9/9/2026 6:00:00 PM","10/12/2026 6:00:00 PM"
+"97","TZP-2026-000097","97","25","17","Vehicle Theft","Synthetic case summary 97","OPEN","10/28/2026 5:00:00 PM",
+"98","TZP-2026-000098","98","26","18","Traffic Collision","Synthetic case summary 98","UNDER_INVESTIGATION","6/19/2026 1:00:00 PM",
+"99","TZP-2026-000099","99","27","19","Hit and Run","Synthetic case summary 99","CLOSED","10/18/2026 6:00:00 PM","12/15/2026 6:00:00 PM"
+"100","TZP-2026-000100","100","28","20","Hit and Run","Synthetic case summary 100","OPEN","5/27/2026 1:00:00 PM",
+"101","TZP-2026-000101","101","29","1","Public Safety Violation","Synthetic case summary 101","UNDER_INVESTIGATION","7/3/2026 1:00:00 PM",
+"102","TZP-2026-000102","102","30","2","Vehicle Theft","Synthetic case summary 102","CLOSED","6/1/2026 4:00:00 PM","7/1/2026 4:00:00 PM"
+"103","TZP-2026-000103","103","31","3","Traffic Collision","Synthetic case summary 103","OPEN","4/13/2026 12:00:00 AM",
+"104","TZP-2026-000104","104","32","4","Traffic Collision","Synthetic case summary 104","UNDER_INVESTIGATION","3/12/2026 5:00:00 AM",
+"105","TZP-2026-000105","105","33","5","Traffic Collision","Synthetic case summary 105","CLOSED","10/13/2026 10:00:00 AM","11/29/2026 10:00:00 AM"
+"106","TZP-2026-000106","106","34","6","Traffic Collision","Synthetic case summary 106","OPEN","1/18/2026 5:00:00 AM",
+"107","TZP-2026-000107","107","35","7","Public Safety Violation","Synthetic case summary 107","UNDER_INVESTIGATION","2/14/2026 8:00:00 AM",
+"108","TZP-2026-000108","108","36","8","Vehicle Theft","Synthetic case summary 108","CLOSED","5/5/2026 7:00:00 PM","5/8/2026 7:00:00 PM"
+"109","TZP-2026-000109","109","1","9","Vehicle Theft","Synthetic case summary 109","OPEN","10/11/2026 9:00:00 PM",
+"110","TZP-2026-000110","110","2","10","Hit and Run","Synthetic case summary 110","UNDER_INVESTIGATION","9/26/2026 5:00:00 PM",
+"111","TZP-2026-000111","111","3","11","Vehicle Theft","Synthetic case summary 111","CLOSED","1/2/2026 5:00:00 AM","1/16/2026 5:00:00 AM"
+"112","TZP-2026-000112","112","4","12","Hit and Run","Synthetic case summary 112","OPEN","12/17/2026 11:00:00 PM",
+"113","TZP-2026-000113","113","5","13","Public Safety Violation","Synthetic case summary 113","UNDER_INVESTIGATION","12/25/2026 11:00:00 AM",
+"114","TZP-2026-000114","114","6","14","Hit and Run","Synthetic case summary 114","CLOSED","7/29/2026 5:00:00 AM","8/11/2026 5:00:00 AM"
+"115","TZP-2026-000115","115","7","15","Public Safety Violation","Synthetic case summary 115","OPEN","5/25/2026 8:00:00 AM",
+"116","TZP-2026-000116","116","8","16","Traffic Collision","Synthetic case summary 116","UNDER_INVESTIGATION","11/27/2026 4:00:00 AM",
+"117","TZP-2026-000117","117","9","17","License Fraud","Synthetic case summary 117","CLOSED","6/16/2026 5:00:00 AM","6/25/2026 5:00:00 AM"
+"118","TZP-2026-000118","118","10","18","License Fraud","Synthetic case summary 118","OPEN","6/25/2026 2:00:00 PM",
+"119","TZP-2026-000119","119","11","19","Hit and Run","Synthetic case summary 119","UNDER_INVESTIGATION","1/10/2026 6:00:00 PM",
+"120","TZP-2026-000120","120","12","20","Public Safety Violation","Synthetic case summary 120","CLOSED","6/27/2026 10:00:00 AM","7/25/2026 10:00:00 AM"
+"121","TZP-2026-000121","121","13","1","Traffic Collision","Synthetic case summary 121","OPEN","3/4/2026 12:00:00 PM",
+"122","TZP-2026-000122","122","14","2","Traffic Collision","Synthetic case summary 122","UNDER_INVESTIGATION","5/1/2026 2:00:00 AM",
+"123","TZP-2026-000123","123","15","3","Vehicle Theft","Synthetic case summary 123","CLOSED","12/12/2026 2:00:00 AM","1/19/2027 2:00:00 AM"
+"124","TZP-2026-000124","124","16","4","Vehicle Theft","Synthetic case summary 124","OPEN","5/2/2026 2:00:00 AM",
+"125","TZP-2026-000125","125","17","5","Vehicle Theft","Synthetic case summary 125","UNDER_INVESTIGATION","8/23/2026 1:00:00 AM",
+"126","TZP-2026-000126","126","18","6","Vehicle Theft","Synthetic case summary 126","CLOSED","12/2/2026 3:00:00 PM","1/3/2027 3:00:00 PM"
+"127","TZP-2026-000127","127","19","7","Traffic Collision","Synthetic case summary 127","OPEN","10/25/2026 6:00:00 PM",
+"128","TZP-2026-000128","128","20","8","Hit and Run","Synthetic case summary 128","UNDER_INVESTIGATION","7/29/2026 11:00:00 PM",
+"129","TZP-2026-000129","129","21","9","Traffic Collision","Synthetic case summary 129","CLOSED","5/4/2026 5:00:00 AM","5/16/2026 5:00:00 AM"
+"130","TZP-2026-000130","130","22","10","License Fraud","Synthetic case summary 130","OPEN","4/27/2026 3:00:00 AM",
+"131","TZP-2026-000131","131","23","11","Public Safety Violation","Synthetic case summary 131","UNDER_INVESTIGATION","3/31/2026 5:00:00 AM",
+"132","TZP-2026-000132","132","24","12","Traffic Collision","Synthetic case summary 132","CLOSED","3/5/2026 3:00:00 PM","4/21/2026 3:00:00 PM"
+"133","TZP-2026-000133","133","25","13","License Fraud","Synthetic case summary 133","OPEN","3/30/2026 8:00:00 AM",
+"134","TZP-2026-000134","134","26","14","Hit and Run","Synthetic case summary 134","UNDER_INVESTIGATION","7/31/2026 7:00:00 AM",
+"135","TZP-2026-000135","135","27","15","Hit and Run","Synthetic case summary 135","CLOSED","1/2/2026 12:00:00 AM","2/27/2026 12:00:00 AM"
+"136","TZP-2026-000136","136","28","16","Public Safety Violation","Synthetic case summary 136","OPEN","6/17/2026 8:00:00 PM",
+"137","TZP-2026-000137","137","29","17","Vehicle Theft","Synthetic case summary 137","UNDER_INVESTIGATION","12/1/2026 3:00:00 AM",
+"138","TZP-2026-000138","138","30","18","License Fraud","Synthetic case summary 138","CLOSED","6/8/2026 2:00:00 PM","6/29/2026 2:00:00 PM"
+"139","TZP-2026-000139","139","31","19","Public Safety Violation","Synthetic case summary 139","OPEN","9/20/2026 4:00:00 PM",
+"140","TZP-2026-000140","140","32","20","Traffic Collision","Synthetic case summary 140","UNDER_INVESTIGATION","7/13/2026 5:00:00 AM",
+"141","TZP-2026-000141","141","33","1","Hit and Run","Synthetic case summary 141","CLOSED","4/29/2026 8:00:00 AM","5/24/2026 8:00:00 AM"
+"142","TZP-2026-000142","142","34","2","Public Safety Violation","Synthetic case summary 142","OPEN","3/28/2026 6:00:00 AM",
+"143","TZP-2026-000143","143","35","3","Vehicle Theft","Synthetic case summary 143","UNDER_INVESTIGATION","5/20/2026 7:00:00 AM",
+"144","TZP-2026-000144","144","36","4","Vehicle Theft","Synthetic case summary 144","CLOSED","3/2/2026 12:00:00 PM","3/17/2026 12:00:00 PM"
+"145","TZP-2026-000145","145","1","5","Hit and Run","Synthetic case summary 145","OPEN","5/10/2026 7:00:00 AM",
+"146","TZP-2026-000146","146","2","6","Vehicle Theft","Synthetic case summary 146","UNDER_INVESTIGATION","10/25/2026 3:00:00 PM",
+"147","TZP-2026-000147","147","3","7","Public Safety Violation","Synthetic case summary 147","CLOSED","4/3/2026 8:00:00 PM","4/9/2026 8:00:00 PM"
+"148","TZP-2026-000148","148","4","8","Hit and Run","Synthetic case summary 148","OPEN","6/4/2026 1:00:00 PM",
+"149","TZP-2026-000149","149","5","9","Vehicle Theft","Synthetic case summary 149","UNDER_INVESTIGATION","1/15/2026 10:00:00 AM",
+"150","TZP-2026-000150","150","6","10","Traffic Collision","Synthetic case summary 150","CLOSED","6/1/2026 1:00:00 AM","6/22/2026 1:00:00 AM"
+"151","TZP-2026-000151","151","7","11","Vehicle Theft","Synthetic case summary 151","OPEN","1/20/2026 3:00:00 PM",
+"152","TZP-2026-000152","152","8","12","Traffic Collision","Synthetic case summary 152","UNDER_INVESTIGATION","9/19/2026 3:00:00 AM",
+"153","TZP-2026-000153","153","9","13","License Fraud","Synthetic case summary 153","CLOSED","1/11/2026 12:00:00 PM","2/17/2026 12:00:00 PM"
+"154","TZP-2026-000154","154","10","14","Hit and Run","Synthetic case summary 154","OPEN","3/28/2026 9:00:00 PM",
+"155","TZP-2026-000155","155","11","15","Hit and Run","Synthetic case summary 155","UNDER_INVESTIGATION","10/4/2026 9:00:00 AM",
+"156","TZP-2026-000156","156","12","16","License Fraud","Synthetic case summary 156","CLOSED","5/30/2026 2:00:00 AM","7/22/2026 2:00:00 AM"
+"157","TZP-2026-000157","157","13","17","Hit and Run","Synthetic case summary 157","OPEN","12/7/2026 11:00:00 AM",
+"158","TZP-2026-000158","158","14","18","License Fraud","Synthetic case summary 158","UNDER_INVESTIGATION","8/5/2026 7:00:00 PM",
+"159","TZP-2026-000159","159","15","19","License Fraud","Synthetic case summary 159","CLOSED","12/18/2026 7:00:00 PM","2/13/2027 7:00:00 PM"
+"160","TZP-2026-000160","160","16","20","Traffic Collision","Synthetic case summary 160","OPEN","1/22/2026 2:00:00 AM",
+"161","TZP-2026-000161","161","17","1","License Fraud","Synthetic case summary 161","UNDER_INVESTIGATION","2/7/2026 1:00:00 PM",
+"162","TZP-2026-000162","162","18","2","Vehicle Theft","Synthetic case summary 162","CLOSED","9/24/2026 1:00:00 PM","11/3/2026 1:00:00 PM"
+"163","TZP-2026-000163","163","19","3","Hit and Run","Synthetic case summary 163","OPEN","6/6/2026 5:00:00 PM",
+"164","TZP-2026-000164","164","20","4","Vehicle Theft","Synthetic case summary 164","UNDER_INVESTIGATION","5/27/2026 2:00:00 PM",
+"165","TZP-2026-000165","165","21","5","Traffic Collision","Synthetic case summary 165","CLOSED","3/9/2026 1:00:00 PM","4/16/2026 1:00:00 PM"
+"166","TZP-2026-000166","166","22","6","Traffic Collision","Synthetic case summary 166","OPEN","2/16/2026 7:00:00 AM",
+"167","TZP-2026-000167","167","23","7","Vehicle Theft","Synthetic case summary 167","UNDER_INVESTIGATION","7/25/2026 5:00:00 AM",
+"168","TZP-2026-000168","168","24","8","Vehicle Theft","Synthetic case summary 168","CLOSED","5/22/2026 12:00:00 AM","7/15/2026 12:00:00 AM"
+"169","TZP-2026-000169","169","25","9","Vehicle Theft","Synthetic case summary 169","OPEN","3/27/2026 5:00:00 AM",
+"170","TZP-2026-000170","170","26","10","Traffic Collision","Synthetic case summary 170","UNDER_INVESTIGATION","11/8/2026 2:00:00 PM",
+"171","TZP-2026-000171","171","27","11","License Fraud","Synthetic case summary 171","CLOSED","9/24/2026 6:00:00 AM","10/7/2026 6:00:00 AM"
+"172","TZP-2026-000172","172","28","12","Vehicle Theft","Synthetic case summary 172","OPEN","8/30/2026 7:00:00 PM",
+"173","TZP-2026-000173","173","29","13","Traffic Collision","Synthetic case summary 173","UNDER_INVESTIGATION","6/7/2026 8:00:00 AM",
+"174","TZP-2026-000174","174","30","14","Hit and Run","Synthetic case summary 174","CLOSED","3/22/2026 8:00:00 PM","3/23/2026 8:00:00 PM"
+"175","TZP-2026-000175","175","31","15","Traffic Collision","Synthetic case summary 175","OPEN","6/30/2026 10:00:00 AM",
+"176","TZP-2026-000176","176","32","16","License Fraud","Synthetic case summary 176","UNDER_INVESTIGATION","12/1/2026 3:00:00 PM",
+"177","TZP-2026-000177","177","33","17","Public Safety Violation","Synthetic case summary 177","CLOSED","11/27/2026 2:00:00 PM","1/19/2027 2:00:00 PM"
+"178","TZP-2026-000178","178","34","18","License Fraud","Synthetic case summary 178","OPEN","4/25/2026 5:00:00 PM",
+"179","TZP-2026-000179","179","35","19","Traffic Collision","Synthetic case summary 179","UNDER_INVESTIGATION","3/17/2026 5:00:00 AM",
+"180","TZP-2026-000180","180","36","20","Vehicle Theft","Synthetic case summary 180","CLOSED","3/6/2026 9:00:00 AM","4/21/2026 9:00:00 AM"
+"181","TZP-2026-000181","181","1","1","Hit and Run","Synthetic case summary 181","OPEN","10/13/2026 9:00:00 PM",
+"182","TZP-2026-000182","182","2","2","Hit and Run","Synthetic case summary 182","UNDER_INVESTIGATION","12/10/2026 8:00:00 AM",
+"183","TZP-2026-000183","183","3","3","Traffic Collision","Synthetic case summary 183","CLOSED","11/13/2026 6:00:00 PM","11/26/2026 6:00:00 PM"
+"184","TZP-2026-000184","184","4","4","Public Safety Violation","Synthetic case summary 184","OPEN","5/14/2026 12:00:00 PM",
+"185","TZP-2026-000185","185","5","5","Public Safety Violation","Synthetic case summary 185","UNDER_INVESTIGATION","8/15/2026 11:00:00 PM",
+"186","TZP-2026-000186","186","6","6","Public Safety Violation","Synthetic case summary 186","CLOSED","2/1/2026 3:00:00 PM","2/14/2026 3:00:00 PM"
+"187","TZP-2026-000187","187","7","7","Hit and Run","Synthetic case summary 187","OPEN","3/28/2026 2:00:00 AM",
+"188","TZP-2026-000188","188","8","8","Public Safety Violation","Synthetic case summary 188","UNDER_INVESTIGATION","4/4/2026 9:00:00 AM",
+"189","TZP-2026-000189","189","9","9","Traffic Collision","Synthetic case summary 189","CLOSED","2/28/2026 5:00:00 AM","3/13/2026 5:00:00 AM"
+"190","TZP-2026-000190","190","10","10","Traffic Collision","Synthetic case summary 190","OPEN","1/7/2026 7:00:00 PM",
+"191","TZP-2026-000191","191","11","11","Vehicle Theft","Synthetic case summary 191","UNDER_INVESTIGATION","7/25/2026 12:00:00 PM",
+"192","TZP-2026-000192","192","12","12","Hit and Run","Synthetic case summary 192","CLOSED","2/1/2026 5:00:00 AM","3/5/2026 5:00:00 AM"
+"193","TZP-2026-000193","193","13","13","Vehicle Theft","Synthetic case summary 193","OPEN","11/20/2026 3:00:00 AM",
+"194","TZP-2026-000194","194","14","14","License Fraud","Synthetic case summary 194","UNDER_INVESTIGATION","11/18/2026 2:00:00 PM",
+"195","TZP-2026-000195","195","15","15","Vehicle Theft","Synthetic case summary 195","CLOSED","9/26/2026 1:00:00 AM","10/11/2026 1:00:00 AM"
+"196","TZP-2026-000196","196","16","16","Traffic Collision","Synthetic case summary 196","OPEN","2/8/2026 12:00:00 PM",
+"197","TZP-2026-000197","197","17","17","License Fraud","Synthetic case summary 197","UNDER_INVESTIGATION","11/27/2026 4:00:00 AM",
+"198","TZP-2026-000198","198","18","18","Vehicle Theft","Synthetic case summary 198","CLOSED","7/17/2026 1:00:00 AM","8/19/2026 1:00:00 AM"
+"199","TZP-2026-000199","199","19","19","Vehicle Theft","Synthetic case summary 199","OPEN","2/20/2026 3:00:00 PM",
+"200","TZP-2026-000200","200","20","20","Vehicle Theft","Synthetic case summary 200","UNDER_INVESTIGATION","1/19/2026 11:00:00 PM",
+"201","TZP-2026-000201","201","21","1","Hit and Run","Synthetic case summary 201","CLOSED","6/8/2026 10:00:00 AM","6/15/2026 10:00:00 AM"
+"202","TZP-2026-000202","202","22","2","Traffic Collision","Synthetic case summary 202","OPEN","9/24/2026 8:00:00 PM",
+"203","TZP-2026-000203","203","23","3","Traffic Collision","Synthetic case summary 203","UNDER_INVESTIGATION","11/18/2026 11:00:00 PM",
+"204","TZP-2026-000204","204","24","4","Vehicle Theft","Synthetic case summary 204","CLOSED","9/14/2026 11:00:00 AM","10/24/2026 11:00:00 AM"
+"205","TZP-2026-000205","205","25","5","Public Safety Violation","Synthetic case summary 205","OPEN","3/13/2026 2:00:00 AM",
+"206","TZP-2026-000206","206","26","6","Vehicle Theft","Synthetic case summary 206","UNDER_INVESTIGATION","10/25/2026 1:00:00 AM",
+"207","TZP-2026-000207","207","27","7","Public Safety Violation","Synthetic case summary 207","CLOSED","8/29/2026 4:00:00 AM","9/20/2026 4:00:00 AM"
+"208","TZP-2026-000208","208","28","8","License Fraud","Synthetic case summary 208","OPEN","1/15/2026 12:00:00 AM",
+"209","TZP-2026-000209","209","29","9","Hit and Run","Synthetic case summary 209","UNDER_INVESTIGATION","2/6/2026 4:00:00 AM",
+"210","TZP-2026-000210","210","30","10","Traffic Collision","Synthetic case summary 210","CLOSED","8/10/2026 8:00:00 AM","10/2/2026 8:00:00 AM"
+"211","TZP-2026-000211","211","31","11","Public Safety Violation","Synthetic case summary 211","OPEN","5/11/2026 7:00:00 AM",
+"212","TZP-2026-000212","212","32","12","Hit and Run","Synthetic case summary 212","UNDER_INVESTIGATION","11/7/2026 4:00:00 PM",
+"213","TZP-2026-000213","213","33","13","Traffic Collision","Synthetic case summary 213","CLOSED","6/5/2026 7:00:00 AM","7/30/2026 7:00:00 AM"
+"214","TZP-2026-000214","214","34","14","Vehicle Theft","Synthetic case summary 214","OPEN","12/21/2026 1:00:00 AM",
+"215","TZP-2026-000215","215","35","15","Traffic Collision","Synthetic case summary 215","UNDER_INVESTIGATION","12/18/2026 5:00:00 AM",
+"216","TZP-2026-000216","216","36","16","Vehicle Theft","Synthetic case summary 216","CLOSED","8/22/2026 5:00:00 PM","10/20/2026 5:00:00 PM"
+"217","TZP-2026-000217","217","1","17","Traffic Collision","Synthetic case summary 217","OPEN","11/15/2026 6:00:00 AM",
+"218","TZP-2026-000218","218","2","18","License Fraud","Synthetic case summary 218","UNDER_INVESTIGATION","4/12/2026 8:00:00 AM",
+"219","TZP-2026-000219","219","3","19","License Fraud","Synthetic case summary 219","CLOSED","3/21/2026 12:00:00 AM","5/1/2026 12:00:00 AM"
+"220","TZP-2026-000220","220","4","20","License Fraud","Synthetic case summary 220","OPEN","6/25/2026 8:00:00 AM",
+"221","TZP-2026-000221","221","5","1","Public Safety Violation","Synthetic case summary 221","UNDER_INVESTIGATION","8/10/2026 5:00:00 AM",
+"222","TZP-2026-000222","222","6","2","Public Safety Violation","Synthetic case summary 222","CLOSED","3/8/2026 3:00:00 AM","3/17/2026 3:00:00 AM"
+"223","TZP-2026-000223","223","7","3","Hit and Run","Synthetic case summary 223","OPEN","1/23/2026 8:00:00 AM",
+"224","TZP-2026-000224","224","8","4","Public Safety Violation","Synthetic case summary 224","UNDER_INVESTIGATION","3/29/2026 8:00:00 PM",
+"225","TZP-2026-000225","225","9","5","Traffic Collision","Synthetic case summary 225","CLOSED","8/10/2026 4:00:00 PM","9/30/2026 4:00:00 PM"
+"226","TZP-2026-000226","226","10","6","Hit and Run","Synthetic case summary 226","OPEN","8/12/2026 9:00:00 PM",
+"227","TZP-2026-000227","227","11","7","Traffic Collision","Synthetic case summary 227","UNDER_INVESTIGATION","5/17/2026 4:00:00 AM",
+"228","TZP-2026-000228","228","12","8","Public Safety Violation","Synthetic case summary 228","CLOSED","3/27/2026 3:00:00 PM","4/26/2026 3:00:00 PM"
+"229","TZP-2026-000229","229","13","9","License Fraud","Synthetic case summary 229","OPEN","1/6/2026 10:00:00 AM",
+"230","TZP-2026-000230","230","14","10","License Fraud","Synthetic case summary 230","UNDER_INVESTIGATION","3/10/2026 3:00:00 PM",
+"231","TZP-2026-000231","231","15","11","Hit and Run","Synthetic case summary 231","CLOSED","6/9/2026 7:00:00 PM","7/22/2026 7:00:00 PM"
+"232","TZP-2026-000232","232","16","12","Vehicle Theft","Synthetic case summary 232","OPEN","11/3/2026 11:00:00 AM",
+"233","TZP-2026-000233","233","17","13","Vehicle Theft","Synthetic case summary 233","UNDER_INVESTIGATION","3/6/2026 10:00:00 AM",
+"234","TZP-2026-000234","234","18","14","Hit and Run","Synthetic case summary 234","CLOSED","12/28/2026 7:00:00 PM","1/22/2027 7:00:00 PM"
+"235","TZP-2026-000235","235","19","15","Traffic Collision","Synthetic case summary 235","OPEN","2/9/2026 12:00:00 PM",
+"236","TZP-2026-000236","236","20","16","License Fraud","Synthetic case summary 236","UNDER_INVESTIGATION","7/2/2026 2:00:00 AM",
+"237","TZP-2026-000237","237","21","17","Traffic Collision","Synthetic case summary 237","CLOSED","12/27/2026 5:00:00 AM","1/22/2027 5:00:00 AM"
+"238","TZP-2026-000238","238","22","18","License Fraud","Synthetic case summary 238","OPEN","8/28/2026 12:00:00 PM",
+"239","TZP-2026-000239","239","23","19","License Fraud","Synthetic case summary 239","UNDER_INVESTIGATION","3/10/2026 7:00:00 PM",
+"240","TZP-2026-000240","240","24","20","Hit and Run","Synthetic case summary 240","CLOSED","10/3/2026 1:00:00 AM","11/8/2026 1:00:00 AM"
+"241","TZP-2026-000241","241","25","1","Public Safety Violation","Synthetic case summary 241","OPEN","7/21/2026 7:00:00 PM",
+"242","TZP-2026-000242","242","26","2","Traffic Collision","Synthetic case summary 242","UNDER_INVESTIGATION","7/4/2026 8:00:00 AM",
+"243","TZP-2026-000243","243","27","3","License Fraud","Synthetic case summary 243","CLOSED","4/18/2026 4:00:00 AM","6/12/2026 4:00:00 AM"
+"244","TZP-2026-000244","244","28","4","Hit and Run","Synthetic case summary 244","OPEN","2/12/2026 9:00:00 AM",
+"245","TZP-2026-000245","245","29","5","Vehicle Theft","Synthetic case summary 245","UNDER_INVESTIGATION","2/21/2026 8:00:00 PM",
+"246","TZP-2026-000246","246","30","6","Traffic Collision","Synthetic case summary 246","CLOSED","4/12/2026 2:00:00 AM","4/17/2026 2:00:00 AM"
+"247","TZP-2026-000247","247","31","7","Hit and Run","Synthetic case summary 247","OPEN","8/21/2026 4:00:00 AM",
+"248","TZP-2026-000248","248","32","8","Hit and Run","Synthetic case summary 248","UNDER_INVESTIGATION","8/8/2026 4:00:00 PM",
+"249","TZP-2026-000249","249","33","9","Public Safety Violation","Synthetic case summary 249","CLOSED","11/7/2026 9:00:00 AM","11/29/2026 9:00:00 AM"
+"250","TZP-2026-000250","250","34","10","Hit and Run","Synthetic case summary 250","OPEN","10/2/2026 10:00:00 PM",
+"251","TZP-2026-000251","251","35","11","Hit and Run","Synthetic case summary 251","UNDER_INVESTIGATION","3/5/2026 7:00:00 PM",
+"252","TZP-2026-000252","252","36","12","Traffic Collision","Synthetic case summary 252","CLOSED","7/25/2026 3:00:00 PM","8/4/2026 3:00:00 PM"
+"253","TZP-2026-000253","253","1","13","Hit and Run","Synthetic case summary 253","OPEN","4/23/2026 7:00:00 PM",
+"254","TZP-2026-000254","254","2","14","Hit and Run","Synthetic case summary 254","UNDER_INVESTIGATION","9/30/2026 12:00:00 AM",
+"255","TZP-2026-000255","255","3","15","Hit and Run","Synthetic case summary 255","CLOSED","4/15/2026 12:00:00 PM","5/5/2026 12:00:00 PM"
+"256","TZP-2026-000256","256","4","16","Traffic Collision","Synthetic case summary 256","OPEN","5/12/2026 3:00:00 PM",
+"257","TZP-2026-000257","257","5","17","Hit and Run","Synthetic case summary 257","UNDER_INVESTIGATION","7/28/2026 2:00:00 PM",
+"258","TZP-2026-000258","258","6","18","Traffic Collision","Synthetic case summary 258","CLOSED","6/7/2026 8:00:00 AM","7/25/2026 8:00:00 AM"
+"259","TZP-2026-000259","259","7","19","Public Safety Violation","Synthetic case summary 259","OPEN","4/8/2026 9:00:00 PM",
+"260","TZP-2026-000260","260","8","20","Traffic Collision","Synthetic case summary 260","UNDER_INVESTIGATION","2/12/2026 10:00:00 PM",
+"261","TZP-2026-000261","261","9","1","Vehicle Theft","Synthetic case summary 261","CLOSED","3/7/2026 1:00:00 AM","3/27/2026 1:00:00 AM"
+"262","TZP-2026-000262","262","10","2","Public Safety Violation","Synthetic case summary 262","OPEN","12/4/2026 3:00:00 PM",
+"263","TZP-2026-000263","263","11","3","Public Safety Violation","Synthetic case summary 263","UNDER_INVESTIGATION","1/25/2026 5:00:00 PM",
+"264","TZP-2026-000264","264","12","4","Vehicle Theft","Synthetic case summary 264","CLOSED","11/23/2026 3:00:00 PM","12/28/2026 3:00:00 PM"
+"265","TZP-2026-000265","265","13","5","Traffic Collision","Synthetic case summary 265","OPEN","1/10/2026 8:00:00 AM",
+"266","TZP-2026-000266","266","14","6","Traffic Collision","Synthetic case summary 266","UNDER_INVESTIGATION","1/18/2026 10:00:00 AM",
+"267","TZP-2026-000267","267","15","7","Vehicle Theft","Synthetic case summary 267","CLOSED","12/1/2026 3:00:00 PM","1/4/2027 3:00:00 PM"
+"268","TZP-2026-000268","268","16","8","Public Safety Violation","Synthetic case summary 268","OPEN","11/14/2026 4:00:00 AM",
+"269","TZP-2026-000269","269","17","9","Vehicle Theft","Synthetic case summary 269","UNDER_INVESTIGATION","2/19/2026 5:00:00 PM",
+"270","TZP-2026-000270","270","18","10","Public Safety Violation","Synthetic case summary 270","CLOSED","12/28/2026 4:00:00 AM","2/15/2027 4:00:00 AM"
+"271","TZP-2026-000271","271","19","11","Traffic Collision","Synthetic case summary 271","OPEN","1/27/2026 5:00:00 AM",
+"272","TZP-2026-000272","272","20","12","License Fraud","Synthetic case summary 272","UNDER_INVESTIGATION","10/16/2026 9:00:00 AM",
+"273","TZP-2026-000273","273","21","13","License Fraud","Synthetic case summary 273","CLOSED","9/10/2026 10:00:00 PM","10/31/2026 10:00:00 PM"
+"274","TZP-2026-000274","274","22","14","License Fraud","Synthetic case summary 274","OPEN","6/16/2026 7:00:00 PM",
+"275","TZP-2026-000275","275","23","15","Public Safety Violation","Synthetic case summary 275","UNDER_INVESTIGATION","5/13/2026 11:00:00 PM",
+"276","TZP-2026-000276","276","24","16","Public Safety Violation","Synthetic case summary 276","CLOSED","11/2/2026 6:00:00 PM","12/12/2026 6:00:00 PM"
+"277","TZP-2026-000277","277","25","17","Vehicle Theft","Synthetic case summary 277","OPEN","4/13/2026 12:00:00 PM",
+"278","TZP-2026-000278","278","26","18","License Fraud","Synthetic case summary 278","UNDER_INVESTIGATION","11/18/2026 4:00:00 PM",
+"279","TZP-2026-000279","279","27","19","Hit and Run","Synthetic case summary 279","CLOSED","10/21/2026 7:00:00 PM","11/10/2026 7:00:00 PM"
+"280","TZP-2026-000280","280","28","20","Public Safety Violation","Synthetic case summary 280","OPEN","11/4/2026 4:00:00 PM",
+"281","TZP-2026-000281","281","29","1","Public Safety Violation","Synthetic case summary 281","UNDER_INVESTIGATION","10/10/2026 8:00:00 AM",
+"282","TZP-2026-000282","282","30","2","License Fraud","Synthetic case summary 282","CLOSED","3/7/2026 6:00:00 AM","4/15/2026 6:00:00 AM"
+"283","TZP-2026-000283","283","31","3","Public Safety Violation","Synthetic case summary 283","OPEN","6/2/2026 11:00:00 PM",
+"284","TZP-2026-000284","284","32","4","Traffic Collision","Synthetic case summary 284","UNDER_INVESTIGATION","10/21/2026 11:00:00 PM",
+"285","TZP-2026-000285","285","33","5","Public Safety Violation","Synthetic case summary 285","CLOSED","6/4/2026 11:00:00 AM","6/13/2026 11:00:00 AM"
+"286","TZP-2026-000286","286","34","6","Vehicle Theft","Synthetic case summary 286","OPEN","7/30/2026 5:00:00 AM",
+"287","TZP-2026-000287","287","35","7","Vehicle Theft","Synthetic case summary 287","UNDER_INVESTIGATION","1/2/2026 12:00:00 PM",
+"288","TZP-2026-000288","288","36","8","License Fraud","Synthetic case summary 288","CLOSED","9/22/2026 6:00:00 AM","9/29/2026 6:00:00 AM"
+"289","TZP-2026-000289","289","1","9","License Fraud","Synthetic case summary 289","OPEN","12/2/2026 9:00:00 PM",
+"290","TZP-2026-000290","290","2","10","License Fraud","Synthetic case summary 290","UNDER_INVESTIGATION","7/16/2026 10:00:00 PM",
+"291","TZP-2026-000291","291","3","11","Traffic Collision","Synthetic case summary 291","CLOSED","12/29/2026 12:00:00 AM","2/26/2027 12:00:00 AM"
+"292","TZP-2026-000292","292","4","12","Traffic Collision","Synthetic case summary 292","OPEN","9/28/2026 1:00:00 PM",
+"293","TZP-2026-000293","293","5","13","Hit and Run","Synthetic case summary 293","UNDER_INVESTIGATION","12/9/2026 9:00:00 AM",
+"294","TZP-2026-000294","294","6","14","License Fraud","Synthetic case summary 294","CLOSED","9/21/2026 4:00:00 PM","11/13/2026 4:00:00 PM"
+"295","TZP-2026-000295","295","7","15","License Fraud","Synthetic case summary 295","OPEN","4/21/2026 8:00:00 AM",
+"296","TZP-2026-000296","296","8","16","License Fraud","Synthetic case summary 296","UNDER_INVESTIGATION","7/10/2026 5:00:00 PM",
+"297","TZP-2026-000297","297","9","17","Public Safety Violation","Synthetic case summary 297","CLOSED","3/6/2026 7:00:00 PM","3/21/2026 7:00:00 PM"
+"298","TZP-2026-000298","298","10","18","Traffic Collision","Synthetic case summary 298","OPEN","1/30/2026 9:00:00 PM",
+"299","TZP-2026-000299","299","11","19","Vehicle Theft","Synthetic case summary 299","UNDER_INVESTIGATION","12/26/2026 7:00:00 PM",
+"300","TZP-2026-000300","300","12","20","Hit and Run","Synthetic case summary 300","CLOSED","5/19/2026 6:00:00 AM","7/10/2026 6:00:00 AM"
+"301","TZP-2026-000301","301","13","1","Vehicle Theft","Synthetic case summary 301","OPEN","1/26/2026 10:00:00 AM",
+"302","TZP-2026-000302","302","14","2","Traffic Collision","Synthetic case summary 302","UNDER_INVESTIGATION","12/11/2026 1:00:00 AM",
+"303","TZP-2026-000303","303","15","3","Hit and Run","Synthetic case summary 303","CLOSED","2/11/2026 2:00:00 PM","3/19/2026 2:00:00 PM"
+"304","TZP-2026-000304","304","16","4","Vehicle Theft","Synthetic case summary 304","OPEN","10/28/2026 12:00:00 AM",
+"305","TZP-2026-000305","305","17","5","Vehicle Theft","Synthetic case summary 305","UNDER_INVESTIGATION","6/30/2026 8:00:00 AM",
+"306","TZP-2026-000306","306","18","6","Hit and Run","Synthetic case summary 306","CLOSED","3/15/2026 1:00:00 AM","5/2/2026 1:00:00 AM"
+"307","TZP-2026-000307","307","19","7","License Fraud","Synthetic case summary 307","OPEN","7/31/2026 4:00:00 AM",
+"308","TZP-2026-000308","308","20","8","Public Safety Violation","Synthetic case summary 308","UNDER_INVESTIGATION","3/2/2026 2:00:00 AM",
+"309","TZP-2026-000309","309","21","9","Public Safety Violation","Synthetic case summary 309","CLOSED","5/28/2026 3:00:00 AM","6/5/2026 3:00:00 AM"
+"310","TZP-2026-000310","310","22","10","Public Safety Violation","Synthetic case summary 310","OPEN","12/3/2026 10:00:00 AM",
+"311","TZP-2026-000311","311","23","11","Public Safety Violation","Synthetic case summary 311","UNDER_INVESTIGATION","8/22/2026 1:00:00 PM",
+"312","TZP-2026-000312","312","24","12","License Fraud","Synthetic case summary 312","CLOSED","11/11/2026 5:00:00 PM","12/8/2026 5:00:00 PM"
+"313","TZP-2026-000313","313","25","13","Traffic Collision","Synthetic case summary 313","OPEN","7/3/2026 2:00:00 PM",
+"314","TZP-2026-000314","314","26","14","Traffic Collision","Synthetic case summary 314","UNDER_INVESTIGATION","1/3/2026 12:00:00 AM",
+"315","TZP-2026-000315","315","27","15","Hit and Run","Synthetic case summary 315","CLOSED","6/29/2026 3:00:00 PM","8/5/2026 3:00:00 PM"
+"316","TZP-2026-000316","316","28","16","Vehicle Theft","Synthetic case summary 316","OPEN","5/4/2026 7:00:00 AM",
+"317","TZP-2026-000317","317","29","17","Public Safety Violation","Synthetic case summary 317","UNDER_INVESTIGATION","7/28/2026 3:00:00 PM",
+"318","TZP-2026-000318","318","30","18","Hit and Run","Synthetic case summary 318","CLOSED","8/28/2026 7:00:00 AM","10/17/2026 7:00:00 AM"
+"319","TZP-2026-000319","319","31","19","Vehicle Theft","Synthetic case summary 319","OPEN","8/10/2026 11:00:00 PM",
+"320","TZP-2026-000320","320","32","20","Hit and Run","Synthetic case summary 320","UNDER_INVESTIGATION","10/1/2026 7:00:00 AM",
+"321","TZP-2026-000321","321","33","1","Vehicle Theft","Synthetic case summary 321","CLOSED","3/25/2026 6:00:00 PM","5/21/2026 6:00:00 PM"
+"322","TZP-2026-000322","322","34","2","License Fraud","Synthetic case summary 322","OPEN","9/20/2026 11:00:00 AM",
+"323","TZP-2026-000323","323","35","3","Public Safety Violation","Synthetic case summary 323","UNDER_INVESTIGATION","1/30/2026 7:00:00 PM",
+"324","TZP-2026-000324","324","36","4","Traffic Collision","Synthetic case summary 324","CLOSED","12/29/2026 6:00:00 PM","1/8/2027 6:00:00 PM"
+"325","TZP-2026-000325","325","1","5","Vehicle Theft","Synthetic case summary 325","OPEN","5/11/2026 5:00:00 PM",
+"326","TZP-2026-000326","326","2","6","License Fraud","Synthetic case summary 326","UNDER_INVESTIGATION","11/26/2026 12:00:00 PM",
+"327","TZP-2026-000327","327","3","7","License Fraud","Synthetic case summary 327","CLOSED","12/30/2026 5:00:00 AM","2/26/2027 5:00:00 AM"
+"328","TZP-2026-000328","328","4","8","Public Safety Violation","Synthetic case summary 328","OPEN","3/24/2026 1:00:00 PM",
+"329","TZP-2026-000329","329","5","9","Vehicle Theft","Synthetic case summary 329","UNDER_INVESTIGATION","3/26/2026 2:00:00 AM",
+"330","TZP-2026-000330","330","6","10","License Fraud","Synthetic case summary 330","CLOSED","2/17/2026 10:00:00 AM","3/31/2026 10:00:00 AM"
+"331","TZP-2026-000331","331","7","11","License Fraud","Synthetic case summary 331","OPEN","10/25/2026 5:00:00 PM",
+"332","TZP-2026-000332","332","8","12","Public Safety Violation","Synthetic case summary 332","UNDER_INVESTIGATION","2/20/2026 12:00:00 PM",
+"333","TZP-2026-000333","333","9","13","License Fraud","Synthetic case summary 333","CLOSED","9/2/2026 9:00:00 AM","10/18/2026 9:00:00 AM"
+"334","TZP-2026-000334","334","10","14","Traffic Collision","Synthetic case summary 334","OPEN","11/21/2026 9:00:00 PM",
+"335","TZP-2026-000335","335","11","15","Public Safety Violation","Synthetic case summary 335","UNDER_INVESTIGATION","10/8/2026 8:00:00 PM",
+"336","TZP-2026-000336","336","12","16","License Fraud","Synthetic case summary 336","CLOSED","6/24/2026 1:00:00 PM","7/8/2026 1:00:00 PM"
+"337","TZP-2026-000337","337","13","17","License Fraud","Synthetic case summary 337","OPEN","5/16/2026 11:00:00 PM",
+"338","TZP-2026-000338","338","14","18","Traffic Collision","Synthetic case summary 338","UNDER_INVESTIGATION","4/16/2026 6:00:00 AM",
+"339","TZP-2026-000339","339","15","19","Hit and Run","Synthetic case summary 339","CLOSED","7/28/2026 9:00:00 AM","9/23/2026 9:00:00 AM"
+"340","TZP-2026-000340","340","16","20","Traffic Collision","Synthetic case summary 340","OPEN","11/10/2026 1:00:00 PM",
+"341","TZP-2026-000341","341","17","1","License Fraud","Synthetic case summary 341","UNDER_INVESTIGATION","7/12/2026 6:00:00 AM",
+"342","TZP-2026-000342","342","18","2","License Fraud","Synthetic case summary 342","CLOSED","1/10/2026 8:00:00 AM","2/3/2026 8:00:00 AM"
+"343","TZP-2026-000343","343","19","3","Vehicle Theft","Synthetic case summary 343","OPEN","12/15/2026 2:00:00 PM",
+"344","TZP-2026-000344","344","20","4","Hit and Run","Synthetic case summary 344","UNDER_INVESTIGATION","4/20/2026 6:00:00 PM",
+"345","TZP-2026-000345","345","21","5","Hit and Run","Synthetic case summary 345","CLOSED","5/28/2026 3:00:00 AM","6/19/2026 3:00:00 AM"
+"346","TZP-2026-000346","346","22","6","Hit and Run","Synthetic case summary 346","OPEN","1/16/2026 1:00:00 PM",
+"347","TZP-2026-000347","347","23","7","Public Safety Violation","Synthetic case summary 347","UNDER_INVESTIGATION","1/4/2026 6:00:00 AM",
+"348","TZP-2026-000348","348","24","8","Hit and Run","Synthetic case summary 348","CLOSED","12/11/2026 10:00:00 AM","2/2/2027 10:00:00 AM"
+"349","TZP-2026-000349","349","25","9","Vehicle Theft","Synthetic case summary 349","OPEN","4/19/2026 6:00:00 AM",
+"350","TZP-2026-000350","350","26","10","Hit and Run","Synthetic case summary 350","UNDER_INVESTIGATION","6/24/2026 7:00:00 PM",
+"351","TZP-2026-000351","351","27","11","Hit and Run","Synthetic case summary 351","CLOSED","11/4/2026 2:00:00 PM","12/5/2026 2:00:00 PM"
+"352","TZP-2026-000352","352","28","12","Traffic Collision","Synthetic case summary 352","OPEN","11/4/2026 2:00:00 AM",
+"353","TZP-2026-000353","353","29","13","License Fraud","Synthetic case summary 353","UNDER_INVESTIGATION","8/1/2026 5:00:00 PM",
+"354","TZP-2026-000354","354","30","14","Public Safety Violation","Synthetic case summary 354","CLOSED","7/8/2026 11:00:00 AM","8/8/2026 11:00:00 AM"
+"355","TZP-2026-000355","355","31","15","Traffic Collision","Synthetic case summary 355","OPEN","10/7/2026 10:00:00 AM",
+"356","TZP-2026-000356","356","32","16","Hit and Run","Synthetic case summary 356","UNDER_INVESTIGATION","9/20/2026 5:00:00 AM",
+"357","TZP-2026-000357","357","33","17","Vehicle Theft","Synthetic case summary 357","CLOSED","4/29/2026 1:00:00 AM","5/15/2026 1:00:00 AM"
+"358","TZP-2026-000358","358","34","18","Vehicle Theft","Synthetic case summary 358","OPEN","9/6/2026 2:00:00 PM",
+"359","TZP-2026-000359","359","35","19","License Fraud","Synthetic case summary 359","UNDER_INVESTIGATION","1/21/2026 8:00:00 AM",
+"360","TZP-2026-000360","360","36","20","Vehicle Theft","Synthetic case summary 360","CLOSED","3/15/2026 11:00:00 PM","4/13/2026 11:00:00 PM"
+"361","TZP-2026-000361","361","1","1","License Fraud","Synthetic case summary 361","OPEN","6/26/2026 6:00:00 PM",
+"362","TZP-2026-000362","362","2","2","Public Safety Violation","Synthetic case summary 362","UNDER_INVESTIGATION","2/17/2026 9:00:00 AM",
+"363","TZP-2026-000363","363","3","3","Vehicle Theft","Synthetic case summary 363","CLOSED","5/31/2026 3:00:00 PM","6/17/2026 3:00:00 PM"
+"364","TZP-2026-000364","364","4","4","Public Safety Violation","Synthetic case summary 364","OPEN","4/22/2026 11:00:00 AM",
+"365","TZP-2026-000365","365","5","5","Public Safety Violation","Synthetic case summary 365","UNDER_INVESTIGATION","12/15/2026 1:00:00 PM",
+"366","TZP-2026-000366","366","6","6","Vehicle Theft","Synthetic case summary 366","CLOSED","3/29/2026 4:00:00 PM","4/12/2026 4:00:00 PM"
+"367","TZP-2026-000367","367","7","7","Hit and Run","Synthetic case summary 367","OPEN","1/7/2026 7:00:00 PM",
+"368","TZP-2026-000368","368","8","8","Hit and Run","Synthetic case summary 368","UNDER_INVESTIGATION","2/1/2026 1:00:00 PM",
+"369","TZP-2026-000369","369","9","9","Traffic Collision","Synthetic case summary 369","CLOSED","8/16/2026 2:00:00 AM","8/30/2026 2:00:00 AM"
+"370","TZP-2026-000370","370","10","10","Traffic Collision","Synthetic case summary 370","OPEN","7/22/2026 12:00:00 PM",
+"371","TZP-2026-000371","371","11","11","Public Safety Violation","Synthetic case summary 371","UNDER_INVESTIGATION","2/1/2026 10:00:00 AM",
+"372","TZP-2026-000372","372","12","12","Hit and Run","Synthetic case summary 372","CLOSED","10/29/2026 9:00:00 PM","11/17/2026 9:00:00 PM"
+"373","TZP-2026-000373","373","13","13","License Fraud","Synthetic case summary 373","OPEN","11/14/2026 4:00:00 PM",
+"374","TZP-2026-000374","374","14","14","Hit and Run","Synthetic case summary 374","UNDER_INVESTIGATION","10/2/2026 2:00:00 AM",
+"375","TZP-2026-000375","375","15","15","Vehicle Theft","Synthetic case summary 375","CLOSED","9/11/2026 12:00:00 PM","10/10/2026 12:00:00 PM"
+"376","TZP-2026-000376","376","16","16","License Fraud","Synthetic case summary 376","OPEN","6/11/2026 12:00:00 PM",
+"377","TZP-2026-000377","377","17","17","License Fraud","Synthetic case summary 377","UNDER_INVESTIGATION","12/12/2026 9:00:00 AM",
+"378","TZP-2026-000378","378","18","18","Traffic Collision","Synthetic case summary 378","CLOSED","6/4/2026 12:00:00 PM","7/8/2026 12:00:00 PM"
+"379","TZP-2026-000379","379","19","19","Vehicle Theft","Synthetic case summary 379","OPEN","4/24/2026 7:00:00 AM",
+"380","TZP-2026-000380","380","20","20","License Fraud","Synthetic case summary 380","UNDER_INVESTIGATION","3/23/2026 10:00:00 PM",
+"381","TZP-2026-000381","381","21","1","Vehicle Theft","Synthetic case summary 381","CLOSED","6/16/2026 7:00:00 PM","7/16/2026 7:00:00 PM"
+"382","TZP-2026-000382","382","22","2","Hit and Run","Synthetic case summary 382","OPEN","1/12/2026 8:00:00 AM",
+"383","TZP-2026-000383","383","23","3","Hit and Run","Synthetic case summary 383","UNDER_INVESTIGATION","12/2/2026 3:00:00 PM",
+"384","TZP-2026-000384","384","24","4","Hit and Run","Synthetic case summary 384","CLOSED","1/7/2026 2:00:00 PM","3/5/2026 2:00:00 PM"
+"385","TZP-2026-000385","385","25","5","License Fraud","Synthetic case summary 385","OPEN","7/19/2026 2:00:00 AM",
+"386","TZP-2026-000386","386","26","6","Traffic Collision","Synthetic case summary 386","UNDER_INVESTIGATION","9/27/2026 2:00:00 PM",
+"387","TZP-2026-000387","387","27","7","License Fraud","Synthetic case summary 387","CLOSED","10/2/2026 1:00:00 AM","11/11/2026 1:00:00 AM"
+"388","TZP-2026-000388","388","28","8","Hit and Run","Synthetic case summary 388","OPEN","7/24/2026 7:00:00 AM",
+"389","TZP-2026-000389","389","29","9","Vehicle Theft","Synthetic case summary 389","UNDER_INVESTIGATION","2/23/2026 12:00:00 AM",
+"390","TZP-2026-000390","390","30","10","Hit and Run","Synthetic case summary 390","CLOSED","4/14/2026 1:00:00 PM","6/1/2026 1:00:00 PM"
+"391","TZP-2026-000391","391","31","11","Traffic Collision","Synthetic case summary 391","OPEN","10/7/2026 8:00:00 PM",
+"392","TZP-2026-000392","392","32","12","Traffic Collision","Synthetic case summary 392","UNDER_INVESTIGATION","11/22/2026 11:00:00 AM",
+"393","TZP-2026-000393","393","33","13","Traffic Collision","Synthetic case summary 393","CLOSED","2/13/2026 8:00:00 PM","3/2/2026 8:00:00 PM"
+"394","TZP-2026-000394","394","34","14","Vehicle Theft","Synthetic case summary 394","OPEN","9/3/2026 7:00:00 PM",
+"395","TZP-2026-000395","395","35","15","Hit and Run","Synthetic case summary 395","UNDER_INVESTIGATION","3/30/2026 2:00:00 PM",
+"396","TZP-2026-000396","396","36","16","Public Safety Violation","Synthetic case summary 396","CLOSED","9/7/2026 3:00:00 PM","10/14/2026 3:00:00 PM"
+"397","TZP-2026-000397","397","1","17","Traffic Collision","Synthetic case summary 397","OPEN","1/13/2026 9:00:00 AM",
+"398","TZP-2026-000398","398","2","18","License Fraud","Synthetic case summary 398","UNDER_INVESTIGATION","10/1/2026 12:00:00 AM",
+"399","TZP-2026-000399","399","3","19","Traffic Collision","Synthetic case summary 399","CLOSED","1/5/2026 5:00:00 AM","3/1/2026 5:00:00 AM"
+"400","TZP-2026-000400","400","4","20","Public Safety Violation","Synthetic case summary 400","OPEN","1/18/2026 11:00:00 AM",
+"401","TZP-2026-000401","401","5","1","License Fraud","Synthetic case summary 401","UNDER_INVESTIGATION","8/18/2026 1:00:00 PM",
+"402","TZP-2026-000402","402","6","2","Vehicle Theft","Synthetic case summary 402","CLOSED","1/27/2026 5:00:00 PM","2/13/2026 5:00:00 PM"
+"403","TZP-2026-000403","403","7","3","License Fraud","Synthetic case summary 403","OPEN","12/6/2026 9:00:00 PM",
+"404","TZP-2026-000404","404","8","4","License Fraud","Synthetic case summary 404","UNDER_INVESTIGATION","8/6/2026 2:00:00 AM",
+"405","TZP-2026-000405","405","9","5","License Fraud","Synthetic case summary 405","CLOSED","9/23/2026 2:00:00 AM","10/24/2026 2:00:00 AM"
+"406","TZP-2026-000406","406","10","6","Public Safety Violation","Synthetic case summary 406","OPEN","11/18/2026 2:00:00 PM",
+"407","TZP-2026-000407","407","11","7","Hit and Run","Synthetic case summary 407","UNDER_INVESTIGATION","11/24/2026 7:00:00 AM",
+"408","TZP-2026-000408","408","12","8","License Fraud","Synthetic case summary 408","CLOSED","9/21/2026 6:00:00 AM","11/11/2026 6:00:00 AM"
+"409","TZP-2026-000409","409","13","9","Public Safety Violation","Synthetic case summary 409","OPEN","2/3/2026 9:00:00 PM",
+"410","TZP-2026-000410","410","14","10","Hit and Run","Synthetic case summary 410","UNDER_INVESTIGATION","3/8/2026 12:00:00 AM",
+"411","TZP-2026-000411","411","15","11","Public Safety Violation","Synthetic case summary 411","CLOSED","1/2/2026 10:00:00 PM","2/11/2026 10:00:00 PM"
+"412","TZP-2026-000412","412","16","12","Hit and Run","Synthetic case summary 412","OPEN","2/23/2026 10:00:00 PM",
+"413","TZP-2026-000413","413","17","13","Traffic Collision","Synthetic case summary 413","UNDER_INVESTIGATION","2/9/2026 11:00:00 PM",
+"414","TZP-2026-000414","414","18","14","Hit and Run","Synthetic case summary 414","CLOSED","8/17/2026 1:00:00 PM","9/26/2026 1:00:00 PM"
+"415","TZP-2026-000415","415","19","15","License Fraud","Synthetic case summary 415","OPEN","1/5/2026 10:00:00 PM",
+"416","TZP-2026-000416","416","20","16","Vehicle Theft","Synthetic case summary 416","UNDER_INVESTIGATION","2/20/2026 5:00:00 AM",
+"417","TZP-2026-000417","417","21","17","Traffic Collision","Synthetic case summary 417","CLOSED","7/13/2026 9:00:00 PM","8/2/2026 9:00:00 PM"
+"418","TZP-2026-000418","418","22","18","Public Safety Violation","Synthetic case summary 418","OPEN","12/14/2026 7:00:00 PM",
+"419","TZP-2026-000419","419","23","19","Traffic Collision","Synthetic case summary 419","UNDER_INVESTIGATION","7/23/2026 9:00:00 AM",
+"420","TZP-2026-000420","420","24","20","Public Safety Violation","Synthetic case summary 420","CLOSED","12/25/2026 2:00:00 PM","1/28/2027 2:00:00 PM"
+"421","TZP-2026-000421","421","25","1","Vehicle Theft","Synthetic case summary 421","OPEN","9/29/2026 6:00:00 PM",
+"422","TZP-2026-000422","422","26","2","Public Safety Violation","Synthetic case summary 422","UNDER_INVESTIGATION","7/30/2026 3:00:00 PM",
+"423","TZP-2026-000423","423","27","3","Traffic Collision","Synthetic case summary 423","CLOSED","3/26/2026 7:00:00 PM","5/20/2026 7:00:00 PM"
+"424","TZP-2026-000424","424","28","4","License Fraud","Synthetic case summary 424","OPEN","9/28/2026 4:00:00 AM",
+"425","TZP-2026-000425","425","29","5","Traffic Collision","Synthetic case summary 425","UNDER_INVESTIGATION","8/1/2026 5:00:00 PM",
+"426","TZP-2026-000426","426","30","6","License Fraud","Synthetic case summary 426","CLOSED","3/3/2026 6:00:00 PM","4/29/2026 6:00:00 PM"
+"427","TZP-2026-000427","427","31","7","License Fraud","Synthetic case summary 427","OPEN","9/4/2026 2:00:00 AM",
+"428","TZP-2026-000428","428","32","8","Hit and Run","Synthetic case summary 428","UNDER_INVESTIGATION","6/24/2026 11:00:00 PM",
+"429","TZP-2026-000429","429","33","9","Public Safety Violation","Synthetic case summary 429","CLOSED","2/1/2026 7:00:00 PM","3/14/2026 7:00:00 PM"
+"430","TZP-2026-000430","430","34","10","Public Safety Violation","Synthetic case summary 430","OPEN","2/23/2026 12:00:00 AM",
+"431","TZP-2026-000431","431","35","11","Hit and Run","Synthetic case summary 431","UNDER_INVESTIGATION","10/14/2026 12:00:00 PM",
+"432","TZP-2026-000432","432","36","12","Hit and Run","Synthetic case summary 432","CLOSED","7/8/2026 3:00:00 AM","8/7/2026 3:00:00 AM"
+"433","TZP-2026-000433","433","1","13","Public Safety Violation","Synthetic case summary 433","OPEN","3/14/2026 4:00:00 PM",
+"434","TZP-2026-000434","434","2","14","License Fraud","Synthetic case summary 434","UNDER_INVESTIGATION","2/25/2026 11:00:00 AM",
+"435","TZP-2026-000435","435","3","15","Hit and Run","Synthetic case summary 435","CLOSED","3/12/2026 6:00:00 AM","5/1/2026 6:00:00 AM"
+"436","TZP-2026-000436","436","4","16","License Fraud","Synthetic case summary 436","OPEN","11/18/2026 4:00:00 AM",
+"437","TZP-2026-000437","437","5","17","License Fraud","Synthetic case summary 437","UNDER_INVESTIGATION","12/16/2026 4:00:00 AM",
+"438","TZP-2026-000438","438","6","18","Hit and Run","Synthetic case summary 438","CLOSED","3/4/2026 10:00:00 PM","4/8/2026 10:00:00 PM"
+"439","TZP-2026-000439","439","7","19","Traffic Collision","Synthetic case summary 439","OPEN","11/3/2026 9:00:00 AM",
+"440","TZP-2026-000440","440","8","20","License Fraud","Synthetic case summary 440","UNDER_INVESTIGATION","1/2/2026 12:00:00 AM",
+"441","TZP-2026-000441","441","9","1","Vehicle Theft","Synthetic case summary 441","CLOSED","3/6/2026 7:00:00 PM","3/9/2026 7:00:00 PM"
+"442","TZP-2026-000442","442","10","2","Hit and Run","Synthetic case summary 442","OPEN","8/25/2026 12:00:00 AM",
+"443","TZP-2026-000443","443","11","3","Public Safety Violation","Synthetic case summary 443","UNDER_INVESTIGATION","9/1/2026 9:00:00 AM",
+"444","TZP-2026-000444","444","12","4","Hit and Run","Synthetic case summary 444","CLOSED","2/8/2026 11:00:00 AM","2/10/2026 11:00:00 AM"
+"445","TZP-2026-000445","445","13","5","Public Safety Violation","Synthetic case summary 445","OPEN","2/26/2026 7:00:00 PM",
+"446","TZP-2026-000446","446","14","6","Public Safety Violation","Synthetic case summary 446","UNDER_INVESTIGATION","6/11/2026 12:00:00 AM",
+"447","TZP-2026-000447","447","15","7","Public Safety Violation","Synthetic case summary 447","CLOSED","5/28/2026 12:00:00 AM","7/2/2026 12:00:00 AM"
+"448","TZP-2026-000448","448","16","8","Vehicle Theft","Synthetic case summary 448","OPEN","1/20/2026 2:00:00 PM",
+"449","TZP-2026-000449","449","17","9","License Fraud","Synthetic case summary 449","UNDER_INVESTIGATION","3/20/2026 10:00:00 AM",
+"450","TZP-2026-000450","450","18","10","License Fraud","Synthetic case summary 450","CLOSED","7/26/2026 11:00:00 PM","8/3/2026 11:00:00 PM"
+"451","TZP-2026-000451","451","19","11","Hit and Run","Synthetic case summary 451","OPEN","8/9/2026 8:00:00 AM",
+"452","TZP-2026-000452","452","20","12","Public Safety Violation","Synthetic case summary 452","UNDER_INVESTIGATION","5/12/2026 2:00:00 PM",
+"453","TZP-2026-000453","453","21","13","Hit and Run","Synthetic case summary 453","CLOSED","11/27/2026 11:00:00 PM","12/30/2026 11:00:00 PM"
+"454","TZP-2026-000454","454","22","14","Public Safety Violation","Synthetic case summary 454","OPEN","7/19/2026 5:00:00 PM",
+"455","TZP-2026-000455","455","23","15","Traffic Collision","Synthetic case summary 455","UNDER_INVESTIGATION","5/15/2026 3:00:00 AM",
+"456","TZP-2026-000456","456","24","16","Traffic Collision","Synthetic case summary 456","CLOSED","6/1/2026 4:00:00 PM","7/28/2026 4:00:00 PM"
+"457","TZP-2026-000457","457","25","17","Hit and Run","Synthetic case summary 457","OPEN","4/20/2026 3:00:00 AM",
+"458","TZP-2026-000458","458","26","18","Traffic Collision","Synthetic case summary 458","UNDER_INVESTIGATION","2/26/2026 10:00:00 AM",
+"459","TZP-2026-000459","459","27","19","License Fraud","Synthetic case summary 459","CLOSED","6/24/2026 1:00:00 AM","7/7/2026 1:00:00 AM"
+"460","TZP-2026-000460","460","28","20","Hit and Run","Synthetic case summary 460","OPEN","5/29/2026 2:00:00 AM",
+"461","TZP-2026-000461","461","29","1","License Fraud","Synthetic case summary 461","UNDER_INVESTIGATION","4/6/2026 2:00:00 PM",
+"462","TZP-2026-000462","462","30","2","Traffic Collision","Synthetic case summary 462","CLOSED","7/23/2026 2:00:00 PM","9/11/2026 2:00:00 PM"
+"463","TZP-2026-000463","463","31","3","Vehicle Theft","Synthetic case summary 463","OPEN","1/18/2026 10:00:00 AM",
+"464","TZP-2026-000464","464","32","4","Hit and Run","Synthetic case summary 464","UNDER_INVESTIGATION","5/6/2026 8:00:00 AM",
+"465","TZP-2026-000465","465","33","5","Vehicle Theft","Synthetic case summary 465","CLOSED","9/2/2026 4:00:00 AM","9/7/2026 4:00:00 AM"
+"466","TZP-2026-000466","466","34","6","Traffic Collision","Synthetic case summary 466","OPEN","5/21/2026 8:00:00 PM",
+"467","TZP-2026-000467","467","35","7","Vehicle Theft","Synthetic case summary 467","UNDER_INVESTIGATION","1/18/2026 10:00:00 AM",
+"468","TZP-2026-000468","468","36","8","Vehicle Theft","Synthetic case summary 468","CLOSED","2/17/2026 2:00:00 AM","4/13/2026 2:00:00 AM"
+"469","TZP-2026-000469","469","1","9","License Fraud","Synthetic case summary 469","OPEN","5/15/2026 7:00:00 PM",
+"470","TZP-2026-000470","470","2","10","Vehicle Theft","Synthetic case summary 470","UNDER_INVESTIGATION","12/12/2026 7:00:00 PM",
+"471","TZP-2026-000471","471","3","11","Hit and Run","Synthetic case summary 471","CLOSED","5/16/2026 3:00:00 PM","6/30/2026 3:00:00 PM"
+"472","TZP-2026-000472","472","4","12","Public Safety Violation","Synthetic case summary 472","OPEN","6/24/2026 6:00:00 PM",
+"473","TZP-2026-000473","473","5","13","Public Safety Violation","Synthetic case summary 473","UNDER_INVESTIGATION","10/10/2026 12:00:00 AM",
+"474","TZP-2026-000474","474","6","14","Traffic Collision","Synthetic case summary 474","CLOSED","8/30/2026 9:00:00 PM","10/18/2026 9:00:00 PM"
+"475","TZP-2026-000475","475","7","15","Public Safety Violation","Synthetic case summary 475","OPEN","5/23/2026 7:00:00 AM",
+"476","TZP-2026-000476","476","8","16","Vehicle Theft","Synthetic case summary 476","UNDER_INVESTIGATION","10/19/2026 5:00:00 AM",
+"477","TZP-2026-000477","477","9","17","Traffic Collision","Synthetic case summary 477","CLOSED","2/8/2026 6:00:00 AM","3/28/2026 6:00:00 AM"
+"478","TZP-2026-000478","478","10","18","License Fraud","Synthetic case summary 478","OPEN","8/27/2026 11:00:00 AM",
+"479","TZP-2026-000479","479","11","19","Hit and Run","Synthetic case summary 479","UNDER_INVESTIGATION","4/21/2026 7:00:00 PM",
+"480","TZP-2026-000480","480","12","20","Public Safety Violation","Synthetic case summary 480","CLOSED","9/11/2026 12:00:00 PM","10/12/2026 12:00:00 PM"
+"481","TZP-2026-000481","481","13","1","Vehicle Theft","Synthetic case summary 481","OPEN","12/21/2026 12:00:00 AM",
+"482","TZP-2026-000482","482","14","2","Vehicle Theft","Synthetic case summary 482","UNDER_INVESTIGATION","9/23/2026 10:00:00 PM",
+"483","TZP-2026-000483","483","15","3","Vehicle Theft","Synthetic case summary 483","CLOSED","1/8/2026 5:00:00 AM","1/10/2026 5:00:00 AM"
+"484","TZP-2026-000484","484","16","4","Hit and Run","Synthetic case summary 484","OPEN","10/19/2026 5:00:00 AM",
+"485","TZP-2026-000485","485","17","5","Traffic Collision","Synthetic case summary 485","UNDER_INVESTIGATION","11/3/2026 3:00:00 AM",
+"486","TZP-2026-000486","486","18","6","Hit and Run","Synthetic case summary 486","CLOSED","11/3/2026 10:00:00 PM","12/16/2026 10:00:00 PM"
+"487","TZP-2026-000487","487","19","7","Public Safety Violation","Synthetic case summary 487","OPEN","4/27/2026 1:00:00 AM",
+"488","TZP-2026-000488","488","20","8","Traffic Collision","Synthetic case summary 488","UNDER_INVESTIGATION","8/11/2026 4:00:00 PM",
+"489","TZP-2026-000489","489","21","9","Public Safety Violation","Synthetic case summary 489","CLOSED","2/4/2026 1:00:00 PM","4/2/2026 1:00:00 PM"
+"490","TZP-2026-000490","490","22","10","Hit and Run","Synthetic case summary 490","OPEN","3/1/2026 3:00:00 AM",
+"491","TZP-2026-000491","491","23","11","Hit and Run","Synthetic case summary 491","UNDER_INVESTIGATION","11/25/2026 2:00:00 AM",
+"492","TZP-2026-000492","492","24","12","License Fraud","Synthetic case summary 492","CLOSED","11/14/2026 6:00:00 AM","1/4/2027 6:00:00 AM"
+"493","TZP-2026-000493","493","25","13","Hit and Run","Synthetic case summary 493","OPEN","7/8/2026 8:00:00 PM",
+"494","TZP-2026-000494","494","26","14","Vehicle Theft","Synthetic case summary 494","UNDER_INVESTIGATION","3/18/2026 8:00:00 AM",
+"495","TZP-2026-000495","495","27","15","License Fraud","Synthetic case summary 495","CLOSED","3/13/2026 8:00:00 PM","3/23/2026 8:00:00 PM"
+"496","TZP-2026-000496","496","28","16","Public Safety Violation","Synthetic case summary 496","OPEN","5/18/2026 5:00:00 PM",
+"497","TZP-2026-000497","497","29","17","Public Safety Violation","Synthetic case summary 497","UNDER_INVESTIGATION","3/24/2026 2:00:00 PM",
+"498","TZP-2026-000498","498","30","18","Public Safety Violation","Synthetic case summary 498","CLOSED","3/5/2026 7:00:00 PM","3/7/2026 7:00:00 PM"
+"499","TZP-2026-000499","499","31","19","Hit and Run","Synthetic case summary 499","OPEN","7/1/2026 11:00:00 AM",
+"500","TZP-2026-000500","500","32","20","License Fraud","Synthetic case summary 500","UNDER_INVESTIGATION","3/17/2026 10:00:00 AM",
+"501","TZP-2026-000501","501","33","1","License Fraud","Synthetic case summary 501","CLOSED","11/8/2026 8:00:00 AM","12/21/2026 8:00:00 AM"
+"502","TZP-2026-000502","502","34","2","Traffic Collision","Synthetic case summary 502","OPEN","3/17/2026 1:00:00 PM",
+"503","TZP-2026-000503","503","35","3","Vehicle Theft","Synthetic case summary 503","UNDER_INVESTIGATION","2/5/2026 6:00:00 PM",
+"504","TZP-2026-000504","504","36","4","Hit and Run","Synthetic case summary 504","CLOSED","10/23/2026 3:00:00 PM","11/8/2026 3:00:00 PM"
+"505","TZP-2026-000505","505","1","5","Hit and Run","Synthetic case summary 505","OPEN","10/24/2026 5:00:00 AM",
+"506","TZP-2026-000506","506","2","6","Vehicle Theft","Synthetic case summary 506","UNDER_INVESTIGATION","3/16/2026 10:00:00 AM",
+"507","TZP-2026-000507","507","3","7","Hit and Run","Synthetic case summary 507","CLOSED","4/28/2026 3:00:00 AM","5/16/2026 3:00:00 AM"
+"508","TZP-2026-000508","508","4","8","Hit and Run","Synthetic case summary 508","OPEN","3/14/2026 1:00:00 AM",
+"509","TZP-2026-000509","509","5","9","Traffic Collision","Synthetic case summary 509","UNDER_INVESTIGATION","12/8/2026 3:00:00 AM",
+"510","TZP-2026-000510","510","6","10","License Fraud","Synthetic case summary 510","CLOSED","7/27/2026 1:00:00 AM","9/11/2026 1:00:00 AM"
+"511","TZP-2026-000511","511","7","11","Traffic Collision","Synthetic case summary 511","OPEN","7/27/2026 7:00:00 PM",
+"512","TZP-2026-000512","512","8","12","Public Safety Violation","Synthetic case summary 512","UNDER_INVESTIGATION","5/20/2026 12:00:00 PM",
+"513","TZP-2026-000513","513","9","13","Traffic Collision","Synthetic case summary 513","CLOSED","8/30/2026 5:00:00 PM","9/26/2026 5:00:00 PM"
+"514","TZP-2026-000514","514","10","14","Vehicle Theft","Synthetic case summary 514","OPEN","1/30/2026 12:00:00 PM",
+"515","TZP-2026-000515","515","11","15","Hit and Run","Synthetic case summary 515","UNDER_INVESTIGATION","9/30/2026 2:00:00 AM",
+"516","TZP-2026-000516","516","12","16","Traffic Collision","Synthetic case summary 516","CLOSED","1/29/2026 2:00:00 AM","3/16/2026 2:00:00 AM"
+"517","TZP-2026-000517","517","13","17","Traffic Collision","Synthetic case summary 517","OPEN","5/8/2026 4:00:00 PM",
+"518","TZP-2026-000518","518","14","18","Traffic Collision","Synthetic case summary 518","UNDER_INVESTIGATION","7/1/2026 1:00:00 PM",
+"519","TZP-2026-000519","519","15","19","License Fraud","Synthetic case summary 519","CLOSED","5/1/2026 3:00:00 AM","6/27/2026 3:00:00 AM"
+"520","TZP-2026-000520","520","16","20","Public Safety Violation","Synthetic case summary 520","OPEN","11/21/2026 5:00:00 PM",
+"521","TZP-2026-000521","521","17","1","Public Safety Violation","Synthetic case summary 521","UNDER_INVESTIGATION","7/31/2026 5:00:00 PM",
+"522","TZP-2026-000522","522","18","2","License Fraud","Synthetic case summary 522","CLOSED","2/7/2026 12:00:00 AM","3/19/2026 12:00:00 AM"
+"523","TZP-2026-000523","523","19","3","License Fraud","Synthetic case summary 523","OPEN","10/3/2026 2:00:00 PM",
+"524","TZP-2026-000524","524","20","4","License Fraud","Synthetic case summary 524","UNDER_INVESTIGATION","3/3/2026 3:00:00 AM",
+"525","TZP-2026-000525","525","21","5","Public Safety Violation","Synthetic case summary 525","CLOSED","7/1/2026 11:00:00 AM","8/19/2026 11:00:00 AM"
+"526","TZP-2026-000526","526","22","6","Hit and Run","Synthetic case summary 526","OPEN","12/19/2026 11:00:00 AM",
+"527","TZP-2026-000527","527","23","7","Public Safety Violation","Synthetic case summary 527","UNDER_INVESTIGATION","10/4/2026 7:00:00 AM",
+"528","TZP-2026-000528","528","24","8","Hit and Run","Synthetic case summary 528","CLOSED","10/2/2026 3:00:00 PM","11/19/2026 3:00:00 PM"
+"529","TZP-2026-000529","529","25","9","License Fraud","Synthetic case summary 529","OPEN","6/22/2026 12:00:00 PM",
+"530","TZP-2026-000530","530","26","10","Hit and Run","Synthetic case summary 530","UNDER_INVESTIGATION","9/19/2026 5:00:00 AM",
+"531","TZP-2026-000531","531","27","11","Traffic Collision","Synthetic case summary 531","CLOSED","9/6/2026 11:00:00 PM","9/8/2026 11:00:00 PM"
+"532","TZP-2026-000532","532","28","12","Vehicle Theft","Synthetic case summary 532","OPEN","2/27/2026 1:00:00 AM",
+"533","TZP-2026-000533","533","29","13","License Fraud","Synthetic case summary 533","UNDER_INVESTIGATION","2/21/2026 6:00:00 AM",
+"534","TZP-2026-000534","534","30","14","Public Safety Violation","Synthetic case summary 534","CLOSED","12/29/2026 9:00:00 PM","1/19/2027 9:00:00 PM"
+"535","TZP-2026-000535","535","31","15","Hit and Run","Synthetic case summary 535","OPEN","8/27/2026 8:00:00 PM",
+"536","TZP-2026-000536","536","32","16","Vehicle Theft","Synthetic case summary 536","UNDER_INVESTIGATION","2/4/2026 6:00:00 PM",
+"537","TZP-2026-000537","537","33","17","Public Safety Violation","Synthetic case summary 537","CLOSED","6/15/2026 2:00:00 AM","6/30/2026 2:00:00 AM"
+"538","TZP-2026-000538","538","34","18","Hit and Run","Synthetic case summary 538","OPEN","3/28/2026 11:00:00 AM",
+"539","TZP-2026-000539","539","35","19","Hit and Run","Synthetic case summary 539","UNDER_INVESTIGATION","4/10/2026 3:00:00 AM",
+"540","TZP-2026-000540","540","36","20","Public Safety Violation","Synthetic case summary 540","CLOSED","11/12/2026 11:00:00 PM","1/6/2027 11:00:00 PM"
+"541","TZP-2026-000541","541","1","1","Vehicle Theft","Synthetic case summary 541","OPEN","12/23/2026 12:00:00 PM",
+"542","TZP-2026-000542","542","2","2","Public Safety Violation","Synthetic case summary 542","UNDER_INVESTIGATION","9/13/2026 5:00:00 PM",
+"543","TZP-2026-000543","543","3","3","Vehicle Theft","Synthetic case summary 543","CLOSED","1/20/2026 3:00:00 AM","2/19/2026 3:00:00 AM"
+"544","TZP-2026-000544","544","4","4","Hit and Run","Synthetic case summary 544","OPEN","11/16/2026 8:00:00 PM",
+"545","TZP-2026-000545","545","5","5","License Fraud","Synthetic case summary 545","UNDER_INVESTIGATION","11/20/2026 5:00:00 PM",
+"546","TZP-2026-000546","546","6","6","Public Safety Violation","Synthetic case summary 546","CLOSED","3/9/2026 3:00:00 PM","5/4/2026 3:00:00 PM"
+"547","TZP-2026-000547","547","7","7","License Fraud","Synthetic case summary 547","OPEN","11/18/2026 1:00:00 PM",
+"548","TZP-2026-000548","548","8","8","License Fraud","Synthetic case summary 548","UNDER_INVESTIGATION","3/11/2026 9:00:00 PM",
+"549","TZP-2026-000549","549","9","9","Traffic Collision","Synthetic case summary 549","CLOSED","11/11/2026 3:00:00 AM","1/8/2027 3:00:00 AM"
+"550","TZP-2026-000550","550","10","10","Public Safety Violation","Synthetic case summary 550","OPEN","11/15/2026 12:00:00 AM",
+"551","TZP-2026-000551","551","11","11","Traffic Collision","Synthetic case summary 551","UNDER_INVESTIGATION","7/18/2026 10:00:00 PM",
+"552","TZP-2026-000552","552","12","12","Public Safety Violation","Synthetic case summary 552","CLOSED","5/18/2026 3:00:00 PM","6/10/2026 3:00:00 PM"
+"553","TZP-2026-000553","553","13","13","License Fraud","Synthetic case summary 553","OPEN","5/11/2026 7:00:00 AM",
+"554","TZP-2026-000554","554","14","14","Hit and Run","Synthetic case summary 554","UNDER_INVESTIGATION","8/27/2026 11:00:00 PM",
+"555","TZP-2026-000555","555","15","15","Vehicle Theft","Synthetic case summary 555","CLOSED","3/6/2026 7:00:00 AM","4/7/2026 7:00:00 AM"
+"556","TZP-2026-000556","556","16","16","Traffic Collision","Synthetic case summary 556","OPEN","1/22/2026 5:00:00 AM",
+"557","TZP-2026-000557","557","17","17","Hit and Run","Synthetic case summary 557","UNDER_INVESTIGATION","1/31/2026 10:00:00 PM",
+"558","TZP-2026-000558","558","18","18","Traffic Collision","Synthetic case summary 558","CLOSED","10/17/2026 6:00:00 AM","12/5/2026 6:00:00 AM"
+"559","TZP-2026-000559","559","19","19","Traffic Collision","Synthetic case summary 559","OPEN","1/14/2026 9:00:00 PM",
+"560","TZP-2026-000560","560","20","20","Public Safety Violation","Synthetic case summary 560","UNDER_INVESTIGATION","6/23/2026 5:00:00 PM",
+"561","TZP-2026-000561","561","21","1","License Fraud","Synthetic case summary 561","CLOSED","11/14/2026 5:00:00 PM","1/9/2027 5:00:00 PM"
+"562","TZP-2026-000562","562","22","2","Hit and Run","Synthetic case summary 562","OPEN","4/5/2026 1:00:00 PM",
+"563","TZP-2026-000563","563","23","3","Vehicle Theft","Synthetic case summary 563","UNDER_INVESTIGATION","1/29/2026 11:00:00 AM",
+"564","TZP-2026-000564","564","24","4","Vehicle Theft","Synthetic case summary 564","CLOSED","12/21/2026 1:00:00 AM","1/4/2027 1:00:00 AM"
+"565","TZP-2026-000565","565","25","5","License Fraud","Synthetic case summary 565","OPEN","7/8/2026 1:00:00 PM",
+"566","TZP-2026-000566","566","26","6","License Fraud","Synthetic case summary 566","UNDER_INVESTIGATION","6/17/2026 11:00:00 PM",
+"567","TZP-2026-000567","567","27","7","Vehicle Theft","Synthetic case summary 567","CLOSED","12/19/2026 9:00:00 PM","1/25/2027 9:00:00 PM"
+"568","TZP-2026-000568","568","28","8","Public Safety Violation","Synthetic case summary 568","OPEN","5/3/2026 2:00:00 AM",
+"569","TZP-2026-000569","569","29","9","Vehicle Theft","Synthetic case summary 569","UNDER_INVESTIGATION","5/13/2026 8:00:00 PM",
+"570","TZP-2026-000570","570","30","10","Traffic Collision","Synthetic case summary 570","CLOSED","2/17/2026 3:00:00 AM","4/14/2026 3:00:00 AM"
+"571","TZP-2026-000571","571","31","11","Hit and Run","Synthetic case summary 571","OPEN","7/7/2026 10:00:00 AM",
+"572","TZP-2026-000572","572","32","12","Vehicle Theft","Synthetic case summary 572","UNDER_INVESTIGATION","12/6/2026 6:00:00 AM",
+"573","TZP-2026-000573","573","33","13","Hit and Run","Synthetic case summary 573","CLOSED","12/12/2026 11:00:00 PM","1/17/2027 11:00:00 PM"
+"574","TZP-2026-000574","574","34","14","Traffic Collision","Synthetic case summary 574","OPEN","6/6/2026 5:00:00 PM",
+"575","TZP-2026-000575","575","35","15","Vehicle Theft","Synthetic case summary 575","UNDER_INVESTIGATION","4/25/2026 12:00:00 PM",
+"576","TZP-2026-000576","576","36","16","Traffic Collision","Synthetic case summary 576","CLOSED","4/13/2026 5:00:00 PM","5/14/2026 5:00:00 PM"
+"577","TZP-2026-000577","577","1","17","Traffic Collision","Synthetic case summary 577","OPEN","11/27/2026 11:00:00 PM",
+"578","TZP-2026-000578","578","2","18","Traffic Collision","Synthetic case summary 578","UNDER_INVESTIGATION","5/29/2026 6:00:00 AM",
+"579","TZP-2026-000579","579","3","19","Traffic Collision","Synthetic case summary 579","CLOSED","9/29/2026 9:00:00 PM","10/14/2026 9:00:00 PM"
+"580","TZP-2026-000580","580","4","20","Traffic Collision","Synthetic case summary 580","OPEN","6/14/2026 8:00:00 PM",
+"581","TZP-2026-000581","581","5","1","Traffic Collision","Synthetic case summary 581","UNDER_INVESTIGATION","2/14/2026 11:00:00 PM",
+"582","TZP-2026-000582","582","6","2","Vehicle Theft","Synthetic case summary 582","CLOSED","3/4/2026 4:00:00 PM","3/16/2026 4:00:00 PM"
+"583","TZP-2026-000583","583","7","3","Hit and Run","Synthetic case summary 583","OPEN","9/16/2026 12:00:00 AM",
+"584","TZP-2026-000584","584","8","4","License Fraud","Synthetic case summary 584","UNDER_INVESTIGATION","4/8/2026 2:00:00 AM",
+"585","TZP-2026-000585","585","9","5","Hit and Run","Synthetic case summary 585","CLOSED","1/22/2026 11:00:00 AM","3/14/2026 11:00:00 AM"
+"586","TZP-2026-000586","586","10","6","License Fraud","Synthetic case summary 586","OPEN","3/7/2026 10:00:00 AM",
+"587","TZP-2026-000587","587","11","7","Vehicle Theft","Synthetic case summary 587","UNDER_INVESTIGATION","11/14/2026 4:00:00 AM",
+"588","TZP-2026-000588","588","12","8","Traffic Collision","Synthetic case summary 588","CLOSED","4/22/2026 11:00:00 PM","6/1/2026 11:00:00 PM"
+"589","TZP-2026-000589","589","13","9","License Fraud","Synthetic case summary 589","OPEN","10/4/2026 1:00:00 AM",
+"590","TZP-2026-000590","590","14","10","Vehicle Theft","Synthetic case summary 590","UNDER_INVESTIGATION","8/2/2026 9:00:00 PM",
+"591","TZP-2026-000591","591","15","11","Vehicle Theft","Synthetic case summary 591","CLOSED","7/31/2026 10:00:00 PM","8/20/2026 10:00:00 PM"
+"592","TZP-2026-000592","592","16","12","Vehicle Theft","Synthetic case summary 592","OPEN","4/29/2026 2:00:00 PM",
+"593","TZP-2026-000593","593","17","13","Public Safety Violation","Synthetic case summary 593","UNDER_INVESTIGATION","1/21/2026 8:00:00 AM",
+"594","TZP-2026-000594","594","18","14","License Fraud","Synthetic case summary 594","CLOSED","9/6/2026 8:00:00 PM","9/24/2026 8:00:00 PM"
+"595","TZP-2026-000595","595","19","15","Traffic Collision","Synthetic case summary 595","OPEN","2/4/2026 5:00:00 AM",
+"596","TZP-2026-000596","596","20","16","Traffic Collision","Synthetic case summary 596","UNDER_INVESTIGATION","11/26/2026 8:00:00 PM",
+"597","TZP-2026-000597","597","21","17","Vehicle Theft","Synthetic case summary 597","CLOSED","3/22/2026 6:00:00 AM","5/16/2026 6:00:00 AM"
+"598","TZP-2026-000598","598","22","18","Traffic Collision","Synthetic case summary 598","OPEN","10/12/2026 4:00:00 AM",
+"599","TZP-2026-000599","599","23","19","License Fraud","Synthetic case summary 599","UNDER_INVESTIGATION","2/1/2026 4:00:00 PM",
+"600","TZP-2026-000600","600","24","20","Vehicle Theft","Synthetic case summary 600","CLOSED","4/14/2026 5:00:00 PM","5/6/2026 5:00:00 PM"
