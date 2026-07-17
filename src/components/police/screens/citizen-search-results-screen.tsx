@@ -26,7 +26,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { CITIZEN_RESULT } from "@/lib/admin-mgmt-data";
+import { lookupCitizen } from "@/lib/mock-database";
 import { findMatchingMissingAlerts } from "@/lib/shared-missing-alerts";
 import { toast } from "@/hooks/use-toast";
 
@@ -41,7 +41,15 @@ export function CitizenSearchResultsScreen() {
   const searchEntity = usePoliceStore((s) => s.searchEntity);
   const runSearch = usePoliceStore((s) => s.runSearch);
   const setSearchEntity = usePoliceStore((s) => s.setSearchEntity);
-  const r = CITIZEN_RESULT;
+  const foundCitizen = useMemo(() => lookupCitizen(searchQuery), [searchQuery]);
+  const r = foundCitizen ?? {
+    name: searchQuery || "Raia Asiyejulikana", nida: "—", mobile: "—", gender: "Mme" as const, dob: "—", age: 0,
+    address: "—", occupation: "—", status: "Haijulikani", statusColor: "#888",
+    alerts: [] as string[], criminalRecord: { hasRecord: false, cases: 0, convictions: 0 },
+    licenseNo: "—", licenseExpiry: "—", licenseClass: "—", passportNo: "—", passportExpiry: "—",
+    vehicles: [], devices: [], history: [], riskScore: 0, riskLevel: "—",
+    documents: [] as {type:string;number:string;status:string}[],
+  };
 
 
   const handleRecordInfo = () => {
@@ -144,27 +152,34 @@ export function CitizenSearchResultsScreen() {
       )}
 
       {/* Not found state */}
-      {searchStatus === "not-found" && (
-        <div className="flex flex-col items-center justify-center gap-4 px-6 py-24 text-center">
-          <SearchX size={48} className="text-police-faint" />
-          <p className="text-[15px] font-bold text-police-navy">Raia Hajapatikana</p>
-          <p className="text-[12px] text-police-muted">
-            Hakuna rekodi ya &quot;{searchQuery}&quot; iliyopatikana. Angalia neno la utafutaji na
-            ujaribu tena.
+      {(searchStatus === "not-found" || (searchStatus === "found" && !foundCitizen)) && (
+        <div className="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
+          <SearchX size={52} className="text-police-faint" />
+          <p className="text-[16px] font-bold text-police-navy">Raia Hajapatikana</p>
+          <p className="text-[13px] text-police-muted">
+            Hakuna rekodi ya &ldquo;{searchQuery}&rdquo; kwenye mfumo.
           </p>
-          <button
-            onClick={() => {
-              runSearch(searchQuery);
-            }}
-            className="mt-2 rounded-xl bg-[#2196F3] px-6 py-2.5 text-[13px] font-bold text-white"
-          >
-            Jaribu Tena
+          <button onClick={() => goBack()} className="rounded-xl border border-police px-6 py-2.5 text-[13px] font-semibold text-police">
+            Rudi na Utafute Tena
           </button>
+          <div className="mt-2 w-full rounded-2xl border border-[#10B981]/30 bg-[#10B981]/5 p-4 text-left">
+            <p className="text-[13px] font-bold text-[#10B981]">Mtu Hajasajiliwa Mfumoni</p>
+            <p className="text-[11px] text-police-muted mt-1">Unaweza kurekodi tukio au fomu ya kukamatwa na taarifa unazozijua.</p>
+            <button onClick={() => navigate("incident-detail")} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#10B981] py-2.5 text-[13px] font-bold text-white">
+              Rekodi Tukio Jipya
+            </button>
+            <button onClick={() => { setWarningPrefill({ recipientName: searchQuery, plate: "", licenseNo: "", phone: "" }); navigate("warning-form"); }} className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-[#FF9800] py-2.5 text-[13px] font-semibold text-[#FF9800]">
+              Toa Onyo
+            </button>
+            <button onClick={() => { setArrestPrefill({ suspectName: searchQuery, nida: "", phone: "", plate: "", licenseNo: "" }); navigate("arrest-form"); }} className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-[#EF4444] py-2.5 text-[13px] font-semibold text-[#EF4444]">
+              Fomu ya Kukamatwa
+            </button>
+          </div>
         </div>
       )}
 
       {/* Found / idle: show full citizen profile */}
-      {(searchStatus === "found" || searchStatus === "idle") && (
+      {(searchStatus === "found" || searchStatus === "idle") && foundCitizen && (
         <div className="space-y-3 p-4">
           {/* Citizen Header Card */}
           <div className="rounded-2xl bg-police-card p-4 shadow-sm">

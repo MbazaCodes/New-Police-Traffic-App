@@ -164,9 +164,13 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
   setSearchEntity: (t) => set({ searchEntity: t }),
   runSearch: (query) => {
     set({ searchQuery: query, searchStatus: "searching" });
-    setTimeout(() => {
-      set({ searchStatus: query.trim().length > 0 ? "found" : "not-found" });
-    }, 1400);
+    setTimeout(async () => {
+      if (!query.trim()) { set({ searchStatus: "not-found" }); return; }
+      // Dynamic import to avoid circular dependency
+      const { universalSearch } = await import("@/lib/mock-database");
+      const { citizen, vehicle, device } = universalSearch(query);
+      set({ searchStatus: (citizen || vehicle || device) ? "found" : "not-found" });
+    }, 1000);
   },
   clearSearch: () => set({ searchQuery: "", searchStatus: "idle" }),
 
