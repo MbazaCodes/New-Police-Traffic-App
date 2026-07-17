@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Bell, Search, X, ChevronRight, UserCheck, AlertTriangle, ShieldCheck, Package, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { OFFICER, ARREST_RECORDS, WARNING_RECORDS, GENERAL_INCIDENTS } from "@/lib/police-data";
+import { ARREST_RECORDS, WARNING_RECORDS, GENERAL_INCIDENTS } from "@/lib/police-data";
+import { useOfficer } from "@/hooks/use-officer";
 import { validateName, validateNida, validateMobile, validateSerial, getSuggestions } from "@/lib/mock-database";
 
 type SearchMode = "citizen" | "serial";
@@ -24,6 +25,7 @@ const CITIZEN_PLACEHOLDERS: Record<CitizenTab, string> = {
 
 export function GeneralHomeScreen() {
   const { citizenSearchType, setCitizenSearchType, navigate, runSearch, setSearchEntity, unreadAlertCount, patrolRecords } = usePoliceStore();
+  const OFFICER = useOfficer();
   const [value, setValue] = useState("");
   const [searchMode, setSearchMode] = useState<SearchMode>("citizen");
   const [error, setError] = useState("");

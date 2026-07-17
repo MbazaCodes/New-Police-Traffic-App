@@ -80,6 +80,9 @@ interface PoliceState {
   logout: () => void;
   setRole: (role: UserRole) => void;
 
+  loginIdentifier: string;
+  setLoginIdentifier: (id: string) => void;
+
   activeTab: ScreenId;
   currentScreen: ScreenId;
   history: ScreenId[];
@@ -153,6 +156,9 @@ export const usePoliceStore = create<PoliceState>()(
       isAuthenticated: false,
       userRole: "officer-traffic",
       authRole: null,
+      loginIdentifier: "",
+      setLoginIdentifier: (id) => set({ loginIdentifier: id }),
+
       login: (role) => {
         const officerRole = normalizeOfficerRole(role);
         set({ isAuthenticated: true, userRole: officerRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
@@ -163,11 +169,10 @@ export const usePoliceStore = create<PoliceState>()(
         set({ isAuthenticated: true, userRole: officerRole, authRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
       },
       logout: () => {
-        // Clear persisted auth — use localStorage directly to ensure clean state
         if (typeof window !== "undefined") {
           localStorage.removeItem("tz-police-auth");
         }
-        set({ isAuthenticated: false, userRole: "officer-traffic", authRole: null, currentScreen: "login", activeTab: "home", history: [], readAlertIds: [] });
+        set({ isAuthenticated: false, userRole: "officer-traffic", authRole: null, loginIdentifier: "", currentScreen: "login", activeTab: "home", history: [], readAlertIds: [] });
       },
   setRole: (role) => set({ userRole: normalizeOfficerRole(role) }),
 

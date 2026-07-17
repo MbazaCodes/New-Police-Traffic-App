@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Bell, Search, Camera, ScanLine, ChevronRight, X, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { OFFICER, RECENT_OFFENSES, CITATION_HISTORY, ARREST_RECORDS, PATROL_STATS } from "@/lib/police-data";
+import { RECENT_OFFENSES, CITATION_HISTORY, ARREST_RECORDS, PATROL_STATS } from "@/lib/police-data";
+import { useOfficer } from "@/hooks/use-officer";
 import { PoliceIcon } from "../police-icons";
 import {
   validatePlate, validateLicense, validateNida,
@@ -33,6 +34,7 @@ const HINT_LABELS: Record<Tab, string> = {
 
 export function HomeScreen() {
   const { searchTab, setSearchTab, navigate, openScanner, runSearch, setSearchEntity, setSelectedOffense, unreadAlertCount, patrolRecords } = usePoliceStore();
+  const OFFICER = useOfficer();
   const tab = searchTab as Tab;
   const [value, setValue] = useState("");
   const [error, setError] = useState("");

@@ -17,12 +17,13 @@ import {
   Info,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
-import { OFFENSE_TYPES, VEHICLE_TYPES, OFFICER } from "@/lib/police-data";
+import { OFFENSE_TYPES, VEHICLE_TYPES} from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 
 export function CitationScreen() {
+  const OFFICER = useOfficer();
   const prefill = usePoliceStore((s) => s.citationPrefill);
   const goBack = usePoliceStore((s) => s.goBack);
   const addCitation = useRecordsStore((s) => s.addCitation);

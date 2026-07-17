@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { ArrowLeft, Camera, X, CheckCircle, User, MapPin, Clock, FileText, AlertTriangle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { OFFICER } from "@/lib/police-data";
+import { useOfficer } from "@/hooks/use-officer";
 import { toast } from "@/hooks/use-toast";
 
 const OFFENSE_CATEGORIES = [
@@ -13,6 +13,7 @@ const OFFENSE_CATEGORIES = [
 ];
 
 export function ArrestFormScreen() {
+  const OFFICER = useOfficer();
   const { goBack, arrestPrefill, setArrestPrefill } = usePoliceStore();
   const [submitted, setSubmitted] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);

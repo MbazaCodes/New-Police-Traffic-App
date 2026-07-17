@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { ArrowLeft, Camera, X, CheckCircle, MapPin, AlertTriangle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { OFFICER } from "@/lib/police-data";
+import { useOfficer } from "@/hooks/use-officer";
 import { toast } from "@/hooks/use-toast";
 
 const INCIDENT_TYPES = [
@@ -13,6 +13,7 @@ const INCIDENT_TYPES = [
 ];
 
 export function IncidentDetailScreen() {
+  const OFFICER = useOfficer();
   const { goBack, incidentPrefill, setIncidentPrefill } = usePoliceStore();
   const [submitted, setSubmitted] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);

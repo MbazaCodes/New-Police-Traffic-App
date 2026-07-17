@@ -3,10 +3,11 @@
 import { useState, useRef } from "react";
 import { ArrowLeft, Camera, CheckCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { OFFICER } from "@/lib/police-data";
+import { useOfficer } from "@/hooks/use-officer";
 import { toast } from "@/hooks/use-toast";
 
 export function EditProfileScreen() {
+  const OFFICER = useOfficer();
   const { goBack } = usePoliceStore();
   const [saved, setSaved] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);

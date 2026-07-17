@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { ArrowLeft, User, CheckCircle, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { OFFICER } from "@/lib/police-data";
+import { useOfficer } from "@/hooks/use-officer";
 import { saveNewCitizen, validateNida, validateMobile, validateName, newCitizenRecords } from "@/lib/mock-database";
 import { toast } from "@/hooks/use-toast";
 
 const OCCUPATIONS = ["Mfanyabiashara", "Mwalimu", "Dereva", "Mhudumu wa Afya", "Mwanafunzi", "Fundi", "Mkulima", "Mfanyakazi wa Serikali", "Mwandishi", "Daktari", "Mkandarasi", "Nyingine"];
 
 export function AddCitizenScreen() {
+  const OFFICER = useOfficer();
   const { goBack, searchQuery, citizenSearchType } = usePoliceStore();
   const [saved, setSaved] = useState(false);
   const [savedRecord, setSavedRecord] = useState<ReturnType<typeof saveNewCitizen> | null>(null);

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft, Car, CheckCircle, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { OFFICER } from "@/lib/police-data";
+import { useOfficer } from "@/hooks/use-officer";
 import { saveNewVehicle, validatePlate, validateNida, validateMobile, validateLicense, newVehicleRecords } from "@/lib/mock-database";
 import { toast } from "@/hooks/use-toast";
 
@@ -12,6 +12,7 @@ const INSURANCE_COS = ["Jubilee Insurance", "GA Insurance", "Strategies Insuranc
 const COLORS = ["Nyeupe", "Nyeusi", "Fedha", "Nyekundu", "Bluu", "Kijani", "Kahawia", "Dhahabu", "Njano", "Pinki"];
 
 export function AddVehicleScreen() {
+  const OFFICER = useOfficer();
   const { goBack, searchQuery } = usePoliceStore();
   const [saved, setSaved] = useState(false);
   const [savedRecord, setSavedRecord] = useState<ReturnType<typeof saveNewVehicle> | null>(null);

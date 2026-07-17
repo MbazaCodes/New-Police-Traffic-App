@@ -63,7 +63,7 @@ type ActionList = Action[];
 
 const ALL_ACTIONS: ActionList = ["view", "create", "update", "delete", "manage"];
 
-const PERMISSIONS: Record<Role, Partial<Record<Resource, ActionList>>> = {
+export const PERMISSIONS: Record<Role, Partial<Record<Resource, ActionList>>> = {
   SUPER_ADMIN: {
     officers: ALL_ACTIONS,
     citations: ALL_ACTIONS,

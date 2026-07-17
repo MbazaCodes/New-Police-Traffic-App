@@ -16,6 +16,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { usePoliceStore, AUTH_ROLES, type AuthRole } from "@/store/police-store";
+import { saveLoginIdentifier, clearLoginIdentifier } from "@/lib/session-context";
 import type { UserRole } from "@/store/police-store";
 import { Shield, Car, UserCheck } from "lucide-react";
 
@@ -79,6 +80,7 @@ function roleMatchesSelection(selectedRole: string, authRole?: string): boolean 
 export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }) {
   const router = useRouter();
   const login = usePoliceStore((s) => s.login);
+  const setLoginIdentifier = usePoliceStore((s) => s.setLoginIdentifier);
   const [step, setStep] = useState<Step>("credentials");
   const [method, setMethod] = useState<"username" | "phone">("username");
   const [identifier, setIdentifier] = useState("");
