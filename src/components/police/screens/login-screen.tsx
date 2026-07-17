@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import {
   ShieldCheck,
   User,
@@ -44,9 +45,37 @@ const WEB_ROLES: WebRoleOption[] = [
   { id: "TRAFFIC_OFFICER", label: "Traffic Officer", route: "/officer/traffic/home", storeRole: "officer-traffic" },
   { id: "GENERAL_OFFICER", label: "General Officer", route: "/officer/general/home", storeRole: "officer-general" },
   { id: "INVESTIGATOR", label: "CID / Investigator", route: "/cid/home", storeRole: "officer-general" },
-  { id: "CLERK", label: "Clerk", route: "/clerk/dashboard", storeRole: "admin" },
+  { id: "CLERK", label: "Clerk", route: "/clerk/records", storeRole: "admin" },
   { id: "VIEWER", label: "Viewer", route: "/viewer/dashboard", storeRole: "admin" },
 ];
+
+function toStoreOfficerRole(authRole?: string, fallback: UserRole = "officer-traffic"): UserRole {
+  if (authRole === "GENERAL_OFFICER") return "officer-general";
+  if (authRole === "TRAFFIC_OFFICER" || authRole === "OFFICER") return "officer-traffic";
+  return fallback;
+}
+
+function roleMatchesSelection(selectedRole: string, authRole?: string): boolean {
+  if (!authRole) return false;
+  if (selectedRole === authRole) return true;
+
+  // Legacy commander role can access all command tiers.
+  if (authRole === "COMMANDER") {
+    return [
+      "NATIONAL_COMMANDER",
+      "REGIONAL_COMMANDER",
+      "DISTRICT_COMMANDER",
+      "STATION_COMMANDER",
+    ].includes(selectedRole);
+  }
+
+  // Legacy officer role can access both officer tracks.
+  if (authRole === "OFFICER") {
+    return ["TRAFFIC_OFFICER", "GENERAL_OFFICER"].includes(selectedRole);
+  }
+
+  return false;
+}
 
 export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }) {
   const router = useRouter();
@@ -59,6 +88,9 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
   const [resendTimer, setResendTimer] = useState(0);
   const [role, setRole] = useState<UserRole>(OFFICER_ROLES[0].id);
   const [webRole, setWebRole] = useState<string>(WEB_ROLES[0].id);
+  const [authResolvedRole, setAuthResolvedRole] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [verifying, setVerifying] = useState(false);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Resend countdown
@@ -93,41 +125,110 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
     otpRefs.current[Math.min(text.length, 5)]?.focus();
   };
 
-  const sendOtp = () => {
-    if (!identifier.trim()) return;
+  const sendOtp = async () => {
+    const cleanIdentifier = identifier.trim();
+    if (!cleanIdentifier) return;
+
+    setErrorMsg("");
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier: cleanIdentifier }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || data?.error) {
+        setErrorMsg(data?.error ?? "Imeshindikana kutuma OTP. Jaribu tena.");
+        return;
+      }
+
+      const apiRole = String(data?.user?.role ?? "");
+      if (mode === "admin" && apiRole && !roleMatchesSelection(webRole, apiRole)) {
+        setErrorMsg(`Akaunti hii ni ya role ${apiRole}. Tafadhali chagua role inayolingana.`);
+        return;
+      }
+
+      setAuthResolvedRole(apiRole || null);
+
+      const devOtp = String(data?.auth?.devOtp ?? "").replace(/\D/g, "").slice(0, 6);
+      if (devOtp.length === 6) {
+        const next = ["", "", "", "", "", ""];
+        devOtp.split("").forEach((c, i) => (next[i] = c));
+        setOtp(next);
+      } else {
+        setOtp(["", "", "", "", "", ""]);
+      }
+
       setStep("otp");
       setResendTimer(45);
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
-    }, 1200);
+    } catch {
+      setErrorMsg("Hitilafu ya mtandao. Jaribu tena.");
+    } finally {
+      setSending(false);
+    }
   };
 
-  const verifyOtp = () => {
-    if (otp.join("").length < 6) return;
-    setStep("success");
-    setTimeout(() => {
-      if (mode === "admin") {
-        const selectedWebRole = WEB_ROLES.find((r) => r.id === webRole) ?? WEB_ROLES[0];
-        usePoliceStore.setState({
-          isAuthenticated: true,
-          userRole: selectedWebRole.storeRole,
-          adminScreen: "dashboard",
-          currentScreen: "home",
-          activeTab: "home",
-          history: ["home"],
-        });
-        router.push(selectedWebRole.route);
+  const verifyOtp = async () => {
+    const cleanIdentifier = identifier.trim();
+    const otpCode = otp.join("");
+
+    if (!cleanIdentifier || otpCode.length < 6) return;
+
+    setErrorMsg("");
+    setVerifying(true);
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        username: cleanIdentifier,
+        otp: otpCode,
+      });
+
+      if (!result || result.error) {
+        setErrorMsg("OTP si sahihi au ime-expire.");
         return;
       }
-      login(role);
-    }, 1100);
+
+      const sessionResponse = await fetch("/api/auth/session", {
+        method: "GET",
+        cache: "no-store",
+      });
+      const sessionData = await sessionResponse.json().catch(() => ({}));
+      if (!sessionResponse.ok || !sessionData?.authenticated) {
+        setErrorMsg("Session haijapatikana baada ya login.");
+        return;
+      }
+
+      const sessionRole = String(sessionData?.session?.user?.role ?? authResolvedRole ?? "");
+
+      if (mode === "admin") {
+        const selectedWebRole = WEB_ROLES.find((r) => r.id === webRole) ?? WEB_ROLES[0];
+        if (sessionRole && !roleMatchesSelection(selectedWebRole.id, sessionRole)) {
+          setErrorMsg(`Umechagua ${selectedWebRole.id} lakini akaunti ni ${sessionRole}.`);
+          return;
+        }
+        setStep("success");
+        setTimeout(() => {
+          router.push(String(sessionData?.redirectTo ?? selectedWebRole.route));
+        }, 700);
+        return;
+      }
+
+      const mappedRole = toStoreOfficerRole(sessionRole, role);
+      login(mappedRole);
+      setStep("success");
+    } catch {
+      setErrorMsg("Imeshindikana kuthibitisha OTP. Jaribu tena.");
+    } finally {
+      setVerifying(false);
+    }
   };
 
   const resendOtp = () => {
     if (resendTimer > 0) return;
-    setResendTimer(45);
+    void sendOtp();
   };
 
   const otpComplete = otp.join("").length === 6;
@@ -291,6 +392,12 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                 </p>
               </div>
 
+              {errorMsg && (
+                <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700">
+                  {errorMsg}
+                </div>
+              )}
+
               {/* Send OTP Button */}
               <button
                 onClick={sendOtp}
@@ -375,13 +482,28 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
               {/* Verify Button */}
               <button
                 onClick={verifyOtp}
-                disabled={!otpComplete}
+                disabled={!otpComplete || verifying}
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0070C0] py-3.5 text-[15px] font-bold text-white shadow-lg shadow-[#0070C0]/30 transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <ShieldCheck size={20} />
-                <span>Thibitisha na Ingia</span>
-                <ArrowRight size={18} />
+                {verifying ? (
+                  <>
+                    <RefreshCw size={18} className="animate-spin" />
+                    <span>Inathibitisha...</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck size={20} />
+                    <span>Thibitisha na Ingia</span>
+                    <ArrowRight size={18} />
+                  </>
+                )}
               </button>
+
+              {errorMsg && (
+                <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700">
+                  {errorMsg}
+                </div>
+              )}
             </>
           )}
 

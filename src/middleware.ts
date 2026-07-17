@@ -4,7 +4,6 @@ import type { Role } from "@/lib/auth";
 import { canRoleAccessPath, getDefaultRouteForRole } from "@/lib/route-access";
 
 const PUBLIC_PATHS = new Set([
-  "/",
   "/unauthorized",
   "/api/auth/login",
   "/api/auth/otp",
@@ -30,7 +29,7 @@ function isPublicAsset(pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (isPublicAsset(pathname) || PUBLIC_PATHS.has(pathname)) {
+  if (isPublicAsset(pathname)) {
     return NextResponse.next();
   }
 
@@ -41,6 +40,20 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
   const role = token?.role as Role | undefined;
 
+  // Root path acts as auth-aware entrypoint.
+  // - unauthenticated: show login app on /
+  // - authenticated: redirect to role-specific default route
+  if (pathname === "/") {
+    if (!role) {
+      return NextResponse.next();
+    }
+    return NextResponse.redirect(new URL(getDefaultRouteForRole(role), request.url));
+  }
+
+  if (PUBLIC_PATHS.has(pathname)) {
+    return NextResponse.next();
+  }
+
   if (!role) {
     if (pathname.startsWith("/api")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -48,15 +61,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // Redirect root to role-specific dashboard when authenticated.
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL(getDefaultRouteForRole(role), request.url));
-  }
-
   if (!canRoleAccessPath(role, pathname)) {
     if (pathname.startsWith("/api")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
+
+    const defaultRoute = getDefaultRouteForRole(role);
+    if (pathname !== defaultRoute) {
+      return NextResponse.redirect(new URL(defaultRoute, request.url));
+    }
+
     return NextResponse.redirect(new URL("/unauthorized", request.url));
   }
 
