@@ -4,7 +4,7 @@ import { usePoliceStore, AUTH_ROLES, type AuthRole } from "@/store/police-store"
 import { Shield, ArrowRight, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Lazy load shells to reduce initial compilation
 import dynamic from "next/dynamic";
@@ -62,6 +62,34 @@ const ROLE_GRADIENTS: Record<string, string> = {
   INVESTIGATOR: "from-purple-500 to-purple-700",
   CLERK: "from-teal-500 to-teal-700",
   VIEWER: "from-slate-500 to-slate-700",
+};
+
+const ROLE_GLOW_COLORS: Record<string, string> = {
+  SUPER_ADMIN: "239 68 68",
+  SYSTEM_ADMIN: "16 185 129",
+  NATIONAL_COMMANDER: "245 158 11",
+  REGIONAL_COMMANDER: "249 115 22",
+  DISTRICT_COMMANDER: "234 179 8",
+  STATION_COMMANDER: "132 204 22",
+  TRAFFIC_OFFICER: "59 130 246",
+  GENERAL_OFFICER: "6 182 212",
+  INVESTIGATOR: "168 85 247",
+  CLERK: "20 184 166",
+  VIEWER: "100 116 139",
+};
+
+const ROLE_ACCESS_LEVELS: Record<string, { level: number; label: string }> = {
+  SUPER_ADMIN: { level: 10, label: "Full Access" },
+  SYSTEM_ADMIN: { level: 9, label: "System" },
+  NATIONAL_COMMANDER: { level: 8, label: "National" },
+  REGIONAL_COMMANDER: { level: 7, label: "Regional" },
+  DISTRICT_COMMANDER: { level: 6, label: "District" },
+  STATION_COMMANDER: { level: 5, label: "Station" },
+  TRAFFIC_OFFICER: { level: 3, label: "Field" },
+  GENERAL_OFFICER: { level: 3, label: "Field" },
+  INVESTIGATOR: { level: 4, label: "CID" },
+  CLERK: { level: 2, label: "Records" },
+  VIEWER: { level: 1, label: "Read Only" },
 };
 
 const ROLE_ICONS: Record<string, string> = {
