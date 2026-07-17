@@ -1,0 +1,724 @@
+     1→// TZ Police Digital Platform — Mock data & types
+     2→
+     3→export type ScreenId =
+     4→  | "login"
+     5→  | "home"
+     6→  | "search-results"
+     7→  | "citizen-search-results"
+     8→  | "traffic"
+     9→  | "patrol"
+    10→  | "alerts"
+    11→  | "profile"
+    12→  | "accident-report"
+    13→  | "vehicle-inspection"
+    14→  | "pf3"
+    15→  | "citation"
+    16→  | "history"
+    17→  | "arrest-form"
+    18→  | "warning-form"
+    19→  | "lost-property"
+    20→  | "driver-points"
+    21→  | "incident-detail"
+    22→  | "offense-detail"
+    23→  | "citation-detail"
+    24→  | "edit-profile"
+    25→  | "sos-request"
+    26→  | "incident-view"
+    27→  | "citizen-detail"
+    28→  | "add-vehicle"
+    29→  | "add-citizen"
+    30→  | "mock-data-reference";
+    31→
+    32→export const OFFICER = {
+    33→  name: "Cprl. Juma Mwinyi",
+    34→  shortName: "Cprl. Juma",
+    35→  rank: "Corporal",
+    36→  rankShort: "Cprl.",
+    37→  id: "TP123456",
+    38→  station: "Kituo Kikuu cha Polisi Dar es Salaam",
+    39→  unit: "Trafiki - Mkoa wa Dar es Salaam",
+    40→  phone: "0712 345 678",
+    41→  email: "juma.mwinyi@polisi.go.tz",
+    42→  status: "Mtaandao",
+    43→};
+    44→
+    45→export const OFFICERS_LIST = [
+    46→  { id: "TP123456", name: "Cprl. Juma Mwinyi", rank: "Corporal", unit: "Trafiki", station: "Kikuu DSM", status: "active", points: 87 },
+    47→  { id: "TP234567", name: "Sgt. Ali Hassan", rank: "Sergeant", unit: "Trafiki", station: "Kinondoni", status: "active", points: 72 },
+    48→  { id: "TP345678", name: "Insp. Grace Mushi", rank: "Inspector", unit: "Jumla", station: "Ilala", status: "patrol", points: 95 },
+    49→  { id: "TP456789", name: "Cprl. Saidi Juma", rank: "Corporal", unit: "Trafiki", station: "Temeke", status: "active", points: 63 },
+    50→  { id: "TP567890", name: "Cst. Mariam Ally", rank: "Constable", unit: "Jumla", station: "Ubungo", status: "off", points: 100 },
+    51→];
+    52→
+    53→export const HOME_STATS = [
+    54→  { label: "Matukio Yote", value: "1,234", icon: "alert", color: "#1A237E" },
+    55→  { label: "Kesi Zinazosubiri", value: "56", icon: "clock", color: "#FF9800" },
+    56→  { label: "Kesi Zilizotatuliwa", value: "1,178", icon: "check", color: "#4CAF50" },
+    57→  { label: "Patroli Zinazofanya Kazi", value: "23", icon: "car", color: "#F44336" },
+    58→];
+    59→
+    60→export const TRAFFIC_STATS = [
+    61→  { label: "Jumla ya Makosa", value: "10", icon: "clipboard", color: "#2563EB" },
+    62→  { label: "Inasubiri", value: "6", icon: "clock", color: "#F97316" },
+    63→  { label: "Imelipwa", value: "4", icon: "check", color: "#10B981" },
+    64→  { label: "Jumla ya Faini", value: "580,000", sub: "TZS", icon: "wallet", color: "#8B5CF6" },
+    65→];
+    66→
+    67→export const TRAFFIC_QUICK_ACTIONS = [
+    68→  { label: "Ripoti Tukio", icon: "clipboard", color: "#2563EB", screen: "incident-detail" as ScreenId },
+    69→  { label: "Tafuta Raia", icon: "search", color: "#8B5CF6", screen: "citizen-search-results" as ScreenId },
+    70→  { label: "Rekodi Taarifa", icon: "file-text", color: "#10B981", screen: "citation" as ScreenId },
+    71→  { label: "Kamata Mtuhumiwa", icon: "user-x", color: "#EF4444", screen: "arrest-form" as ScreenId },
+    72→  { label: "Ripoti Ajali", icon: "alert-triangle", color: "#F97316", screen: "accident-report" as ScreenId },
+    73→  { label: "Historia", icon: "clock", color: "#3B82F6", screen: "history" as ScreenId },
+    74→];
+    75→
+    76→export const RECENT_OFFENSES = [
+    77→  {
+    78→    id: 1,
+    79→    name: "Kutopita mstari",
+    80→    status: "Inasubiri" as const,
+    81→    statusColor: "#F97316",
+    82→    date: "15 Mei 2026",
+    83→    location: "Morogoro Road, DSM",
+    84→    fine: "TZS 50,000",
+    85→    icon: "alert-triangle",
+    86→    iconColor: "#F97316",
+    87→    plate: "T123ABC",
+    88→    driver: "Juma Khamis Mwinyi",
+    89→    offense: "Kutopita mstari wa kugawanya barabara",
+    90→    deductedPoints: 1,
+    91→  },
+    92→  {
+    93→    id: 2,
+    94→    name: "Kasi kupita kiasi",
+    95→    status: "Imelipwa" as const,
+    96→    statusColor: "#10B981",
+    97→    date: "14 Mei 2026",
+    98→    location: "Mandela Road, DSM",
+    99→    fine: "TZS 150,000",
+   100→    icon: "zap",
+   101→    iconColor: "#EF4444",
+   102→    plate: "T789GHI",
+   103→    driver: "Ali Mohamed Salum",
+   104→    offense: "Over Speeding - 95km/h kwenye 60km/h zone",
+   105→    deductedPoints: 3,
+   106→  },
+   107→  {
+   108→    id: 3,
+   109→    name: "Kutumia simu",
+   110→    status: "Inasubiri" as const,
+   111→    statusColor: "#F97316",
+   112→    date: "13 Mei 2026",
+   113→    location: "Samora Ave, DSM",
+   114→    fine: "TZS 50,000",
+   115→    icon: "phone",
+   116→    iconColor: "#8B5CF6",
+   117→    plate: "T456DEF",
+   118→    driver: "Grace Mushi",
+   119→    offense: "Kutumia simu bila headset wakati wa udereva",
+   120→    deductedPoints: 1,
+   121→  },
+   122→  {
+   123→    id: 4,
+   124→    name: "Bila mkanda",
+   125→    status: "Imelipwa" as const,
+   126→    statusColor: "#10B981",
+   127→    date: "12 Mei 2026",
+   128→    location: "Kivukoni, DSM",
+   129→    fine: "TZS 30,000",
+   130→    icon: "minus-circle",
+   131→    iconColor: "#3B82F6",
+   132→    plate: "T321XYZ",
+   133→    driver: "Saidi Juma Khamis",
+   134→    offense: "Kutumia gari bila mkanda wa usalama",
+   135→    deductedPoints: 0.5,
+   136→  },
+   137→  {
+   138→    id: 5,
+   139→    name: "Taa nyekundu",
+   140→    status: "Hajalipwa" as const,
+   141→    statusColor: "#EF4444",
+   142→    date: "11 Mei 2026",
+   143→    location: "Posta, DSM",
+   144→    fine: "TZS 100,000",
+   145→    icon: "circle",
+   146→    iconColor: "#EF4444",
+   147→    plate: "T654ABC",
+   148→    driver: "Hamisi Rashid",
+   149→    offense: "Kupita taa nyekundu - junction ya Posta",
+   150→    deductedPoints: 2,
+   151→  },
+   152→];
+   153→
+   154→export const PATROL_STATS = [
+   155→  { label: "Patroli za Leo", value: "3", icon: "shield", color: "#2196F3" },
+   156→  { label: "Eneo Lililofunikwa", value: "8", icon: "map-pin", color: "#4CAF50" },
+   157→  { label: "Muda (Saa)", value: "6.5", icon: "clock", color: "#FF9800" },
+   158→  { label: "Umbali (km)", value: "42", icon: "route", color: "#9C27B0" },
+   159→];
+   160→
+   161→export const ALERTS = [
+   162→  {
+   163→    id: 1,
+   164→    icon: "alert-triangle",
+   165→    iconColor: "#F44336",
+   166→    title: "SOS — Insp. Grace Mushi",
+   167→    time: "08:28",
+   168→    message: "Ofisa anahitaji msaada haraka! Kariakoo junction — gari linaloshukiwa limeendesha kwa hatari.",
+   169→    source: "Command Center",
+   170→    sourceBg: "#FFEBEE",
+   171→    dotColor: "#F44336",
+   172→    borderColor: "#F44336",
+   173→    unread: true,
+   174→    category: "all" as const,
+   175→    important: true,
+   176→  },
+   177→  {
+   178→    id: 2,
+   179→    icon: "megaphone",
+   180→    iconColor: "#2196F3",
+   181→    title: "Tangazo: Doria ya Usiku",
+   182→    time: "07:00",
+   183→    message: "Vikosi vyote: Doria maalum ya usiku itafanyika 22:00-06:00 katika maeneo ya Kariakoo, Ilala na Kinondoni.",
+   184→    source: "OCD Mwanza",
+   185→    sourceBg: "#E3F2FD",
+   186→    dotColor: "#2196F3",
+   187→    borderColor: "#2196F3",
+   188→    unread: true,
+   189→    category: "all" as const,
+   190→    important: false,
+   191→  },
+   192→  {
+   193→    id: 3,
+   194→    icon: "file-text",
+   195→    iconColor: "#10B981",
+   196→    title: "Citation CT-2026-0451 — Imekubaliwa",
+   197→    time: "06:45",
+   198→    message: "Citation namba CT-2026-0451 kwa gari T123ABC imekubaliwa na kusindikizwa kwa mahakama.",
+   199→    source: "Mfumo wa Kiotomatiki",
+   200→    sourceBg: "#E8F5E9",
+   201→    dotColor: "#10B981",
+   202→    borderColor: "#10B981",
+   203→    unread: false,
+   204→    category: "mine" as const,
+   205→    important: false,
+   206→  },
+   207→  {
+   208→    id: 4,
+   209→    icon: "user-x",
+   210→    iconColor: "#9C27B0",
+   211→    title: "Kukamatwa: Ali Bakari — Imekamilika",
+   212→    time: "05:30",
+   213→    message: "Ripoti ya kukamatwa kwa Ali Bakari imepokewa na Kamishna wa Kituo. Weka kizuizini hadi uchunguzi ukamilike.",
+   214→    source: "Kituo cha Ilala",
+   215→    sourceBg: "#F3E5F5",
+   216→    dotColor: "#9C27B0",
+   217→    borderColor: "#9C27B0",
+   218→    unread: false,
+   219→    category: "mine" as const,
+   220→    important: true,
+   221→  },
+   222→  {
+   223→    id: 5,
+   224→    icon: "shield",
+   225→    iconColor: "#FF9800",
+   226→    title: "Onyo: Daraja la Pointi",
+   227→    time: "Jana",
+   228→    message: "Dereva HAMISI RASHID (DL987654) ana pointi 48/100. Chini ya kiwango kinachohitajika. Angalia historia yake.",
+   229→    source: "Mfumo wa Pointi",
+   230→    sourceBg: "#FFF3E0",
+   231→    dotColor: "#FF9800",
+   232→    borderColor: "#FF9800",
+   233→    unread: true,
+   234→    category: "important" as const,
+   235→    important: true,
+   236→  },
+   237→  {
+   238→    id: 6,
+   239→    icon: "search",
+   240→    iconColor: "#3B82F6",
+   241→    title: "Mali Iliyopotea — Simu Imepatikana",
+   242→    time: "Jana",
+   243→    message: "Simu ya Samsung (SN: SM-S928B-2025) iliyoripotiwa kuibiwa Mei 10 imepatikana na ofisa wa Temeke.",
+   244→    source: "Kituo cha Temeke",
+   245→    sourceBg: "#E3F2FD",
+   246→    dotColor: "#3B82F6",
+   247→    borderColor: "#3B82F6",
+   248→    unread: false,
+   249→    category: "all" as const,
+   250→    important: false,
+   251→  },
+   252→];
+   253→
+   254→export const PROFILE_STATS = [
+   255→  { label: "Patroli Zilizofanywa", value: "3", sub: "Leo", icon: "car", color: "#2196F3" },
+   256→  { label: "Citations Zimetolewa", value: "12", sub: "Leo", icon: "file-text", color: "#FF9800" },
+   257→  { label: "Makosa Yaliyoshughulikiwa", value: "18", sub: "Leo", icon: "users", color: "#4CAF50" },
+   258→  { label: "Masaa Kazini", value: "8.5", sub: "Leo", icon: "calendar", color: "#9C27B0" },
+   259→  { label: "Umbali (km)", value: "116.5", sub: "Wiki Hii", icon: "route", color: "#2196F3" },
+   260→];
+   261→
+   262→export const PROFILE_ACTIVITIES = [
+   263→  { title: "Patroli imekamilika", desc: "Kariakoo - Ilala Zone", time: "08:15 AM 15 Mei 2026", icon: "car", color: "#2196F3" },
+   264→  { title: "Citation imetolewa", desc: "Namba ya Gari: T789GHI", time: "07:45 AM 15 Mei 2026", icon: "file-text", color: "#4CAF50" },
+   265→  { title: "Kukamatwa — Ali Bakari", desc: "Wizi wa Silaha", time: "07:20 AM 15 Mei 2026", icon: "user-x", color: "#EF4444" },
+   266→  { title: "Onyo Limetolewa", desc: "Kasi kupita kiasi — T456DEF", time: "06:50 AM 15 Mei 2026", icon: "alert-triangle", color: "#FF9800" },
+   267→  { title: "Eneo la Patroli", desc: "Morogoro Road, Dar es Salaam", time: "06:30 AM 15 Mei 2026", icon: "map-pin", color: "#9C27B0" },
+   268→];
+   269→
+   270→export const PROFILE_SETTINGS = [
+   271→  { label: "Profaili Yangu", desc: "Maelezo binafsi", icon: "user", color: "#2196F3" },
+   272→  { label: "Mipangilio", desc: "Badilisha mipangilio", icon: "settings", color: "#2196F3" },
+   273→  { label: "Usalama", desc: "Nenosiri na usalama", icon: "shield", color: "#2196F3" },
+   274→  { label: "Pakua Ripoti", desc: "Ripoti na takwimu", icon: "download", color: "#4CAF50" },
+   275→  { label: "Historia ya Shughuli", desc: "Rekodi zako zote", icon: "clock", color: "#FF9800" },
+   276→  { label: "Msaada", desc: "Usaidizi na maelekezo", icon: "help-circle", color: "#2196F3" },
+   277→];
+   278→
+   279→export const ACCIDENT_VEHICLES = [
+   280→  { plate: "T123ABC", model: "Toyota Corolla", color: "Nyeupe", damage: "Ndogo" },
+   281→  { plate: "T789GHI", model: "Toyota Hiace", color: "Fedha", damage: "Kubwa" },
+   282→];
+   283→
+   284→export const ACCIDENT_PEOPLE = [
+   285→  { name: "Juma Khamis Mwinyi", role: "Dereva", phone: "0712 345 678", condition: "Hakuna Madhara" },
+   286→  { name: "Ali Mohamed Salum", role: "Abiria", phone: "0755 987 654", condition: "Maumivu Madogo" },
+   287→];
+   288→
+   289→export const ACCIDENT_EVIDENCE = [
+   290→  { name: "picha_01.jpg", size: "2.4 MB", type: "image" as const },
+   291→  { name: "picha_02.jpg", size: "1.8 MB", type: "image" as const },
+   292→  { name: "video_01.mp4", size: "5.6 MB", type: "video" as const },
+   293→  { name: "ripoti_mwanzo.pdf", size: "1.2 MB", type: "pdf" as const },
+   294→];
+   295→
+   296→export const VEHICLE_INSPECTION = {
+   297→  plate: "T123ABC",
+   298→  model: "Toyota Corolla",
+   299→  color: "Nyeupe",
+   300→  owner: "Juma Khamis Mwinyi",
+   301→  phone: "0712 345 678",
+   302→  location: "Morogoro Road, DSM",
+   303→  datetime: "15 Mei 2026, 08:15 AM",
+   304→  documents: [
+   305→    { label: "Leseni ya Udereva", status: "Sahihi", pass: true },
+   306→    { label: "Hati ya Usajili (Logbook)", status: "Sahihi", pass: true },
+   307→    { label: "Bima ya Gari", status: "Sahihi", pass: true },
+   308→    { label: "Vyeti vya Ukaguzi (Inspection Certificate)", status: "Haijasahihi", pass: false },
+   309→    { label: "Kibali cha Biashara / PSV Badge", status: "Sahihi", pass: true },
+   310→  ],
+   311→  mechanical: [
+   312→    { label: "Taa za Mbele na Nyuma", status: "Nzuri", pass: true },
+   313→    { label: "Brenki", status: "Nzuri", pass: true },
+   314→    { label: "Matairi", status: "Nzuri", pass: true },
+   315→    { label: "Kioo cha Mbele (Wiper)", status: "Nzuri", pass: true },
+   316→    { label: "Kelele za Gari", status: "Nzuri", pass: true },
+   317→    { label: "Viashiria (Indicators)", status: "Nzuri", pass: true },
+   318→    { label: "Horn", status: "Nzuri", pass: true },
+   319→    { label: "Suspension", status: "Nzuri", pass: true },
+   320→    { label: "Kioo (Mirrors)", status: "Nzuri", pass: true },
+   321→    { label: "Exhaust / Moshi", status: "Nzuri", pass: true },
+   322→  ],
+   323→  photos: [
+   324→    { label: "Nje - Nyuma" },
+   325→    { label: "Nje - Mbele" },
+   326→    { label: "Tairi la Mbele Kushoto" },
+   327→    { label: "Dashibodi" },
+   328→  ],
+   329→};
+   330→
+   331→export const PF3_FORM = {
+   332→  referenceNo: "PF3/DSM/2026/00892",
+   333→  region: "Dar es Salaam",
+   334→  district: "Kinondoni",
+   335→  station: "Kituo Kikuu cha Polisi Dar es Salaam",
+   336→  accidentType: "Mgongano wa Magari Mawili",
+   337→  severity: "Mdogo",
+   338→  weather: "Wazi",
+   339→  roadSurface: "Lami",
+   340→  lightCondition: "Mchana",
+   341→  vehicles: [
+   342→    {
+   343→      plate: "T123ABC", make: "Toyota Corolla", year: "2020", color: "Nyeupe",
+   344→      driver: "Juma Khamis Mwinyi", license: "DL123456789TZ",
+   345→      direction: "Kuelekea Ubungo", damage: "Mbele - Upande wa Kulia", insured: true,
+   346→    },
+   347→    {
+   348→      plate: "T789GHI", make: "Toyota Hiace", year: "2019", color: "Fedha",
+   349→      driver: "Ali Mohamed Salum", license: "DL987654321TZ",
+   350→      direction: "Kutoka Ubungo", damage: "Nyuma - Upande wa Kushoto", insured: true,
+   351→    },
+   352→  ],
+   353→  casualties: [
+   354→    { name: "Ali Mohamed Salum", type: "Abiria", injury: "Maumivu Madogo", hospital: "Mwananyamala", status: "Matibabu" },
+   355→    { name: "Fatuma Hassan", type: "Abiria", injury: "Hakuna Madhara", hospital: "—", status: "Ametoka" },
+   356→  ],
+   357→  witnesses: [
+   358→    { name: "Saidi Juma", phone: "0788 123 456", statement: "Gari la T123ABC lilipita kasi na kupoteza udhibiti." },
+   359→    { name: "Mariam Ally", phone: "0766 987 654", statement: "Niliona gari la pindi likijaribu kuepuka." },
+   360→  ],
+   361→};
+   362→
+   363→export const CITATION_HISTORY = [
+   364→  { id: "CT-2026-0451", plate: "T123ABC", offense: "Over Speeding", driver: "Juma Khamis Mwinyi", date: "10 Mei 2026", time: "14:30", location: "Mandela Road, DSM", fine: "TZS 150,000", status: "Hajalipwa", statusColor: "#F44336", deductedPoints: 3 },
+   365→  { id: "CT-2026-0450", plate: "T789GHI", offense: "No Seatbelt", driver: "Ali Mohamed Salum", date: "08 Mei 2026", time: "09:15", location: "Mbezi Beach, DSM", fine: "TZS 50,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 0.5 },
+   366→  { id: "CT-2026-0449", plate: "T456DEF", offense: "Traffic Light Violation", driver: "Saidi Juma Khamis", date: "05 Mei 2026", time: "17:45", location: "Samora Ave, DSM", fine: "TZS 100,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 2 },
+   367→  { id: "CT-2026-0448", plate: "T321XYZ", offense: "Kutumia Simu wakati wa Udereva", driver: "Grace Mushi", date: "02 Mei 2026", time: "11:20", location: "Nkrumah Street, DSM", fine: "TZS 50,000", status: "Hajalipwa", statusColor: "#F44336", deductedPoints: 1 },
+   368→  { id: "CT-2026-0447", plate: "T654ABC", offense: "Kutopita kasi", driver: "Hamisi Rashid", date: "28 Apr 2026", time: "08:05", location: "Morogoro Road, DSM", fine: "TZS 30,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 0.5 },
+   369→  { id: "CT-2026-0446", plate: "T888ZZZ", offense: "No Insurance", driver: "Baraka Msangi", date: "25 Apr 2026", time: "15:30", location: "Kariakoo, DSM", fine: "TZS 200,000", status: "Hajalipwa", statusColor: "#F44336", deductedPoints: 2 },
+   370→  { id: "CT-2026-0445", plate: "T555YYY", offense: "Defective Vehicle", driver: "Zawadi Kimani", date: "22 Apr 2026", time: "10:00", location: "Tabata, DSM", fine: "TZS 75,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 1 },
+   371→];
+   372→
+   373→export const OFFENSE_TYPES = [
+   374→  "Over Speeding",
+   375→  "No Seatbelt",
+   376→  "Traffic Light Violation",
+   377→  "Kutumia Simu wakati wa Udereva",
+   378→  "Kutopita kasi",
+   379→  "Kutopita mstari",
+   380→  "Gari bila Bima",
+   381→  "Leseni imekwisha",
+   382→  "Kukata kona hatari",
+   383→  "Kuepuka kodi",
+   384→  "Overloading",
+   385→  "No Inspection Certificate",
+   386→  "Driving Under Influence",
+   387→  "Wrong Overtaking",
+   388→];
+   389→
+   390→export const VEHICLE_TYPES = ["Saloon", "Pick Up", "Minibus", "Lori", "Pikipiki", "Bajaji", "Basila"];
+   391→
+   392→// Violation points deduction table
+   393→export const VIOLATION_POINTS: Record<string, number> = {
+   394→  "Over Speeding": 3,
+   395→  "Driving Under Influence": 3,
+   396→  "Wrong Overtaking": 2,
+   397→  "Traffic Light Violation": 2,
+   398→  "No Insurance": 2,
+   399→  "No Seatbelt": 0.5,
+   400→  "Kutumia Simu wakati wa Udereva": 1,
+   401→  "Kutopita kasi": 0.5,
+   402→  "Kutopita mstari": 1,
+   403→  "Gari bila Bima": 2,
+   404→  "Leseni imekwisha": 1.5,
+   405→  "Kukata kona hatari": 2,
+   406→  "Kuepuka kodi": 1,
+   407→  "Overloading": 1.5,
+   408→  "No Inspection Certificate": 1,
+   409→  "Defective Vehicle": 1,
+   410→};
+   411→
+   412→// Driver points registry
+   413→export const DRIVER_POINTS = [
+   414→  { id: "DL123456789TZ", name: "Juma Khamis Mwinyi", plate: "T123ABC", points: 87, violations: 3, lastViolation: "10 Mei 2026", status: "good" as const },
+   415→  { id: "DL987654321TZ", name: "Ali Mohamed Salum", plate: "T789GHI", points: 74, violations: 5, lastViolation: "08 Mei 2026", status: "good" as const },
+   416→  { id: "DL555555555TZ", name: "Grace Mushi", plate: "T456DEF", points: 63, violations: 7, lastViolation: "05 Mei 2026", status: "warning" as const },
+   417→  { id: "DL444444444TZ", name: "Saidi Juma Khamis", plate: "T321XYZ", points: 55, violations: 9, lastViolation: "02 Mei 2026", status: "warning" as const },
+   418→  { id: "DL777777777TZ", name: "Hamisi Rashid", plate: "T654ABC", points: 48, violations: 12, lastViolation: "28 Apr 2026", status: "critical" as const },
+   419→  { id: "DL888888888TZ", name: "Baraka Msangi", plate: "T888ZZZ", points: 72, violations: 4, lastViolation: "25 Apr 2026", status: "good" as const },
+   420→  { id: "DL999999999TZ", name: "Zawadi Kimani", plate: "T555YYY", points: 100, violations: 0, lastViolation: "—", status: "good" as const },
+   421→  { id: "DL111111111TZ", name: "Fatuma Hassan", plate: "T777AAA", points: 52, violations: 10, lastViolation: "20 Apr 2026", status: "warning" as const },
+   422→  { id: "DL222222222TZ", name: "Rashid Omari", plate: "T222BBB", points: 38, violations: 15, lastViolation: "15 Apr 2026", status: "critical" as const },
+   423→  { id: "DL333333333TZ", name: "Amina Said", plate: "T333CCC", points: 91, violations: 2, lastViolation: "01 Apr 2026", status: "good" as const },
+   424→];
+   425→
+   426→// Arrest records
+   427→export const ARREST_RECORDS = [
+   428→  {
+   429→    id: "AR-2026-0045",
+   430→    suspect: "Ali Bakari Hassan",
+   431→    nida: "198905231234567",
+   432→    dob: "23 Mei 1989",
+   433→    gender: "Mme",
+   434→    offense: "Wizi wa Silaha",
+   435→    offenseCategory: "criminal",
+   436→    arrestDate: "15 Mei 2026",
+   437→    arrestTime: "07:20",
+   438→    arrestLocation: "Kariakoo, DSM",
+   439→    station: "Kituo cha Ilala",
+   440→    holdingCell: "Chumba B-3",
+   441→    arrestingOfficer: "Cprl. Juma Mwinyi",
+   442→    status: "held",
+   443→    courtDate: "22 Mei 2026",
+   444→    notes: "Mshukiwa alikamatwa na silaha mkononi. Dawa za kulevya zilipatikana.",
+   445→  },
+   446→  {
+   447→    id: "AR-2026-0044",
+   448→    suspect: "Rashid Omari Said",
+   449→    nida: "199203151234567",
+   450→    dob: "15 Mar 1992",
+   451→    gender: "Mme",
+   452→    offense: "Uendeshaji Gari kwa Ulevi",
+   453→    offenseCategory: "traffic",
+   454→    arrestDate: "14 Mei 2026",
+   455→    arrestTime: "23:45",
+   456→    arrestLocation: "Bagamoyo Road, DSM",
+   457→    station: "Kituo Kikuu DSM",
+   458→    holdingCell: "Chumba A-1",
+   459→    arrestingOfficer: "Sgt. Ali Hassan",
+   460→    status: "released",
+   461→    courtDate: "18 Mei 2026",
+   462→    notes: "BAC 0.12%. Gari lilisimamishwa. Familia ilipigiwa simu.",
+   463→  },
+   464→  {
+   465→    id: "AR-2026-0043",
+   466→    suspect: "Grace Amina Mwanga",
+   467→    nida: "199507081234567",
+   468→    dob: "08 Jul 1995",
+   469→    gender: "Mke",
+   470→    offense: "Kupiga Risasi Holela",
+   471→    offenseCategory: "criminal",
+   472→    arrestDate: "13 Mei 2026",
+   473→    arrestTime: "15:10",
+   474→    arrestLocation: "Mnazi Mmoja, DSM",
+   475→    station: "Kituo cha Kinondoni",
+   476→    holdingCell: "Chumba C-2",
+   477→    arrestingOfficer: "Insp. Grace Mushi",
+   478→    status: "charged",
+   479→    courtDate: "20 Mei 2026",
+   480→    notes: "Inahusishwa na tukio la ugaidi mdogo.",
+   481→  },
+   482→];
+   483→
+   484→// Warning records
+   485→export const WARNING_RECORDS = [
+   486→  {
+   487→    id: "WR-2026-0112",
+   488→    recipient: "Juma Khamis Mwinyi",
+   489→    plate: "T123ABC",
+   490→    licenseNo: "DL123456789TZ",
+   491→    warningType: "traffic",
+   492→    offense: "Kutopita mstari",
+   493→    date: "15 Mei 2026",
+   494→    time: "08:30",
+   495→    location: "Morogoro Road, DSM",
+   496→    issuingOfficer: "Cprl. Juma Mwinyi",
+   497→    station: "Kituo Kikuu DSM",
+   498→    notes: "Onyo la kwanza. Mwelekeze kuzingatia kanuni za barabarani.",
+   499→    acknowledged: true,
+   500→  },
+   501→  {
+   502→    id: "WR-2026-0111",
+   503→    recipient: "Baraka Msangi",
+   504→    plate: "T888ZZZ",
+   505→    licenseNo: "DL888888888TZ",
+   506→    warningType: "traffic",
+   507→    offense: "Kasi kidogo zaidi ya kiwango",
+   508→    date: "14 Mei 2026",
+   509→    time: "11:15",
+   510→    location: "Nelson Mandela Road, DSM",
+   511→    issuingOfficer: "Sgt. Ali Hassan",
+   512→    station: "Kituo Kikuu DSM",
+   513→    notes: "Dereva alikubaliana na onyo.",
+   514→    acknowledged: true,
+   515→  },
+   516→  {
+   517→    id: "WR-2026-0110",
+   518→    recipient: "Zawadi Kimani",
+   519→    plate: "T555YYY",
+   520→    licenseNo: "DL999999999TZ",
+   521→    warningType: "conduct",
+   522→    offense: "Tabia mbaya kwa afisa wa polisi",
+   523→    date: "12 Mei 2026",
+   524→    time: "16:45",
+   525→    location: "Samora Ave, DSM",
+   526→    issuingOfficer: "Cprl. Saidi Juma",
+   527→    station: "Kituo cha Temeke",
+   528→    notes: "Mtu alionyesha tabia ya dharau kwa afisa.",
+   529→    acknowledged: false,
+   530→  },
+   531→];
+   532→
+   533→// Lost properties
+   534→export const LOST_PROPERTIES = [
+   535→  {
+   536→    id: "LP-2026-0089",
+   537→    category: "simu",
+   538→    description: "Samsung Galaxy S24 Ultra — Nyeusi",
+   539→    serialNo: "SM-S928B-2025-887643",
+   540→    deviceNo: "IMEI: 358423092847163",
+   541→    owner: "Fatuma Hassan Mwanga",
+   542→    ownerPhone: "0754 123 456",
+   543→    ownerNida: "199507081234567",
+   544→    reportedDate: "10 Mei 2026",
+   545→    reportedStation: "Kituo cha Temeke",
+   546→    status: "found",
+   547→    foundDate: "14 Mei 2026",
+   548→    foundLocation: "Kariakoo Market",
+   549→    notes: "Simu ilipatikana na mfanyabiashara wa Kariakoo.",
+   550→  },
+   551→  {
+   552→    id: "LP-2026-0088",
+   553→    category: "kompyuta",
+   554→    description: "HP Laptop 15s — Fedha",
+   555→    serialNo: "CNF1234567",
+   556→    deviceNo: "5CD1234XYZ",
+   557→    owner: "Juma Rashid Ally",
+   558→    ownerPhone: "0712 987 654",
+   559→    ownerNida: "198803221234567",
+   560→    reportedDate: "08 Mei 2026",
+   561→    reportedStation: "Kituo Kikuu DSM",
+   562→    status: "searching",
+   563→    foundDate: null,
+   564→    foundLocation: null,
+   565→    notes: "Liliibwa kwenye gari lililowekwa parking.",
+   566→  },
+   567→  {
+   568→    id: "LP-2026-0087",
+   569→    category: "hati",
+   570→    description: "Pasi ya Tanzania — Bluu",
+   571→    serialNo: "TZ-1234567",
+   572→    deviceNo: "N/A",
+   573→    owner: "Grace Amina Mushi",
+   574→    ownerPhone: "0766 456 789",
+   575→    ownerNida: "199209141234567",
+   576→    reportedDate: "05 Mei 2026",
+   577→    reportedStation: "Kituo cha Kinondoni",
+   578→    status: "searching",
+   579→    foundDate: null,
+   580→    foundLocation: null,
+   581→    notes: "Pasi ilipotea uwanja wa ndege.",
+   582→  },
+   583→  {
+   584→    id: "LP-2026-0086",
+   585→    category: "mali-nyingine",
+   586→    description: "Mfuko wa ngozi — Kahawia, na fedha TZS 500,000",
+   587→    serialNo: "N/A",
+   588→    deviceNo: "N/A",
+   589→    owner: "Saidi Omari Bakari",
+   590→    ownerPhone: "0788 321 654",
+   591→    ownerNida: "197612301234567",
+   592→    reportedDate: "02 Mei 2026",
+   593→    reportedStation: "Kituo cha Ilala",
+   594→    status: "returned",
+   595→    foundDate: "03 Mei 2026",
+   596→    foundLocation: "Kariakoo Bus Terminal",
+   597→    notes: "Ilipatikana na dereva wa daladala — fedha zote zipo.",
+   598→  },
+   599→  {
+   600→    id: "LP-2026-0085",
+   601→    category: "simu",
+   602→    description: "iPhone 14 Pro — Dhahabu",
+   603→    serialNo: "DNPXK23456789",
+   604→    deviceNo: "IMEI: 352098103456789",
+   605→    owner: "Amina Said Juma",
+   606→    ownerPhone: "0755 789 012",
+   607→    ownerNida: "200101151234567",
+   608→    reportedDate: "28 Apr 2026",
+   609→    reportedStation: "Kituo cha Ubungo",
+   610→    status: "searching",
+   611→    foundDate: null,
+   612→    foundLocation: null,
+   613→    notes: "Iliibiwa kwenye daladala.",
+   614→  },
+   615→];
+   616→
+   617→// Detained citizens (station commissioner view)
+   618→export const DETAINED_CITIZENS = [
+   619→  {
+   620→    id: "DT-2026-0031",
+   621→    fullName: "Ali Bakari Hassan",
+   622→    nida: "198905231234567",
+   623→    dob: "23 Mei 1989",
+   624→    gender: "Mme",
+   625→    address: "Mtaa wa Kariakoo, Ilala, DSM",
+   626→    phone: "0712 456 789",
+   627→    occupation: "Mfanyabiashara",
+   628→    reason: "Wizi wa Silaha",
+   629→    detainedDate: "15 Mei 2026",
+   630→    detainedTime: "07:20",
+   631→    cell: "B-3",
+   632→    station: "Kituo cha Ilala",
+   633→    officer: "Cprl. Juma Mwinyi",
+   634→    type: "arrested",
+   635→    status: "held",
+   636→    courtDate: "22 Mei 2026",
+   637→    medicalStatus: "Nzuri",
+   638→    nextOfKin: "Fatuma Hassan — 0755 111 222",
+   639→    lawyer: "Dkt. Omar Salum — 0788 333 444",
+   640→  },
+   641→  {
+   642→    id: "DT-2026-0030",
+   643→    fullName: "Rashid Omari Said",
+   644→    nida: "199203151234567",
+   645→    dob: "15 Mar 1992",
+   646→    gender: "Mme",
+   647→    address: "Mtaa wa Magomeni, Kinondoni, DSM",
+   648→    phone: "0755 321 654",
+   649→    occupation: "Dereva",
+   650→    reason: "Uendeshaji Gari kwa Ulevi",
+   651→    detainedDate: "14 Mei 2026",
+   652→    detainedTime: "23:45",
+   653→    cell: "A-1",
+   654→    station: "Kituo Kikuu DSM",
+   655→    officer: "Sgt. Ali Hassan",
+   656→    type: "traffic",
+   657→    status: "released",
+   658→    courtDate: "18 Mei 2026",
+   659→    medicalStatus: "Nzuri",
+   660→    nextOfKin: "Amina Omari — 0766 789 012",
+   661→    lawyer: "Hajulikani",
+   662→  },
+   663→  {
+   664→    id: "DT-2026-0029",
+   665→    fullName: "Baraka John Mwanga",
+   666→    nida: "200005121234567",
+   667→    dob: "12 May 2000",
+   668→    gender: "Mme",
+   669→    address: "Mtaa wa Manzese, Ubungo, DSM",
+   670→    phone: "0788 654 321",
+   671→    occupation: "Mwanafunzi",
+   672→    reason: "Migogoro ya Kikosi",
+   673→    detainedDate: "12 Mei 2026",
+   674→    detainedTime: "14:30",
+   675→    cell: "C-1",
+   676→    station: "Kituo cha Ubungo",
+   677→    officer: "Cst. Mariam Ally",
+   678→    type: "detained",
+   679→    status: "held",
+   680→    courtDate: "17 Mei 2026",
+   681→    medicalStatus: "Maumivu Madogo",
+   682→    nextOfKin: "John Mwanga — 0712 111 333",
+   683→    lawyer: "Hajulikani",
+   684→  },
+   685→];
+   686→
+   687→// Chat messages for alerts
+   688→export const CHAT_MESSAGES = [
+   689→  { id: 1, from: "OCD Mwanza", role: "commander", message: "Vikosi vyote, doria ianze saa 4 usiku.", time: "07:00", mine: false },
+   690→  { id: 2, from: "Cprl. Juma", role: "officer", message: "Imepokewa. Tutakuwa tayari.", time: "07:02", mine: true },
+   691→  { id: 3, from: "Sgt. Ali Hassan", role: "officer", message: "Kikosi cha Kinondoni tayari.", time: "07:03", mine: false },
+   692→  { id: 4, from: "Insp. Grace", role: "officer", message: "Eneo la Kariakoo limefunikwa.", time: "07:05", mine: false },
+   693→  { id: 5, from: "OCD Mwanza", role: "commander", message: "Vizuri. Ripoti kila saa mbili.", time: "07:06", mine: false },
+   694→];
+   695→
+   696→// Search result mock data
+   697→export const SEARCH_RESULT = {
+   698→  plate: "T123ABC",
+   699→  model: "Toyota Corolla",
+   700→  year: "2020",
+   701→  color: "Nyeupe",
+   702→  type: "Saloon",
+   703→  owner: "Juma Khamis Mwinyi",
+   704→  ownerNida: "199012031234567",
+   705→  ownerPhone: "0712 345 678",
+   706→  licenseNo: "DL123456789TZ",
+   707→  licenseExpiry: "31 Dec 2027",
+   708→  insuranceExpiry: "15 Jun 2026",
+   709→  inspectionExpiry: "30 Apr 2026",
+   710→  registrationExpiry: "31 Mar 2027",
+   711→  status: "clear" as const,
+   712→  outstanding_fines: 1,
+   713→  total_fines_amount: "TZS 150,000",
+   714→};
+   715→
+   716→// General officer recent incidents (for Polisi screen)
+   717→export const GENERAL_INCIDENTS = [
+   718→  { id: 1, title: "Wizi wa simu - Kariakoo", type: "Wizi", status: "Yanaendelea", statusColor: "#F97316", icon: "alert", iconColor: "#F97316", date: "12 Mei 2026", time: "14:30", location: "Kariakoo Market, Ilala", description: "Mtuhumiwa aliiba simu 3 kutoka kwa wafanyabiashara wakati wa msongamano wa soko. Alitoroka kuelekea Mnazi Mmoja.", casualties: 0, officer: "Cprl. Juma Mwinyi" },
+   719→  { id: 2, title: "Gharika ya mto Msimbazi", type: "Dharura ya Asili", status: "Tatuliwa", statusColor: "#4CAF50", icon: "cloud-rain", iconColor: "#3B82F6", date: "10 Mei 2026", time: "08:15", location: "Msimbazi Valley, Kinondoni", description: "Mafuriko yaliyosababishwa na mvua nyingi usiku. Familia 12 zilihamishwa. Hakuna majeruhi.", casualties: 0, officer: "Sgt. Ali Hassan" },
+   720→  { id: 3, title: "Ajali ya gari - Mwendokasi", type: "Ajali ya Barabara", status: "Yanaendelea", statusColor: "#F97316", icon: "car", iconColor: "#EF4444", date: "09 Mei 2026", time: "17:45", location: "Mwendokasi Terminal, Ubungo", description: "Mgongano kati ya daladala na pikipiki. Majeruhi 2 walipelekwa Mwananyamala.", casualties: 2, officer: "Cprl. Juma Mwinyi" },
+   721→  { id: 4, title: "Uvamizi wa nyumba - Mbezi", type: "Uvamizi", status: "Tatuliwa", statusColor: "#4CAF50", icon: "shield-alert", iconColor: "#10B981", date: "08 Mei 2026", time: "22:10", location: "Mbezi Beach, Kinondoni", description: "Wavamizi 3 waliingia nyumba usiku. Mmiliki alimpigia simu polisi. Wavamizi walikamatwa kituoni.", casualties: 0, officer: "Insp. Grace Mushi" },
+   722→  { id: 5, title: "Ufisadi wa umma - Posta", type: "Ufisadi", status: "Mpya", statusColor: "#2563EB", icon: "users", iconColor: "#8B5CF6", date: "07 Mei 2026", time: "11:20", location: "Posta Mpya, Ilala", description: "Mlalamiko wa ufisadi dhidi ya afisa wa serikali. Uchunguzi unaendelea.", casualties: 0, officer: "Cprl. Saidi Juma" },
+   723→];
+   724→
