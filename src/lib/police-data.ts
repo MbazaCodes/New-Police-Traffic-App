@@ -27,7 +27,7 @@ export type ScreenId =
   | "citizen-detail"
   | "add-vehicle"
   | "add-citizen"
-  | "mock-data-reference";
+
 
 export const OFFICER = {
   name: "Cprl. Juma Mwinyi",
