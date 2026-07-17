@@ -5,8 +5,22 @@ import { LoginScreen } from "@/components/police/screens/login-screen";
 import { StatusBar } from "@/components/police/status-bar";
 import { usePoliceStore } from "@/store/police-store";
 
+const IS_WEB = process.env.NEXT_PUBLIC_APP_MODE === "admin";
+
 export default function CommandPage() {
   const { isAuthenticated, userRole } = usePoliceStore();
+
+  if (!IS_WEB) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#0d1b3d] p-8 text-center">
+        <div className="text-5xl">🚫</div>
+        <h1 className="mt-4 text-[20px] font-bold text-white">Ukurasa Huu Haupatikani</h1>
+        <p className="mt-2 text-[13px] text-white/60">
+          Tafadhali tumia Dashibodi ya Amri inayotolewa na mkurugenzi wako.
+        </p>
+      </div>
+    );
+  }
 
   if (!isAuthenticated || userRole !== "commander") {
     return (
@@ -14,7 +28,7 @@ export default function CommandPage() {
         <div className="flex h-full min-h-screen flex-col overflow-hidden">
           <StatusBar dark />
           <div className="flex-1 overflow-y-auto">
-            <LoginScreen allowedRoles={["admin", "commander"]} showAdminRole />
+            <LoginScreen mode="admin" />
           </div>
         </div>
       </div>
