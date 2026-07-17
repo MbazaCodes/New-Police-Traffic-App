@@ -73,7 +73,6 @@ export function HomeScreen() {
               { id: "plate", label: "Namba Gari" },
               { id: "license", label: "Leseni" },
               { id: "nida", label: "NIDA" },
-              { id: "serial", label: "S/N Mali" },
             ] as const).map((tab) => (
               <button
                 key={tab.id}
@@ -93,10 +92,10 @@ export function HomeScreen() {
                 if (e.key === "Enter" && searchValue.trim()) {
                   setSearchEntity(currentEntity);
                   runSearch(searchValue);
-                  navigate(searchTab === "serial" ? "lost-property" : "search-results");
+                  navigate("search-results");
                 }
               }}
-              placeholder={searchTab === "plate" ? "T123ABC" : searchTab === "license" ? "DL123456789TZ" : searchTab === "nida" ? "1990123456789" : "SM-S928B / IMEI..."}
+              placeholder={searchTab === "plate" ? "T123ABC" : searchTab === "license" ? "DL123456789TZ" : "1990123456789"}
               className="h-11 flex-1 bg-transparent text-[15px] font-medium text-police placeholder:text-police-faint focus:outline-none"
             />
             {searchValue && <button onClick={() => setSearchValue("")} className="text-police-faint"><X size={16} /></button>}
@@ -104,7 +103,7 @@ export function HomeScreen() {
           <button
             onClick={() => {
               if (searchValue.trim()) { setSearchEntity(currentEntity); runSearch(searchValue); }
-              navigate(searchTab === "serial" ? "lost-property" : "search-results");
+              navigate("search-results");
             }}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#3B82F6] py-3 text-[15px] font-bold text-white shadow-md shadow-[#3B82F6]/30 active:scale-[0.98]"
           >

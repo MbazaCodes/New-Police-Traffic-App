@@ -10,28 +10,39 @@ import {
   UserCheck,
   AlertTriangle,
   ShieldCheck,
+  Package,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { OFFICER } from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 
+type SearchMode = "citizen" | "serial";
+
 export function GeneralHomeScreen() {
   const { citizenSearchType, setCitizenSearchType, navigate, runSearch, setSearchEntity } = usePoliceStore();
   const [searchValue, setSearchValue] = useState("");
+  const [searchMode, setSearchMode] = useState<SearchMode>("citizen");
 
   const placeholder =
-    citizenSearchType === "name"
-      ? "Juma Mwinyi"
-      : citizenSearchType === "nida"
-        ? "1990123456789"
-        : "0712345678";
+    searchMode === "serial"
+      ? "S/N au IMEI — SM-S928B / 358423..."
+      : citizenSearchType === "name"
+        ? "Juma Mwinyi"
+        : citizenSearchType === "nida"
+          ? "1990123456789"
+          : "0712345678";
 
   const handleSearch = () => {
     if (!searchValue.trim()) {
       toast({
         title: "Tafadhali andika neno la utafutaji",
-        description: "Weka jina, NIDA, au namba ya simu.",
+        description: searchMode === "serial" ? "Weka nambari ya serial au IMEI." : "Weka jina, NIDA, au namba ya simu.",
       });
+      return;
+    }
+    if (searchMode === "serial") {
+      runSearch(searchValue);
+      navigate("lost-property");
       return;
     }
     setSearchEntity("person");
@@ -127,28 +138,46 @@ export function GeneralHomeScreen() {
             Utafutaji wa Raia
           </h3>
 
-          {/* Tabs */}
+          {/* Mode toggle: Citizen vs Serial/Lost Property */}
           <div className="mt-3 flex gap-2">
-            {(
-              [
-                { id: "name", label: "Jina" },
-                { id: "nida", label: "NIDA" },
-                { id: "mobile", label: "Simu" },
-              ] as const
-            ).map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setCitizenSearchType(tab.id)}
-                className={`flex-1 rounded-lg py-2 text-[12px] font-semibold transition ${
-                  citizenSearchType === tab.id
-                    ? "bg-[#3B82F6] text-white"
-                    : "bg-police-muted text-police-muted"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+            <button
+              onClick={() => { setSearchMode("citizen"); setSearchValue(""); }}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${searchMode === "citizen" ? "bg-[#3B82F6] text-white" : "bg-police-muted text-police-muted"}`}
+            >
+              <UserCheck size={13} /> Raia
+            </button>
+            <button
+              onClick={() => { setSearchMode("serial"); setSearchValue(""); }}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${searchMode === "serial" ? "bg-[#8B5CF6] text-white" : "bg-police-muted text-police-muted"}`}
+            >
+              <Package size={13} /> S/N Mali
+            </button>
           </div>
+
+          {/* Citizen sub-tabs — only when in citizen mode */}
+          {searchMode === "citizen" && (
+            <div className="mt-2 flex gap-2">
+              {(
+                [
+                  { id: "name", label: "Jina" },
+                  { id: "nida", label: "NIDA" },
+                  { id: "mobile", label: "Simu" },
+                ] as const
+              ).map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setCitizenSearchType(tab.id)}
+                  className={`flex-1 rounded-lg py-2 text-[12px] font-semibold transition ${
+                    citizenSearchType === tab.id
+                      ? "bg-[#3B82F6] text-white"
+                      : "bg-police-muted text-police-muted"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Search Input */}
           <div className="mt-3 flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
