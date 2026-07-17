@@ -22,7 +22,9 @@ export type ScreenId =
   | "offense-detail"
   | "citation-detail"
   | "edit-profile"
-  | "sos-request";
+  | "sos-request"
+  | "incident-view"
+  | "citizen-detail";
 
 export const OFFICER = {
   name: "Cprl. Juma Mwinyi",
@@ -707,3 +709,12 @@ export const SEARCH_RESULT = {
   outstanding_fines: 1,
   total_fines_amount: "TZS 150,000",
 };
+
+// General officer recent incidents (for Polisi screen)
+export const GENERAL_INCIDENTS = [
+  { id: 1, title: "Wizi wa simu - Kariakoo", type: "Wizi", status: "Yanaendelea", statusColor: "#F97316", icon: "alert", iconColor: "#F97316", date: "12 Mei 2026", time: "14:30", location: "Kariakoo Market, Ilala", description: "Mtuhumiwa aliiba simu 3 kutoka kwa wafanyabiashara wakati wa msongamano wa soko. Alitoroka kuelekea Mnazi Mmoja.", casualties: 0, officer: "Cprl. Juma Mwinyi" },
+  { id: 2, title: "Gharika ya mto Msimbazi", type: "Dharura ya Asili", status: "Tatuliwa", statusColor: "#4CAF50", icon: "cloud-rain", iconColor: "#3B82F6", date: "10 Mei 2026", time: "08:15", location: "Msimbazi Valley, Kinondoni", description: "Mafuriko yaliyosababishwa na mvua nyingi usiku. Familia 12 zilihamishwa. Hakuna majeruhi.", casualties: 0, officer: "Sgt. Ali Hassan" },
+  { id: 3, title: "Ajali ya gari - Mwendokasi", type: "Ajali ya Barabara", status: "Yanaendelea", statusColor: "#F97316", icon: "car", iconColor: "#EF4444", date: "09 Mei 2026", time: "17:45", location: "Mwendokasi Terminal, Ubungo", description: "Mgongano kati ya daladala na pikipiki. Majeruhi 2 walipelekwa Mwananyamala.", casualties: 2, officer: "Cprl. Juma Mwinyi" },
+  { id: 4, title: "Uvamizi wa nyumba - Mbezi", type: "Uvamizi", status: "Tatuliwa", statusColor: "#4CAF50", icon: "shield-alert", iconColor: "#10B981", date: "08 Mei 2026", time: "22:10", location: "Mbezi Beach, Kinondoni", description: "Wavamizi 3 waliingia nyumba usiku. Mmiliki alimpigia simu polisi. Wavamizi walikamatwa kituoni.", casualties: 0, officer: "Insp. Grace Mushi" },
+  { id: 5, title: "Ufisadi wa umma - Posta", type: "Ufisadi", status: "Mpya", statusColor: "#2563EB", icon: "users", iconColor: "#8B5CF6", date: "07 Mei 2026", time: "11:20", location: "Posta Mpya, Ilala", description: "Mlalamiko wa ufisadi dhidi ya afisa wa serikali. Uchunguzi unaendelea.", casualties: 0, officer: "Cprl. Saidi Juma" },
+];

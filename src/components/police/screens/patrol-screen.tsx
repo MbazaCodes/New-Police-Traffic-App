@@ -23,6 +23,7 @@ export function PatrolScreen() {
   const [events, setEvents] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [patrolType, setPatrolType] = useState<"gari" | "miguu" | "baiskeli">("gari");
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -59,10 +60,11 @@ export function PatrolScreen() {
   const handleSubmit = () => {
     if (!area) { toast({ title: "Kosa", description: "Taja eneo la patroli.", variant: "destructive" }); return; }
     const now = new Date();
+    const typeLabels = { gari: "Gari", miguu: "Miguu", baiskeli: "Baiskeli" };
     addPatrolRecord({
       id: `PT-${Date.now()}`,
       date: now.toLocaleDateString("sw-TZ"),
-      area,
+      area: `${area} (${typeLabels[patrolType]})`,
       duration: formatTime(patrolElapsed),
       durationSecs: patrolElapsed,
       events,
@@ -70,7 +72,7 @@ export function PatrolScreen() {
     });
     setSubmitted(true);
     setShowForm(false);
-    toast({ title: "Ripoti Imehifadhiwa ✓", description: `Patroli ya ${formatTime(patrolElapsed)} imerekodiwa.` });
+    toast({ title: "Ripoti Imehifadhiwa ✓", description: `Patroli ya ${formatTime(patrolElapsed)} (${typeLabels[patrolType]}) imerekodiwa.` });
   };
 
   const todayPatrols = patrolRecords.filter((p) => p.date === new Date().toLocaleDateString("sw-TZ"));
@@ -108,7 +110,25 @@ export function PatrolScreen() {
         </div>
 
         {/* Live stats */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="space-y-2">
+          {/* Patrol type selector — visible before starting */}
+          {!patrolActive && !showForm && (
+            <div className="rounded-2xl bg-police-card p-3 shadow-sm">
+              <p className="mb-2 text-[12px] font-medium text-police-muted">Aina ya Patroli</p>
+              <div className="flex gap-2">
+                {([
+                  { id: "gari",     label: "🚗 Gari",     },
+                  { id: "miguu",    label: "🚶 Miguu",    },
+                  { id: "baiskeli", label: "🚲 Baiskeli", },
+                ] as const).map((t) => (
+                  <button key={t.id} onClick={() => setPatrolType(t.id)} className={`flex-1 rounded-xl py-2 text-[12px] font-bold transition ${patrolType === t.id ? "bg-[#2196F3] text-white" : "bg-police-muted text-police-muted"}`}>
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          <div className="grid grid-cols-4 gap-2">
           {[
             { label: "Leo", value: String(todayPatrols.length), sub: "Patroli" },
             { label: "Jumla", value: String(patrolRecords.length), sub: "Zote" },
@@ -120,6 +140,7 @@ export function PatrolScreen() {
               <span className="mt-1 text-center text-[8px] leading-tight text-police-muted">{s.sub}</span>
             </div>
           ))}
+        </div>
         </div>
 
         {/* Success banner */}

@@ -13,12 +13,14 @@ const INCIDENT_TYPES = [
 ];
 
 export function IncidentDetailScreen() {
-  const { goBack } = usePoliceStore();
+  const { goBack, incidentPrefill, setIncidentPrefill } = usePoliceStore();
   const [submitted, setSubmitted] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
-    incidentType: "", severity: "medium", location: "", description: "",
+    incidentType: "", severity: "medium",
+    location: incidentPrefill?.citizenAddress ?? "",
+    description: incidentPrefill ? `Inahusiana na raia: ${incidentPrefill.citizenName} (${incidentPrefill.citizenNida})` : "",
     casualties: "0", vehicles: "", witnesses: "", actionTaken: "",
   });
 
@@ -41,6 +43,7 @@ export function IncidentDetailScreen() {
       toast({ title: "Kosa", description: "Jaza aina ya tukio na mahali.", variant: "destructive" }); return;
     }
     setSubmitted(true);
+    setIncidentPrefill(null);
     toast({ title: "Tukio Limeripotiwa ✓", description: `${incidentId} — Ripoti imepelekwa kwa Kamanda.` });
   };
 

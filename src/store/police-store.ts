@@ -31,6 +31,11 @@ export interface WarningPrefill {
   recipientName: string; plate: string; licenseNo: string; phone: string;
 }
 
+
+export interface IncidentPrefill {
+  citizenName: string; citizenNida: string; citizenPhone: string; citizenAddress: string;
+}
+
 export interface PatrolRecord {
   id: string; date: string; area: string; duration: string;
   durationSecs: number; events: string; photos: number;
@@ -81,6 +86,11 @@ interface PoliceState {
   setArrestPrefill: (data: ArrestPrefill | null) => void;
   warningPrefill: WarningPrefill | null;
   setWarningPrefill: (data: WarningPrefill | null) => void;
+
+  incidentPrefill: IncidentPrefill | null;
+  setIncidentPrefill: (data: IncidentPrefill | null) => void;
+  selectedIncidentId: number | null;
+  setSelectedIncident: (id: number | null) => void;
 
   // Scanner
   scannerOpen: boolean;
@@ -166,6 +176,10 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
   setArrestPrefill: (data) => set({ arrestPrefill: data }),
   warningPrefill: null,
   setWarningPrefill: (data) => set({ warningPrefill: data }),
+  incidentPrefill: null,
+  setIncidentPrefill: (data) => set({ incidentPrefill: data }),
+  selectedIncidentId: null,
+  setSelectedIncident: (id) => set({ selectedIncidentId: id }),
 
   scannerOpen: false,
   scannerMode: "qr",

@@ -27,6 +27,7 @@ import { IncidentDetailScreen } from "./screens/incident-detail-screen";
 import { OffenseDetailScreen } from "./screens/offense-detail-screen";
 import { CitationDetailScreen } from "./screens/citation-detail-screen";
 import { EditProfileScreen } from "./screens/edit-profile-screen";
+import { IncidentViewScreen } from "./screens/incident-view-screen";
 import { CameraScannerModal } from "./camera-scanner-modal";
 import type { ScreenId } from "@/lib/police-data";
 
@@ -34,7 +35,7 @@ const NO_NAV_SCREENS: ScreenId[] = [
   "login", "accident-report", "vehicle-inspection", "search-results",
   "pf3", "citation", "history", "citizen-search-results",
   "arrest-form", "warning-form", "lost-property", "driver-points",
-  "incident-detail", "offense-detail", "citation-detail", "edit-profile", "sos-request",
+  "incident-detail", "offense-detail", "citation-detail", "edit-profile", "sos-request", "incident-view", "citizen-detail",
 ];
 
 export function MobileShell() {
@@ -79,6 +80,7 @@ function renderScreen(screen: ScreenId, isGeneral = false) {
     case "offense-detail":    return <OffenseDetailScreen />;
     case "citation-detail":   return <CitationDetailScreen />;
     case "edit-profile":      return <EditProfileScreen />;
+    case "incident-view":     return <IncidentViewScreen />;
     case "patrol":            return <PatrolScreen />;
     case "alerts":            return <AlertsScreen />;
     case "profile":           return <ProfileScreen />;
