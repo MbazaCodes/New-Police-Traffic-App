@@ -1,0 +1,550 @@
+     1→// ============================================================
+     2→// TZ POLICE DIGITAL PLATFORM — MOCK DATABASE
+     3→// 20 Citizens · 20 Plates · 20 Licenses · 20 NIDs · 20 Phones · 20 Serials
+     4→// All cross-linked. Use any field to search and get a real result.
+     5→// ============================================================
+     6→
+     7→export interface MockCitizen {
+     8→  // Identity
+     9→  name: string;
+    10→  nida: string;
+    11→  mobile: string;
+    12→  gender: "Mme" | "Mke";
+    13→  dob: string;
+    14→  age: number;
+    15→  address: string;
+    16→  occupation: string;
+    17→  status: string;
+    18→  statusColor: string;
+    19→  // Criminal
+    20→  criminalRecord: { hasRecord: boolean; cases: number; convictions: number };
+    21→  alerts: string[];
+    22→  // Documents
+    23→  licenseNo: string;
+    24→  licenseExpiry: string;
+    25→  licenseClass: string;
+    26→  passportNo: string;
+    27→  passportExpiry: string;
+    28→  // Vehicles
+    29→  vehicles: MockVehicle[];
+    30→  // Devices
+    31→  devices: MockDevice[];
+    32→  // History
+    33→  history: { date: string; type: string; case: string; station: string }[];
+    34→  // Risk
+    35→  riskScore: number;
+    36→  riskLevel: string;
+    37→}
+    38→
+    39→export interface MockVehicle {
+    40→  plate: string;
+    41→  model: string;
+    42→  type: string;
+    43→  color: string;
+    44→  year: string;
+    45→  ownerNida: string;
+    46→  ownerName: string;
+    47→  ownerPhone: string;
+    48→  insurance: { company: string; policy: string; expires: string; valid: boolean };
+    49→  inspectionExpiry: string;
+    50→  registrationExpiry: string;
+    51→  accidentInvolved: boolean;
+    52→  violations: { id: number; name: string; date: string; area: string; fine: string; paid: boolean }[];
+    53→  outstandingFines: number;
+    54→}
+    55→
+    56→export interface MockDevice {
+    57→  serialNo: string;
+    58→  imei: string;
+    59→  description: string;
+    60→  category: string;
+    61→  ownerNida: string;
+    62→  ownerName: string;
+    63→  ownerPhone: string;
+    64→  status: "clean" | "stolen" | "found";
+    65→  reportDate?: string;
+    66→}
+    67→
+    68→// ── 20 CITIZENS ──────────────────────────────────────────────
+    69→export const MOCK_CITIZENS: MockCitizen[] = [
+    70→  {
+    71→    name: "Juma Khamis Mwinyi", nida: "199012031234567", mobile: "0712 345 678",
+    72→    gender: "Mme", dob: "03 Des 1990", age: 35,
+    73→    address: "Nyumba Na. 45, Mbezi Beach, Kinondoni, Dar es Salaam",
+    74→    occupation: "Mfanyabiashara", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+    75→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+    76→    licenseNo: "DL001001TZ", licenseExpiry: "31 Des 2027", licenseClass: "B",
+    77→    passportNo: "TZ-AA-001001", passportExpiry: "15 Mar 2029",
+    78→    vehicles: [], devices: [],
+    79→    history: [
+    80→      { date: "10 Mei 2026", type: "Shahidi wa Kesi", case: "INC-2026-0341", station: "Kituo Kikuu DSM" },
+    81→    ],
+    82→    riskScore: 12, riskLevel: "Chini",
+    83→  },
+    84→  {
+    85→    name: "Fatuma Hassan Mwanga", nida: "199507081234568", mobile: "0754 123 456",
+    86→    gender: "Mke", dob: "08 Jul 1995", age: 30,
+    87→    address: "Mtaa wa Mikocheni, Kinondoni, Dar es Salaam",
+    88→    occupation: "Mwalimu", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+    89→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+    90→    licenseNo: "DL002002TZ", licenseExpiry: "20 Jun 2028", licenseClass: "B",
+    91→    passportNo: "TZ-BB-002002", passportExpiry: "10 Ago 2030",
+    92→    vehicles: [], devices: [],
+    93→    history: [],
+    94→    riskScore: 5, riskLevel: "Chini",
+    95→  },
+    96→  {
+    97→    name: "Ali Mohamed Salum", nida: "198803221234569", mobile: "0712 987 654",
+    98→    gender: "Mme", dob: "22 Mar 1988", age: 38,
+    99→    address: "Mtaa wa Magomeni, Kinondoni, Dar es Salaam",
+   100→    occupation: "Dereva", status: "Ana Makosa", statusColor: "#FF9800",
+   101→    criminalRecord: { hasRecord: true, cases: 2, convictions: 1 }, alerts: ["Faini isiyolipwa TZS 150,000"],
+   102→    licenseNo: "DL003003TZ", licenseExpiry: "05 Jan 2026", licenseClass: "C",
+   103→    passportNo: "TZ-CC-003003", passportExpiry: "01 Nov 2027",
+   104→    vehicles: [], devices: [],
+   105→    history: [
+   106→      { date: "08 Mei 2026", type: "Citation - Kasi", case: "CT-2026-0450", station: "Kituo Kikuu DSM" },
+   107→      { date: "15 Jan 2026", type: "Ajali ya Barabara", case: "INC-2026-0088", station: "Kituo cha Kinondoni" },
+   108→    ],
+   109→    riskScore: 68, riskLevel: "Wastani",
+   110→  },
+   111→  {
+   112→    name: "Grace Amina Mushi", nida: "199209141234570", mobile: "0766 456 789",
+   113→    gender: "Mke", dob: "14 Sep 1992", age: 33,
+   114→    address: "Mtaa wa Sinza, Kinondoni, Dar es Salaam",
+   115→    occupation: "Mhudumu wa Afya", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   116→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   117→    licenseNo: "DL004004TZ", licenseExpiry: "12 Apr 2027", licenseClass: "B",
+   118→    passportNo: "TZ-DD-004004", passportExpiry: "20 Feb 2031",
+   119→    vehicles: [], devices: [],
+   120→    history: [],
+   121→    riskScore: 8, riskLevel: "Chini",
+   122→  },
+   123→  {
+   124→    name: "Saidi Omari Bakari", nida: "197612301234571", mobile: "0788 321 654",
+   125→    gender: "Mme", dob: "30 Des 1976", age: 49,
+   126→    address: "Mtaa wa Temeke, Temeke, Dar es Salaam",
+   127→    occupation: "Mkandarasi", status: "Ana Makosa", statusColor: "#F44336",
+   128→    criminalRecord: { hasRecord: true, cases: 4, convictions: 2 }, alerts: ["Alikimbia baada ya ajali", "Leseni imekwisha"],
+   129→    licenseNo: "DL005005TZ", licenseExpiry: "28 Feb 2024", licenseClass: "C",
+   130→    passportNo: "TZ-EE-005005", passportExpiry: "05 Jul 2026",
+   131→    vehicles: [], devices: [],
+   132→    history: [
+   133→      { date: "02 Mei 2026", type: "Kukimbia Baada ya Ajali", case: "INC-2026-0311", station: "Kituo cha Temeke" },
+   134→      { date: "10 Feb 2026", type: "Leseni Imekwisha", case: "CT-2026-0123", station: "Kituo cha Temeke" },
+   135→      { date: "05 Nov 2025", type: "Uendeshaji kwa Ulevi", case: "CT-2025-0887", station: "Kituo Kikuu DSM" },
+   136→    ],
+   137→    riskScore: 85, riskLevel: "Juu",
+   138→  },
+   139→  {
+   140→    name: "Amina Said Juma", nida: "200101151234572", mobile: "0755 789 012",
+   141→    gender: "Mke", dob: "15 Jan 2001", age: 25,
+   142→    address: "Mtaa wa Ubungo, Ubungo, Dar es Salaam",
+   143→    occupation: "Mwanafunzi wa Chuo", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   144→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   145→    licenseNo: "DL006006TZ", licenseExpiry: "30 Sep 2029", licenseClass: "B",
+   146→    passportNo: "TZ-FF-006006", passportExpiry: "22 Des 2032",
+   147→    vehicles: [], devices: [],
+   148→    history: [],
+   149→    riskScore: 3, riskLevel: "Chini",
+   150→  },
+   151→  {
+   152→    name: "Baraka John Mwanga", nida: "200005121234573", mobile: "0788 654 321",
+   153→    gender: "Mme", dob: "12 Mei 2000", age: 26,
+   154→    address: "Mtaa wa Manzese, Ubungo, Dar es Salaam",
+   155→    occupation: "Fundi Umeme", status: "Chini ya Uchunguzi", statusColor: "#FF9800",
+   156→    criminalRecord: { hasRecord: true, cases: 1, convictions: 0 }, alerts: ["Kesi inayoendelea"],
+   157→    licenseNo: "DL007007TZ", licenseExpiry: "14 Ago 2028", licenseClass: "B",
+   158→    passportNo: "TZ-GG-007007", passportExpiry: "08 Mar 2030",
+   159→    vehicles: [], devices: [],
+   160→    history: [
+   161→      { date: "12 Mei 2026", type: "Kukamatwa - Ugomvi", case: "AR-2026-0029", station: "Kituo cha Ubungo" },
+   162→    ],
+   163→    riskScore: 42, riskLevel: "Wastani",
+   164→  },
+   165→  {
+   166→    name: "Zawadi Kimani Ochieng", nida: "198506201234574", mobile: "0712 111 333",
+   167→    gender: "Mke", dob: "20 Jun 1985", age: 40,
+   168→    address: "Mtaa wa Ilala, Ilala, Dar es Salaam",
+   169→    occupation: "Mfanyakazi wa Benki", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   170→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   171→    licenseNo: "DL008008TZ", licenseExpiry: "25 Nov 2026", licenseClass: "B",
+   172→    passportNo: "TZ-HH-008008", passportExpiry: "14 Jan 2028",
+   173→    vehicles: [], devices: [],
+   174→    history: [],
+   175→    riskScore: 15, riskLevel: "Chini",
+   176→  },
+   177→  {
+   178→    name: "Hamisi Rashid Omar", nida: "197805091234575", mobile: "0766 222 444",
+   179→    gender: "Mme", dob: "09 Mei 1978", age: 48,
+   180→    address: "Mtaa wa Kariakoo, Ilala, Dar es Salaam",
+   181→    occupation: "Mfanyabiashara wa Jumla", status: "Ana Makosa", statusColor: "#F44336",
+   182→    criminalRecord: { hasRecord: true, cases: 6, convictions: 3 }, alerts: ["Faini nyingi isiyolipwa", "Historia ya makosa ya trafiki"],
+   183→    licenseNo: "DL009009TZ", licenseExpiry: "31 Mar 2025", licenseClass: "D",
+   184→    passportNo: "TZ-II-009009", passportExpiry: "30 Jun 2027",
+   185→    vehicles: [], devices: [],
+   186→    history: [
+   187→      { date: "28 Apr 2026", type: "Kasi kupita kiasi", case: "CT-2026-0447", station: "Kituo Kikuu DSM" },
+   188→      { date: "15 Mar 2026", type: "Kupita taa nyekundu", case: "CT-2026-0234", station: "Kituo cha Ilala" },
+   189→      { date: "10 Des 2025", type: "Gari bila Bima", case: "CT-2025-0991", station: "Kituo cha Kariakoo" },
+   190→    ],
+   191→    riskScore: 91, riskLevel: "Hatari",
+   192→  },
+   193→  {
+   194→    name: "Rashid Omari Said", nida: "199203151234576", mobile: "0755 321 654",
+   195→    gender: "Mme", dob: "15 Mar 1992", age: 34,
+   196→    address: "Mtaa wa Magomeni, Kinondoni, Dar es Salaam",
+   197→    occupation: "Dereva wa Daladala", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   198→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   199→    licenseNo: "DL010010TZ", licenseExpiry: "18 Des 2027", licenseClass: "D",
+   200→    passportNo: "TZ-JJ-010010", passportExpiry: "22 Sep 2029",
+   201→    vehicles: [], devices: [],
+   202→    history: [],
+   203→    riskScore: 20, riskLevel: "Chini",
+   204→  },
+   205→  {
+   206→    name: "Mariamu Ally Komba", nida: "199811271234577", mobile: "0712 555 666",
+   207→    gender: "Mke", dob: "27 Nov 1998", age: 27,
+   208→    address: "Mtaa wa Mwananyamala, Kinondoni, Dar es Salaam",
+   209→    occupation: "Muuguzi", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   210→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   211→    licenseNo: "DL011011TZ", licenseExpiry: "09 Jul 2030", licenseClass: "B",
+   212→    passportNo: "TZ-KK-011011", passportExpiry: "05 Nov 2033",
+   213→    vehicles: [], devices: [],
+   214→    history: [],
+   215→    riskScore: 2, riskLevel: "Chini",
+   216→  },
+   217→  {
+   218→    name: "Omari Hassan Kitwana", nida: "198210081234578", mobile: "0766 777 888",
+   219→    gender: "Mme", dob: "08 Okt 1982", age: 43,
+   220→    address: "Mtaa wa Kijitonyama, Kinondoni, Dar es Salaam",
+   221→    occupation: "Mkurugenzi", status: "Ana Faili", statusColor: "#2196F3",
+   222→    criminalRecord: { hasRecord: true, cases: 1, convictions: 0 }, alerts: ["Kesi ya kiraia - bado"],
+   223→    licenseNo: "DL012012TZ", licenseExpiry: "03 Feb 2028", licenseClass: "B",
+   224→    passportNo: "TZ-LL-012012", passportExpiry: "18 Apr 2031",
+   225→    vehicles: [], devices: [],
+   226→    history: [
+   227→      { date: "20 Apr 2026", type: "Mshtaki - Kesi ya Kiraia", case: "CIV-2026-0045", station: "Mahakama ya Hakimu" },
+   228→    ],
+   229→    riskScore: 30, riskLevel: "Wastani",
+   230→  },
+   231→  {
+   232→    name: "Pendo Mkwawa Haji", nida: "199604031234579", mobile: "0788 999 000",
+   233→    gender: "Mke", dob: "03 Apr 1996", age: 30,
+   234→    address: "Mtaa wa Tabata, Ilala, Dar es Salaam",
+   235→    occupation: "Msanifu Majengo", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   236→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   237→    licenseNo: "DL013013TZ", licenseExpiry: "27 Ago 2029", licenseClass: "B",
+   238→    passportNo: "TZ-MM-013013", passportExpiry: "12 Jul 2032",
+   239→    vehicles: [], devices: [],
+   240→    history: [],
+   241→    riskScore: 7, riskLevel: "Chini",
+   242→  },
+   243→  {
+   244→    name: "Yusuph Issa Majaliwa", nida: "197001171234580", mobile: "0712 444 555",
+   245→    gender: "Mme", dob: "17 Jan 1970", age: 56,
+   246→    address: "Mtaa wa Buguruni, Ilala, Dar es Salaam",
+   247→    occupation: "Mstaafu wa Polisi", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   248→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   249→    licenseNo: "DL014014TZ", licenseExpiry: "01 Okt 2026", licenseClass: "C",
+   250→    passportNo: "TZ-NN-014014", passportExpiry: "28 Feb 2028",
+   251→    vehicles: [], devices: [],
+   252→    history: [],
+   253→    riskScore: 10, riskLevel: "Chini",
+   254→  },
+   255→  {
+   256→    name: "Sikudhani Mwema Nyota", nida: "199309251234581", mobile: "0755 666 777",
+   257→    gender: "Mke", dob: "25 Sep 1993", age: 32,
+   258→    address: "Mtaa wa Kimara, Ubungo, Dar es Salaam",
+   259→    occupation: "Mwandishi wa Habari", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   260→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   261→    licenseNo: "DL015015TZ", licenseExpiry: "16 Mei 2028", licenseClass: "B",
+   262→    passportNo: "TZ-OO-015015", passportExpiry: "30 Des 2031",
+   263→    vehicles: [], devices: [],
+   264→    history: [],
+   265→    riskScore: 4, riskLevel: "Chini",
+   266→  },
+   267→  {
+   268→    name: "Masoud Ally Mapunda", nida: "198107141234582", mobile: "0766 888 999",
+   269→    gender: "Mme", dob: "14 Jul 1981", age: 44,
+   270→    address: "Mtaa wa Mwenge, Kinondoni, Dar es Salaam",
+   271→    occupation: "Daktari", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   272→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   273→    licenseNo: "DL016016TZ", licenseExpiry: "21 Mar 2027", licenseClass: "B",
+   274→    passportNo: "TZ-PP-016016", passportExpiry: "09 Okt 2030",
+   275→    vehicles: [], devices: [],
+   276→    history: [],
+   277→    riskScore: 6, riskLevel: "Chini",
+   278→  },
+   279→  {
+   280→    name: "Hidaya Ramadhani Chiku", nida: "200208061234583", mobile: "0788 000 111",
+   281→    gender: "Mke", dob: "06 Ago 2002", age: 23,
+   282→    address: "Mtaa wa Msasani, Kinondoni, Dar es Salaam",
+   283→    occupation: "Mubunifu", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   284→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   285→    licenseNo: "DL017017TZ", licenseExpiry: "14 Nov 2030", licenseClass: "B",
+   286→    passportNo: "TZ-QQ-017017", passportExpiry: "25 Mar 2034",
+   287→    vehicles: [], devices: [],
+   288→    history: [],
+   289→    riskScore: 1, riskLevel: "Chini",
+   290→  },
+   291→  {
+   292→    name: "Nassoro Kombo Mataka", nida: "198905231234584", mobile: "0712 222 333",
+   293→    gender: "Mme", dob: "23 Mei 1989", age: 37,
+   294→    address: "Mtaa wa Goba, Kinondoni, Dar es Salaam",
+   295→    occupation: "Injinia", status: "Ana Makosa", statusColor: "#FF9800",
+   296→    criminalRecord: { hasRecord: true, cases: 3, convictions: 1 }, alerts: ["Ombi la kuzuia liko"],
+   297→    licenseNo: "DL018018TZ", licenseExpiry: "07 Jan 2027", licenseClass: "B",
+   298→    passportNo: "TZ-RR-018018", passportExpiry: "16 Jun 2029",
+   299→    vehicles: [], devices: [],
+   300→    history: [
+   301→      { date: "15 Mei 2026", type: "Kukamatwa - Wizi", case: "AR-2026-0045", station: "Kituo cha Ilala" },
+   302→      { date: "03 Feb 2026", type: "Kuachiwa kwa dhamana", case: "AR-2026-0011", station: "Kituo Kikuu DSM" },
+   303→    ],
+   304→    riskScore: 72, riskLevel: "Juu",
+   305→  },
+   306→  {
+   307→    name: "Twaha Mrisho Lukindo", nida: "197503311234585", mobile: "0755 444 555",
+   308→    gender: "Mme", dob: "31 Mar 1975", age: 51,
+   309→    address: "Mtaa wa Segerea, Ilala, Dar es Salaam",
+   310→    occupation: "Mkulima", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   311→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   312→    licenseNo: "DL019019TZ", licenseExpiry: "19 Apr 2025", licenseClass: "C",
+   313→    passportNo: "TZ-SS-019019", passportExpiry: "11 Ago 2027",
+   314→    vehicles: [], devices: [],
+   315→    history: [],
+   316→    riskScore: 18, riskLevel: "Chini",
+   317→  },
+   318→  {
+   319→    name: "Zainab Hemed Singida", nida: "199704121234586", mobile: "0766 333 444",
+   320→    gender: "Mke", dob: "12 Apr 1997", age: 29,
+   321→    address: "Mtaa wa Makuburi, Kinondoni, Dar es Salaam",
+   322→    occupation: "Mhadhiri wa Chuo Kikuu", status: "Mtu wa Kawaida", statusColor: "#4CAF50",
+   323→    criminalRecord: { hasRecord: false, cases: 0, convictions: 0 }, alerts: [],
+   324→    licenseNo: "DL020020TZ", licenseExpiry: "28 Okt 2028", licenseClass: "B",
+   325→    passportNo: "TZ-TT-020020", passportExpiry: "03 Feb 2033",
+   326→    vehicles: [], devices: [],
+   327→    history: [],
+   328→    riskScore: 3, riskLevel: "Chini",
+   329→  },
+   330→];
+   331→
+   332→// ── 20 VEHICLES — linked to citizens ────────────────────────
+   333→export const MOCK_VEHICLES: MockVehicle[] = [
+   334→  { plate: "T 001 ABC", model: "Toyota Corolla", type: "Saloon", color: "Nyeupe", year: "2020", ownerNida: "199012031234567", ownerName: "Juma Khamis Mwinyi", ownerPhone: "0712 345 678", insurance: { company: "Jubilee Insurance", policy: "JUB-2026-00123", expires: "30 Jun 2027", valid: true }, inspectionExpiry: "15 Mei 2027", registrationExpiry: "31 Mar 2027", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   335→  { plate: "T 002 DEF", model: "Toyota Vitz", type: "Saloon", color: "Nyekundu", year: "2019", ownerNida: "199507081234568", ownerName: "Fatuma Hassan Mwanga", ownerPhone: "0754 123 456", insurance: { company: "GA Insurance", policy: "GA-2026-00234", expires: "28 Feb 2027", valid: true }, inspectionExpiry: "10 Apr 2027", registrationExpiry: "28 Feb 2027", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   336→  { plate: "T 003 GHI", model: "Toyota Hiace", type: "Minibus", color: "Fedha", year: "2018", ownerNida: "198803221234569", ownerName: "Ali Mohamed Salum", ownerPhone: "0712 987 654", insurance: { company: "Strategies Insurance", policy: "STR-2026-00345", expires: "15 Mar 2026", valid: false }, inspectionExpiry: "20 Jan 2026", registrationExpiry: "31 Jan 2026", accidentInvolved: true, violations: [{ id: 1, name: "Kasi kupita kiasi", date: "08 Mei 2026", area: "Mbezi Beach", fine: "TZS 150,000", paid: false }], outstandingFines: 150000 },
+   337→  { plate: "T 004 JKL", model: "Suzuki Swift", type: "Saloon", color: "Bluu", year: "2021", ownerNida: "199209141234570", ownerName: "Grace Amina Mushi", ownerPhone: "0766 456 789", insurance: { company: "Alliance Insurance", policy: "ALL-2026-00456", expires: "20 Dec 2027", valid: true }, inspectionExpiry: "05 Mar 2027", registrationExpiry: "20 Dec 2027", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   338→  { plate: "T 005 MNO", model: "Toyota Land Cruiser", type: "SUV", color: "Mweusi", year: "2016", ownerNida: "197612301234571", ownerName: "Saidi Omari Bakari", ownerPhone: "0788 321 654", insurance: { company: "Heritage Insurance", policy: "HER-2024-00567", expires: "10 Jan 2025", valid: false }, inspectionExpiry: "01 Des 2024", registrationExpiry: "10 Jan 2025", accidentInvolved: true, violations: [{ id: 1, name: "Gari bila Bima", date: "02 Mei 2026", area: "Kariakoo", fine: "TZS 200,000", paid: false }, { id: 2, name: "Leseni imekwisha", date: "10 Feb 2026", area: "Temeke", fine: "TZS 100,000", paid: false }], outstandingFines: 300000 },
+   339→  { plate: "T 006 PQR", model: "Honda Fit", type: "Saloon", color: "Kijani", year: "2022", ownerNida: "200101151234572", ownerName: "Amina Said Juma", ownerPhone: "0755 789 012", insurance: { company: "UAP Insurance", policy: "UAP-2026-00678", expires: "05 Nov 2027", valid: true }, inspectionExpiry: "22 Aug 2027", registrationExpiry: "05 Nov 2027", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   340→  { plate: "T 007 STU", model: "Nissan Note", type: "Saloon", color: "Dhahabu", year: "2020", ownerNida: "200005121234573", ownerName: "Baraka John Mwanga", ownerPhone: "0788 654 321", insurance: { company: "Jubilee Insurance", policy: "JUB-2026-00789", expires: "14 Aug 2027", valid: true }, inspectionExpiry: "30 Jul 2027", registrationExpiry: "14 Aug 2027", accidentInvolved: false, violations: [{ id: 1, name: "Kutumia simu", date: "12 Mei 2026", area: "Manzese", fine: "TZS 50,000", paid: false }], outstandingFines: 50000 },
+   341→  { plate: "T 008 VWX", model: "Toyota Prado", type: "SUV", color: "Kahawia", year: "2023", ownerNida: "198506201234574", ownerName: "Zawadi Kimani Ochieng", ownerPhone: "0712 111 333", insurance: { company: "ICEA Lion", policy: "ICE-2026-00890", expires: "25 Nov 2027", valid: true }, inspectionExpiry: "18 Oct 2027", registrationExpiry: "25 Nov 2027", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   342→  { plate: "T 009 YZA", model: "Bajaji RE", type: "Bajaji", color: "Njano", year: "2019", ownerNida: "197805091234575", ownerName: "Hamisi Rashid Omar", ownerPhone: "0766 222 444", insurance: { company: "Madison Insurance", policy: "MAD-2025-00901", expires: "31 Mar 2025", valid: false }, inspectionExpiry: "28 Feb 2025", registrationExpiry: "31 Mar 2025", accidentInvolved: true, violations: [{ id: 1, name: "Kasi kupita kiasi", date: "28 Apr 2026", area: "Morogoro Road", fine: "TZS 150,000", paid: false }, { id: 2, name: "Kupita taa nyekundu", date: "15 Mar 2026", area: "Posta", fine: "TZS 100,000", paid: false }, { id: 3, name: "Bila mkanda", date: "10 Des 2025", area: "Kariakoo", fine: "TZS 30,000", paid: true }], outstandingFines: 250000 },
+   343→  { plate: "T 010 BCD", model: "Toyota Ipsum", type: "Minibus", color: "Nyeupe", year: "2017", ownerNida: "199203151234576", ownerName: "Rashid Omari Said", ownerPhone: "0755 321 654", insurance: { company: "Jubilee Insurance", policy: "JUB-2026-01012", expires: "18 Dec 2027", valid: true }, inspectionExpiry: "10 Nov 2027", registrationExpiry: "18 Dec 2027", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   344→  { plate: "T 011 EFG", model: "Toyota Axio", type: "Saloon", color: "Fedha", year: "2021", ownerNida: "199811271234577", ownerName: "Mariamu Ally Komba", ownerPhone: "0712 555 666", insurance: { company: "GA Insurance", policy: "GA-2026-01123", expires: "09 Jul 2027", valid: true }, inspectionExpiry: "01 Jun 2027", registrationExpiry: "09 Jul 2027", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   345→  { plate: "T 012 HIJ", model: "Mitsubishi Outlander", type: "SUV", color: "Nyeusi", year: "2022", ownerNida: "198210081234578", ownerName: "Omari Hassan Kitwana", ownerPhone: "0766 777 888", insurance: { company: "Strategies Insurance", policy: "STR-2026-01234", expires: "03 Feb 2028", valid: true }, inspectionExpiry: "25 Jan 2028", registrationExpiry: "03 Feb 2028", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   346→  { plate: "T 013 KLM", model: "Toyota Rush", type: "SUV", color: "Buluu ya Giza", year: "2023", ownerNida: "199604031234579", ownerName: "Pendo Mkwawa Haji", ownerPhone: "0788 999 000", insurance: { company: "Alliance Insurance", policy: "ALL-2026-01345", expires: "27 Aug 2028", valid: true }, inspectionExpiry: "15 Aug 2028", registrationExpiry: "27 Aug 2028", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   347→  { plate: "T 014 NOP", model: "Toyota Hilux", type: "Pick Up", color: "Nyeupe", year: "2015", ownerNida: "197001171234580", ownerName: "Yusuph Issa Majaliwa", ownerPhone: "0712 444 555", insurance: { company: "Heritage Insurance", policy: "HER-2026-01456", expires: "01 Oct 2027", valid: true }, inspectionExpiry: "20 Sep 2027", registrationExpiry: "01 Oct 2027", accidentInvolved: false, violations: [{ id: 1, name: "Leseni karibu kwisha", date: "14 Apr 2026", area: "Buguruni", fine: "TZS 0", paid: true }], outstandingFines: 0 },
+   348→  { plate: "T 015 QRS", model: "Nissan Leaf", type: "Saloon", color: "Nyeupe", year: "2024", ownerNida: "199309251234581", ownerName: "Sikudhani Mwema Nyota", ownerPhone: "0755 666 777", insurance: { company: "UAP Insurance", policy: "UAP-2026-01567", expires: "16 May 2028", valid: true }, inspectionExpiry: "08 May 2028", registrationExpiry: "16 May 2028", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   349→  { plate: "T 016 TUV", model: "Toyota Fortuner", type: "SUV", color: "Fedha", year: "2022", ownerNida: "198107141234582", ownerName: "Masoud Ally Mapunda", ownerPhone: "0766 888 999", insurance: { company: "ICEA Lion", policy: "ICE-2026-01678", expires: "21 Mar 2027", valid: true }, inspectionExpiry: "12 Mar 2027", registrationExpiry: "21 Mar 2027", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   350→  { plate: "T 017 WXY", model: "Suzuki Alto", type: "Saloon", color: "Pinki", year: "2023", ownerNida: "200208061234583", ownerName: "Hidaya Ramadhani Chiku", ownerPhone: "0788 000 111", insurance: { company: "Madison Insurance", policy: "MAD-2026-01789", expires: "14 Nov 2028", valid: true }, inspectionExpiry: "05 Nov 2028", registrationExpiry: "14 Nov 2028", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   351→  { plate: "T 018 ZAB", model: "Toyota Premio", type: "Saloon", color: "Mwekundu wa Giza", year: "2018", ownerNida: "198905231234584", ownerName: "Nassoro Kombo Mataka", ownerPhone: "0712 222 333", insurance: { company: "Jubilee Insurance", policy: "JUB-2025-01890", expires: "07 Jan 2026", valid: false }, inspectionExpiry: "01 Jan 2026", registrationExpiry: "07 Jan 2026", accidentInvolved: true, violations: [{ id: 1, name: "Gari bila Bima", date: "15 Mei 2026", area: "Goba", fine: "TZS 200,000", paid: false }], outstandingFines: 200000 },
+   352→  { plate: "T 019 CDE", model: "Toyota Dyna (Lori)", type: "Lori", color: "Bluu na Nyeupe", year: "2014", ownerNida: "197503311234585", ownerName: "Twaha Mrisho Lukindo", ownerPhone: "0755 444 555", insurance: { company: "GA Insurance", policy: "GA-2026-01901", expires: "19 Apr 2027", valid: true }, inspectionExpiry: "10 Apr 2027", registrationExpiry: "19 Apr 2027", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   353→  { plate: "T 020 FGH", model: "Toyota RAV4", type: "SUV", color: "Nyeupe ya Lulu", year: "2024", ownerNida: "199704121234586", ownerName: "Zainab Hemed Singida", ownerPhone: "0766 333 444", insurance: { company: "Strategies Insurance", policy: "STR-2026-02012", expires: "28 Oct 2028", valid: true }, inspectionExpiry: "20 Oct 2028", registrationExpiry: "28 Oct 2028", accidentInvolved: false, violations: [], outstandingFines: 0 },
+   354→];
+   355→
+   356→// ── 20 DEVICES — linked to citizens ─────────────────────────
+   357→export const MOCK_DEVICES: MockDevice[] = [
+   358→  { serialNo: "SM-S928B-TZ-001", imei: "358423092847001", description: "Samsung Galaxy S24 Ultra — Nyeusi", category: "simu", ownerNida: "199012031234567", ownerName: "Juma Khamis Mwinyi", ownerPhone: "0712 345 678", status: "clean" },
+   359→  { serialNo: "DNPXK-TZ-002", imei: "352098103456002", description: "iPhone 15 Pro — Dhahabu", category: "simu", ownerNida: "199507081234568", ownerName: "Fatuma Hassan Mwanga", ownerPhone: "0754 123 456", status: "stolen", reportDate: "10 Mei 2026" },
+   360→  { serialNo: "SM-A546E-TZ-003", imei: "358423092847003", description: "Samsung Galaxy A54 — Njano ya Kupendeza", category: "simu", ownerNida: "198803221234569", ownerName: "Ali Mohamed Salum", ownerPhone: "0712 987 654", status: "clean" },
+   361→  { serialNo: "CPH2551-TZ-004", imei: "869912034567004", description: "OPPO Reno 11 — Nyeupe ya Jadi", category: "simu", ownerNida: "199209141234570", ownerName: "Grace Amina Mushi", ownerPhone: "0766 456 789", status: "clean" },
+   362→  { serialNo: "CNF-HP-TZ-005", imei: "N/A", description: "HP Laptop 15s-fq5 — Fedha", category: "kompyuta", ownerNida: "197612301234571", ownerName: "Saidi Omari Bakari", ownerPhone: "0788 321 654", status: "stolen", reportDate: "08 Mei 2026" },
+   363→  { serialNo: "SM-T500-TZ-006", imei: "354513069012006", description: "Samsung Galaxy Tab A7 — Fedha Nyepesi", category: "simu", ownerNida: "200101151234572", ownerName: "Amina Said Juma", ownerPhone: "0755 789 012", status: "clean" },
+   364→  { serialNo: "POCO-X6-TZ-007", imei: "863947056789007", description: "Xiaomi Poco X6 Pro — Nyeusi ya Mkaa", category: "simu", ownerNida: "200005121234573", ownerName: "Baraka John Mwanga", ownerPhone: "0788 654 321", status: "clean" },
+   365→  { serialNo: "ASUS-TUF-TZ-008", imei: "N/A", description: "ASUS TUF Gaming Laptop F15 — Giza", category: "kompyuta", ownerNida: "198506201234574", ownerName: "Zawadi Kimani Ochieng", ownerPhone: "0712 111 333", status: "clean" },
+   366→  { serialNo: "DNPXK-TZ-009", imei: "352098103456009", description: "iPhone 14 — Midnait Nyeusi", category: "simu", ownerNida: "197805091234575", ownerName: "Hamisi Rashid Omar", ownerPhone: "0766 222 444", status: "stolen", reportDate: "15 Mar 2026" },
+   367→  { serialNo: "TECNO-TZ-010", imei: "358741023456010", description: "Tecno Camon 30 Pro — Bluu ya Anga", category: "simu", ownerNida: "199203151234576", ownerName: "Rashid Omari Said", ownerPhone: "0755 321 654", status: "clean" },
+   368→  { serialNo: "SM-S928B-TZ-011", imei: "358423092847011", description: "Samsung Galaxy S23 — Nyeupe ya Cream", category: "simu", ownerNida: "199811271234577", ownerName: "Mariamu Ally Komba", ownerPhone: "0712 555 666", status: "found", reportDate: "05 Apr 2026" },
+   369→  { serialNo: "DELL-I5-TZ-012", imei: "N/A", description: "Dell Inspiron 15 3520 — Fedha", category: "kompyuta", ownerNida: "198210081234578", ownerName: "Omari Hassan Kitwana", ownerPhone: "0766 777 888", status: "clean" },
+   370→  { serialNo: "INFINIX-TZ-013", imei: "359047012345013", description: "Infinix Note 40 Pro — Kijani cha Misitu", category: "simu", ownerNida: "199604031234579", ownerName: "Pendo Mkwawa Haji", ownerPhone: "0788 999 000", status: "clean" },
+   371→  { serialNo: "NOKIA-TZ-014", imei: "351456087890014", description: "Nokia G60 5G — Bluu ya Bahari", category: "simu", ownerNida: "197001171234580", ownerName: "Yusuph Issa Majaliwa", ownerPhone: "0712 444 555", status: "clean" },
+   372→  { serialNo: "OPPO-TZ-015", imei: "869374056789015", description: "OPPO A98 5G — Matunda ya Fedha", category: "simu", ownerNida: "199309251234581", ownerName: "Sikudhani Mwema Nyota", ownerPhone: "0755 666 777", status: "clean" },
+   373→  { serialNo: "APPLE-MBP-TZ-016", imei: "N/A", description: "MacBook Pro M3 — Fedha ya Anga", category: "kompyuta", ownerNida: "198107141234582", ownerName: "Masoud Ally Mapunda", ownerPhone: "0766 888 999", status: "clean" },
+   374→  { serialNo: "SM-F946B-TZ-017", imei: "354223098765017", description: "Samsung Galaxy Z Fold5 — Cream", category: "simu", ownerNida: "200208061234583", ownerName: "Hidaya Ramadhani Chiku", ownerPhone: "0788 000 111", status: "clean" },
+   375→  { serialNo: "VIVO-TZ-018", imei: "864523012345018", description: "Vivo V29 5G — Jewel Red", category: "simu", ownerNida: "198905231234584", ownerName: "Nassoro Kombo Mataka", ownerPhone: "0712 222 333", status: "stolen", reportDate: "01 Mei 2026" },
+   376→  { serialNo: "HONOR-TZ-019", imei: "352789045678019", description: "Honor X8b — Titanium Silver", category: "simu", ownerNida: "197503311234585", ownerName: "Twaha Mrisho Lukindo", ownerPhone: "0755 444 555", status: "clean" },
+   377→  { serialNo: "REAL-TZ-020", imei: "868412034567020", description: "Realme 12 Pro+ — Submarine Blue", category: "simu", ownerNida: "199704121234586", ownerName: "Zainab Hemed Singida", ownerPhone: "0766 333 444", status: "clean" },
+   378→];
+   379→
+   380→// ── LOOKUP HELPERS ────────────────────────────────────────────
+   381→// Cross-link: assign vehicles and devices to their citizens
+   382→MOCK_CITIZENS.forEach((c) => {
+   383→  c.vehicles = MOCK_VEHICLES.filter((v) => v.ownerNida === c.nida);
+   384→  c.devices  = MOCK_DEVICES.filter((d) => d.ownerNida === c.nida);
+   385→});
+   386→
+   387→/** Find a citizen by any searchable field */
+   388→export function lookupCitizen(query: string): MockCitizen | null {
+   389→  const q = query.trim().toLowerCase().replace(/\s+/g, " ");
+   390→  return MOCK_CITIZENS.find((c) =>
+   391→    c.name.toLowerCase().includes(q) ||
+   392→    c.nida === query.trim() ||
+   393→    c.mobile.replace(/\s/g, "").includes(q.replace(/\s/g, "")) ||
+   394→    c.licenseNo.toLowerCase() === q ||
+   395→    c.passportNo.toLowerCase() === q
+   396→  ) ?? null;
+   397→}
+   398→
+   399→/** Find a vehicle by plate */
+   400→export function lookupVehicle(query: string): MockVehicle | null {
+   401→  const q = query.trim().toUpperCase().replace(/\s+/g, " ");
+   402→  return MOCK_VEHICLES.find((v) =>
+   403→    v.plate.toUpperCase().replace(/\s+/g, " ") === q ||
+   404→    v.plate.toUpperCase().replace(/\s/g, "").includes(q.replace(/\s/g, ""))
+   405→  ) ?? null;
+   406→}
+   407→
+   408→/** Find a device by serial number or IMEI */
+   409→export function lookupDevice(query: string): MockDevice | null {
+   410→  const q = query.trim().toLowerCase();
+   411→  return MOCK_DEVICES.find((d) =>
+   412→    d.serialNo.toLowerCase().includes(q) ||
+   413→    d.imei.includes(q)
+   414→  ) ?? null;
+   415→}
+   416→
+   417→/** Universal search across all records */
+   418→export function universalSearch(query: string): { citizen: MockCitizen | null; vehicle: MockVehicle | null; device: MockDevice | null } {
+   419→  const q = query.trim();
+   420→  const vehicle  = lookupVehicle(q);
+   421→  const ownerOfVehicle = vehicle ? MOCK_CITIZENS.find((c) => c.nida === vehicle.ownerNida) ?? null : null;
+   422→  const citizen  = ownerOfVehicle ?? lookupCitizen(q);
+   423→  const device   = lookupDevice(q);
+   424→  return { citizen, vehicle, device };
+   425→}
+   426→
+   427→// ── IN-SESSION NEW RECORDS (added by officers during session) ─
+   428→export interface NewVehicleRecord {
+   429→  id: string;
+   430→  plate: string;
+   431→  model: string;
+   432→  type: string;
+   433→  color: string;
+   434→  year: string;
+   435→  ownerName: string;
+   436→  ownerNida: string;
+   437→  ownerPhone: string;
+   438→  ownerLicense: string;
+   439→  station: string;
+   440→  addedBy: string;
+   441→  addedAt: string;
+   442→  notes: string;
+   443→}
+   444→
+   445→export interface NewCitizenRecord {
+   446→  id: string;
+   447→  name: string;
+   448→  nida: string;
+   449→  mobile: string;
+   450→  gender: string;
+   451→  dob: string;
+   452→  address: string;
+   453→  occupation: string;
+   454→  station: string;
+   455→  addedBy: string;
+   456→  addedAt: string;
+   457→  notes: string;
+   458→}
+   459→
+   460→// In-memory store for officer-added records (session only)
+   461→export const newVehicleRecords: NewVehicleRecord[] = [];
+   462→export const newCitizenRecords: NewCitizenRecord[] = [];
+   463→
+   464→export function saveNewVehicle(r: Omit<NewVehicleRecord, "id" | "addedAt">): NewVehicleRecord {
+   465→  const record = { ...r, id: `VEH-NEW-${Date.now()}`, addedAt: new Date().toISOString() };
+   466→  newVehicleRecords.unshift(record);
+   467→  return record;
+   468→}
+   469→
+   470→export function saveNewCitizen(r: Omit<NewCitizenRecord, "id" | "addedAt">): NewCitizenRecord {
+   471→  const record = { ...r, id: `CIT-NEW-${Date.now()}`, addedAt: new Date().toISOString() };
+   472→  newCitizenRecords.unshift(record);
+   473→  return record;
+   474→}
+   475→
+   476→// ── INPUT VALIDATION HELPERS ──────────────────────────────────
+   477→export type ValidationResult = { valid: boolean; error: string };
+   478→
+   479→/** Tanzania plate: T NNN XYZ or T NNN XYZW — flexible */
+   480→export function validatePlate(v: string): ValidationResult {
+   481→  const clean = v.trim().toUpperCase().replace(/\s+/g, " ");
+   482→  if (!clean) return { valid: false, error: "Ingiza namba ya gari" };
+   483→  // TZ plates: T followed by 3 digits and 2-4 letters, with optional space
+   484→  if (!/^T\s?\d{2,4}\s?[A-Z]{2,4}$/.test(clean.replace(/\s/g, "")))
+   485→    return { valid: false, error: "Fomati sahihi: T 001 ABC au T123ABC" };
+   486→  return { valid: true, error: "" };
+   487→}
+   488→
+   489→/** Tanzania driving license: DL + 6+ digits + TZ */
+   490→export function validateLicense(v: string): ValidationResult {
+   491→  const clean = v.trim().toUpperCase();
+   492→  if (!clean) return { valid: false, error: "Ingiza namba ya leseni" };
+   493→  if (!/^DL\d{6,}TZ$/.test(clean))
+   494→    return { valid: false, error: "Fomati sahihi: DL001001TZ" };
+   495→  return { valid: true, error: "" };
+   496→}
+   497→
+   498→/** Tanzania NIDA: 15 digits */
+   499→export function validateNida(v: string): ValidationResult {
+   500→  const clean = v.trim().replace(/\s/g, "");
+   501→  if (!clean) return { valid: false, error: "Ingiza namba ya NIDA" };
+   502→  if (!/^\d{15}$/.test(clean))
+   503→    return { valid: false, error: "NIDA lazima iwe na tarakimu 15" };
+   504→  return { valid: true, error: "" };
+   505→}
+   506→
+   507→/** Tanzania mobile: 07XX or 06XX, 10 digits */
+   508→export function validateMobile(v: string): ValidationResult {
+   509→  const clean = v.trim().replace(/[\s\-]/g, "");
+   510→  if (!clean) return { valid: false, error: "Ingiza namba ya simu" };
+   511→  if (!/^(07|06)\d{8}$/.test(clean))
+   512→    return { valid: false, error: "Fomati sahihi: 0712345678 au 0712 345 678" };
+   513→  return { valid: true, error: "" };
+   514→}
+   515→
+   516→/** Serial/IMEI: at least 8 chars */
+   517→export function validateSerial(v: string): ValidationResult {
+   518→  const clean = v.trim();
+   519→  if (!clean) return { valid: false, error: "Ingiza namba ya serial au IMEI" };
+   520→  if (clean.length < 8)
+   521→    return { valid: false, error: "Namba ya serial lazima iwe na herufi angalau 8" };
+   522→  return { valid: true, error: "" };
+   523→}
+   524→
+   525→/** Name: at least 3 chars, two words */
+   526→export function validateName(v: string): ValidationResult {
+   527→  const clean = v.trim();
+   528→  if (!clean) return { valid: false, error: "Ingiza jina la mtu" };
+   529→  if (clean.length < 3) return { valid: false, error: "Jina ni fupi sana" };
+   530→  if (!clean.includes(" ")) return { valid: false, error: "Ingiza jina na jina la ukoo" };
+   531→  return { valid: true, error: "" };
+   532→}
+   533→
+   534→/** Get suggestions from mock data based on partial input */
+   535→export function getSuggestions(query: string, type: "plate" | "license" | "nida" | "name" | "mobile" | "serial"): string[] {
+   536→  const q = query.trim().toLowerCase();
+   537→  if (!q || q.length < 2) return [];
+   538→  if (type === "plate") return MOCK_VEHICLES.map((v) => v.plate).filter((p) => p.toLowerCase().replace(/\s/g, "").includes(q.replace(/\s/g, ""))).slice(0, 4);
+   539→  if (type === "license") return MOCK_CITIZENS.map((c) => c.licenseNo).filter((l) => l.toLowerCase().includes(q)).slice(0, 4);
+   540→  if (type === "nida") return MOCK_CITIZENS.map((c) => c.nida).filter((n) => n.includes(q)).slice(0, 4);
+   541→  if (type === "name") return MOCK_CITIZENS.map((c) => c.name).filter((n) => n.toLowerCase().includes(q)).slice(0, 5);
+   542→  if (type === "mobile") return MOCK_CITIZENS.map((c) => c.mobile).filter((m) => m.replace(/\s/g, "").includes(q.replace(/\s/g, ""))).slice(0, 4);
+   543→  if (type === "serial") {
+   544→    const sn = MOCK_DEVICES.map((d) => d.serialNo).filter((s) => s.toLowerCase().includes(q));
+   545→    const imei = MOCK_DEVICES.map((d) => d.imei).filter((i) => i !== "N/A" && i.includes(q));
+   546→    return [...sn, ...imei].slice(0, 4);
+   547→  }
+   548→  return [];
+   549→}
+   550→
