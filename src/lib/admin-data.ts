@@ -65,13 +65,16 @@ export const ADMIN_INCIDENTS = [
 ];
 
 export const ADMIN_CITATIONS = [
-  { id: "CT-2026-0451", plate: "T123ABC", offense: "Over Speeding", driver: "Juma Khamis Mwinyi", date: "10 Mei 2026", amount: "150,000", status: "unpaid", officer: "Insp. Juma Mwinyi" },
-  { id: "CT-2026-0450", plate: "T789GHI", offense: "No Seatbelt", driver: "Ali Mohamed Salum", date: "08 Mei 2026", amount: "50,000", status: "paid", officer: "Sgt. Ali Hassan" },
-  { id: "CT-2026-0449", plate: "T456DEF", offense: "Traffic Light Violation", driver: "Saidi Juma Khamis", date: "05 Mei 2026", amount: "100,000", status: "paid", officer: "Sgt. Fatuma Hassan" },
-  { id: "CT-2026-0448", plate: "T321XYZ", offense: "Phone While Driving", driver: "Grace Mushi", date: "02 Mei 2026", amount: "50,000", status: "unpaid", officer: "Insp. Juma Mwinyi" },
-  { id: "CT-2026-0447", plate: "T654ABC", offense: "Over Speeding", driver: "Hamisi Rashid", date: "28 Apr 2026", amount: "30,000", status: "paid", officer: "Cpl. Mariam Ally" },
-  { id: "CT-2026-0446", plate: "T987GHI", offense: "No Seatbelt", driver: "Mariam Ally", date: "25 Apr 2026", amount: "50,000", status: "unpaid", officer: "Sgt. Ali Hassan" },
-  { id: "CT-2026-0445", plate: "T111ABC", offense: "Traffic Light Violation", driver: "Emmanuel Joseph", date: "22 Apr 2026", amount: "100,000", status: "paid", officer: "Insp. Grace Mushi" },
+  { id: "CT-2026-0451", plate: "T 003 GHI", offense: "Over Speeding",             driver: "Ali Mohamed Salum",     date: "10 Mei 2026", amount: "150,000", status: "unpaid", officer: "Sgt. Ali Hassan",    type: "traffic" },
+  { id: "CT-2026-0450", plate: "T 009 YZA", offense: "No Seatbelt",               driver: "Hamisi Rashid Omar",   date: "08 Mei 2026", amount: "50,000",  status: "paid",   officer: "Sgt. Fatuma Hassan", type: "traffic" },
+  { id: "CT-2026-0449", plate: "T 005 MNO", offense: "Traffic Light Violation",   driver: "Saidi Omari Bakari",   date: "05 Mei 2026", amount: "100,000", status: "unpaid", officer: "Cprl. Juma",         type: "traffic" },
+  { id: "CT-2026-0448", plate: "T 007 STU", offense: "Phone While Driving",       driver: "Baraka John Mwanga",   date: "02 Mei 2026", amount: "50,000",  status: "unpaid", officer: "Insp. Grace Mushi",  type: "traffic" },
+  { id: "CT-2026-0447", plate: "T 009 YZA", offense: "Over Speeding",             driver: "Hamisi Rashid Omar",   date: "28 Apr 2026", amount: "30,000",  status: "paid",   officer: "Cpl. Mariamu Ally",  type: "traffic" },
+  { id: "CT-2026-0446", plate: "T 018 ZAB", offense: "No Insurance",              driver: "Nassoro Kombo Mataka", date: "25 Apr 2026", amount: "200,000", status: "unpaid", officer: "Sgt. Ali Hassan",    type: "traffic" },
+  { id: "CT-2026-0445", plate: "T 005 MNO", offense: "No Inspection Certificate", driver: "Saidi Omari Bakari",   date: "22 Apr 2026", amount: "100,000", status: "paid",   officer: "Insp. Grace Mushi",  type: "traffic" },
+  { id: "CT-2026-0444", plate: "T 018 ZAB", offense: "Gari bila Bima",            driver: "Nassoro Kombo Mataka", date: "15 Apr 2026", amount: "200,000", status: "unpaid", officer: "Cprl. Juma",         type: "traffic" },
+  { id: "CT-2026-0443", plate: "T 003 GHI", offense: "Expired License",           driver: "Ali Mohamed Salum",    date: "10 Apr 2026", amount: "100,000", status: "unpaid", officer: "Sgt. Ali Hassan",    type: "traffic" },
+  { id: "CT-2026-0442", plate: "T 007 STU", offense: "No Seatbelt",               driver: "Baraka John Mwanga",   date: "05 Apr 2026", amount: "50,000",  status: "paid",   officer: "Insp. Grace Mushi",  type: "traffic" },
 ];
 
 export const ACTIVE_PATROLS = [

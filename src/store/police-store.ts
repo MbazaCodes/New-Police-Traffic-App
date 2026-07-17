@@ -16,7 +16,8 @@ function normalizeOfficerRole(role?: UserRole): OfficerRole {
 export type AdminScreen =
   | "dashboard" | "officers" | "incidents" | "citations" | "patrols"
   | "alerts" | "reports" | "users" | "settings" | "stations" | "posts"
-  | "assignments" | "detained-citizens";
+  | "assignments" | "detained-citizens"
+  | "missing";
 
 export interface CitationPrefill {
   plate: string; model: string; color: string; vehicleType: string;

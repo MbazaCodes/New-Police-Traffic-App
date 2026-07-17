@@ -24,6 +24,7 @@ import {
   Line,
 } from "recharts";
 import { INCIDENT_TREND, OFFENSE_DISTRIBUTION, REGION_STATS } from "@/lib/admin-data";
+import { getReportData } from "@/lib/mock-engine";
 import { toast } from "@/hooks/use-toast";
 
 const DATE_RANGES = [
@@ -65,6 +66,7 @@ function downloadFile(content: string, filename: string, mime: string) {
 
 export function AdminReports() {
   const [range, setRange] = useState<string>("7d");
+  const [reportType, setReportType] = useState<"all" | "traffic" | "general">("all");
 
   const totalIncidents = INCIDENT_TREND.reduce((s, d) => s + d.incidents, 0);
   const totalCitations = INCIDENT_TREND.reduce((s, d) => s + d.citations, 0);
@@ -128,7 +130,22 @@ export function AdminReports() {
             Changanua na toa ripoti za shughuli za polisi
           </p>
         </div>
-        <div className="flex items-center gap-2">
+  
+      {/* Report type filter */}
+      <div className="flex gap-2 mb-2">
+        {([
+          { id: "all", label: "Ripoti ya Jumla", color: "#1E3A8A" },
+          { id: "traffic", label: "Trafiki tu", color: "#2196F3" },
+          { id: "general", label: "Polisi Jumla", color: "#10B981" },
+        ] as const).map((t) => (
+          <button key={t.id} onClick={() => setReportType(t.id)}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2 text-[13px] font-bold transition ${reportType === t.id ? "text-white shadow-md" : "bg-police-card text-police-muted border border-police"}`}
+            style={reportType === t.id ? { backgroundColor: t.color } : {}}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <div className="flex items-center gap-2">
           <button
             onClick={handleExportPdf}
             className="inline-flex items-center gap-2 rounded-lg bg-red-500 px-3 py-2 text-[12px] font-semibold text-white hover:bg-red-600"
