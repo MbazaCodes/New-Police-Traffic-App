@@ -297,10 +297,73 @@ function CidDashboard() {
   );
 }
 
+// ---- Extended mock data for Intel Console filtering ----------------------
+
+const CITIZENS_DB = [
+  { name: "Juma Mwenda", nida: "1234567890123", phone: "+255 713 456 789", region: "Dar es Salaam", status: "Clean" },
+  { name: "Aisha Mohammed", nida: "2345678901234", phone: "+255 714 567 890", region: "Dodoma", status: "Suspect" },
+  { name: "Rashid Kimaro", nida: "3456789012345", phone: "+255 715 678 901", region: "Mwanza", status: "Clean" },
+  { name: "Fatma Hassan", nida: "4567890123456", phone: "+255 716 789 012", region: "Arusha", status: "Witness" },
+  { name: "Hassan Omary", nida: "5678901234567", phone: "+255 717 890 123", region: "Dar es Salaam", status: "Suspect" },
+  { name: "Neema Malima", nida: "6789012345678", phone: "+255 718 901 234", region: "Mbeya", status: "Wanted" },
+  { name: "Salma Juma", nida: "7890123456789", phone: "+255 719 012 345", region: "Tanga", status: "Suspect" },
+  { name: "Baraka Mcharo", nida: "8901234567890", phone: "+255 720 123 456", region: "Kilimanjaro", status: "Wanted" },
+  { name: "Idris Makene", nida: "9012345678901", phone: "+255 721 234 567", region: "Zanzibar", status: "Wanted" },
+  { name: "Thomas Ngowi", nida: "0123456789012", phone: "+255 722 345 678", region: "Iringa", status: "Clean" },
+  { name: "Rehema Saidi", nida: "1111111111111", phone: "+255 723 456 789", region: "Morogoro", status: "Clean" },
+  { name: "Khalid Mnengu", nida: "2222222222222", phone: "+255 724 567 890", region: "Dar es Salaam", status: "Suspect" },
+];
+
+const VEHICLES_DB = [
+  { plate: "T 123 ABC", model: "Toyota Corolla 2019", owner: "Juma Mwenda", status: "Clean" },
+  { plate: "T 456 DEF", model: "Honda CR-V 2021", owner: "Aisha Mohammed", status: "Stolen" },
+  { plate: "T 789 GHI", model: "Nissan Patrol 2020", owner: "Rashid Kimaro", status: "Clean" },
+  { plate: "T 111 JKL", model: "Toyota Hilux 2022", owner: "Hassan Omary", status: "Flagged" },
+  { plate: "T 222 MNO", model: "Mitsubishi Pajero 2018", owner: "Neema Malima", status: "Stolen" },
+  { plate: "T 333 PQR", model: "Toyota Land Cruiser 2023", owner: "Idris Makene", status: "Wanted" },
+  { plate: "T 444 STU", model: "Suzuki Vitara 2020", owner: "Fatma Hassan", status: "Clean" },
+  { plate: "T 555 VWX", model: "Ford Ranger 2021", owner: "Thomas Ngowi", status: "Clean" },
+];
+
+const OFFICERS_DB = [
+  { name: "IP. Juma Mwenda", num: "TZ-4451", rank: "Inspector", station: "Central Dar" },
+  { name: "SP. Aisha Mohammed", num: "TZ-3302", rank: "Superintendent", station: "Dodoma HQ" },
+  { name: "IP. Rashid Kimaro", num: "TZ-4488", rank: "Inspector", station: "Mwanza CID" },
+  { name: "ASP. Fatma Hassan", num: "TZ-2201", rank: "Asst. Supt.", station: "Arusha CID" },
+  { name: "IP. Peter Msigwa", num: "TZ-4499", rank: "Inspector", station: "Mbeya CID" },
+  { name: "SP. Halima Mzee", num: "TZ-3310", rank: "Superintendent", station: "Tanga CID" },
+  { name: "IP. George Kapufi", num: "TZ-4460", rank: "Inspector", station: "Zanzibar CID" },
+  { name: "ASP. Joyce Lyimo", num: "TZ-2205", rank: "Asst. Supt.", station: "Kilimanjaro" },
+];
+
+const ACCIDENTS_DB = [
+  { id: "ACC-2025-0141", date: "2025-06-14", location: "Morogoro Rd / Samora", type: "Meli-Meli", casualties: 2, status: "Open" },
+  { id: "ACC-2025-0139", date: "2025-06-12", location: "Nelson Mandela / Ali Hassan Mwinyi", type: "Baiskeli na Gari", casualties: 1, status: "Closed" },
+  { id: "ACC-2025-0137", date: "2025-06-10", location: "Bagamoyo Rd, Mbagala", type: "Gari 2", casualties: 0, status: "Under Review" },
+  { id: "ACC-2025-0135", date: "2025-06-08", location: "Uhuru Rd / Ohio St", type: "Meli na Baiskeli", casualties: 3, status: "Open" },
+  { id: "ACC-2025-0133", date: "2025-06-05", location: "Nyerere Rd / Kivukoni", type: "Gari 3", casualties: 1, status: "Closed" },
+];
+
+function filterData<T>(data: T[], query: string, keys: (keyof T)[]): T[] {
+  if (!query.trim()) return data;
+  const q = query.toLowerCase();
+  return data.filter((item) =>
+    keys.some((key) => String(item[key]).toLowerCase().includes(q))
+  );
+}
+
 // ---- Intel Console --------------------------------------------------------
 
 function CidIntelConsole() {
-  const [query, setQuery] = useState("");
+  const [universalQuery, setUniversalQuery] = useState("");
+  const [tabQueries, setTabQueries] = useState<Record<string, string>>({});
+
+  const getTabQuery = (tab: string) => tabQueries[tab] ?? "";
+  const setTabQuery = (tab: string, val: string) =>
+    setTabQueries((prev) => ({ ...prev, [tab]: val }));
+
+  // Determine effective query: prefer tab-specific, fall back to universal
+  const effectiveQuery = (tab: string) => getTabQuery(tab) || universalQuery;
 
   const TABS_DATA = [
     { value: "citizen", label: "Raia", placeholder: "Ingiza jina au NIDA..." },
@@ -312,6 +375,15 @@ function CidIntelConsole() {
     { value: "accident", label: "Ajali", placeholder: "Ingiza namba ya ajali..." },
   ] as const;
 
+  // Pre-filtered data per tab
+  const filteredCitizens = filterData(CITIZENS_DB, effectiveQuery("citizen"), ["name", "nida", "phone", "region"]);
+  const filteredVehicles = filterData(VEHICLES_DB, effectiveQuery("vehicle"), ["plate", "model", "owner"]);
+  const filteredOfficers = filterData(OFFICERS_DB, effectiveQuery("officer"), ["name", "num", "rank", "station"]);
+  const filteredCases = filterData(CASES, effectiveQuery("case"), ["id", "type", "officer", "region"]);
+  const filteredWanted = filterData(WANTED_PERSONS, effectiveQuery("wanted"), ["name", "crime"]);
+  const filteredPf3 = filterData(PF3_FORMS, effectiveQuery("pf3"), ["id", "case", "suspect"]);
+  const filteredAccidents = filterData(ACCIDENTS_DB, effectiveQuery("accident"), ["id", "location", "type"]);
+
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-bold text-police">Konze la Upelelezi / Intel Console</h2>
@@ -320,20 +392,40 @@ function CidIntelConsole() {
       <div className="flex items-center gap-3 rounded-xl bg-police-card px-4 py-3 shadow-sm">
         <Search size={20} className="text-police-faint" />
         <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={universalQuery}
+          onChange={(e) => setUniversalQuery(e.target.value)}
           placeholder="Utafutaji wa kimataifa — andika neno lolote..."
           className="h-9 flex-1 bg-transparent text-[14px] text-police placeholder:text-police-faint focus:outline-none"
         />
+        {universalQuery && (
+          <button onClick={() => setUniversalQuery("")} className="text-[11px] text-police-faint hover:text-police">
+            Futa
+          </button>
+        )}
       </div>
 
       <Tabs defaultValue="citizen">
         <TabsList className="flex-wrap">
-          {TABS_DATA.map((t) => (
-            <TabsTrigger key={t.value} value={t.value} className="text-[12px]">
-              {t.label}
-            </TabsTrigger>
-          ))}
+          {TABS_DATA.map((t) => {
+            const count = t.value === "citizen" ? filteredCitizens.length
+              : t.value === "vehicle" ? filteredVehicles.length
+              : t.value === "officer" ? filteredOfficers.length
+              : t.value === "case" ? filteredCases.length
+              : t.value === "wanted" ? filteredWanted.length
+              : t.value === "pf3" ? filteredPf3.length
+              : filteredAccidents.length;
+            const hasFilter = effectiveQuery(t.value).length > 0;
+            return (
+              <TabsTrigger key={t.value} value={t.value} className="text-[12px]">
+                {t.label}
+                {hasFilter && (
+                  <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-500/20 px-1 text-[10px] font-bold text-blue-400">
+                    {count}
+                  </span>
+                )}
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
 
         {TABS_DATA.map((t) => (
@@ -343,110 +435,241 @@ function CidIntelConsole() {
                 <div className="mb-4 flex items-center gap-3 rounded-lg bg-police-muted px-3 py-2.5">
                   <Search size={16} className="text-police-faint" />
                   <input
+                    value={getTabQuery(t.value)}
+                    onChange={(e) => setTabQuery(t.value, e.target.value)}
                     placeholder={t.placeholder}
                     className="h-8 flex-1 bg-transparent text-[13px] text-police placeholder:text-police-faint focus:outline-none"
                   />
                 </div>
+
                 {t.value === "citizen" && (
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-police-muted">
-                        <TableHead className="text-police-faint">Jina</TableHead>
-                        <TableHead className="text-police-faint">NIDA</TableHead>
-                        <TableHead className="text-police-faint">Simu</TableHead>
-                        <TableHead className="text-police-faint">Mkoa</TableHead>
-                        <TableHead className="text-police-faint">Hali</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {[
-                        { name: "Juma Mwenda", nida: "1234567890123", phone: "+255 713 456 789", region: "Dar es Salaam", status: "Clean" },
-                        { name: "Aisha Mohammed", nida: "2345678901234", phone: "+255 714 567 890", region: "Dodoma", status: "Suspect" },
-                        { name: "Rashid Kimaro", nida: "3456789012345", phone: "+255 715 678 901", region: "Mwanza", status: "Clean" },
-                        { name: "Fatma Hassan", nida: "4567890123456", phone: "+255 716 789 012", region: "Arusha", status: "Witness" },
-                      ].map((r) => (
-                        <TableRow key={r.nida} className="border-police-muted">
-                          <TableCell className="font-medium text-police">{r.name}</TableCell>
-                          <TableCell className="text-police-faint">{r.nida}</TableCell>
-                          <TableCell className="text-police-faint">{r.phone}</TableCell>
-                          <TableCell className="text-police-faint">{r.region}</TableCell>
-                          <TableCell>
-                            <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${r.status === "Clean" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400" : r.status === "Suspect" ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400" : "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400"}`}>
-                              {r.status}
-                            </span>
-                          </TableCell>
+                  filteredCitizens.length === 0 ? (
+                    <EmptyState msg="Hakuna raia waliopatikana" />
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-police-muted">
+                          <TableHead className="text-police-faint">Jina</TableHead>
+                          <TableHead className="text-police-faint">NIDA</TableHead>
+                          <TableHead className="text-police-faint">Simu</TableHead>
+                          <TableHead className="text-police-faint">Mkoa</TableHead>
+                          <TableHead className="text-police-faint">Hali</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredCitizens.map((r) => (
+                          <TableRow key={r.nida} className="border-police-muted hover:bg-police-muted/50">
+                            <TableCell className="font-medium text-police">{r.name}</TableCell>
+                            <TableCell className="font-mono text-[12px] text-police-faint">{r.nida}</TableCell>
+                            <TableCell className="text-police-faint">{r.phone}</TableCell>
+                            <TableCell className="text-police-faint">{r.region}</TableCell>
+                            <TableCell>
+                              <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
+                                r.status === "Clean" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+                                : r.status === "Suspect" ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
+                                : r.status === "Wanted" ? "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
+                                : "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400"
+                              }`}>
+                                {r.status}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )
                 )}
+
                 {t.value === "vehicle" && (
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-police-muted">
-                        <TableHead className="text-police-faint">Plati</TableHead>
-                        <TableHead className="text-police-faint">Gari</TableHead>
-                        <TableHead className="text-police-faint">Mmiliki</TableHead>
-                        <TableHead className="text-police-faint">Hali</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {[
-                        { plate: "T 123 ABC", model: "Toyota Corolla 2019", owner: "Juma Mwenda", status: "Clean" },
-                        { plate: "T 456 DEF", model: "Honda CR-V 2021", owner: "Aisha Mohammed", status: "Stolen" },
-                        { plate: "T 789 GHI", model: "Nissan Patrol 2020", owner: "Rashid Kimaro", status: "Clean" },
-                      ].map((v) => (
-                        <TableRow key={v.plate} className="border-police-muted">
-                          <TableCell className="font-medium text-police">{v.plate}</TableCell>
-                          <TableCell className="text-police-faint">{v.model}</TableCell>
-                          <TableCell className="text-police-faint">{v.owner}</TableCell>
-                          <TableCell>
-                            <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${v.status === "Clean" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400" : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"}`}>
-                              {v.status}
-                            </span>
-                          </TableCell>
+                  filteredVehicles.length === 0 ? (
+                    <EmptyState msg="Hakuna gari lililopatikana" />
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-police-muted">
+                          <TableHead className="text-police-faint">Plati</TableHead>
+                          <TableHead className="text-police-faint">Gari</TableHead>
+                          <TableHead className="text-police-faint">Mmiliki</TableHead>
+                          <TableHead className="text-police-faint">Hali</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredVehicles.map((v) => (
+                          <TableRow key={v.plate} className="border-police-muted hover:bg-police-muted/50">
+                            <TableCell className="font-mono text-[13px] font-semibold text-police">{v.plate}</TableCell>
+                            <TableCell className="text-police-faint">{v.model}</TableCell>
+                            <TableCell className="text-police-faint">{v.owner}</TableCell>
+                            <TableCell>
+                              <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
+                                v.status === "Clean" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+                                : v.status === "Stolen" ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
+                                : v.status === "Wanted" ? "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
+                                : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+                              }`}>
+                                {v.status}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )
                 )}
+
                 {t.value === "officer" && (
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-police-muted">
-                        <TableHead className="text-police-faint">Jina</TableHead>
-                        <TableHead className="text-police-faint">Namba</TableHead>
-                        <TableHead className="text-police-faint">Daraja</TableHead>
-                        <TableHead className="text-police-faint">Kituo</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {[
-                        { name: "IP. Juma Mwenda", num: "TZ-4451", rank: "Inspector", station: "Central Dar" },
-                        { name: "SP. Aisha Mohammed", num: "TZ-3302", rank: "Superintendent", station: "Dodoma HQ" },
-                        { name: "IP. Rashid Kimaro", num: "TZ-4488", rank: "Inspector", station: "Mwanza CID" },
-                      ].map((o) => (
-                        <TableRow key={o.num} className="border-police-muted">
-                          <TableCell className="font-medium text-police">{o.name}</TableCell>
-                          <TableCell className="text-police-faint">{o.num}</TableCell>
-                          <TableCell className="text-police-faint">{o.rank}</TableCell>
-                          <TableCell className="text-police-faint">{o.station}</TableCell>
+                  filteredOfficers.length === 0 ? (
+                    <EmptyState msg="Hakuna afisa aliyepatikana" />
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-police-muted">
+                          <TableHead className="text-police-faint">Jina</TableHead>
+                          <TableHead className="text-police-faint">Namba</TableHead>
+                          <TableHead className="text-police-faint">Daraja</TableHead>
+                          <TableHead className="text-police-faint">Kituo</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredOfficers.map((o) => (
+                          <TableRow key={o.num} className="border-police-muted hover:bg-police-muted/50">
+                            <TableCell className="font-medium text-police">{o.name}</TableCell>
+                            <TableCell className="font-mono text-[12px] text-police-faint">{o.num}</TableCell>
+                            <TableCell className="text-police-faint">{o.rank}</TableCell>
+                            <TableCell className="text-police-faint">{o.station}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )
                 )}
-                {(t.value === "case" || t.value === "wanted" || t.value === "pf3" || t.value === "accident") && (
-                  <div className="flex flex-col items-center justify-center py-12 text-police-faint">
-                    <Search size={40} className="mb-3 opacity-30" />
-                    <p className="text-[13px]">Tafuta kwa kutumua sehemu ya utafutaji hapo juu.</p>
-                  </div>
+
+                {t.value === "case" && (
+                  filteredCases.length === 0 ? (
+                    <EmptyState msg="Hakuna kesi iliyopatikana" />
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-police-muted">
+                          <TableHead className="text-police-faint">Case ID</TableHead>
+                          <TableHead className="text-police-faint">Aina</TableHead>
+                          <TableHead className="text-police-faint">Hali</TableHead>
+                          <TableHead className="text-police-faint">Tarehe</TableHead>
+                          <TableHead className="text-police-faint">Afisa</TableHead>
+                          <TableHead className="text-police-faint">Mkoa</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredCases.map((c) => (
+                          <TableRow key={c.id} className="border-police-muted hover:bg-police-muted/50">
+                            <TableCell className="font-mono text-[12px] font-semibold text-police">{c.id}</TableCell>
+                            <TableCell className="text-police">{c.type}</TableCell>
+                            <TableCell><span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${statusColor(c.status)}`}>{c.status}</span></TableCell>
+                            <TableCell className="text-police-faint">{c.date}</TableCell>
+                            <TableCell className="text-police">{c.officer}</TableCell>
+                            <TableCell className="text-police-faint">{c.region}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )
+                )}
+
+                {t.value === "wanted" && (
+                  filteredWanted.length === 0 ? (
+                    <EmptyState msg="Hakuna mtu anayetafutwa kwa jina hili" />
+                  ) : (
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {filteredWanted.map((w) => (
+                        <div key={w.name} className={`rounded-xl ${w.color} p-4 text-white shadow-lg`}>
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-bold">{w.name}</p>
+                            <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold">
+                              TZS {w.reward.toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-xs text-white/80">{w.crime}</p>
+                          <p className="mt-2 flex items-center gap-1 text-[11px] text-white/60">
+                            <Banknote size={12} /> Tuzo: {formatTZS(w.reward)}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                )}
+
+                {t.value === "pf3" && (
+                  filteredPf3.length === 0 ? (
+                    <EmptyState msg="Hakuna fomu ya PF3 iliyopatikana" />
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-police-muted">
+                          <TableHead className="text-police-faint">PF3 ID</TableHead>
+                          <TableHead className="text-police-faint">Kesi</TableHead>
+                          <TableHead className="text-police-faint">Mtuhumiwa</TableHead>
+                          <TableHead className="text-police-faint">Tarehe</TableHead>
+                          <TableHead className="text-police-faint">Hali</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredPf3.map((p) => (
+                          <TableRow key={p.id} className="border-police-muted hover:bg-police-muted/50">
+                            <TableCell className="font-mono text-[12px] font-semibold text-police">{p.id}</TableCell>
+                            <TableCell className="text-police-faint">{p.case}</TableCell>
+                            <TableCell className="text-police">{p.suspect}</TableCell>
+                            <TableCell className="text-police-faint">{p.date}</TableCell>
+                            <TableCell><span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${statusColor(p.status)}`}>{p.status}</span></TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )
+                )}
+
+                {t.value === "accident" && (
+                  filteredAccidents.length === 0 ? (
+                    <EmptyState msg="Hakuna ajali iliyopatikana" />
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-police-muted">
+                          <TableHead className="text-police-faint">ID</TableHead>
+                          <TableHead className="text-police-faint">Tarehe</TableHead>
+                          <TableHead className="text-police-faint">Eneo</TableHead>
+                          <TableHead className="text-police-faint">Aina</TableHead>
+                          <TableHead className="text-police-faint">Vifo</TableHead>
+                          <TableHead className="text-police-faint">Hali</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredAccidents.map((a) => (
+                          <TableRow key={a.id} className="border-police-muted hover:bg-police-muted/50">
+                            <TableCell className="font-mono text-[12px] font-semibold text-police">{a.id}</TableCell>
+                            <TableCell className="text-police-faint">{a.date}</TableCell>
+                            <TableCell className="text-police text-[12px]">{a.location}</TableCell>
+                            <TableCell className="text-police-faint">{a.type}</TableCell>
+                            <TableCell className={a.casualties > 0 ? "font-bold text-red-500" : "text-police-faint"}>{a.casualties}</TableCell>
+                            <TableCell><span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${statusColor(a.status)}`}>{a.status}</span></TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )
                 )}
               </CardContent>
             </Card>
           </TabsContent>
         ))}
       </Tabs>
+    </div>
+  );
+}
+
+function EmptyState({ msg }: { msg: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 text-police-faint">
+      <Search size={40} className="mb-3 opacity-30" />
+      <p className="text-[13px]">{msg}</p>
     </div>
   );
 }

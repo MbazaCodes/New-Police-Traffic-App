@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { ScreenId } from "@/lib/police-data";
 import { ALERTS } from "@/lib/police-data";
 
@@ -146,20 +147,28 @@ interface PoliceState {
   setSelectedCitation: (id: string | null) => void;
 }
 
-export const usePoliceStore = create<PoliceState>((set, get) => ({
-  isAuthenticated: false,
-  userRole: "officer-traffic",
-  authRole: null,
-  login: (role) => {
-    const officerRole = normalizeOfficerRole(role);
-    set({ isAuthenticated: true, userRole: officerRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
-  },
-  loginAsRole: (authRole) => {
-    const storeRole = authRoleToStoreRole(authRole);
-    const officerRole = normalizeOfficerRole(storeRole);
-    set({ isAuthenticated: true, userRole: officerRole, authRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
-  },
-  logout: () => set({ isAuthenticated: false, userRole: "officer-traffic", authRole: null, currentScreen: "login", activeTab: "home", history: [], readAlertIds: [] }),
+export const usePoliceStore = create<PoliceState>()(
+  persist(
+    (set, get) => ({
+      isAuthenticated: false,
+      userRole: "officer-traffic",
+      authRole: null,
+      login: (role) => {
+        const officerRole = normalizeOfficerRole(role);
+        set({ isAuthenticated: true, userRole: officerRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
+      },
+      loginAsRole: (authRole) => {
+        const storeRole = authRoleToStoreRole(authRole);
+        const officerRole = normalizeOfficerRole(storeRole);
+        set({ isAuthenticated: true, userRole: officerRole, authRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
+      },
+      logout: () => {
+        // Clear persisted auth — use localStorage directly to ensure clean state
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("tz-police-auth");
+        }
+        set({ isAuthenticated: false, userRole: "officer-traffic", authRole: null, currentScreen: "login", activeTab: "home", history: [], readAlertIds: [] });
+      },
   setRole: (role) => set({ userRole: normalizeOfficerRole(role) }),
 
   activeTab: "home",
@@ -244,4 +253,14 @@ export const usePoliceStore = create<PoliceState>((set, get) => ({
   setSelectedOffense: (id) => set({ selectedOffenseId: id }),
   selectedCitationId: null,
   setSelectedCitation: (id) => set({ selectedCitationId: id }),
-}));
+    }),
+    {
+      name: "tz-police-auth",
+      partialize: (state) => ({
+        isAuthenticated: state.isAuthenticated,
+        authRole: state.authRole,
+        userRole: state.userRole,
+      }) as PoliceState,
+    }
+  )
+);
