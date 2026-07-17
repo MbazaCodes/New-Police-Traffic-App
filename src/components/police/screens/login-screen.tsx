@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import {
   ShieldCheck,
   User,
@@ -16,7 +15,7 @@ import {
   CheckCircle2,
   ChevronDown,
 } from "lucide-react";
-import { usePoliceStore } from "@/store/police-store";
+import { usePoliceStore, AUTH_ROLES, type AuthRole } from "@/store/police-store";
 import type { UserRole } from "@/store/police-store";
 import { Shield, Car, UserCheck } from "lucide-react";
 
@@ -171,6 +170,8 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
     }
   };
 
+  const loginAsRole = usePoliceStore((s) => s.loginAsRole);
+
   const verifyOtp = async () => {
     const cleanIdentifier = identifier.trim();
     const otpCode = otp.join("");
@@ -180,43 +181,35 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
     setErrorMsg("");
     setVerifying(true);
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        username: cleanIdentifier,
-        otp: otpCode,
+      // Verify OTP via API
+      const verifyRes = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier: cleanIdentifier, code: otpCode }),
       });
+      const verifyData = await verifyRes.json().catch(() => ({}));
 
-      if (!result || result.error) {
+      if (!verifyRes.ok || !verifyData?.ok) {
         setErrorMsg("OTP si sahihi au ime-expire.");
         return;
       }
 
-      const sessionResponse = await fetch("/api/auth/session", {
-        method: "GET",
-        cache: "no-store",
-      });
-      const sessionData = await sessionResponse.json().catch(() => ({}));
-      if (!sessionResponse.ok || !sessionData?.authenticated) {
-        setErrorMsg("Session haijapatikana baada ya login.");
-        return;
-      }
-
-      const sessionRole = String(sessionData?.session?.user?.role ?? authResolvedRole ?? "");
+      // Use resolved role from step 1 (sendOtp already fetched user.role)
+      const userRole = authResolvedRole ?? "";
 
       if (mode === "admin") {
         const selectedWebRole = WEB_ROLES.find((r) => r.id === webRole) ?? WEB_ROLES[0];
-        if (sessionRole && !roleMatchesSelection(selectedWebRole.id, sessionRole)) {
-          setErrorMsg(`Umechagua ${selectedWebRole.id} lakini akaunti ni ${sessionRole}.`);
+        if (userRole && !roleMatchesSelection(selectedWebRole.id, userRole)) {
+          setErrorMsg(`Umechagua ${selectedWebRole.id} lakini akaunti ni ${userRole}.`);
           return;
         }
+        // Login via Zustand — no NextAuth dependency
+        loginAsRole(selectedWebRole.id as AuthRole);
         setStep("success");
-        setTimeout(() => {
-          router.push(String(sessionData?.redirectTo ?? selectedWebRole.route));
-        }, 700);
         return;
       }
 
-      const mappedRole = toStoreOfficerRole(sessionRole, role);
+      const mappedRole = toStoreOfficerRole(userRole, role);
       login(mappedRole);
       setStep("success");
     } catch {
