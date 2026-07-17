@@ -26,6 +26,7 @@ import { useTheme } from "next-themes";
 import { usePoliceStore, type AdminScreen } from "@/store/police-store";
 import { ROLE_USERS } from "@/lib/mock-engine";
 import { AdminDashboard } from "./screens/admin-dashboard";
+import { CommissionerDashboard } from "./screens/commissioner-dashboard";
 import { AdminOfficers } from "./screens/admin-officers";
 import { AdminIncidents } from "./screens/admin-incidents";
 import { AdminCitations } from "./screens/admin-citations";
@@ -41,20 +42,20 @@ import { DetainedCitizensScreen } from "./screens/detained-citizens-screen";
 import { AdminMissing } from "./screens/admin-missing";
 
 const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "officers", label: "Maofisa", icon: Users },
-  { id: "incidents", label: "Matukio", icon: AlertTriangle, badge: 5 },
-  { id: "citations", label: "Citations", icon: FileText },
-  { id: "patrols", label: "Patroli", icon: Shield, badge: 5 },
-  { id: "alerts", label: "Arifa", icon: Bell, badge: 3 },
-  { id: "reports", label: "Ripoti", icon: BarChart3 },
-  { id: "detained-citizens", label: "Wafungwa", icon: Shield, badge: 3 },
-  { id: "missing", label: "Wanaotafutwa", icon: AlertTriangle, badge: 7 },
-  { id: "users", label: "Watumiaji", icon: Users },
-  { id: "stations", label: "Vituo", icon: Building2 },
-  { id: "posts", label: "Posti", icon: Network, badge: 1 },
-  { id: "assignments", label: "Mgao", icon: ArrowRightLeft, badge: 3 },
-  { id: "settings", label: "Mipangilio", icon: Settings },
+  { id: "dashboard",         label: "Dashboard",       icon: LayoutDashboard },
+  { id: "officers",          label: "Maofisa",          icon: Users },
+  { id: "incidents",         label: "Matukio",          icon: AlertTriangle, badge: 5 },
+  { id: "citations",         label: "Citations",        icon: FileText },
+  { id: "patrols",           label: "Patroli",          icon: Shield, badge: 5 },
+  { id: "alerts",            label: "Arifa",            icon: Bell, badge: 3 },
+  { id: "reports",           label: "Ripoti",           icon: BarChart3 },
+  { id: "detained-citizens", label: "Wafungwa",         icon: Shield, badge: 3 },
+  { id: "missing",           label: "Wanaotafutwa",     icon: AlertTriangle, badge: 7 },
+  { id: "stations",          label: "Vituo",            icon: Building2 },
+  { id: "posts",             label: "Posti",            icon: Network, badge: 1 },
+  { id: "assignments",       label: "Mgao",             icon: ArrowRightLeft, badge: 3 },
+  { id: "settings",          label: "Mipangilio",       icon: Settings },
+  // Commanders do NOT see Watumiaji — that is Admin-only
 ];
 
 // Admin — management focus
@@ -255,10 +256,16 @@ export function AdminShell() {
   );
 }
 
+function DashboardRouter() {
+  const { authRole } = usePoliceStore();
+  const cmdRoles = ["NATIONAL_COMMANDER","REGIONAL_COMMANDER","DISTRICT_COMMANDER","STATION_COMMANDER","SUPER_ADMIN"];
+  return cmdRoles.includes(authRole ?? "") ? <CommissionerDashboard /> : <AdminDashboard />;
+}
+
 function renderAdminScreen(screen: AdminScreen) {
   switch (screen) {
     case "dashboard":
-      return <AdminDashboard />;
+      return <DashboardRouter />;
     case "officers":
       return <AdminOfficers />;
     case "incidents":

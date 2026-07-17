@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   description: "Tanzania Police Force digital platform. Usalama Wetu, Jukumu Letu.",
   keywords: ["Tanzania Police", "TPF", "Digital Platform"],
   authors: [{ name: "Tanzania Police Force" }],
+  icons: {
+    icon: [
+      { url: "/police-logo.png", type: "image/png", sizes: "32x32" },
+      { url: "/police-logo.png", type: "image/png", sizes: "64x64" },
+    ],
+    apple: [{ url: "/police-logo.png", type: "image/png" }],
+    shortcut: "/police-logo.png",
+  },
 };
 
 export const viewport: Viewport = {
