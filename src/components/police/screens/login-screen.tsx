@@ -206,14 +206,20 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
           return;
         }
         // Login via Zustand — no NextAuth dependency
-        loginAsRole(selectedWebRole.id as AuthRole);
         setStep("success");
+        setTimeout(() => {
+          loginAsRole(selectedWebRole.id as AuthRole);
+        }, 900);
         return;
       }
 
       const mappedRole = toStoreOfficerRole(userRole, role);
-      login(mappedRole);
+      saveLoginIdentifier(cleanIdentifier);
+      setLoginIdentifier(cleanIdentifier);
       setStep("success");
+      setTimeout(() => {
+        login(mappedRole);
+      }, 900);
     } catch {
       setErrorMsg("Imeshindikana kuthibitisha OTP. Jaribu tena.");
     } finally {
@@ -518,16 +524,21 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
           {/* STEP 3: Success */}
           {step === "success" && (
             <div className="flex flex-col items-center py-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-50">
-                <CheckCircle2 size={48} className="text-green-500" />
+              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-green-50">
+                <div className="absolute inset-0 animate-ping rounded-full bg-green-200 opacity-40" />
+                <CheckCircle2 size={48} className="text-green-500 relative z-10" />
               </div>
               <h2 className="mt-4 text-[19px] font-bold text-police-navy2">Login Imefanikiwa!</h2>
               <p className="mt-1 text-center text-[13px] text-police-muted">
                 Karibu kwenye mfumo. Inaingia...
               </p>
-              <div className="mt-4 h-1 w-32 overflow-hidden rounded-full bg-police-muted">
-                <div className="h-full w-full animate-pulse rounded-full bg-[#0070C0]" />
+              <div className="mt-4 h-1.5 w-40 overflow-hidden rounded-full bg-police-muted">
+                <div
+                  className="h-full rounded-full bg-[#0070C0]"
+                  style={{ animation: "progress-fill 0.85s ease-in-out forwards" }}
+                />
               </div>
+              <style>{`@keyframes progress-fill { from { width: 0% } to { width: 100% } }`}</style>
             </div>
           )}
         </div>
