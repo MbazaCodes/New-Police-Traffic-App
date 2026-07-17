@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+<<<<<<< HEAD
+=======
+!.env.example
+>>>>>>> origin/main
 
 # vercel
 .vercel
@@ -51,4 +55,10 @@ prompt
 
 server.log
 # Skills directory
+<<<<<<< HEAD
 /skills/
+=======
+/skills/db/
+*.db
+*.db-journal
+>>>>>>> origin/main

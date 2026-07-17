@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS cases (
+	id BIGSERIAL PRIMARY KEY,
+	case_number VARCHAR(15) NOT NULL UNIQUE CHECK (case_number ~ '^TZP-2026-[0-9]{6}$'),
+	citizen_id BIGINT NOT NULL REFERENCES citizens(id) ON DELETE CASCADE,
+	officer_id BIGINT NOT NULL REFERENCES officers(id) ON UPDATE CASCADE,
+	station_id BIGINT NOT NULL REFERENCES stations(id) ON UPDATE CASCADE,
+	case_type TEXT NOT NULL,
+	summary TEXT NOT NULL,
+	status TEXT NOT NULL CHECK (status IN ('OPEN', 'UNDER_INVESTIGATION', 'CLOSED')),
+	opened_at TIMESTAMPTZ NOT NULL,
+	closed_at TIMESTAMPTZ,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	CHECK (closed_at IS NULL OR closed_at >= opened_at)
+);
+

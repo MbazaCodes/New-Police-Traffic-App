@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS devices (
+	id BIGSERIAL PRIMARY KEY,
+	citizen_id BIGINT NOT NULL REFERENCES citizens(id) ON DELETE CASCADE,
+	imei VARCHAR(15) NOT NULL UNIQUE CHECK (imei ~ '^[0-9]{15}$'),
+	device_type TEXT NOT NULL,
+	brand TEXT NOT NULL,
+	model TEXT NOT NULL,
+	linked_phone VARCHAR(15),
+	registered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+

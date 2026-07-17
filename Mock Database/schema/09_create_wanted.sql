@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS wanted_persons (
+	id BIGSERIAL PRIMARY KEY,
+	citizen_id BIGINT NOT NULL UNIQUE REFERENCES citizens(id) ON DELETE CASCADE,
+	case_id BIGINT REFERENCES cases(id) ON DELETE SET NULL,
+	wanted_reason TEXT NOT NULL,
+	risk_level TEXT NOT NULL CHECK (risk_level IN ('LOW', 'MEDIUM', 'HIGH')),
+	last_known_location TEXT,
+	active BOOLEAN NOT NULL DEFAULT TRUE,
+	listed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+

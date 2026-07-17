@@ -1,0 +1,902 @@
+﻿[
+    {
+        "id":  1,
+        "mmic_number":  "F1001",
+        "station_id":  1,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  2,
+        "mmic_number":  "G1002",
+        "station_id":  2,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  3,
+        "mmic_number":  "H1003",
+        "station_id":  3,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  4,
+        "mmic_number":  "J1004",
+        "station_id":  4,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  5,
+        "mmic_number":  "K1005",
+        "station_id":  5,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  6,
+        "mmic_number":  "F1006",
+        "station_id":  6,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  7,
+        "mmic_number":  "G1007",
+        "station_id":  7,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  8,
+        "mmic_number":  "H1008",
+        "station_id":  8,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  9,
+        "mmic_number":  "J1009",
+        "station_id":  9,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  10,
+        "mmic_number":  "K1010",
+        "station_id":  10,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  11,
+        "mmic_number":  "F1011",
+        "station_id":  11,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  12,
+        "mmic_number":  "G1012",
+        "station_id":  12,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  13,
+        "mmic_number":  "H1013",
+        "station_id":  13,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  14,
+        "mmic_number":  "J1014",
+        "station_id":  14,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  15,
+        "mmic_number":  "K1015",
+        "station_id":  15,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  16,
+        "mmic_number":  "F1016",
+        "station_id":  16,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  17,
+        "mmic_number":  "G1017",
+        "station_id":  17,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  18,
+        "mmic_number":  "H1018",
+        "station_id":  18,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  19,
+        "mmic_number":  "J1019",
+        "station_id":  19,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  20,
+        "mmic_number":  "K1020",
+        "station_id":  20,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  21,
+        "mmic_number":  "F1021",
+        "station_id":  1,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  22,
+        "mmic_number":  "G1022",
+        "station_id":  2,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  23,
+        "mmic_number":  "H1023",
+        "station_id":  3,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  24,
+        "mmic_number":  "J1024",
+        "station_id":  4,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  25,
+        "mmic_number":  "K1025",
+        "station_id":  5,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  26,
+        "mmic_number":  "F1026",
+        "station_id":  6,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  27,
+        "mmic_number":  "G1027",
+        "station_id":  7,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  28,
+        "mmic_number":  "H1028",
+        "station_id":  8,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  29,
+        "mmic_number":  "J1029",
+        "station_id":  9,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  30,
+        "mmic_number":  "K1030",
+        "station_id":  10,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  31,
+        "mmic_number":  "F1031",
+        "station_id":  11,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  32,
+        "mmic_number":  "G1032",
+        "station_id":  12,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  33,
+        "mmic_number":  "H1033",
+        "station_id":  13,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  34,
+        "mmic_number":  "J1034",
+        "station_id":  14,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  35,
+        "mmic_number":  "K1035",
+        "station_id":  15,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  36,
+        "mmic_number":  "F1036",
+        "station_id":  16,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  37,
+        "mmic_number":  "G1037",
+        "station_id":  17,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  38,
+        "mmic_number":  "H1038",
+        "station_id":  18,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  39,
+        "mmic_number":  "J1039",
+        "station_id":  19,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  40,
+        "mmic_number":  "K1040",
+        "station_id":  20,
+        "employment_status":  "SUSPENDED"
+    },
+    {
+        "id":  41,
+        "mmic_number":  "F1041",
+        "station_id":  1,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  42,
+        "mmic_number":  "G1042",
+        "station_id":  2,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  43,
+        "mmic_number":  "H1043",
+        "station_id":  3,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  44,
+        "mmic_number":  "J1044",
+        "station_id":  4,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  45,
+        "mmic_number":  "K1045",
+        "station_id":  5,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  46,
+        "mmic_number":  "F1046",
+        "station_id":  6,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  47,
+        "mmic_number":  "G1047",
+        "station_id":  7,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  48,
+        "mmic_number":  "H1048",
+        "station_id":  8,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  49,
+        "mmic_number":  "J1049",
+        "station_id":  9,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  50,
+        "mmic_number":  "K1050",
+        "station_id":  10,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  51,
+        "mmic_number":  "F1051",
+        "station_id":  11,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  52,
+        "mmic_number":  "G1052",
+        "station_id":  12,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  53,
+        "mmic_number":  "H1053",
+        "station_id":  13,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  54,
+        "mmic_number":  "J1054",
+        "station_id":  14,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  55,
+        "mmic_number":  "K1055",
+        "station_id":  15,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  56,
+        "mmic_number":  "F1056",
+        "station_id":  16,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  57,
+        "mmic_number":  "G1057",
+        "station_id":  17,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  58,
+        "mmic_number":  "H1058",
+        "station_id":  18,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  59,
+        "mmic_number":  "J1059",
+        "station_id":  19,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  60,
+        "mmic_number":  "K1060",
+        "station_id":  20,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  61,
+        "mmic_number":  "F1061",
+        "station_id":  1,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  62,
+        "mmic_number":  "G1062",
+        "station_id":  2,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  63,
+        "mmic_number":  "H1063",
+        "station_id":  3,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  64,
+        "mmic_number":  "J1064",
+        "station_id":  4,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  65,
+        "mmic_number":  "K1065",
+        "station_id":  5,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  66,
+        "mmic_number":  "F1066",
+        "station_id":  6,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  67,
+        "mmic_number":  "G1067",
+        "station_id":  7,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  68,
+        "mmic_number":  "H1068",
+        "station_id":  8,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  69,
+        "mmic_number":  "J1069",
+        "station_id":  9,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  70,
+        "mmic_number":  "K1070",
+        "station_id":  10,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  71,
+        "mmic_number":  "F1071",
+        "station_id":  11,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  72,
+        "mmic_number":  "G1072",
+        "station_id":  12,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  73,
+        "mmic_number":  "H1073",
+        "station_id":  13,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  74,
+        "mmic_number":  "J1074",
+        "station_id":  14,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  75,
+        "mmic_number":  "K1075",
+        "station_id":  15,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  76,
+        "mmic_number":  "F1076",
+        "station_id":  16,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  77,
+        "mmic_number":  "G1077",
+        "station_id":  17,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  78,
+        "mmic_number":  "H1078",
+        "station_id":  18,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  79,
+        "mmic_number":  "J1079",
+        "station_id":  19,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  80,
+        "mmic_number":  "K1080",
+        "station_id":  20,
+        "employment_status":  "SUSPENDED"
+    },
+    {
+        "id":  81,
+        "mmic_number":  "F1081",
+        "station_id":  1,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  82,
+        "mmic_number":  "G1082",
+        "station_id":  2,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  83,
+        "mmic_number":  "H1083",
+        "station_id":  3,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  84,
+        "mmic_number":  "J1084",
+        "station_id":  4,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  85,
+        "mmic_number":  "K1085",
+        "station_id":  5,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  86,
+        "mmic_number":  "F1086",
+        "station_id":  6,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  87,
+        "mmic_number":  "G1087",
+        "station_id":  7,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  88,
+        "mmic_number":  "H1088",
+        "station_id":  8,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  89,
+        "mmic_number":  "J1089",
+        "station_id":  9,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  90,
+        "mmic_number":  "K1090",
+        "station_id":  10,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  91,
+        "mmic_number":  "F1091",
+        "station_id":  11,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  92,
+        "mmic_number":  "G1092",
+        "station_id":  12,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  93,
+        "mmic_number":  "H1093",
+        "station_id":  13,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  94,
+        "mmic_number":  "J1094",
+        "station_id":  14,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  95,
+        "mmic_number":  "K1095",
+        "station_id":  15,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  96,
+        "mmic_number":  "F1096",
+        "station_id":  16,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  97,
+        "mmic_number":  "G1097",
+        "station_id":  17,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  98,
+        "mmic_number":  "H1098",
+        "station_id":  18,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  99,
+        "mmic_number":  "J1099",
+        "station_id":  19,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  100,
+        "mmic_number":  "K1100",
+        "station_id":  20,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  101,
+        "mmic_number":  "F1101",
+        "station_id":  1,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  102,
+        "mmic_number":  "G1102",
+        "station_id":  2,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  103,
+        "mmic_number":  "H1103",
+        "station_id":  3,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  104,
+        "mmic_number":  "J1104",
+        "station_id":  4,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  105,
+        "mmic_number":  "K1105",
+        "station_id":  5,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  106,
+        "mmic_number":  "F1106",
+        "station_id":  6,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  107,
+        "mmic_number":  "G1107",
+        "station_id":  7,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  108,
+        "mmic_number":  "H1108",
+        "station_id":  8,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  109,
+        "mmic_number":  "J1109",
+        "station_id":  9,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  110,
+        "mmic_number":  "K1110",
+        "station_id":  10,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  111,
+        "mmic_number":  "F1111",
+        "station_id":  11,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  112,
+        "mmic_number":  "G1112",
+        "station_id":  12,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  113,
+        "mmic_number":  "H1113",
+        "station_id":  13,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  114,
+        "mmic_number":  "J1114",
+        "station_id":  14,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  115,
+        "mmic_number":  "K1115",
+        "station_id":  15,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  116,
+        "mmic_number":  "F1116",
+        "station_id":  16,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  117,
+        "mmic_number":  "G1117",
+        "station_id":  17,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  118,
+        "mmic_number":  "H1118",
+        "station_id":  18,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  119,
+        "mmic_number":  "J1119",
+        "station_id":  19,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  120,
+        "mmic_number":  "K1120",
+        "station_id":  20,
+        "employment_status":  "SUSPENDED"
+    },
+    {
+        "id":  121,
+        "mmic_number":  "F1121",
+        "station_id":  1,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  122,
+        "mmic_number":  "G1122",
+        "station_id":  2,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  123,
+        "mmic_number":  "H1123",
+        "station_id":  3,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  124,
+        "mmic_number":  "J1124",
+        "station_id":  4,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  125,
+        "mmic_number":  "K1125",
+        "station_id":  5,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  126,
+        "mmic_number":  "F1126",
+        "station_id":  6,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  127,
+        "mmic_number":  "G1127",
+        "station_id":  7,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  128,
+        "mmic_number":  "H1128",
+        "station_id":  8,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  129,
+        "mmic_number":  "J1129",
+        "station_id":  9,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  130,
+        "mmic_number":  "K1130",
+        "station_id":  10,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  131,
+        "mmic_number":  "F1131",
+        "station_id":  11,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  132,
+        "mmic_number":  "G1132",
+        "station_id":  12,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  133,
+        "mmic_number":  "H1133",
+        "station_id":  13,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  134,
+        "mmic_number":  "J1134",
+        "station_id":  14,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  135,
+        "mmic_number":  "K1135",
+        "station_id":  15,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  136,
+        "mmic_number":  "F1136",
+        "station_id":  16,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  137,
+        "mmic_number":  "G1137",
+        "station_id":  17,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  138,
+        "mmic_number":  "H1138",
+        "station_id":  18,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  139,
+        "mmic_number":  "J1139",
+        "station_id":  19,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  140,
+        "mmic_number":  "K1140",
+        "station_id":  20,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  141,
+        "mmic_number":  "F1141",
+        "station_id":  1,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  142,
+        "mmic_number":  "G1142",
+        "station_id":  2,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  143,
+        "mmic_number":  "H1143",
+        "station_id":  3,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  144,
+        "mmic_number":  "J1144",
+        "station_id":  4,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  145,
+        "mmic_number":  "K1145",
+        "station_id":  5,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  146,
+        "mmic_number":  "F1146",
+        "station_id":  6,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  147,
+        "mmic_number":  "G1147",
+        "station_id":  7,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  148,
+        "mmic_number":  "H1148",
+        "station_id":  8,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  149,
+        "mmic_number":  "J1149",
+        "station_id":  9,
+        "employment_status":  "ACTIVE"
+    },
+    {
+        "id":  150,
+        "mmic_number":  "K1150",
+        "station_id":  10,
+        "employment_status":  "ACTIVE"
+    }
+]

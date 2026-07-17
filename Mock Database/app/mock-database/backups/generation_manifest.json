@@ -1,0 +1,18 @@
+﻿{
+    "generated_at":  "2026-07-17 09:07:02",
+    "year":  2026,
+    "seed":  2601,
+    "growth_percent":  20,
+    "counts":  {
+                   "stations":  20,
+                   "officers":  36,
+                   "citizens":  1200,
+                   "vehicles":  600,
+                   "licenses":  360,
+                   "fines":  2400,
+                   "cases":  600,
+                   "wanted":  60,
+                   "devices":  60,
+                   "audit_logs":  12000
+               }
+}

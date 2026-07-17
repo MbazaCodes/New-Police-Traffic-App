@@ -1,0 +1,87 @@
+# ===== TZ Police Digital Platform — Supabase Project Configuration =====
+# Used by `supabase init`, `supabase start`, and `supabase db push`
+# Docs: https://supabase.com/docs/guides/local-development/cli/config
+
+project_id = "tz-police-digital-platform"
+
+# ===== API =====
+# Edge Functions & PostgREST configuration
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+# ===== Database =====
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+# ===== DB Pooler (PgBouncer) =====
+[db.pooler]
+enabled = true
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 20
+max_client_conn = 100
+
+# ===== Auth =====
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://localhost:3000/auth/callback"]
+jwt_expiry = 3600
+refresh_token_rotation_enabled = true
+refresh_token_reuse_interval = 10
+enable_signup = false                # Only admins create accounts
+enable_anonymous_sign_ins = false
+enable_manual_linking = true
+
+[auth.email]
+enable_signup = false
+double_confirm_changes = true
+enable_confirmations = false
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = true
+template = "Your TZ Police verification code is {{ .Code }}"
+
+[auth.external.azure]
+enabled = false
+
+# ===== Storage =====
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+# ===== Realtime =====
+[realtime]
+enabled = true
+# Patroli GPS, alert broadcasts, incident updates rely on realtime
+
+# ===== Edge Functions =====
+[functions]
+enabled = true
+verify_jwt = true
+
+[functions.send-otp]
+verify_jwt = false
+
+[functions.verify-otp]
+verify_jwt = false
+
+[functions.send-broadcast]
+verify_jwt = true
+
+[functions.generate-report]
+verify_jwt = true
+
+[functions.track-patrol]
+verify_jwt = true
+
+# ===== Analytics =====
+[analytics]
+enabled = false

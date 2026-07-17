@@ -1,0 +1,302 @@
+   300→   300→   300→9. admin-settings.tsx — 4 sections (Jumla, Usalama, Arifa, Mfumo) with custom Toggle switches + input fields + selects + info banners + system status grid (version, server, storage, last backup) + sticky bottom save bar with toast confirmation
+   301→   301→   301→
+   302→   302→   302→Design:
+   303→   303→   303→- All use police CSS classes (bg-police-card, text-police-navy, text-police-muted, text-police-faint, border-police, border-police-soft, bg-police-muted, bg-police-input) for proper dark/light theming
+   304→   304→   304→- All cards use rounded-xl bg-police-card p-4 shadow-sm
+   305→   305→   305→- Status badges: green=active/paid/resolved, orange=break/pending, red=urgent/unpaid/suspended, gray=off-duty, purple=commander, blue=admin
+   306→   306→   306→- lucide-react icons throughout (Users, Shield, AlertTriangle, FileText, Bell, Settings, etc.)
+   307→   307→   307→- recharts charts (ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, BarChart, Bar, LineChart, Line, Tooltip, Legend, CartesianGrid, XAxis, YAxis) with CSS-variable-aware tooltip styling
+   308→   308→   308→- Tables wrapped in overflow-x-auto for horizontal scroll on small screens (min-w set so columns don't squish)
+   309→   309→   309→- Swahili labels throughout matching officer app
+   310→   310→   310→- toast from @/hooks/use-toast for all action feedback
+   311→   311→   311→- usePoliceStore.setAdminScreen for cross-screen navigation (Dashboard → Incidents)
+   312→   312→   312→
+   313→   313→   313→Verification:
+   314→   314→   314→- `bun run lint` → exit 0, no errors
+   315→   315→   315→- `bunx tsc --noEmit` → no errors in admin/screens/ (pre-existing errors only in examples/, skills/, alerts-screen.tsx which are out of scope)
+   316→   316→   316→
+   317→   317→   317→Stage Summary:
+   318→   318→   318→- 9 admin screen components created, all named exports matching admin-shell.tsx imports
+   319→   319→   319→- Full desktop admin/command-center UX: KPIs, charts, data tables, drawers/modals, filter tabs, forms, toasts
+   320→   320→   320→- Light + dark mode fully supported via police CSS utilities
+   321→   321→   321→- Recharts visualizations: area, pie, bar, line charts
+   322→   322→   322→- Lint clean, TypeScript clean for new files
+   323→   323→   323→
+   324→   324→   324→---
+   325→   325→   325→Task ID: 9
+   326→   326→   326→Agent: Main (Z.ai Code)
+   327→   327→   327→Task: Add Admin & Command Center web app for Admins and Officers in Charge
+   328→   328→   328→
+   329→   329→   329→Work Log:
+   330→   330→   330→- Added userRole (officer/admin/commander) + adminScreen state to Zustand store
+   331→   331→   331→- Updated login screen with role selector: 3 cards (Afisa/Mobile, Admin/Web, Kamanda/Command Center)
+   332→   332→   332→- Login now passes role to login() function → routes to AdminShell for admin/commander roles
+   333→   333→   333→- Created admin mock data (admin-data.ts): DASHBOARD_KPIS, INCIDENT_TREND, OFFENSE_DISTRIBUTION, LIVE_INCIDENTS, OFFICERS (8), ADMIN_INCIDENTS (7), ADMIN_CITATIONS (7), ACTIVE_PATROLS (5), ADMIN_ALERTS_HISTORY, ADMIN_USERS (5), REGION_STATS
+   334→   334→   334→- Created AdminShell: desktop layout with dark navy sidebar (#0d1b3d), 9 nav items with badges, top bar with search/theme toggle/notifications/user chip, responsive (collapsible sidebar on mobile)
+   335→   335→   335→- Subagent built 9 admin screens (Task ID 8):
+   336→   336→   336→  1. Dashboard: 4 KPI cards, area chart (incident+citation trends), pie chart (offense distribution), live incidents list, region stats table
+   337→   337→   337→  2. Officers: search + filter, 8-officer data table with status badges, detail drawer
+   338→   338→   338→  3. Incidents: 5 filter tabs, incident table with priority/status badges, detail modal
+   339→   339→   339→  4. Citations: 4 stat cards, filter tabs, citation table, CSV export
+   340→   340→   340→  5. Patrols: active patrol cards with progress bars, map placeholder with pins
+   341→   341→   341→  6. Alerts: Tuma Tangazo compose form (audience/priority/message), alert history table
+   342→   342→   342→  7. Reports: bar/pie/line charts (recharts), date range, region comparison, PDF/CSV export
+   343→   343→   343→  8. Users: user table with role badges, edit modal, suspend/restore
+   344→   344→   344→  9. Settings: 4 sections (General/Security/Notifications/System) with toggles, save bar
+   345→   345→   345→- Updated MobileShell to route to AdminShell when userRole is admin or commander
+   346→   346→   346→- Browser-verified: login as Admin → Command Center dashboard with sidebar, KPIs, charts, live incidents, region stats
+   347→   347→   347→- Verified navigation: Dashboard → Maofisa (officer table) → Citations (table) → Patroli (active patrols) → Arifa (broadcast form) → Ripoti (3 charts) all work
+   348→   348→   348→- Verified dark mode works on admin app (dark navy theme)
+   349→   349→   349→- Lint clean, no runtime errors
+   350→   350→   350→
+   351→   351→   351→Stage Summary:
+   352→   352→   352→- Admin & Command Center: full desktop web app with 9 screens
+   353→   353→   353→- Role-based login: Officer (mobile) / Admin (web) / Commander (command center)
+   354→   354→   354→- Dashboard with real charts (recharts), data tables, KPIs, live monitoring
+   355→   355→   355→- Works in both light and dark mode
+   356→   356→   356→- All screens wired and functional with toast feedback
+   357→   357→   357→
+   358→   358→   358→---
+   359→   359→   359→Task ID: 10
+   360→   360→   360→Agent: Sub-agent (Admin Stations/Posts/Assignments screens)
+   361→   361→   361→Task: Build admin stations/posts/assignments screens for the TZ Police Digital Platform Admin panel
+   362→   362→   362→
+   363→   363→   363→Work Log:
+   364→   364→   364→- Read worklog.md and existing admin screen components (admin-officers, admin-patrols, admin-users, admin-incidents) to learn project patterns: police CSS classes (bg-police-card, bg-police-input, bg-police-muted, text-police-navy, text-police-muted, text-police-faint, border-police-soft), toast from @/hooks/use-toast, lucide-react icons, rounded-xl bg-police-card p-4 shadow-sm cards, overflow-x-auto tables with min-w
+   365→   365→   365→- Confirmed store already had stations/posts/assignments in AdminScreen type (added in earlier task but not yet wired up)
+   366→   366→   366→- Confirmed data file src/lib/admin-mgmt-data.ts already exists with STATIONS (7), POSTS (7), ASSIGNMENTS (7), UNASSIGNED_OFFICERS (3)
+   367→   367→   367→- Created src/components/admin/screens/admin-stations.tsx (named export AdminStations):
+   368→   368→   368→  * Header "Vituo vya Polisi" + "Ongeza Kituo" button (toast on click)
+   369→   369→   369→  * 4 stat cards: Total Stations, Active, Maintenance, Total Officers
+   370→   370→   370→  * Search filter by name/region/district
+   371→   371→   371→  * Filter tabs: Vituo Vyote / Inafanya Kazi / Inarekebishwa
+   372→   372→   372→  * Data table: Name+address, Region/District, Phone, Officers badge, Posts badge, Status badge (green active / orange maintenance), Established year, Actions (View, Edit, Manage Posts) — all toast
+   373→   373→   373→  * Wrapped in overflow-x-auto with min-w-[1100px], empty state
+   374→   374→   374→- Created src/components/admin/screens/admin-posts.tsx (named export AdminPosts):
+   375→   375→   375→  * Header "Posti za Polisi" + "Ongeza Posti" button (toast)
+   376→   376→   376→  * 4 stat cards: Total Posts, Active, Inactive, Total Officers
+   377→   377→   377→  * Search + filter tabs (Wote / Inafanya Kazi / Imezimwa)
+   378→   378→   378→  * Data table: Name+location, Station, Type badge (Traffic=blue, Patrol=green, with TrafficCone/Shield icons), Officers count, Shift schedule, Status badge (green active / red inactive), Actions (View, Edit, Mgawie) — all toast
+   379→   379→   379→  * Wrapped in overflow-x-auto, empty state
+   380→   380→   380→- Created src/components/admin/screens/admin-assignments.tsx (named export AdminAssignments):
+   381→   381→   381→  * Header "Mgao wa Maofisa" + "Ongeza Mgao" button (toast)
+   382→   382→   382→  * 4 stat cards: Total Assignments, Active, On Leave, Unassigned Officers
+   383→   383→   383→  * Section A: Assigned officers table — Officer name+rank avatar, Station, Post, Role badge, Assigned Date, Status badge (green active / orange on-leave), Actions (Reassign, Remove) — all toast
+   384→   384→   384→  * Section B: Unassigned officers card grid — each card with avatar, name, rank, "Mgawie Afisa huyu" button
+   385→   385→   385→  * AssignModal component (inline modal form) with:
+   386→   386→   386→    - Read-only officer display
+   387→   387→   387→    - Station dropdown (from STATIONS)
+   388→   388→   388→    - Post dropdown (filtered by selected station via useMemo — disabled until station chosen)
+   389→   389→   389→    - Role text input (default "General Duty")
+   390→   390→   390→    - Confirm button → toast "Mgao Umewekwa" with details and close
+   391→   391→   391→    - Validation: confirm disabled until all 3 fields filled
+   392→   392→   392→- Wired all 3 new screens into admin-shell.tsx:
+   393→   393→   393→  * Added imports: AdminStations, AdminPosts, AdminAssignments
+   394→   394→   394→  * Added 3 nav items to NAV_ITEMS: Vituo (Building2), Posti (Network, badge 1), Mgao (ArrowRightLeft, badge 3)
+   395→   395→   395→  * Added 3 cases to renderAdminScreen switch
+   396→   396→   396→  * Added icon imports: Building2, Network, ArrowRightLeft
+   397→   397→   397→- Verified with `bun run lint` — exit 0, no errors
+   398→   398→   398→- Verified with `bunx tsc --noEmit` — no errors in any of the new files (only pre-existing errors in unrelated files like examples/websocket, skills/, alerts-screen.tsx, login-screen.tsx, police-store.ts)
+   399→   399→   399→
+   400→   400→   400→Stage Summary:
+   401→   401→   401→- 3 new admin screens created: admin-stations.tsx, admin-posts.tsx, admin-assignments.tsx
+   402→   402→   402→- All screens use police CSS classes for full dark mode support
+   403→   403→   403→- All screens use Swahili labels and lucide-react icons
+   404→   404→   404→- Toast feedback on every action button (View, Edit, Manage Posts, Add, Reassign, Remove, Assign)
+   405→   405→   405→- Assignment modal includes station→post cascading dropdown (post filtered by selected station)
+   406→   406→   406→- Screens wired into AdminShell sidebar with appropriate badges — fully navigable from admin/commander UI
+   407→   407→   407→- Lint clean, no TypeScript errors in new code
+   408→   408→   408→
+   409→   409→   409→---
+   410→   410→   410→Task ID: 11
+   411→   411→   411→Agent: Sub-agent (general officer screens)
+   412→   412→   412→Task: Build mobile screens for the "Afisa Polisi" (General/Normal Police Officer) role in the TZ Police Digital Platform
+   413→   413→   413→
+   414→   414→   414→Work Log:
+   415→   415→   415→- Read existing worklog, traffic home/traffic/search-results screens, police-store, admin-mgmt-data, top-app-bar, police-icons, and ScreenId type to understand conventions
+   416→   416→   416→- Found and fixed a latent bug in `src/store/police-store.ts`: `citizenSearchType: "name" | "nida" | "mobile"` (which is a bitwise-OR value expression, not a string) → `citizenSearchType: "name" as "name" | "nida" | "mobile"` so the initial value is the literal `"name"` and the type stays correct
+   417→   417→   417→- Added `"citizen-search-results"` to the `ScreenId` union in `src/lib/police-data.ts` so general-officer navigation can target the new screen
+   418→   418→   418→- Added `Hand` icon import + `hand` entry to `ICON_MAP` in `src/components/police/police-icons.tsx` so the "Kamata Mtuhumiwa" quick action can render via PoliceIcon
+   419→   419→   419→- Created `src/components/police/screens/general-home-screen.tsx` (`GeneralHomeScreen`):
+   420→   420→   420→  • Gradient header (from-[#1E3A8A] to-[#3B82F6]) with "Karibu, [Officer.shortName]", bell with badge + toast, avatar circle
+   421→   421→   421→  • Hero banner card overlapping the header: police logo + "TANZANIA POLICE FORCE" + "USALAMA WETU, JUKUMU LETU"
+   422→   422→   422→  • 2-col Quick Actions grid: "Tafuta Raia" (UserCheck, #3B82F6 → navigate citizen-search-results), "Ripoti Tukio" (AlertTriangle, #EF4444 → toast)
+   423→   423→   423→  • "Utafutaji wa Raia" search card with 3 tabs (Jina/NIDA/Simu) bound to store `citizenSearchType` + `setCitizenSearchType`, dynamic placeholder ("Juma Mwinyi" / "1990123456789" / "0712345678"), "Tafuta" button that calls `runSearch(searchValue)` then `navigate("citizen-search-results")` (Enter key also triggers)
+   424→   424→   424→  • Footer with "Mfumo salama wa Jeshi la Polisi Tanzania" + copyright
+   425→   425→   425→- Created `src/components/police/screens/general-police-screen.tsx` (`GeneralPoliceScreen`):
+   426→   426→   426→  • TopAppBar title="Polisi" subtitle="Uendeshaji wa shughuli za polisi" showThemeToggle
+   427→   427→   427→  • 4 stat cards: Matukio Yote (1,234 navy), Yanayoendelea (56 orange), Yameitatuliwa (1,178 green), Maofisa Kazini (23 red) — values colored to match stat color
+   428→   428→   428→  • 3-col Quick Actions grid (6 items) using PoliceIcon by name: Ripoti Tukio (clipboard #2563EB), Tafuta Raia (search #8B5CF6 → navigate citizen-search-results), Rekodi Taarifa (file-text #10B981), Kamata Mtuhumiwa (hand #F97316), Ripoti Ajali (alert #EF4444), Historia (clock #3B82F6) — non-navigation actions fire a toast
+   429→   429→   429→  • "Matukio ya Karibuni" section: 5 mock incidents, each with icon, status badge, date+time, location, "Angalia Zote" link (toast)
+   430→   430→   430→- Created `src/components/police/screens/citizen-search-results-screen.tsx` (`CitizenSearchResultsScreen`):
+   431→   431→   431→  • Header with back button + "Matokeo ya Raia" + share button (toast)
+   432→   432→   432→  • 3 states mirroring the vehicle search-results screen:
+   433→   433→   433→    - "searching": Loader2 spinner + "Inatafuta taarifa za raia..." + query
+   434→   434→   434→    - "not-found": SearchX + "Raia Hajapatikana" + retry button (re-runs `runSearch(searchQuery)`)
+   435→   435→   435→    - "found"/"idle": full citizen profile from `CITIZEN_RESULT`
+   436→   436→   436→  • Citizen header card: gradient avatar circle with initials (e.g. "JK"), bold name, status badge ("Mtu wa Kawaida" green), NIDA, Mobile
+   437→   437→   437→  • Conditional alert box (red border, AlertTriangle) — rendered only when `CITIZEN_RESULT.alerts` is non-empty
+   438→   438→   438→  • Action buttons (3 cols) above the detail cards so they're always reachable: Rekodi Taarifa (blue), Toa Onyo (orange toast), Kamata (red toast) — colored top-border style copied from the vehicle search-results screen
+   439→   439→   439→  • SectionCard sections: "Taarifa za Kibinafsi" (gender, DOB, age, address, occupation), "Rekodi ya Uhalifu" (hasRecord badge: green "Hakana Rekodi" / red "Ana Rekodi", cases, convictions), "Hati za Kitaifa" (documents list with status badges), "Magari Yaliyosajiliwa" (plate + model + color + year), "Historia ya Mwingiliano" (date, type, case number, station)
+   440→   440→   440→  • Verified footer line "Taarifa zimehakikiwa kutoka NIDA & LINESS"
+   441→   441→   441→- All three files use police CSS classes (bg-police, bg-police-card, bg-police-muted, bg-police-input, text-police, text-police-navy, text-police-muted, text-police-faint, border-police, border-police-soft) so dark mode works automatically
+   442→   442→   442→- Status badge color logic: green = normal/Sahihi, orange = warning/Imeisha, red = alert/record/invalid
+   443→   443→   443→- Swahili text throughout, lucide-react icons, toast from `@/hooks/use-toast`
+   444→   444→   444→- Verified with `bun run lint` → no errors. Also confirmed `bunx tsc --noEmit` produces no errors in any of the new/edited files (pre-existing TS errors in alerts-screen.tsx, login-screen.tsx, examples/, and skills/ are unrelated to this task)
+   445→   445→   445→
+   446→   446→   446→Stage Summary:
+   447→   447→   447→- 3 new general-officer screens delivered (`GeneralHomeScreen`, `GeneralPoliceScreen`, `CitizenSearchResultsScreen`) plus 3 supporting edits (store bug fix, ScreenId extended, PoliceIcon `hand` added)
+   448→   448→   448→- General officer flow now wires: Home → citizen search → citizen-search-results (with searching/not-found/found states), and Polisi page → Tafuta Raia quick action → citizen-search-results
+   449→   449→   449→- Lint passes cleanly. Files are ready to be wired into the mobile-shell / navigation switch by a follow-up task.
+   450→   450→   450→
+   451→   451→   451→---
+   452→   452→   452→Task ID: 12
+   453→   453→   453→Agent: Main (Z.ai Code)
+   454→   454→   454→Task: Role-based restructuring - Admin gets focused nav, General Officer (Afisa Polisi) with citizen search
+   455→   455→   455→
+   456→   456→   456→Work Log:
+   457→   457→   457→- Updated store: 4 roles (officer-traffic, officer-general, admin, commander) + citizenSearchType state
+   458→   458→   458→- Updated login role selector: 4 cards (Afisa Trafiki, Afisa Polisi, Admin, Kamanda) in 2x2 grid
+   459→   459→   459→- Admin now lands on "users" screen (not dashboard) with focused nav
+   460→   460→   460→
+   461→   461→   461→- Admin role (focused navigation):
+   462→   462→   462→  - 5 nav items only: Watumiaji (Users), Vituo (Stations), Posti (Posts), Mgao (Assignments), Mipangilio (Settings)
+   463→   463→   463→  - Does NOT see: Dashboard, Matukio, Citations, Patroli, Arifa, Ripoti (commander-only)
+   464→   464→   464→  - Created 3 new admin screens (Task ID 10): admin-stations.tsx, admin-posts.tsx, admin-assignments.tsx
+   465→   465→   465→  - Stations: 7 stations table with stats, search, filter, CRUD actions
+   466→   466→   466→  - Posts: 7 posts table with station linkage, type badges, shift schedules
+   467→   467→   467→  - Assignments: assigned officers table + unassigned officers with inline assignment modal (station/post cascading dropdowns)
+   468→   468→   468→
+   469→   469→   469→- General Officer (Afisa Polisi) mobile app:
+   470→   470→   470→  - Created 3 new screens (Task ID 11): general-home-screen.tsx, general-police-screen.tsx, citizen-search-results-screen.tsx
+   471→   471→   471→  - GeneralHomeScreen: gradient header, hero banner, quick actions (Tafuta Raia, Ripoti Tukio), citizen search with 3 tabs (Jina/NIDA/Simu)
+   472→   472→   472→  - GeneralPoliceScreen: replaces Traffic page, title "Polisi", stats cards, 6 quick actions, recent incidents list
+   473→   473→   473→  - CitizenSearchResultsScreen: searching/not-found/found states, full citizen profile (name, NIDA, mobile, personal info, criminal record, documents, vehicles, history) + 3 action buttons
+   474→   474→   474→  - Created GeneralBottomNav: 5 tabs (Nyumbani, Polisi, Patroli, Arifa, Akaunti) — "Polisi" replaces "Trafiki"
+   475→   475→   475→  - Updated MobileShell to route general officers to their screens + GeneralBottomNav
+   476→   476→   476→
+   477→   477→   477→- Commander role: unchanged — full command center with all 12 screens (Dashboard, Maofisa, Matukio, Citations, Patroli, Arifa, Ripoti, Watumiaji, Vituo, Posti, Mgao, Mipangilio)
+   478→   478→   478→
+   479→   479→   479→- Browser-verified all 4 roles:
+   480→   480→   480→  1. Admin: login → focused nav (Users/Stations/Posts/Assignments/Settings) ✓, Stations table ✓, Assignments ✓
+   481→   481→   481→  2. General Officer: login → home with citizen search (Jina/NIDA/Simu) ✓, Polisi page (not Trafiki) ✓, citizen search results with full profile ✓
+   482→   482→   482→  3. Commander: full command center (unchanged) ✓
+   483→   483→   483→  4. Traffic Officer: unchanged vehicle search app ✓
+   484→   484→   484→
+   485→   485→   485→- Lint clean, no runtime errors
+   486→   486→   486→
+   487→   487→   487→Stage Summary:
+   488→   488→   488→- 4 distinct roles with role-dedicated pages:
+   489→   489→   489→  - Afisa Trafiki: mobile app with vehicle search (Namba ya Gari/Leseni/NIDA)
+   490→   490→   490→  - Afisa Polisi: mobile app with citizen search (Jina/NIDA/Simu) + "Polisi" page (not Trafiki)
+   491→   491→   491→  - Admin: web app with focused nav (Users, Stations, Posts, Assignments, Settings only)
+   492→   492→   492→  - Kamanda: full command center web app (all 12 screens)
+   493→   493→   493→- Each role rank has pages dedicated to their level
+   494→   494→   494→
+   495→   495→   495→---
+   496→   496→   496→Task ID: 13
+   497→   497→   497→Agent: Sub-agent (general-purpose)
+   498→   498→   498→Task: Create Dart shared mirror files so PWA and Flutter "look alike and act as one"
+   499→   499→   499→
+   500→   500→   500→Work Log:
+   501→   501→   501→- Read worklog.md (Tasks 1–12) to understand the platform state (PWA + admin web + Flutter officer-mobile + role-based restructuring).
+   502→   502→   502→- Read all TypeScript sources that need mirroring:
+   503→   503→   503→  • packages/ui-tokens/src/index.ts (COLORS, STATUS_COLORS, TYPOGRAPHY, SPACING, RADIUS, SHADOWS, THEME)
+   504→   504→   504→  • packages/shared/src/constants/index.ts (APP_INFO, ROLES, *_NAV, *_TABS, OFFENSE_TYPES, VEHICLE_TYPES, ALERT_FILTERS, CITATION_FILTERS)
+   505→   505→   505→  • packages/shared/src/types/index.ts (UserRole + all interfaces)
+   506→   506→   506→  • src/lib/police-data.ts (OFFICER, HOME_STATS, TRAFFIC_STATS, TRAFFIC_QUICK_ACTIONS [7 incl. PF3], RECENT_OFFENSES [5], SEARCH_RESULT, PATROL_STATS, ALERTS [5], PROFILE_*, ACCIDENT_*, VEHICLE_INSPECTION, PF3_FORM, CITATION_HISTORY [5], OFFENSE_TYPES, VEHICLE_TYPES)
+   507→   507→   507→  • src/lib/admin-data.ts (ADMIN_USER, DASHBOARD_KPIS, INCIDENT_TREND, OFFENSE_DISTRIBUTION, LIVE_INCIDENTS, OFFICERS [8], ADMIN_INCIDENTS [7], ADMIN_CITATIONS [7], ACTIVE_PATROLS [5], ADMIN_ALERTS_HISTORY [4], ADMIN_USERS [5], REGION_STATS [5])
+   508→   508→   508→  • src/lib/admin-mgmt-data.ts (STATIONS [7], POSTS [7], ASSIGNMENTS [7], UNASSIGNED_OFFICERS [3], CITIZEN_RESULT)
+   509→   509→   509→- Read existing Flutter sources that need updating:
+   510→   510→   510→  • apps/officer-mobile/lib/core/theme/app_theme.dart (existing theme using local app_colors.dart)
+   511→   511→   511→  • apps/officer-mobile/lib/core/theme/app_colors.dart (existing local color palette)
+   512→   512→   512→  • apps/officer-mobile/lib/data/mock_data.dart (existing per-screen Dart mock data)
+   513→   513→   513→  • apps/officer-mobile/lib/core/constants/app_constants.dart (existing local app config — kept untouched)
+   514→   514→   514→- Verified nothing else imports `core/theme/app_theme.dart` except `app.dart` (so updating the theme file is safe).
+   515→   515→   515→
+   516→   516→   516→Created 5 new shared files at `apps/mobile/lib/shared/` (and mirrored to `apps/officer-mobile/lib/shared/`):
+   517→   517→   517→
+   518→   518→   518→1. **tokens/app_tokens.dart** (~250 LOC) — Mirror of `ui-tokens/src/index.ts`:
+   519→   519→   519→   • `AppTokens` — brand navy (#1A237E / #002B5C / #0d1b3d), blues (#2196F3 / #0070C0 / #3B82F6 / #1976D2 / #1E3A8A / #2563EB), status (green #4CAF50, greenBright #10B981, orange #FF9800, orangeBright #F97316, red #F44336, redBright #EF4444, purple #9C27B0, purpleBright #8B5CF6), soft tints, fromHex + tint helpers
+   520→   520→   520→   • `AppColors` — light + dark neutral sets (bg, card, cardMuted, text, textMuted, textFaint, border, borderSoft, input + dark* variants)
+   521→   521→   521→   • `AppGradients` — `home` (#1E3A8A → #3B82F6) and `patrol` (#2196F3 → #1976D2) LinearGradients + sidebarBg
+   522→   522→   522→   • `AppSpacing` — 4/8 scale (s0=0, s1=4, s2=8, s3=12, s4=16, s5=20, s6=24, s8=32, s10=40, s12=48, s16=64) + EdgeInsets helpers
+   523→   523→   523→   • `AppRadius` — sm=6, md=8, lg=12, xl=16, 2xl=20, 3xl=24, full=9999 + Radius/BorderRadius helpers
+   524→   524→   524→   • `AppTypography` — fontFamily='Inter', sizes xs=10 → 7xl=24, weights normal=400 → extrabold=800, line heights
+   525→   525→   525→   • `AppStatusColors` — status string → Color map (active/paid/resolved/sahihi/nzuri=green, break/pending/inasubiri/maintenance/onleave=orange, urgent/unpaid/inactive/important=red, off-duty=gray, investigating=purpleBright) + `of(status)` lookup helper
+   526→   526→   526→   • `AppShadows` — Material BoxShadow equivalents of SHADOWS (none/sm/md/lg/xl/card)
+   527→   527→   527→
+   528→   528→   528→2. **constants/app_constants.dart** (~225 LOC) — Mirror of `shared/src/constants/index.ts`:
+   529→   529→   529→   • `AppInfo` — appName, tagline, org, copyright, footer strings
+   530→   530→   530→   • `UserRole` enum + `UserRoleX` extension (id string ↔ enum)
+   531→   531→   531→   • `RoleDefinition` + `AppRoles.all` — 4 roles (officer-traffic / officer-general / admin / commander) with label, sublabel, appType
+   532→   532→   532→   • `NavItem` + `TrafficOfficerNav`, `GeneralOfficerNav` (Polisi replaces Trafiki), `AdminNav` (5 focused items), `CommanderNav` (12 command-center items)
+   533→   533→   533→   • `SearchTab` + `VehicleSearchTabs` (plate/license/nida), `CitizenSearchTabs` (name/nida/mobile)
+   534→   534→   534→   • `OffenseTypes.items` (10), `VehicleTypes.items` (7)
+   535→   535→   535→   • `FilterItem` + `AlertFilters` (all/mine/important), `CitationFilters` (all/unpaid/paid)
+   536→   536→   536→
+   537→   537→   537→3. **data/mock_data.dart** (~600 LOC) — Plain `const` Dart lists/maps mirroring every value from police-data.ts + admin-data.ts + admin-mgmt-data.ts:
+   538→   538→   538→   • `OFFICER` map (name, shortName, rank, rankShort, id, station, unit, phone, email, status)
+   539→   539→   539→   • `HOME_STATS` (4), `TRAFFIC_STATS` (4), `PATROL_STATS` (3)
+   540→   540→   540→   • `TRAFFIC_QUICK_ACTIONS` (7 items incl. PF3 — color #0A3D62, screen 'pf3')
+   541→   541→   541→   • `RECENT_OFFENSES` (5)
+   542→   542→   542→   • `SEARCH_RESULT` (plate, date, status, riskScore=70, riskLevel='JUU', alertMessage, insurance{}, driver{}, vehicle{}, payment{}, violations[3])
+   543→   543→   543→   • `ALERTS` (5 items with category + important flags)
+   544→   544→   544→   • `CITATION_HISTORY` (5)
+   545→   545→   545→   • `DASHBOARD_KPIS` (4), `INCIDENT_TREND` (7 days), `OFFENSE_DISTRIBUTION` (5), `REGION_STATS` (5)
+   546→   546→   546→   • `OFFICERS` (8), `ADMIN_INCIDENTS` (7), `ADMIN_CITATIONS` (7), `ACTIVE_PATROLS` (5)
+   547→   547→   547→   • `ADMIN_ALERTS_HISTORY` (4), `ADMIN_USERS` (5), `ADMIN_USER` map
+   548→   548→   548→   • `STATIONS` (7), `POSTS` (7), `ASSIGNMENTS` (7), `UNASSIGNED_OFFICERS` (3)
+   549→   549→   549→   • `CITIZEN_RESULT` (name, nida, mobile, gender, dob, age, address, occupation, status, alerts[], criminalRecord{}, documents[3], vehicles[1], history[2]) — typed as `Map<String, Object?>` to allow `photo: null`
+   550→   550→   550→
+   551→   551→   551→4. **data/app_data_service.dart** (~100 LOC) — Singleton service class that simulates the eventual Supabase data layer:
+   552→   552→   552→   • `AppDataService.instance` singleton
+   553→   553→   553→   • Getters for every mock structure: `getOfficer()`, `getHomeStats()`, `getTrafficStats()`, `getPatrolStats()`, `getTrafficQuickActions()`, `getRecentOffenses()`, `getAlerts()`
+   554→   554→   554→   • `getSearchResult(plate)` returns a copy of SEARCH_RESULT with the queried plate surfaced
+   555→   555→   555→   • `getCitizenResult(query)` returns a copy of CITIZEN_RESULT (Object? map to allow null photo)
+   556→   556→   556→   • Admin getters: `getOfficers()`, `getIncidents()`, `getCitations()`, `getActivePatrols()`, `getStations()`, `getPosts()`, `getAssignments()`, `getUnassignedOfficers()`
+   557→   557→   557→   • `getCitationHistory()`, `getDashboardKPIs()`, `getIncidentTrend()`, `getOffenseDistribution()`, `getRegionStats()`, `getAlertsHistory()`, `getAdminUser()`, `getAdminUsers()`
+   558→   558→   558→   • Convenience filters: `officersByStatus(status)`, `incidentsByStatus(status)`, `citationsByStatus(status)`, `postsByStation(stationId)`
+   559→   559→   559→
+   560→   560→   560→5. **theme/app_theme.dart** (~310 LOC) — New shared Material 3 theme that builds light + dark `ThemeData` using ONLY values from `AppTokens` / `AppColors` / `AppRadius` / `AppTypography`:
+   561→   561→   561→   • ColorScheme.fromSeed with shared seed colors
+   562→   562→   562→   • Inter text theme via google_fonts with weights/sizes from AppTypography
+   563→   563→   563→   • Card / AppBar / InputDecoration / Buttons / Divider / BottomNav themes all using shared AppColors + AppRadius values
+   564→   564→   564→   • Re-exports app_tokens.dart so consumers get AppColors, AppTokens, etc. from a single import
+   565→   565→   565→
+   566→   566→   566→Also updated existing **apps/officer-mobile/lib/core/theme/app_theme.dart** to import from `../../shared/tokens/app_tokens.dart` and replace every color / radius / typography value with the shared equivalents:
+   567→   567→   567→   • Removed the import of local `app_colors.dart`
+   568→   568→   568→   • Replaced `AppColors.navyDeep` → `AppColors.navyDark` (same #002B5C value)
+   569→   569→   569→   • Replaced `AppColors.ink` → `AppColors.text`, `grayLight` → `bg`, `grayField` → `input`, `grayBorder` → `border`, `grayText` → `textMuted`, `gray` → `textFaint`
+   570→   570→   570→   • All font weights now reference `AppTypography.bold` / `extrabold` / `semibold` / `medium`
+   571→   571→   571→   • All `BorderRadius.circular(16/12)` replaced with `AppRadius.xlAll` / `AppRadius.lgAll`
+   572→   572→   572→   • The local `app_colors.dart` file is kept untouched (still imported by 18 widget/screen files) so existing screens keep compiling unchanged
+   573→   573→   573→
+   574→   574→   574→Files delivered:
+   575→   575→   575→- apps/mobile/lib/shared/tokens/app_tokens.dart
+   576→   576→   576→- apps/mobile/lib/shared/constants/app_constants.dart
+   577→   577→   577→- apps/mobile/lib/shared/data/mock_data.dart
+   578→   578→   578→- apps/mobile/lib/shared/data/app_data_service.dart
+   579→   579→   579→- apps/mobile/lib/shared/theme/app_theme.dart
+   580→   580→   580→- (mirror copies in apps/officer-mobile/lib/shared/… — 5 files)
+   581→   581→   581→- apps/officer-mobile/lib/core/theme/app_theme.dart (updated to consume shared tokens)
+   582→   582→   582→
+   583→   583→   583→Verification:
+   584→   584→   584→- `bun run lint` → exit 0 (TS side clean; Dart SDK not installed in this environment so Dart files were verified by careful manual review of const-ness, nullability, name clashes)
+   585→   585→   585→- No conflicts: the only consumer of `core/theme/app_theme.dart` is `app.dart`, which only references `AppTheme.light()` / `AppTheme.dark()` — the re-export of shared tokens was trimmed from this file to avoid any future `AppColors` name clash with the still-used local `app_colors.dart`
+   586→   586→   586→- CITIZEN_RESULT correctly typed as `Map<String, Object?>` to permit `photo: null`; `getCitizenResult()` returns `Map<String, Object?>` to match
+   587→   587→   587→
+   588→   588→   588→Stage Summary:
+   589→   589→   589→- 5 new shared mirror files created at apps/mobile/lib/shared/ + mirrored to apps/officer-mobile/lib/shared/
+   590→   590→   590→- Existing officer-mobile core theme updated to consume the shared tokens (single source of truth = ui-tokens/src/index.ts)
+   591→   591→   591→- All values (colors, gradients, spacing, radius, typography, status colors, app info, roles, nav items, search tabs, offense/vehicle types, filter tabs, and every mock data record) match the TypeScript originals exactly so PWA + Flutter now look alike and act as one
+   592→   592→   592→- `bun run lint` passes clean
+   593→   593→   593→
+   594→   594→   594→---
+   595→   595→   595→Task ID: 14
+   596→   596→   596→Agent: Main (Z.ai Code)
+   597→   597→   597→Task: Restructure into solid monorepo with 3 apps (PWA, Flutter, Web) sharing packages
+   598→   598→   598→
+   599→   599→   599→Work Log:
+
+[showing lines 300-599 of 679; use offset=600 with limit to continue reading]
