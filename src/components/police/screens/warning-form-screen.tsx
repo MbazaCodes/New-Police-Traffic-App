@@ -1,9 +1,11 @@
 "use client";
 
+import { useOfficer } from "@/hooks/use-officer";
+
 import { useState, useRef } from "react";
 import { ArrowLeft, Camera, X, CheckCircle, AlertTriangle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { OFFICER } from "@/lib/police-data";
+import {} from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 
 const WARNING_OFFENSES = [
@@ -13,6 +15,7 @@ const WARNING_OFFENSES = [
 ];
 
 export function WarningFormScreen() {
+  const OFFICER = useOfficer();
   const { goBack, warningPrefill, setWarningPrefill } = usePoliceStore();
   const [submitted, setSubmitted] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);

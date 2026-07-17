@@ -1,5 +1,7 @@
 "use client";
 
+import { useOfficer } from "@/hooks/use-officer";
+
 import {
   FileText,
   Calendar,
@@ -20,12 +22,13 @@ import {
   Sun,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
-import { PF3_FORM, OFFICER } from "@/lib/police-data";
+import { PF3_FORM } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 
 export function Pf3Screen() {
+  const OFFICER = useOfficer();
   const f = PF3_FORM;
   const goBack = usePoliceStore((s) => s.goBack);
   const addPF3 = useRecordsStore((s) => s.addPF3);

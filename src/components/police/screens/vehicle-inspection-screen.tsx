@@ -1,5 +1,7 @@
 "use client";
 
+import { useOfficer } from "@/hooks/use-officer";
+
 import { useState } from "react";
 import {
   Pencil,
@@ -13,12 +15,13 @@ import {
   Trash2,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
-import { VEHICLE_INSPECTION, OFFICER } from "@/lib/police-data";
+import { VEHICLE_INSPECTION } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 
 export function VehicleInspectionScreen() {
+  const OFFICER = useOfficer();
   const v = VEHICLE_INSPECTION;
   const goBack = usePoliceStore((s) => s.goBack);
   const addInspection = useRecordsStore((s) => s.addInspection);

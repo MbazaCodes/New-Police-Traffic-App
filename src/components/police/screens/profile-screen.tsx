@@ -5,11 +5,13 @@ import { Pencil, ChevronRight, LogOut, Download } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { PoliceIcon } from "../police-icons";
 import { ThemeToggle } from "../theme-toggle";
-import { PROFILE_STATS, PROFILE_ACTIVITIES, PROFILE_SETTINGS, OFFICER } from "@/lib/police-data";
+import { PROFILE_STATS, PROFILE_ACTIVITIES, PROFILE_SETTINGS } from "@/lib/police-data";
+import { useOfficer } from "@/hooks/use-officer";
 import { usePoliceStore } from "@/store/police-store";
 import { toast } from "@/hooks/use-toast";
 
 export function ProfileScreen() {
+  const OFFICER = useOfficer();
   const logout = usePoliceStore((s) => s.logout);
   const navigate = usePoliceStore((s) => s.navigate);
 

@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { usePoliceStore, type AdminScreen } from "@/store/police-store";
-import { ADMIN_USER } from "@/lib/admin-data";
+import { ROLE_USERS } from "@/lib/mock-engine";
 import { AdminDashboard } from "./screens/admin-dashboard";
 import { AdminOfficers } from "./screens/admin-officers";
 import { AdminIncidents } from "./screens/admin-incidents";
@@ -57,23 +57,62 @@ const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashbo
   { id: "settings", label: "Mipangilio", icon: Settings },
 ];
 
-// Admin gets a focused set: users, stations, posts, assignments + settings
+// Admin — management focus
 const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "officers", label: "Maofisa", icon: Users },
   { id: "users", label: "Watumiaji", icon: Users },
   { id: "stations", label: "Vituo", icon: Building2 },
   { id: "posts", label: "Posti", icon: Network, badge: 1 },
   { id: "assignments", label: "Mgao", icon: ArrowRightLeft, badge: 3 },
+  { id: "reports", label: "Ripoti", icon: BarChart3 },
+  { id: "missing", label: "Wanaotafutwa", icon: AlertTriangle, badge: 7 },
   { id: "settings", label: "Mipangilio", icon: Settings },
 ];
 
 export function AdminShell() {
-  const { adminScreen, setAdminScreen, logout, userRole } = usePoliceStore();
+  const { adminScreen, setAdminScreen, logout, userRole, authRole, loginIdentifier } = usePoliceStore();
+
+  // Resolve the real logged-in user from ROLE_USERS
+  const sessionUser = (() => {
+    if (loginIdentifier) {
+      const q = loginIdentifier.trim().toLowerCase().replace(/\s/g, "");
+      const found = ROLE_USERS.find((u) =>
+        u.username.toLowerCase() === q ||
+        u.mobile.replace(/\s/g, "") === q ||
+        u.email.toLowerCase() === q ||
+        u.badgeNo.toLowerCase() === q
+      );
+      if (found) return found;
+    }
+    // Fallback: match by authRole
+    const roleMap: Record<string, string[]> = {
+      SYSTEM_ADMIN: ["admin"], SUPER_ADMIN: ["admin"],
+      NATIONAL_COMMANDER: ["national-commissioner"],
+      REGIONAL_COMMANDER: ["regional-commissioner"],
+      DISTRICT_COMMANDER: ["district-commissioner"],
+      STATION_COMMANDER: ["station-commissioner"],
+    };
+    const matchRoles = roleMap[authRole ?? ""] ?? [];
+    return ROLE_USERS.find((u) => matchRoles.includes(u.role)) ?? ROLE_USERS.find((u) => u.role === "admin");
+  })();
+
+  const displayName  = sessionUser?.shortName ?? "Msimamizi";
+  const displayRank  = sessionUser?.rank ?? "";
+  const displayRole  = authRole?.replace(/_/g, " ") ?? (userRole === "commander" ? "Commander" : "Admin");
+  const displayStation = sessionUser?.station ?? "";
+  const displayUnit  = sessionUser?.unit ?? "";
+  const displayRegion = sessionUser?.region ?? "";
+  const displayPhoto = sessionUser?.photo ?? "";
+  const displayInitials = displayName.split(" ").filter(Boolean).slice(0, 2).map((w: string) => w[0]).join("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
 
-  const roleLabel = userRole === "commander" ? "Station Commissioner" : "Admin Panel";
-  const navItems = userRole === "commander" ? COMMANDER_NAV : ADMIN_NAV;
+  const roleLabel = displayRole;
+  // Nav is driven by authRole — commanders see everything, admin sees management
+  const commandRoles = ["NATIONAL_COMMANDER","REGIONAL_COMMANDER","DISTRICT_COMMANDER","STATION_COMMANDER","SUPER_ADMIN"];
+  const navItems = commandRoles.includes(authRole ?? "") ? COMMANDER_NAV : ADMIN_NAV;
 
   return (
     <div className="flex min-h-screen bg-police">
@@ -90,8 +129,8 @@ export function AdminShell() {
               <Image src="/police-logo.png" alt="TPF" width={40} height={40} className="h-full w-full object-cover" />
             </div>
             <div>
-              <p className="text-[13px] font-bold text-white">TZ Police</p>
-              <p className="text-[10px] text-white/60">{roleLabel}</p>
+              <p className="text-[13px] font-bold text-white">TZ Police Force</p>
+              <p className="text-[10px] text-white/60">{displayRole}</p>
             </div>
             <button onClick={() => setSidebarOpen(false)} className="ml-auto text-white/60 lg:hidden">
               <X size={20} />
@@ -131,12 +170,16 @@ export function AdminShell() {
           {/* User */}
           <div className="border-t border-white/10 p-3">
             <div className="flex items-center gap-3 rounded-lg bg-white/5 p-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2196F3] text-[12px] font-bold text-white">
-                {ADMIN_USER.shortName.split(" ").map((n) => n[0]).join("")}
-              </div>
+              {displayPhoto ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={displayPhoto} alt={displayName} className="h-9 w-9 rounded-full object-cover ring-2 ring-[#2196F3]" />
+              ) : (
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2196F3] text-[12px] font-bold text-white">{displayInitials}</div>
+              )}
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[12px] font-bold text-white">{ADMIN_USER.shortName}</p>
-                <p className="truncate text-[10px] text-white/50">{ADMIN_USER.rank}</p>
+                <p className="truncate text-[11px] font-bold text-white">{displayName}</p>
+                <p className="truncate text-[9px] text-white/70">{displayRank}</p>
+                <p className="truncate text-[9px] text-white/50">{displayStation}</p>
               </div>
               <button onClick={logout} className="text-white/50 hover:text-white">
                 <LogOut size={16} />
@@ -187,12 +230,16 @@ export function AdminShell() {
 
             {/* User chip */}
             <div className="flex items-center gap-2 rounded-lg bg-police-muted px-2.5 py-1.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2196F3] text-[11px] font-bold text-white">
-                {ADMIN_USER.shortName.split(" ").map((n) => n[0]).join("")}
-              </div>
+              {displayPhoto ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={displayPhoto} alt={displayName} className="h-7 w-7 rounded-full object-cover" />
+              ) : (
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2196F3] text-[11px] font-bold text-white">{displayInitials}</div>
+              )}
               <div className="hidden sm:block">
-                <p className="text-[12px] font-bold leading-tight text-police">{ADMIN_USER.shortName}</p>
-                <p className="text-[10px] leading-tight text-police-faint">{ADMIN_USER.rank}</p>
+                <p className="text-[12px] font-bold leading-tight text-police">{displayName}</p>
+                <p className="text-[10px] leading-tight text-police-faint">{displayRank} — {displayRole}</p>
+                <p className="text-[9px] leading-tight text-police-faint">{displayStation}</p>
               </div>
               <ChevronDown size={14} className="text-police-faint" />
             </div>
