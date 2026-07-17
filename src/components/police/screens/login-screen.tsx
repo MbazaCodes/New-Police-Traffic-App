@@ -530,42 +530,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
           )}
         </div>
 
-        {/* Cross-app link — officers see Admin/Command Web, admins see Officer PWA */}
-        <div className="mt-8 w-full">
-          {mode === "admin" ? (
-            <a
-              href="https://tz-police-pwa.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => {
-                e.preventDefault();
-                openExternalApp("https://tz-police-pwa.vercel.app");
-              }}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#1E3A8A]/30 bg-[#1E3A8A]/5 py-3 text-[13px] font-semibold text-[#1E3A8A] transition active:scale-[0.98] dark:border-white/10 dark:bg-white/5 dark:text-white/70"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>
-              </svg>
-              Officer PWA Login
-            </a>
-          ) : (
-            <a
-              href="https://tz-police-admin-web.vercel.app/admin"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => {
-                e.preventDefault();
-                openExternalApp("https://tz-police-admin-web.vercel.app/admin");
-              }}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#1E3A8A]/30 bg-[#1E3A8A]/5 py-3 text-[13px] font-semibold text-[#1E3A8A] transition active:scale-[0.98] dark:border-white/10 dark:bg-white/5 dark:text-white/70"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
-              </svg>
-              Admin / Command Web Login
-            </a>
-          )}
-        </div>
+
 
         {/* Footer */}
         <div className="mt-6 text-center">
