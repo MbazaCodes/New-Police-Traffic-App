@@ -128,10 +128,7 @@ export function AdminShell() {
 
   const roleLabel = displayRole;
   // Nav is STRICTLY scoped by hierarchy level — each level sees ONLY its items
-  const OFFICER_ROLES_WEB = ["TRAFFIC_OFFICER","GENERAL_OFFICER","POST_OFFICER"];
   const navItems = (() => {
-    // Officer roles on web
-    if (OFFICER_ROLES_WEB.includes(authRole ?? "")) return OFFICER_NAV;
     // Command hierarchy
     if (authRole === "NATIONAL_COMMANDER" || authRole === "SUPER_ADMIN" || authRole === "DIG") return COMMANDER_NAV;
     if (authRole === "REGIONAL_COMMANDER") return COMMANDER_NAV.filter((n) =>
