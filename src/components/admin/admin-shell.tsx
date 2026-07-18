@@ -60,6 +60,19 @@ const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashbo
   // Commanders do NOT see Watumiaji — that is Admin-only
 ];
 
+// Officer — field operations (web version)
+const OFFICER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
+  { id: "dashboard",         label: "Nyumbani",         icon: LayoutDashboard },
+  { id: "citations",         label: "Citations",        icon: FileText },
+  { id: "incidents",         label: "Matukio",          icon: AlertTriangle, badge: 5 },
+  { id: "patrols",           label: "Patroli",          icon: Shield },
+  { id: "detained-citizens", label: "Wafungwa",         icon: Shield },
+  { id: "waliokamatwa",      label: "Waliokamatwa",     icon: Users },
+  { id: "missing",           label: "Wanaotafutwa",     icon: AlertTriangle, badge: 7 },
+  { id: "alerts",            label: "Arifa",            icon: Bell, badge: 3 },
+  { id: "reports",           label: "Ripoti",           icon: BarChart3 },
+];
+
 // Admin — management focus
 const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -114,10 +127,14 @@ export function AdminShell() {
 
   const roleLabel = displayRole;
   // Nav is STRICTLY scoped by hierarchy level — each level sees ONLY its items
+  const OFFICER_ROLES_WEB = ["TRAFFIC_OFFICER","GENERAL_OFFICER","POST_OFFICER"];
   const navItems = (() => {
-    if (authRole === "NATIONAL_COMMANDER" || authRole === "SUPER_ADMIN") return COMMANDER_NAV;
+    // Officer roles on web
+    if (OFFICER_ROLES_WEB.includes(authRole ?? "")) return OFFICER_NAV;
+    // Command hierarchy
+    if (authRole === "NATIONAL_COMMANDER" || authRole === "SUPER_ADMIN" || authRole === "DIG") return COMMANDER_NAV;
     if (authRole === "REGIONAL_COMMANDER") return COMMANDER_NAV.filter((n) =>
-      !["users","stations"].includes(n.id)  // regional can't manage users/all stations
+      !["users","stations"].includes(n.id)
     );
     if (authRole === "DISTRICT_COMMANDER") return COMMANDER_NAV.filter((n) =>
       ["dashboard","officers","incidents","citations","patrols","alerts","reports","detained-citizens","waliokamatwa","missing"].includes(n.id)
@@ -296,7 +313,7 @@ export function AdminShell() {
         </header>
 
         {/* Screen content */}
-        <main key={adminScreen} className="police-screen-enter flex-1 overflow-y-auto p-4 lg:p-6">
+        <main key={adminScreen} className="police-screen-enter flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
           {renderAdminScreen(adminScreen)}
         </main>
       </div>
