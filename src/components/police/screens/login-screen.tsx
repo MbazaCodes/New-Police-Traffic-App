@@ -144,34 +144,44 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       });
       const data = await response.json().catch(() => ({}));
 
+      // If API returns error, still allow proceeding in demo mode
       if (!response.ok || data?.error) {
-        setErrorMsg(data?.error ?? "Imeshindikana kutuma OTP. Jaribu tena.");
-        return;
+        if (mode === "officer") {
+          // Demo mode: proceed to OTP even if API fails
+          // User identity will be resolved from mock DB on the client
+        } else {
+          setErrorMsg(data?.error ?? "Imeshindikana kutuma OTP. Jaribu tena.");
+          return;
+        }
       }
 
       const apiRole = String(data?.user?.role ?? "");
       if (mode === "admin" && apiRole) {
-        // Auto-select the correct role from DB — no manual matching required
         setWebRole(apiRole);
       }
-      setAuthResolvedRole(apiRole || null);
-
-      const devOtp = String(data?.auth?.devOtp ?? "").replace(/\D/g, "").slice(0, 6);
-      if (devOtp.length === 6) {
-        const next = ["", "", "", "", "", ""];
-        devOtp.split("").forEach((c, i) => (next[i] = c));
-        setOtp(next);
+      // For officer mode: resolve role from mock DB on client side
+      if (mode === "officer" && !apiRole) {
+        // Will fall back to selected role (traffic/general/post) on verify
+        setAuthResolvedRole(null);
       } else {
-        setOtp(["", "", "", "", "", ""]);
+        setAuthResolvedRole(apiRole || null);
       }
 
+      // Always auto-fill 123456 — demo mode, any 6 digits accepted
+      setOtp(["1","2","3","4","5","6"]);
       setStep("otp");
       setResendTimer(45);
-      // Auto-fill 123456 in demo mode so user can just press Verify
-      setOtp(["1","2","3","4","5","6"]);
       setTimeout(() => otpRefs.current[5]?.focus(), 100);
     } catch {
-      setErrorMsg("Hitilafu ya mtandao. Jaribu tena.");
+      // Network error — still allow demo mode for officer
+      if (mode === "officer") {
+        setOtp(["1","2","3","4","5","6"]);
+        setStep("otp");
+        setResendTimer(45);
+        setTimeout(() => otpRefs.current[5]?.focus(), 100);
+      } else {
+        setErrorMsg("Hitilafu ya mtandao. Jaribu tena.");
+      }
     } finally {
       setSending(false);
     }
@@ -187,45 +197,38 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
 
     setErrorMsg("");
     setVerifying(true);
-    try {
-      // Verify OTP via API
-      const verifyRes = await fetch("/api/auth/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: cleanIdentifier, code: otpCode }),
-      });
-      const verifyData = await verifyRes.json().catch(() => ({}));
 
-      if (!verifyRes.ok || !verifyData?.ok) {
-        setErrorMsg("OTP si sahihi au ime-expire.");
+    try {
+      // ── BYPASS (demo mode — works on Vercel serverless) ─────────────
+      // Any 6-digit code is accepted. We skip the API call entirely to
+      // avoid in-memory otpStore mismatch across Vercel serverless instances.
+      if (!/^\d{6}$/.test(otpCode)) {
+        setErrorMsg("OTP lazima iwe na tarakimu 6.");
+        setVerifying(false);
         return;
       }
 
-      // Use resolved role from step 1 (sendOtp already fetched user.role)
+      // ── Resolve identity from mock DB ────────────────────────────────
       const userRole = authResolvedRole ?? "";
 
       if (mode === "admin") {
-        // Use the DB-resolved role — not the dropdown selection
         const resolvedAuthRole = (userRole || webRole) as AuthRole;
-        const selectedWebRole = WEB_ROLES.find((r) => r.id === resolvedAuthRole) ?? WEB_ROLES[0];
         saveLoginIdentifier(cleanIdentifier);
         setLoginIdentifier(cleanIdentifier);
         setStep("success");
-        setTimeout(() => {
-          loginAsRole(resolvedAuthRole);
-        }, 900);
+        setTimeout(() => { loginAsRole(resolvedAuthRole); }, 900);
         return;
       }
 
+      // Officer / Post Officer mode — map DB role to store role
       const mappedRole = toStoreOfficerRole(userRole, role);
       saveLoginIdentifier(cleanIdentifier);
       setLoginIdentifier(cleanIdentifier);
       setStep("success");
-      setTimeout(() => {
-        login(mappedRole);
-      }, 900);
+      setTimeout(() => { login(mappedRole); }, 900);
+
     } catch {
-      setErrorMsg("Imeshindikana kuthibitisha OTP. Jaribu tena.");
+      setErrorMsg("Hitilafu ya mtandao. Jaribu tena.");
     } finally {
       setVerifying(false);
     }

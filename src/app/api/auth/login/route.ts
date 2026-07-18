@@ -11,8 +11,12 @@ export async function POST(request: Request) {
     }
 
     const user = findUserByIdentifier(identifier);
-    if (!user || user.status !== "active") {
-      return NextResponse.json({ error: "Invalid account" }, { status: 404 });
+    if (!user) {
+      return NextResponse.json({ error: "Akaunti haipatikani. Angalia jina la mtumiaji au namba ya simu." }, { status: 404 });
+    }
+    // Allow active, patrol, break, off-duty — only block suspended
+    if (user.status === "suspended") {
+      return NextResponse.json({ error: "Akaunti imesimamishwa. Wasiliana na msimamizi." }, { status: 403 });
     }
 
     const code = generateOtp(identifier);
