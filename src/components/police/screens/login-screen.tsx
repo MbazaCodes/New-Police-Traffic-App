@@ -315,72 +315,60 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
               {/* Role selector */}
               {mode === "admin" ? (
                 <div className="mt-4">
-                  <label className="mb-1.5 block text-[13px] font-medium text-police-navy2">Aina ya Role</label>
-                  {/* Category filter buttons */}
-                  <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1">
-                    {ROLE_CATEGORIES.map((cat) => (
-                      <button
-                        key={cat.id}
-                        onClick={() => {
-                          setRoleCategory(cat.id);
-                          // Auto-select first role of category
-                          if (cat.id !== "all" && cat.roles.length > 0) {
-                            setWebRole(cat.roles[0]);
-                          }
-                        }}
-                        className={`shrink-0 rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${
-                          roleCategory === cat.id
-                            ? "bg-[#1E3A8A] text-white"
-                            : "bg-police-muted text-police-muted border border-police"
-                        }`}
-                      >
-                        {cat.labelSw}
-                      </button>
-                    ))}
-                  </div>
-                  <label className="mb-1.5 block text-[12px] font-medium text-police-muted">Role</label>
-                  <div className="relative">
-                    <select
-                      value={webRole}
-                      onChange={(e) => setWebRole(e.target.value)}
-                      className="h-12 w-full appearance-none rounded-xl border border-police bg-police-card px-3 pr-10 text-[14px] text-police focus:border-[#2196F3] focus:outline-none focus:ring-2 focus:ring-[#2196F3]/20"
-                    >
-                      <optgroup label="═══ UONGOZI WA KITAIFA ═══">
-                        <option value="NATIONAL_COMMANDER">IGP — Inspector General of Police</option>
-                        <option value="DIG">DIG — Deputy Inspector General</option>
-                        <option value="SUPER_ADMIN">Super Admin — Msimamizi Mkuu</option>
-                      </optgroup>
-                      <optgroup label="═══ MAKAMISHNA WA MIKOA ═══">
-                        <option value="REGIONAL_COMMANDER">Regional Commissioner — Mkamishna wa Mkoa</option>
-                        <option value="DISTRICT_COMMANDER">District Commander — Mkamishna wa Wilaya</option>
-                        <option value="STATION_COMMANDER">Station Commissioner — Mkamishna wa Kituo</option>
-                      </optgroup>
-                      <optgroup label="═══ MAAFISA WA UWANJA ═══">
-                        <option value="TRAFFIC_OFFICER">Traffic Officer — Afisa Trafiki</option>
-                        <option value="GENERAL_OFFICER">General Officer — Afisa Polisi</option>
-                        <option value="POST_OFFICER">Post Officer — Afisa wa Posti</option>
-                      </optgroup>
-                      <optgroup label="═══ KITENGO CHA UPELELEZI (CID) ═══">
-                        <option value="INVESTIGATOR">CID / Investigator — Mpelelezi</option>
-                        <option value="CID_OFFICER">CID Officer — Afisa CID</option>
-                        <option value="INVESTIGATION_SUPERVISOR">Investigation Supervisor — Msimamizi wa Uchunguzi</option>
-                        <option value="CYBER_CRIME">Cyber Crime Unit — Uhalifu wa Mtandaoni</option>
-                      </optgroup>
-                      <optgroup label="═══ IDARA MAALUM ═══">
-                        <option value="IMMIGRATION_LIAISON">Immigration Liaison — Afisa Uhamiaji</option>
-                        <option value="PRISON_LIAISON">Prison Liaison — Afisa Magereza</option>
-                        <option value="EMERGENCY_DISPATCHER">Emergency Dispatcher — Msimamizi wa Dharura (911)</option>
-                        <option value="EVIDENCE_OFFICER">Evidence Officer — Afisa Ushahidi</option>
-                        <option value="AUDIT_OFFICER">Audit / Internal Affairs — Afisa Ukaguzi</option>
-                      </optgroup>
-                      <optgroup label="═══ UTAWALA ═══">
-                        <option value="SYSTEM_ADMIN">System Admin — Msimamizi wa Mfumo</option>
-                        <option value="CLERK">Clerk — Karani</option>
-                        <option value="VIEWER">Viewer — Mwangalizi (Read-only)</option>
-                      </optgroup>
-                    </select>
-                    <ChevronDown size={18} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-police-faint" />
-                  </div>
+                  {roleCategory === "all" ? (
+                    /* ── STEP A: Category picker ── */
+                    <>
+                      <label className="mb-2 block text-[13px] font-medium text-police-navy2">
+                        Chagua Aina ya Akaunti
+                      </label>
+                      <div className="grid grid-cols-1 gap-2">
+                        {ROLE_CATEGORIES.filter(c => c.id !== "all").map((cat) => (
+                          <button
+                            key={cat.id}
+                            onClick={() => {
+                              setRoleCategory(cat.id);
+                              setWebRole(cat.roles[0]);
+                            }}
+                            className="flex items-center justify-between rounded-xl border border-police bg-police-card px-4 py-3 text-left transition hover:border-[#2196F3] hover:bg-[#2196F3]/5 active:scale-[0.99]"
+                          >
+                            <div>
+                              <p className="text-[13px] font-bold text-police">{cat.labelSw}</p>
+                              <p className="text-[11px] text-police-muted">{cat.label}</p>
+                            </div>
+                            <ChevronDown size={16} className="rotate-[-90deg] text-police-faint" />
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    /* ── STEP B: Role picker for selected category ── */
+                    <>
+                      <div className="mb-3 flex items-center gap-2">
+                        <button
+                          onClick={() => setRoleCategory("all")}
+                          className="flex items-center gap-1 text-[12px] font-semibold text-[#2196F3]"
+                        >
+                          <ChevronDown size={14} className="rotate-90" /> Rudi
+                        </button>
+                        <span className="text-[12px] text-police-muted">
+                          / {ROLE_CATEGORIES.find(c=>c.id===roleCategory)?.labelSw}
+                        </span>
+                      </div>
+                      <label className="mb-1.5 block text-[13px] font-medium text-police-navy2">Role</label>
+                      <div className="relative">
+                        <select
+                          value={webRole}
+                          onChange={(e) => setWebRole(e.target.value)}
+                          className="h-12 w-full appearance-none rounded-xl border border-police bg-police-card px-3 pr-10 text-[14px] text-police focus:border-[#2196F3] focus:outline-none focus:ring-2 focus:ring-[#2196F3]/20"
+                        >
+                          {filteredWebRoles.map((r) => (
+                            <option key={r.id} value={r.id}>{r.label}</option>
+                          ))}
+                        </select>
+                        <ChevronDown size={18} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-police-faint" />
+                      </div>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div className="mt-4 grid grid-cols-2 gap-2">
