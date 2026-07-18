@@ -20,7 +20,7 @@ import {
 } from "@/lib/police-data";
 import { INCIDENT_TREND, OFFENSE_DISTRIBUTION, GENERAL_INCIDENT_DISTRIBUTION, COMBINED_DISTRIBUTION, REGION_STATS } from "@/lib/admin-data";
 
-type ReportTab = "all" | "traffic" | "general";
+type ReportTab = "all" | "traffic" | "general" | "cid" | "post" | "investigations" | "prison" | "operations";
 
 // ── Helpers ──────────────────────────────────────────────────
 const TRAFFIC_OFFICERS = ROLE_USERS.filter((u) => u.role === "officer-traffic");
@@ -77,6 +77,7 @@ export function CommissionerDashboard() {
     { label:"Citations Leo",     value:String(CITATION_HISTORY.length),   sub:"trafiki — " + trafficCitations.length,  color:"#1E3A8A", icon:<FileText size={20}/>,     trend:"up"      },
     { label:"Matukio (Jumla)",   value:String(GENERAL_INCIDENTS.length),  sub:"general polisi",                         color:"#FF9800", icon:<AlertTriangle size={20}/>, trend:"neutral" },
     { label:"Wanaotafutwa",      value:String(ACTIVE_MISSING.length),     sub:"watu + magari + vifaa",                  color:"#EF4444", icon:<Shield size={20}/>,       trend:"down"    },
+    { label:"Waliokamatwa",      value:String(DETAINED.length),           sub:`${DETAINED.length} kazizuizini`,         color:"#1E3A8A", icon:<Users size={20}/>,        trend:"neutral" },
   ];
 
   const secondaryKpis = [
@@ -119,10 +120,16 @@ export function CommissionerDashboard() {
 
       {/* Report type filter — Traffic / General / All */}
       <div className="flex gap-2">
-        {([
-          { id:"all",     label:"Ripoti ya Jumla",       color:"#1E3A8A" },
-          { id:"traffic", label:"Trafiki",               color:"#2196F3" },
-          { id:"general", label:"Polisi Jumla",          color:"#10B981" },
+        <div className="flex gap-2 overflow-x-auto pb-1">
+      {([
+          { id:"all",            label:"Zote",            color:"#1E3A8A" },
+          { id:"traffic",        label:"Trafiki",         color:"#2196F3" },
+          { id:"general",        label:"Polisi Jumla",    color:"#10B981" },
+          { id:"cid",            label:"CID",             color:"#EF4444" },
+          { id:"post",           label:"Posti",           color:"#FF9800" },
+          { id:"investigations", label:"Uchunguzi",       color:"#1E3A8A" },
+          { id:"prison",         label:"Magereza",        color:"#607D8B" },
+          { id:"operations",     label:"Operesheni",      color:"#2196F3" },
         ] as const).map((t) => (
           <button key={t.id} onClick={() => setReportTab(t.id)}
             className={`flex items-center gap-2 rounded-xl px-4 py-2 text-[13px] font-bold transition ${reportTab===t.id?"text-white shadow":"bg-police-card border border-police text-police-muted"}`}
@@ -131,6 +138,7 @@ export function CommissionerDashboard() {
             {t.label}
           </button>
         ))}
+      </div>
       </div>
 
       {/* Primary KPIs */}

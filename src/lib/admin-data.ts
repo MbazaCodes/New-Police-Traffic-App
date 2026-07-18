@@ -98,11 +98,13 @@ export const ADMIN_CITATIONS = [
 ];
 
 export const ACTIVE_PATROLS = [
-  { id: "PT-001", officer: "Insp. Juma Mwinyi", area: "Kariakoo - Ilala Zone", start: "06:30", distance: "12.5 km", status: "active", progress: 65 },
-  { id: "PT-002", officer: "Sgt. Ali Hassan", area: "Samora Avenue", start: "07:00", distance: "8.2 km", status: "active", progress: 40 },
-  { id: "PT-003", officer: "Insp. Grace Mushi", area: "Kinondoni Zone", start: "06:45", distance: "15.3 km", status: "active", progress: 80 },
-  { id: "PT-004", officer: "Cpl. Mariam Ally", area: "Kariakoo Market", start: "07:15", distance: "5.7 km", status: "active", progress: 25 },
-  { id: "PT-005", officer: "Sgt. Fatuma Hassan", area: "Mbezi Beach", start: "06:00", distance: "22.1 km", status: "active", progress: 90 },
+  { id: "PT-001", officer: "Cprl. Juma Khamis Mwinyi",     badgeNo: "TP123456", area: "Kariakoo - Ilala Zone",       type: "Gari",    start: "06:30", distance: "12.5 km", status: "active",  progress: 65 },
+  { id: "PT-002", officer: "Sgt. Ali Hassan Salum",          badgeNo: "TP234567", area: "Samora Avenue Junction",      type: "Miguu",   start: "07:00", distance: "8.2 km",  status: "active",  progress: 40 },
+  { id: "PT-003", officer: "Insp. Grace Amina Mushi",        badgeNo: "GO123456", area: "Kinondoni Zone",              type: "Gari",    start: "06:45", distance: "15.3 km", status: "active",  progress: 80 },
+  { id: "PT-004", officer: "Cpl. Mariamu Ally Komba",        badgeNo: "TP567890", area: "Kariakoo Market",             type: "Miguu",   start: "07:15", distance: "5.7 km",  status: "active",  progress: 25 },
+  { id: "PT-005", officer: "Sgt. Fatuma Hassan Komba",       badgeNo: "TP345678", area: "Mbezi Beach Road",            type: "Baiskeli",start: "06:00", distance: "22.1 km", status: "active",  progress: 90 },
+  { id: "PT-006", officer: "Cprl. Emmanuel Joseph Mapunda",  badgeNo: "GO345678", area: "Mwenge Bus Terminal",         type: "Gari",    start: "07:30", distance: "9.1 km",  status: "active",  progress: 55 },
+  { id: "PT-007", officer: "Insp. Hamisi Rashid Omar",       badgeNo: "GO234567", area: "Ubungo Terminal",             type: "Gari",    start: "08:00", distance: "3.2 km",  status: "sos",     progress: 30 },
 ];
 
 export const ADMIN_ALERTS_HISTORY = [

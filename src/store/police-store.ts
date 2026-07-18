@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 import type { ScreenId } from "@/lib/police-data";
 import { ALERTS } from "@/lib/police-data";
 
-export type UserRole = "officer-traffic" | "officer-general" | "admin" | "commander";
+export type UserRole = "officer-traffic" | "officer-general" | "officer-post" | "admin" | "commander";
 
 // Full 11-role auth system
 export type AuthRole =
@@ -22,6 +22,7 @@ export const AUTH_ROLES: { id: AuthRole; label: string; labelSw: string; descrip
   { id: "DISTRICT_COMMANDER", label: "District Commander", labelSw: "Mkamandeshi wa Wilaya", description: "District-level command", icon: "Building2", shellType: "admin" },
   { id: "STATION_COMMANDER", label: "Station Commander", labelSw: "Mkamandeshi wa Kituo", description: "Station operations & duty rosters", icon: "Building", shellType: "admin" },
   { id: "TRAFFIC_OFFICER", label: "Traffic Officer", labelSw: "Afisa Trafiki", description: "Traffic enforcement & citations", icon: "Car", shellType: "mobile" },
+  { id: "POST_OFFICER", label: "Post Officer", labelSw: "Afisa wa Posti", description: "Post station operations & patrol", icon: "MapPin", shellType: "mobile" },
   { id: "GENERAL_OFFICER", label: "General Officer", labelSw: "Afisa Polisi", description: "General policing duties", icon: "UserCheck", shellType: "mobile" },
   { id: "INVESTIGATOR", label: "CID / Investigator", labelSw: "Mpelelezi", description: "Criminal investigation & intelligence", icon: "Search", shellType: "cid" },
   { id: "CLERK", label: "Clerk", labelSw: "Karani", description: "Records & file management", icon: "FileText", shellType: "clerk" },
@@ -34,18 +35,18 @@ function authRoleToStoreRole(authRole: AuthRole): UserRole {
   if (authRole === "SUPER_ADMIN" || authRole === "SYSTEM_ADMIN" || authRole === "CLERK" || authRole === "VIEWER") return "admin";
   return "commander";
 }
-export type OfficerRole = "officer-traffic" | "officer-general";
-export const OFFICER_ROLES: OfficerRole[] = ["officer-traffic", "officer-general"];
+export type OfficerRole = "officer-traffic" | "officer-general" | "officer-post";
+export const OFFICER_ROLES: OfficerRole[] = ["officer-traffic", "officer-general", "officer-post"];
 
 function normalizeOfficerRole(role?: UserRole): OfficerRole {
-  if (role === "officer-general" || role === "officer-traffic") return role;
+  if (role === "officer-general" || role === "officer-traffic" || role === "officer-post") return role as OfficerRole;
   return "officer-traffic";
 }
 
 export type AdminScreen =
   | "dashboard" | "officers" | "incidents" | "citations" | "patrols"
   | "alerts" | "reports" | "users" | "settings" | "stations" | "posts"
-  | "assignments" | "detained-citizens"
+  | "assignments" | "detained-citizens" | "waliokamatwa"
   | "missing";
 
 export interface CitationPrefill {

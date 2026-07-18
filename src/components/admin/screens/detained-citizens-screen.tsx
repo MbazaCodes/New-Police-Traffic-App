@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Search, X, Plus, Shield, Clock, CheckCircle, AlertTriangle, User, Phone, MapPin, Calendar, FileText } from "lucide-react";
 import { DETAINED_CITIZENS } from "@/lib/police-data";
+import { avatarUrl } from "@/lib/mock-engine";
 import { toast } from "@/hooks/use-toast";
 
 const STATUS_MAP = {

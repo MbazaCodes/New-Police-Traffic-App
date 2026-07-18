@@ -34,21 +34,22 @@ import { toast } from "@/hooks/use-toast";
 // ── Mock data for Command Center ──────────────────────────────────────────────
 
 const ACTIVE_PATROLS = [
-  { id: "PAT-001", officer: "Insp. Juma Mwinyi", unit: "Traffic-01", area: "Morogoro Road", status: "active", lat: -6.8235, lng: 39.2695, speed: "45 km/h", lastUpdate: "30s" },
-  { id: "PAT-002", officer: "Sgt. Ali Hassan", unit: "Traffic-02", area: "Samora Ave", status: "active", lat: -6.816, lng: 39.289, speed: "0 km/h", lastUpdate: "1m" },
-  { id: "PAT-003", officer: "Insp. Grace Mushi", unit: "General-01", area: "Kariakoo", status: "sos", lat: -6.824, lng: 39.277, speed: "0 km/h", lastUpdate: "5s" },
-  { id: "PAT-004", officer: "Sgt. Saidi Juma", unit: "Traffic-03", area: "Ubungo", status: "break", lat: -6.778, lng: 39.233, speed: "0 km/h", lastUpdate: "3m" },
-  { id: "PAT-005", officer: "Cpl. Mariam Ally", unit: "Patrol-01", area: "Mbezi Beach", status: "active", lat: -6.766, lng: 39.251, speed: "60 km/h", lastUpdate: "15s" },
+  { id: "PAT-001", officer: "Cprl. Juma Khamis Mwinyi",    badge: "TP123456", unit: "Traffic-01",  area: "Morogoro Road",   status: "active", lat: -6.8235, lng: 39.2695, speed: "45 km/h", lastUpdate: "30s" },
+  { id: "PAT-002", officer: "Sgt. Ali Hassan Salum",        badge: "TP234567", unit: "Traffic-02",  area: "Samora Ave",      status: "active", lat: -6.816,  lng: 39.289,  speed: "0 km/h",  lastUpdate: "1m"  },
+  { id: "PAT-003", officer: "Insp. Hamisi Rashid Omar",     badge: "GO234567", unit: "General-01",  area: "Ubungo Terminal", status: "sos",    lat: -6.824,  lng: 39.277,  speed: "0 km/h",  lastUpdate: "5s"  },
+  { id: "PAT-004", officer: "Cprl. Saidi Juma Bakari",      badge: "TP456789", unit: "Traffic-03",  area: "Ubungo",          status: "break",  lat: -6.778,  lng: 39.233,  speed: "0 km/h",  lastUpdate: "3m"  },
+  { id: "PAT-005", officer: "Cpl. Mariamu Ally Komba",      badge: "TP567890", unit: "Patrol-01",   area: "Mbezi Beach",     status: "active", lat: -6.766,  lng: 39.251,  speed: "60 km/h", lastUpdate: "15s" },
+  { id: "PAT-006", officer: "Insp. Grace Amina Mushi",      badge: "GO123456", unit: "General-02",  area: "Kariakoo",        status: "active", lat: -6.812,  lng: 39.271,  speed: "0 km/h",  lastUpdate: "2m"  },
 ];
 
 const RADIO_LOGS = [
-  { id: 1, time: "08:32", callSign: "Traffic-01", message: "Nimefika eneo la ajali - Morogoro Road. Majeruhi 2.", type: "report" },
-  { id: 2, time: "08:30", callSign: "Command", message: "Traffic-01, nenda Morogoro Road kwa ajali inayoripotiwa.", type: "dispatch" },
-  { id: 3, time: "08:28", callSign: "General-01", message: "SOS! Nahitaji msaada — Kariakoo junction!", type: "sos" },
-  { id: 4, time: "08:25", callSign: "Traffic-02", message: "Nimekamilisha doria — Samora Ave iko safi.", type: "report" },
-  { id: 5, time: "08:20", callSign: "Command", message: "Vikosi vyote: taarifa ya hali ya hewa - mvua inatarajiwa.", type: "broadcast" },
-  { id: 6, time: "08:15", callSign: "Patrol-01", message: "Nimegundua gari linaloshukiwa — plate T123ABC, Mbezi Beach.", type: "report" },
-  { id: 7, time: "08:10", callSign: "Traffic-03", message: "Mapumziko ya dakika 15 — Ubungo station.", type: "status" },
+  { id: 1, time: "08:32", callSign: "Cprl. Juma (TP-123456)",  message: "Nimefika eneo la ajali - Morogoro Road. Majeruhi 2.", type: "report"    },
+  { id: 2, time: "08:30", callSign: "Command Center",           message: "Traffic-01 (Cprl. Juma), nenda Morogoro Road kwa ajali.", type: "dispatch" },
+  { id: 3, time: "08:28", callSign: "Insp. Hamisi (GO-234567)", message: "SOS! Nahitaji msaada — Ubungo Terminal!", type: "sos"  },
+  { id: 4, time: "08:25", callSign: "Sgt. Ali (TP-234567)",     message: "Nimekamilisha doria — Samora Ave iko safi.", type: "report"    },
+  { id: 5, time: "08:20", callSign: "Command Center",           message: "Vikosi vyote: mvua inatarajiwa DSM — tahadhari barabarani.", type: "broadcast" },
+  { id: 6, time: "08:15", callSign: "Cpl. Mariamu (TP-567890)", message: "Nimegundua gari linaloshukiwa — plate T 015 QRS, Mbezi Beach.", type: "report" },
+  { id: 7, time: "08:10", callSign: "Cprl. Saidi (TP-456789)",  message: "Mapumziko ya dakika 15 — Ubungo station.", type: "status"   },
 ];
 
 const DISPATCH_QUEUE = [

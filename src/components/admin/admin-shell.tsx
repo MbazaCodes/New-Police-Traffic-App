@@ -27,6 +27,7 @@ import { usePoliceStore, type AdminScreen } from "@/store/police-store";
 import { ROLE_USERS } from "@/lib/mock-engine";
 import { AdminDashboard } from "./screens/admin-dashboard";
 import { CommissionerDashboard } from "./screens/commissioner-dashboard";
+import { WaliokamatwaScreen } from "./screens/waliokamatwa-screen";
 import { AdminOfficers } from "./screens/admin-officers";
 import { AdminIncidents } from "./screens/admin-incidents";
 import { AdminCitations } from "./screens/admin-citations";
@@ -50,6 +51,7 @@ const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashbo
   { id: "alerts",            label: "Arifa",            icon: Bell, badge: 3 },
   { id: "reports",           label: "Ripoti",           icon: BarChart3 },
   { id: "detained-citizens", label: "Wafungwa",         icon: Shield, badge: 3 },
+  { id: "waliokamatwa",      label: "Waliokamatwa",     icon: Users, badge: 5 },
   { id: "missing",           label: "Wanaotafutwa",     icon: AlertTriangle, badge: 7 },
   { id: "stations",          label: "Vituo",            icon: Building2 },
   { id: "posts",             label: "Posti",            icon: Network, badge: 1 },
@@ -111,9 +113,21 @@ export function AdminShell() {
   const isDark = theme === "dark";
 
   const roleLabel = displayRole;
-  // Nav is driven by authRole — commanders see everything, admin sees management
-  const commandRoles = ["NATIONAL_COMMANDER","REGIONAL_COMMANDER","DISTRICT_COMMANDER","STATION_COMMANDER","SUPER_ADMIN"];
-  const navItems = commandRoles.includes(authRole ?? "") ? COMMANDER_NAV : ADMIN_NAV;
+  // Nav is STRICTLY scoped by hierarchy level — each level sees ONLY its items
+  const navItems = (() => {
+    if (authRole === "NATIONAL_COMMANDER" || authRole === "SUPER_ADMIN") return COMMANDER_NAV;
+    if (authRole === "REGIONAL_COMMANDER") return COMMANDER_NAV.filter((n) =>
+      !["users","stations"].includes(n.id)  // regional can't manage users/all stations
+    );
+    if (authRole === "DISTRICT_COMMANDER") return COMMANDER_NAV.filter((n) =>
+      ["dashboard","officers","incidents","citations","patrols","alerts","reports","detained-citizens","waliokamatwa","missing"].includes(n.id)
+    );
+    if (authRole === "STATION_COMMANDER") return COMMANDER_NAV.filter((n) =>
+      ["dashboard","officers","incidents","citations","patrols","alerts","detained-citizens","waliokamatwa","missing"].includes(n.id)
+    );
+    if (authRole === "SYSTEM_ADMIN") return ADMIN_NAV;
+    return ADMIN_NAV;
+  })();
 
   return (
     <div className="flex min-h-screen bg-police">
@@ -222,13 +236,47 @@ export function AdminShell() {
             </button>
 
             {/* Notifications */}
-            <button className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police">
-              <Bell size={18} />
+          <div className="relative">
+            <button onClick={() => setNotifOpen(!notifOpen)} className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police hover:bg-[#2196F3]/15 transition">
+              <Bell size={18} className={notifOpen ? "text-[#2196F3]" : ""} />
               <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
                 3
               </span>
             </button>
 
+            {/* Notification Panel */}
+            {notifOpen && (
+              <div className="absolute right-0 top-12 z-50 w-80 rounded-2xl bg-police-card shadow-2xl border border-police-soft overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-police-soft">
+                  <span className="text-[14px] font-bold text-police">Arifa</span>
+                  <button onClick={() => setNotifOpen(false)} className="text-police-faint hover:text-police"><X size={16}/></button>
+                </div>
+                <div className="max-h-72 overflow-y-auto divide-y divide-police-soft">
+                  {[
+                    { id:"N1", title:"SOS — Insp. Hamisi anahitaji msaada", time:"sasa hivi", color:"#EF4444", read:false },
+                    { id:"N2", title:"Gari T 003 GHI limeripotiwa libiwa", time:"dk 5", color:"#FF9800", read:false },
+                    { id:"N3", title:"Citation mpya — T 009 YZA — Bajaji bila bima", time:"dk 12", color:"#2196F3", read:false },
+                    { id:"N4", title:"Ripoti ya Patroli imekamilika — Cprl. Juma", time:"dk 30", color:"#10B981", read:true },
+                    { id:"N5", title:"Mkutano wa Kamanda — Kesho 09:00", time:"saa 1", color:"#1E3A8A", read:true },
+                  ].map((n) => (
+                    <div key={n.id} className={`flex items-start gap-3 px-4 py-3 hover:bg-police-muted transition cursor-pointer ${n.read ? "opacity-60" : ""}`}>
+                      <span className="mt-1 h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor:n.color }}/>
+                      <div className="min-w-0 flex-1">
+                        <p className={`text-[12px] leading-tight text-police ${!n.read ? "font-bold" : ""}`}>{n.title}</p>
+                        <p className="mt-0.5 text-[10px] text-police-faint">{n.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-police-soft px-4 py-2.5">
+                  <button onClick={() => { setAdminScreen("alerts"); setNotifOpen(false); }} className="text-[12px] font-semibold text-[#2196F3] hover:underline">
+                    Ona arifa zote →
+                  </button>
+                </div>
+              </div>
+            )}
+
+          </div>
             {/* User chip */}
             <div className="flex items-center gap-2 rounded-lg bg-police-muted px-2.5 py-1.5">
               {displayPhoto ? (
@@ -288,6 +336,8 @@ function renderAdminScreen(screen: AdminScreen) {
       return <AdminAssignments />;
     case "detained-citizens":
       return <DetainedCitizensScreen />;
+    case "waliokamatwa":
+      return <WaliokamatwaScreen />;
     case "missing":
       return <AdminMissing />;
     case "settings":

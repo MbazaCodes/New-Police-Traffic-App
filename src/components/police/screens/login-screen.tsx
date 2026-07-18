@@ -14,6 +14,7 @@ import {
   Smartphone,
   CheckCircle2,
   ChevronDown,
+  MapPin,
 } from "lucide-react";
 import { usePoliceStore, AUTH_ROLES, type AuthRole } from "@/store/police-store";
 import { saveLoginIdentifier, clearLoginIdentifier } from "@/lib/session-context";
@@ -26,6 +27,7 @@ type Step = "credentials" | "otp" | "success";
 const OFFICER_ROLES = [
   { id: "officer-traffic" as UserRole, label: "Afisa Trafiki", sublabel: "Traffic Officer", icon: Car },
   { id: "officer-general" as UserRole, label: "Afisa Polisi", sublabel: "General Officer", icon: UserCheck },
+  { id: "officer-post" as unknown as UserRole, label: "Afisa wa Posti", sublabel: "Post Officer", icon: MapPin },
 ];
 
 type WebRoleOption = {
@@ -44,6 +46,7 @@ const WEB_ROLES: WebRoleOption[] = [
   { id: "STATION_COMMANDER", label: "Station Commander", route: "/command/station/dashboard", storeRole: "commander" },
   { id: "TRAFFIC_OFFICER", label: "Traffic Officer", route: "/officer/traffic/home", storeRole: "officer-traffic" },
   { id: "GENERAL_OFFICER", label: "General Officer", route: "/officer/general/home", storeRole: "officer-general" },
+  { id: "POST_OFFICER", label: "Post Officer (Afisa wa Posti)", route: "/", storeRole: "officer-post" },
   { id: "INVESTIGATOR", label: "CID / Investigator", route: "/cid/home", storeRole: "officer-general" },
   { id: "CLERK", label: "Clerk", route: "/clerk/records", storeRole: "admin" },
   { id: "VIEWER", label: "Viewer", route: "/viewer/dashboard", storeRole: "admin" },
@@ -52,6 +55,7 @@ const WEB_ROLES: WebRoleOption[] = [
 function toStoreOfficerRole(authRole?: string, fallback: UserRole = "officer-traffic"): UserRole {
   if (authRole === "GENERAL_OFFICER") return "officer-general";
   if (authRole === "TRAFFIC_OFFICER" || authRole === "OFFICER") return "officer-traffic";
+  if (authRole === "POST_OFFICER") return "officer-traffic"; // post officers use traffic PWA
   return fallback;
 }
 
