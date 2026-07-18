@@ -122,6 +122,7 @@ export function AdminShell() {
   const displayPhoto = sessionUser?.photo ?? "";
   const displayInitials = displayName.split(" ").filter(Boolean).slice(0, 2).map((w: string) => w[0]).join("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
 

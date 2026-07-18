@@ -2,118 +2,127 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
-  User, Phone, ArrowRight, ArrowLeft, KeyRound, RefreshCw,
-  CheckCircle2, ChevronRight, Car, Shield, UserCheck, MapPin,
-  Search, Lock, Globe, Package, FileSearch, Landmark, Building2,
-  Building, ShieldCheck, Server, Eye, FileText, Phone as PhoneIcon,
-  ClipboardList, Monitor, Users, ChevronDown,
+  ShieldCheck,
+  User,
+  Phone,
+  ArrowRight,
+  ArrowLeft,
+  KeyRound,
+  RefreshCw,
+  Smartphone,
+  CheckCircle2,
+  ChevronDown,
+  MapPin,
 } from "lucide-react";
-import { usePoliceStore, type AuthRole } from "@/store/police-store";
-import { saveLoginIdentifier } from "@/lib/session-context";
+import { usePoliceStore, AUTH_ROLES, type AuthRole } from "@/store/police-store";
+import { saveLoginIdentifier, clearLoginIdentifier } from "@/lib/session-context";
 import type { UserRole } from "@/store/police-store";
+import { Shield, Car, UserCheck } from "lucide-react";
 
-type Step = "category" | "role" | "credentials" | "otp" | "success";
+type Step = "credentials" | "otp" | "success";
 
-// ── Category definitions ──────────────────────────────────────────────────
-const CATEGORIES = [
-  {
-    id: "command",
-    label: "Uongozi",
-    labelEn: "Command",
-    icon: Landmark,
-    color: "#1E3A8A",
-    description: "IGP, DIG, Makamishna wa Mikoa, Wilaya, Vituo",
-  },
-  {
-    id: "officers",
-    label: "Maafisa wa Uwanja",
-    labelEn: "Field Officers",
-    icon: Shield,
-    color: "#2196F3",
-    description: "Trafiki, Polisi Jumla, Posti",
-  },
-  {
-    id: "cid",
-    label: "Upelelezi (CID)",
-    labelEn: "CID & Investigations",
-    icon: Search,
-    color: "#EF4444",
-    description: "Upelelezi, Uhalifu wa Mtandaoni, Msimamizi",
-  },
-  {
-    id: "specialist",
-    label: "Idara Maalum",
-    labelEn: "Specialist Units",
-    icon: Package,
-    color: "#FF9800",
-    description: "Uhamiaji, Magereza, Dharura, Ushahidi, Ukaguzi",
-  },
-  {
-    id: "admin",
-    label: "Utawala",
-    labelEn: "Administration",
-    icon: Server,
-    color: "#10B981",
-    description: "Msimamizi wa Mfumo, Karani, Mwangalizi",
-  },
-] as const;
+// Role options per mode
+const OFFICER_ROLES = [
+  { id: "officer-traffic" as UserRole, label: "Afisa Trafiki", sublabel: "Traffic Officer", icon: Car },
+  { id: "officer-general" as UserRole, label: "Afisa Polisi", sublabel: "General Officer", icon: UserCheck },
+  { id: "officer-post" as unknown as UserRole, label: "Afisa wa Posti", sublabel: "Post Officer", icon: MapPin },
+];
 
-type CategoryId = typeof CATEGORIES[number]["id"];
-
-// ── Role definitions per category ─────────────────────────────────────────
-const ROLES_BY_CATEGORY: Record<CategoryId, {
-  id: AuthRole; label: string; labelSw: string; icon: React.ElementType; color: string;
-}[]> = {
-  command: [
-    { id: "NATIONAL_COMMANDER",  label: "IGP",                       labelSw: "Mkurugenzi Mkuu wa Polisi",    icon: Landmark,   color: "#1E3A8A" },
-    { id: "DIG",                 label: "Deputy IGP",                labelSw: "Naibu Mkurugenzi Mkuu",       icon: ShieldCheck, color: "#1E3A8A" },
-    { id: "SUPER_ADMIN",         label: "Super Admin",               labelSw: "Msimamizi Mkuu",              icon: ShieldCheck, color: "#1E3A8A" },
-    { id: "REGIONAL_COMMANDER",  label: "Regional Commissioner",     labelSw: "Kamishna wa Mkoa",            icon: MapPin,      color: "#2196F3" },
-    { id: "DISTRICT_COMMANDER",  label: "District Commander",        labelSw: "Kamanda wa Wilaya",           icon: Building2,   color: "#2196F3" },
-    { id: "STATION_COMMANDER",   label: "Station Commissioner",      labelSw: "Kamishna wa Kituo",           icon: Building,    color: "#2196F3" },
-  ],
-  officers: [
-    { id: "TRAFFIC_OFFICER",     label: "Traffic Officer",           labelSw: "Afisa Trafiki",               icon: Car,         color: "#2196F3" },
-    { id: "GENERAL_OFFICER",     label: "General Officer",           labelSw: "Afisa Polisi wa Jumla",       icon: UserCheck,   color: "#2196F3" },
-    { id: "POST_OFFICER",        label: "Post Officer",              labelSw: "Afisa wa Posti",              icon: MapPin,      color: "#2196F3" },
-  ],
-  cid: [
-    { id: "INVESTIGATOR",              label: "CID / Investigator",          labelSw: "Mpelelezi",                   icon: Search,         color: "#EF4444" },
-    { id: "CID_OFFICER",               label: "CID Officer",                 labelSw: "Afisa CID",                   icon: Search,         color: "#EF4444" },
-    { id: "INVESTIGATION_SUPERVISOR",  label: "Investigation Supervisor",    labelSw: "Msimamizi wa Uchunguzi",      icon: ClipboardList,  color: "#EF4444" },
-    { id: "CYBER_CRIME",               label: "Cyber Crime Unit",            labelSw: "Uhalifu wa Mtandaoni",        icon: Monitor,        color: "#EF4444" },
-  ],
-  specialist: [
-    { id: "IMMIGRATION_LIAISON",     label: "Immigration Liaison",       labelSw: "Afisa Uhamiaji",              icon: Globe,      color: "#FF9800" },
-    { id: "PRISON_LIAISON",          label: "Prison Liaison",            labelSw: "Afisa Magereza",              icon: Lock,       color: "#FF9800" },
-    { id: "EMERGENCY_DISPATCHER",    label: "Emergency Dispatcher",      labelSw: "Msimamizi wa Dharura (911)", icon: PhoneIcon,  color: "#FF9800" },
-    { id: "EVIDENCE_OFFICER",        label: "Evidence Officer",          labelSw: "Afisa Ushahidi",              icon: Package,    color: "#FF9800" },
-    { id: "AUDIT_OFFICER",           label: "Audit / Internal Affairs",  labelSw: "Afisa Ukaguzi",               icon: FileSearch, color: "#FF9800" },
-  ],
-  admin: [
-    { id: "SYSTEM_ADMIN",  label: "System Admin",  labelSw: "Msimamizi wa Mfumo",  icon: Server,   color: "#10B981" },
-    { id: "CLERK",         label: "Clerk",          labelSw: "Karani",              icon: FileText, color: "#10B981" },
-    { id: "VIEWER",        label: "Viewer",          labelSw: "Mwangalizi",          icon: Eye,      color: "#10B981" },
-  ],
+type WebRoleOption = {
+  id: string;
+  label: string;
+  route: string;
+  storeRole: UserRole;
 };
 
-export function LoginScreen({ mode = "admin" }: { mode?: "officer" | "admin" }) {
-  const login        = usePoliceStore((s) => s.login);
-  const loginAsRole  = usePoliceStore((s) => s.loginAsRole);
-  const setLoginIdentifier = usePoliceStore((s) => s.setLoginIdentifier);
+const WEB_ROLES: WebRoleOption[] = [
+  { id: "SUPER_ADMIN", label: "Super Admin", route: "/admin/dashboard", storeRole: "admin" },
+  { id: "SYSTEM_ADMIN", label: "System Admin", route: "/system/dashboard", storeRole: "admin" },
+  { id: "NATIONAL_COMMANDER", label: "National Commander", route: "/command/national/dashboard", storeRole: "commander" },
+  { id: "REGIONAL_COMMANDER", label: "Regional Commander", route: "/command/regional/dashboard", storeRole: "commander" },
+  { id: "DISTRICT_COMMANDER", label: "District Commander", route: "/command/district/dashboard", storeRole: "commander" },
+  { id: "STATION_COMMANDER", label: "Station Commander", route: "/command/station/dashboard", storeRole: "commander" },
+  { id: "TRAFFIC_OFFICER", label: "Traffic Officer", route: "/officer/traffic/home", storeRole: "officer-traffic" },
+  { id: "GENERAL_OFFICER", label: "General Officer", route: "/officer/general/home", storeRole: "officer-general" },
+  { id: "POST_OFFICER", label: "Post Officer (Afisa wa Posti)", route: "/", storeRole: "officer-post" },
+  { id: "INVESTIGATOR",            label: "CID / Investigator",         route: "/cid/home",           storeRole: "commander"         },
+  { id: "CID_OFFICER",             label: "CID Officer",                route: "/cid/home",           storeRole: "commander"         },
+  { id: "INVESTIGATION_SUPERVISOR",label: "Investigation Supervisor",   route: "/cid/home",           storeRole: "commander"         },
+  { id: "CYBER_CRIME",             label: "Cyber Crime Unit",           route: "/cid/home",           storeRole: "commander"         },
+  { id: "IMMIGRATION_LIAISON",     label: "Immigration Liaison",        route: "/viewer/dashboard",   storeRole: "admin"             },
+  { id: "PRISON_LIAISON",          label: "Prison Liaison",             route: "/viewer/dashboard",   storeRole: "admin"             },
+  { id: "EMERGENCY_DISPATCHER",    label: "Emergency Dispatcher",       route: "/system/dashboard",   storeRole: "admin"             },
+  { id: "EVIDENCE_OFFICER",        label: "Evidence Officer",           route: "/clerk/records",      storeRole: "admin"             },
+  { id: "AUDIT_OFFICER",           label: "Audit / Internal Affairs",   route: "/system/dashboard",   storeRole: "admin"             },
+  { id: "DIG",                     label: "Deputy IGP",                 route: "/admin",              storeRole: "commander"         },
+  { id: "CLERK", label: "Clerk", route: "/clerk/records", storeRole: "admin" },
+  { id: "VIEWER", label: "Viewer", route: "/viewer/dashboard", storeRole: "admin" },
+];
 
-  const [step, setStep]               = useState<Step>("category");
-  const [category, setCategory]       = useState<CategoryId | null>(null);
-  const [selectedRole, setSelectedRole] = useState<AuthRole | null>(null);
-  const [method, setMethod]           = useState<"username" | "phone">("username");
-  const [identifier, setIdentifier]   = useState("");
-  const [otp, setOtp]                 = useState(["","","","","",""]);
-  const [sending, setSending]         = useState(false);
-  const [verifying, setVerifying]     = useState(false);
+function toStoreOfficerRole(authRole?: string, fallback: UserRole = "officer-traffic"): UserRole {
+  if (authRole === "GENERAL_OFFICER") return "officer-general";
+  if (authRole === "TRAFFIC_OFFICER" || authRole === "OFFICER") return "officer-traffic";
+  if (authRole === "POST_OFFICER") return "officer-traffic"; // post officers use traffic PWA
+  return fallback;
+}
+
+function roleMatchesSelection(selectedRole: string, authRole?: string): boolean {
+  if (!authRole) return false;
+  if (selectedRole === authRole) return true;
+
+  // Legacy commander role can access all command tiers.
+  if (authRole === "COMMANDER") {
+    return [
+      "NATIONAL_COMMANDER",
+      "REGIONAL_COMMANDER",
+      "DISTRICT_COMMANDER",
+      "STATION_COMMANDER",
+    ].includes(selectedRole);
+  }
+
+  // Legacy officer role can access both officer tracks.
+  if (authRole === "OFFICER") {
+    return ["TRAFFIC_OFFICER", "GENERAL_OFFICER"].includes(selectedRole);
+  }
+
+  return false;
+}
+
+export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }) {
+  const router = useRouter();
+  const login = usePoliceStore((s) => s.login);
+  const setLoginIdentifier = usePoliceStore((s) => s.setLoginIdentifier);
+  const [step, setStep] = useState<Step>("credentials");
+  const [method, setMethod] = useState<"username" | "phone">("username");
+  const [identifier, setIdentifier] = useState("");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [sending, setSending] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
-  const [errorMsg, setErrorMsg]       = useState("");
+  const [role, setRole] = useState<UserRole>(OFFICER_ROLES[0].id);
+  const [webRole, setWebRole] = useState<string>(WEB_ROLES[0].id);
+  const [authResolvedRole, setAuthResolvedRole] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [verifying, setVerifying] = useState(false);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Category filter for role selector
+  type RoleCategory = "all"|"command"|"officers"|"cid"|"specialist"|"admin";
+  const [roleCategory, setRoleCategory] = useState<RoleCategory>("all");
+
+  const ROLE_CATEGORIES: { id: RoleCategory; label: string; labelSw: string; roles: string[] }[] = [
+    { id:"all",        label:"All",          labelSw:"Zote",          roles:[] },
+    { id:"command",    label:"Command",      labelSw:"Uongozi",       roles:["NATIONAL_COMMANDER","DIG","SUPER_ADMIN","REGIONAL_COMMANDER","DISTRICT_COMMANDER","STATION_COMMANDER"] },
+    { id:"officers",   label:"Officers",     labelSw:"Maafisa",       roles:["TRAFFIC_OFFICER","GENERAL_OFFICER","POST_OFFICER"] },
+    { id:"cid",        label:"CID",          labelSw:"Upelelezi",     roles:["INVESTIGATOR","CID_OFFICER","INVESTIGATION_SUPERVISOR","CYBER_CRIME"] },
+    { id:"specialist", label:"Specialist",   labelSw:"Idara Maalum",  roles:["IMMIGRATION_LIAISON","PRISON_LIAISON","EMERGENCY_DISPATCHER","EVIDENCE_OFFICER","AUDIT_OFFICER"] },
+    { id:"admin",      label:"Admin",        labelSw:"Utawala",       roles:["SYSTEM_ADMIN","CLERK","VIEWER"] },
+  ];
+
+  const filteredWebRoles = roleCategory === "all"
+    ? WEB_ROLES
+    : WEB_ROLES.filter(r => ROLE_CATEGORIES.find(c=>c.id===roleCategory)?.roles.includes(r.id));
 
   // Resend countdown
   useEffect(() => {
@@ -122,317 +131,504 @@ export function LoginScreen({ mode = "admin" }: { mode?: "officer" | "admin" }) 
     return () => clearTimeout(t);
   }, [resendTimer]);
 
+  // Auto-advance OTP inputs
   const handleOtpChange = (idx: number, val: string) => {
     if (!/^\d?$/.test(val)) return;
-    const next = [...otp]; next[idx] = val; setOtp(next);
+    const next = [...otp];
+    next[idx] = val;
+    setOtp(next);
     if (val && idx < 5) otpRefs.current[idx + 1]?.focus();
   };
-  const handleOtpKey = (idx: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !otp[idx] && idx > 0) otpRefs.current[idx - 1]?.focus();
+
+  const handleOtpKey = (idx: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !otp[idx] && idx > 0) {
+      otpRefs.current[idx - 1]?.focus();
+    }
   };
+
   const handleOtpPaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    const text = e.clipboardData.getData("text").replace(/\D/g,"").slice(0,6);
+    const text = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
     if (!text) return;
-    const next = ["","","","","",""]; text.split("").forEach((c,i) => (next[i]=c));
-    setOtp(next); otpRefs.current[Math.min(text.length,5)]?.focus();
+    const next = ["", "", "", "", "", ""];
+    text.split("").forEach((c, i) => (next[i] = c));
+    setOtp(next);
+    otpRefs.current[Math.min(text.length, 5)]?.focus();
   };
 
   const sendOtp = async () => {
-    const cleanId = identifier.trim();
-    if (!cleanId) { setErrorMsg("Tafadhali ingiza username au namba ya simu."); return; }
-    setErrorMsg(""); setSending(true);
+    const cleanIdentifier = identifier.trim();
+    if (!cleanIdentifier) return;
+
+    setErrorMsg("");
+    setSending(true);
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST", headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ identifier: cleanId }),
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier: cleanIdentifier }),
       });
-      const data = await res.json().catch(() => ({}));
-      // Demo mode: proceed regardless of API result
-      if (data?.user?.role) setSelectedRole(data.user.role as AuthRole);
-    } catch { /* demo mode continues */ } finally { setSending(false); }
-    setOtp(["1","2","3","4","5","6"]);
-    setStep("otp"); setResendTimer(45);
-    setTimeout(() => otpRefs.current[5]?.focus(), 100);
+      const data = await response.json().catch(() => ({}));
+
+      // If API returns error, still proceed in demo mode for ALL modes
+      if (!response.ok || data?.error) {
+        // Demo platform: always proceed to OTP regardless of API result
+        // Role identity is resolved from dropdown selection + mock DB on client
+        console.warn("sendOtp API error (demo mode continues):", data?.error);
+      }
+
+      const apiRole = String(data?.user?.role ?? "");
+      if (apiRole) {
+        // Use DB-resolved role if available (works when API succeeds)
+        setAuthResolvedRole(apiRole);
+        if (mode === "admin") setWebRole(apiRole);
+      }
+      // Always proceed to OTP — demo mode, any 6 digits accepted
+      setOtp(["1","2","3","4","5","6"]);
+      setStep("otp");
+      setResendTimer(45);
+      setTimeout(() => otpRefs.current[5]?.focus(), 100);
+    } catch {
+      // Network error — always proceed in demo mode (both officer and admin)
+      console.warn("sendOtp network error — proceeding in demo mode");
+    } finally {
+      setSending(false);
+    }
   };
 
-  const verifyOtp = () => {
-    const code = otp.join("");
-    if (!/^\d{6}$/.test(code)) { setErrorMsg("OTP lazima iwe na tarakimu 6."); return; }
-    setErrorMsg(""); setVerifying(true);
-    const role = selectedRole!;
-    saveLoginIdentifier(identifier.trim());
-    setLoginIdentifier(identifier.trim());
-    setStep("success");
-    setTimeout(() => {
+  const loginAsRole = usePoliceStore((s) => s.loginAsRole);
+
+  const verifyOtp = async () => {
+    const cleanIdentifier = identifier.trim();
+    const otpCode = otp.join("");
+
+    if (!cleanIdentifier || otpCode.length < 6) return;
+
+    setErrorMsg("");
+    setVerifying(true);
+
+    try {
+      // ── BYPASS (demo mode — works on Vercel serverless) ─────────────
+      // Any 6-digit code is accepted. We skip the API call entirely to
+      // avoid in-memory otpStore mismatch across Vercel serverless instances.
+      if (!/^\d{6}$/.test(otpCode)) {
+        setErrorMsg("OTP lazima iwe na tarakimu 6.");
+        setVerifying(false);
+        return;
+      }
+
+      // ── Resolve identity from mock DB ────────────────────────────────
+      const userRole = authResolvedRole ?? "";
+
+      if (mode === "admin") {
+        // Use DB-resolved role if available, otherwise use the dropdown selection
+        const resolvedAuthRole = (userRole || webRole) as AuthRole;
+        saveLoginIdentifier(cleanIdentifier);
+        setLoginIdentifier(cleanIdentifier);
+        setStep("success");
+        setTimeout(() => {
+          loginAsRole(resolvedAuthRole);
+        }, 900);
+        return;
+      }
+
+      // Officer / Post Officer mode — map DB role to store role
+      const mappedRole = toStoreOfficerRole(userRole, role);
+      saveLoginIdentifier(cleanIdentifier);
+      setLoginIdentifier(cleanIdentifier);
+      setStep("success");
+      setTimeout(() => { login(mappedRole); }, 900);
+
+    } catch {
+      setErrorMsg("Hitilafu ya mtandao. Jaribu tena.");
+    } finally {
       setVerifying(false);
-      loginAsRole(role);
-    }, 900);
+    }
   };
 
-  const catColor = category ? CATEGORIES.find(c => c.id === category)?.color ?? "#1E3A8A" : "#1E3A8A";
-  const roleInfo = selectedRole
-    ? Object.values(ROLES_BY_CATEGORY).flat().find(r => r.id === selectedRole)
-    : null;
+  const resendOtp = () => {
+    if (resendTimer > 0) return;
+    void sendOtp();
+  };
+
+  const openExternalApp = (url: string) => {
+    if (typeof window === "undefined") return;
+
+    const openedWindow = window.open(url, "_blank", "noopener,noreferrer");
+    if (openedWindow) {
+      openedWindow.opener = null;
+      return;
+    }
+
+    // Fallback for PWA contexts where opening a new tab is blocked.
+    window.location.assign(url);
+  };
+
+  const otpComplete = otp.join("").length === 6;
+  const maskedIdentifier =
+    method === "phone"
+      ? identifier.replace(/(\d{3})\d+(\d{2})/, "$1•••••$2")
+      : identifier;
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-[#0d1b3d] via-[#1E3A8A] to-[#1565C0]">
+    <div className="relative flex min-h-full flex-col bg-police-card">
+      {/* Background cityscape overlay */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#2196F3] to-transparent" />
+        <svg className="absolute bottom-0 w-full" viewBox="0 0 400 200" preserveAspectRatio="none">
+          <polygon points="0,200 0,120 30,120 30,90 60,90 60,110 90,110 90,70 120,70 120,100 150,100 150,60 180,60 180,95 210,95 210,80 240,80 240,50 270,50 270,90 300,90 300,75 330,75 330,105 360,105 360,85 400,85 400,200" fill="#1E3A8A" />
+        </svg>
+      </div>
 
-      {/* Header */}
-      <div className="flex flex-col items-center gap-3 px-6 pt-10 pb-6 sm:pt-14">
-        <div className="relative h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-full border-4 border-white/20 bg-white shadow-2xl">
-          <Image src="/police-logo.png" alt="TPF" fill style={{objectFit:"contain"}} priority />
-        </div>
-        <div className="text-center">
-          <h1 className="text-[18px] sm:text-[22px] font-extrabold tracking-wide text-white">
+      {/* Content */}
+      <div className="relative z-10 flex flex-1 flex-col items-center px-6 pb-8 pt-8">
+        {/* Logo */}
+        <div className="mt-2 flex flex-col items-center">
+          <div className="h-28 w-28 overflow-hidden rounded-full ring-4 ring-[#2196F3]/20">
+            <Image
+              src="/police-logo.png"
+              alt="Tanzania Police Force"
+              width={112}
+              height={112}
+              className="h-full w-full object-cover"
+              priority
+            />
+          </div>
+          <h1 className="mt-4 text-center text-[22px] font-extrabold tracking-tight text-police-navy2">
             TANZANIA POLICE FORCE
           </h1>
-          <p className="text-[11px] sm:text-[13px] font-medium tracking-widest text-blue-200">
+          <p className="mt-1 text-[13px] font-medium text-[#2196F3]">
             USALAMA WETU, JUKUMU LETU
           </p>
         </div>
-      </div>
 
-      {/* Main card */}
-      <div className="mx-auto w-full max-w-md flex-1 px-4 pb-8 sm:max-w-lg">
-        <div className="overflow-hidden rounded-2xl bg-white shadow-2xl">
+        {/* Login Card */}
+        <div className="mt-7 w-full rounded-2xl bg-police-card p-5 shadow-[0_4px_20px_rgba(0,0,0,0.08)] ring-1 ring-gray-100">
+          {/* STEP 1: Credentials */}
+          {step === "credentials" && (
+            <>
+              <h2 className="text-center text-[19px] font-bold text-police-navy2">Ingia kwenye Mfumo</h2>
+              <p className="mt-1 text-center text-[13px] text-police-muted">
+                Chagua nafasi yako kisha ingia
+              </p>
 
-          {/* Progress bar */}
-          <div className="h-1 bg-gray-100">
-            <div
-              className="h-full bg-[#2196F3] transition-all duration-500"
-              style={{ width:
-                step==="category" ? "20%" : step==="role" ? "40%" :
-                step==="credentials" ? "60%" : step==="otp" ? "80%" : "100%"
-              }}
-            />
-          </div>
-
-          <div className="p-5 sm:p-7">
-
-            {/* ── STEP 1: CATEGORY ─────────────────────────── */}
-            {step === "category" && (
-              <>
-                <h2 className="text-[18px] font-bold text-[#0d1b3d]">Ingia kwenye Mfumo</h2>
-                <p className="mt-1 text-[13px] text-gray-500">Chagua aina ya akaunti yako</p>
-
-                <div className="mt-5 grid grid-cols-1 gap-3">
-                  {CATEGORIES.map((cat) => {
-                    const Icon = cat.icon;
-                    return (
+              {/* Role selector */}
+              {mode === "admin" ? (
+                <div className="mt-4">
+                  <label className="mb-1.5 block text-[13px] font-medium text-police-navy2">Aina ya Role</label>
+                  {/* Category filter buttons */}
+                  <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1">
+                    {ROLE_CATEGORIES.map((cat) => (
                       <button
                         key={cat.id}
-                        onClick={() => { setCategory(cat.id); setStep("role"); }}
-                        className="flex items-center gap-4 rounded-xl border-2 border-gray-100 bg-white p-4 text-left transition hover:border-[#2196F3]/40 hover:bg-[#2196F3]/5 active:scale-[0.98]"
+                        onClick={() => {
+                          setRoleCategory(cat.id);
+                          // Auto-select first role of category
+                          if (cat.id !== "all" && cat.roles.length > 0) {
+                            setWebRole(cat.roles[0]);
+                          }
+                        }}
+                        className={`shrink-0 rounded-lg px-3 py-1.5 text-[11px] font-semibold transition ${
+                          roleCategory === cat.id
+                            ? "bg-[#1E3A8A] text-white"
+                            : "bg-police-muted text-police-muted border border-police"
+                        }`}
                       >
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl" style={{backgroundColor:`${cat.color}18`}}>
-                          <Icon size={22} style={{color:cat.color}} />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[14px] font-bold text-[#0d1b3d]">{cat.label}</p>
-                          <p className="text-[11px] text-gray-400">{cat.description}</p>
-                        </div>
-                        <ChevronRight size={18} className="shrink-0 text-gray-300" />
+                        {cat.labelSw}
                       </button>
-                    );
-                  })}
+                    ))}
+                  </div>
+                  <label className="mb-1.5 block text-[12px] font-medium text-police-muted">Role</label>
+                  <div className="relative">
+                    <select
+                      value={webRole}
+                      onChange={(e) => setWebRole(e.target.value)}
+                      className="h-12 w-full appearance-none rounded-xl border border-police bg-police-card px-3 pr-10 text-[14px] text-police focus:border-[#2196F3] focus:outline-none focus:ring-2 focus:ring-[#2196F3]/20"
+                    >
+                      <optgroup label="═══ UONGOZI WA KITAIFA ═══">
+                        <option value="NATIONAL_COMMANDER">IGP — Inspector General of Police</option>
+                        <option value="DIG">DIG — Deputy Inspector General</option>
+                        <option value="SUPER_ADMIN">Super Admin — Msimamizi Mkuu</option>
+                      </optgroup>
+                      <optgroup label="═══ MAKAMISHNA WA MIKOA ═══">
+                        <option value="REGIONAL_COMMANDER">Regional Commissioner — Mkamishna wa Mkoa</option>
+                        <option value="DISTRICT_COMMANDER">District Commander — Mkamishna wa Wilaya</option>
+                        <option value="STATION_COMMANDER">Station Commissioner — Mkamishna wa Kituo</option>
+                      </optgroup>
+                      <optgroup label="═══ MAAFISA WA UWANJA ═══">
+                        <option value="TRAFFIC_OFFICER">Traffic Officer — Afisa Trafiki</option>
+                        <option value="GENERAL_OFFICER">General Officer — Afisa Polisi</option>
+                        <option value="POST_OFFICER">Post Officer — Afisa wa Posti</option>
+                      </optgroup>
+                      <optgroup label="═══ KITENGO CHA UPELELEZI (CID) ═══">
+                        <option value="INVESTIGATOR">CID / Investigator — Mpelelezi</option>
+                        <option value="CID_OFFICER">CID Officer — Afisa CID</option>
+                        <option value="INVESTIGATION_SUPERVISOR">Investigation Supervisor — Msimamizi wa Uchunguzi</option>
+                        <option value="CYBER_CRIME">Cyber Crime Unit — Uhalifu wa Mtandaoni</option>
+                      </optgroup>
+                      <optgroup label="═══ IDARA MAALUM ═══">
+                        <option value="IMMIGRATION_LIAISON">Immigration Liaison — Afisa Uhamiaji</option>
+                        <option value="PRISON_LIAISON">Prison Liaison — Afisa Magereza</option>
+                        <option value="EMERGENCY_DISPATCHER">Emergency Dispatcher — Msimamizi wa Dharura (911)</option>
+                        <option value="EVIDENCE_OFFICER">Evidence Officer — Afisa Ushahidi</option>
+                        <option value="AUDIT_OFFICER">Audit / Internal Affairs — Afisa Ukaguzi</option>
+                      </optgroup>
+                      <optgroup label="═══ UTAWALA ═══">
+                        <option value="SYSTEM_ADMIN">System Admin — Msimamizi wa Mfumo</option>
+                        <option value="CLERK">Clerk — Karani</option>
+                        <option value="VIEWER">Viewer — Mwangalizi (Read-only)</option>
+                      </optgroup>
+                    </select>
+                    <ChevronDown size={18} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-police-faint" />
+                  </div>
                 </div>
-              </>
-            )}
-
-            {/* ── STEP 2: ROLE ─────────────────────────────── */}
-            {step === "role" && category && (
-              <>
-                <button onClick={() => setStep("category")} className="mb-4 flex items-center gap-1.5 text-[13px] font-medium text-[#2196F3]">
-                  <ArrowLeft size={16} /> Rudi
-                </button>
-                <h2 className="text-[18px] font-bold text-[#0d1b3d]">Chagua Role</h2>
-                <p className="mt-1 text-[13px] text-gray-500">
-                  {CATEGORIES.find(c=>c.id===category)?.label} — chagua nafasi yako haswa
-                </p>
-
-                <div className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                  {ROLES_BY_CATEGORY[category].map((r) => {
+              ) : (
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  {OFFICER_ROLES.map((r) => {
                     const Icon = r.icon;
-                    const isSelected = selectedRole === r.id;
+                    const active = role === r.id;
                     return (
                       <button
                         key={r.id}
-                        onClick={() => { setSelectedRole(r.id); setStep("credentials"); }}
-                        className={`flex items-center gap-3 rounded-xl border-2 p-3.5 text-left transition active:scale-[0.98] ${
-                          isSelected
-                            ? "border-[#2196F3] bg-[#2196F3]/8"
-                            : "border-gray-100 hover:border-[#2196F3]/30 hover:bg-[#2196F3]/4"
+                        onClick={() => setRole(r.id)}
+                        className={`flex items-center gap-2.5 rounded-xl border-2 p-2.5 text-left transition ${
+                          active
+                            ? "border-[#2196F3] bg-[#2196F3]/5"
+                            : "border-gray-200 bg-white"
                         }`}
                       >
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg" style={{backgroundColor:`${r.color}15`}}>
-                          <Icon size={18} style={{color:r.color}} />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[12px] font-bold leading-tight text-[#0d1b3d]">{r.label}</p>
-                          <p className="text-[10px] text-gray-400 leading-tight">{r.labelSw}</p>
+                        <Icon
+                          size={18}
+                          className={active ? "text-[#2196F3]" : "text-gray-400"}
+                        />
+                        <div className="min-w-0">
+                          <div
+                            className={`text-[11px] font-bold leading-tight ${
+                              active ? "text-police-navy2" : "text-gray-500"
+                            }`}
+                          >
+                            {r.label}
+                          </div>
+                          <div className="text-[8px] leading-tight text-gray-400">{r.sublabel}</div>
                         </div>
                       </button>
                     );
                   })}
                 </div>
-              </>
-            )}
+              )}
 
-            {/* ── STEP 3: CREDENTIALS ──────────────────────── */}
-            {step === "credentials" && selectedRole && (
-              <>
-                <button onClick={() => setStep("role")} className="mb-4 flex items-center gap-1.5 text-[13px] font-medium text-[#2196F3]">
-                  <ArrowLeft size={16} /> Rudi
-                </button>
-
-                {/* Selected role badge */}
-                <div className="mb-4 flex items-center gap-3 rounded-xl bg-[#1E3A8A]/8 p-3">
-                  {(() => { const Icon = roleInfo?.icon ?? Shield; return <Icon size={18} style={{color:roleInfo?.color ?? "#1E3A8A"}} />; })()}
-                  <div>
-                    <p className="text-[12px] font-bold text-[#1E3A8A]">{roleInfo?.label}</p>
-                    <p className="text-[10px] text-gray-400">{roleInfo?.labelSw}</p>
-                  </div>
-                </div>
-
-                <h2 className="text-[17px] font-bold text-[#0d1b3d]">Ingiza Kitambulisho</h2>
-
-                {/* Method toggle */}
-                <div className="mt-3 flex gap-1.5 rounded-xl bg-gray-100 p-1">
-                  {(["username","phone"] as const).map((m) => (
-                    <button key={m} onClick={() => setMethod(m)}
-                      className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${
-                        method===m ? "bg-white text-[#2196F3] shadow-sm" : "text-gray-500"
-                      }`}>
-                      {m==="username" ? <><User size={13}/> Username</> : <><Phone size={13}/> Simu</>}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Input */}
-                <div className="mt-3">
-                  <div className="flex items-center gap-2.5 rounded-xl border-2 border-gray-200 bg-white px-3.5 focus-within:border-[#2196F3]">
-                    {method==="username" ? <User size={18} className="text-[#2196F3]"/> : <Phone size={18} className="text-[#2196F3]"/>}
-                    <input
-                      value={identifier}
-                      onChange={(e) => { setIdentifier(e.target.value); setErrorMsg(""); }}
-                      onKeyDown={(e) => e.key==="Enter" && sendOtp()}
-                      placeholder={method==="username" ? "Ingiza username yako" : "07XX XXX XXX"}
-                      inputMode={method==="phone" ? "tel" : "text"}
-                      autoComplete="username"
-                      className="h-12 flex-1 bg-transparent text-[14px] text-[#0d1b3d] placeholder:text-gray-300 focus:outline-none"
-                    />
-                  </div>
-                  {errorMsg && <p className="mt-1.5 text-[12px] text-[#EF4444]">{errorMsg}</p>}
-                </div>
-
-                {/* Demo hint */}
-                <div className="mt-3 rounded-xl border border-[#2196F3]/20 bg-[#2196F3]/5 px-3 py-2.5">
-                  <p className="text-[11px] text-[#1E3A8A]">
-                    <span className="font-bold">Demo Mode —</span> Ingiza username yoyote sahihi. OTP itajazwa kiotomatiki: <span className="font-bold tracking-widest">123456</span>
-                  </p>
-                </div>
-
+              {/* Method toggle */}
+              <div className="mt-4 flex gap-2 rounded-xl bg-police-muted p-1">
                 <button
-                  onClick={sendOtp}
-                  disabled={sending || !identifier.trim()}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] py-3.5 text-[14px] font-bold text-white disabled:opacity-50 active:scale-[0.98] transition"
+                  onClick={() => setMethod("username")}
+                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${
+                    method === "username"
+                      ? "bg-police-card text-[#2196F3] shadow-sm"
+                      : "text-police-muted"
+                  }`}
                 >
-                  {sending ? <RefreshCw size={16} className="animate-spin"/> : <><ArrowRight size={16}/> Endelea</>}
+                  <User size={14} /> Username
                 </button>
-              </>
-            )}
-
-            {/* ── STEP 4: OTP ──────────────────────────────── */}
-            {step === "otp" && (
-              <>
-                <div className="mb-4 flex items-center gap-3 rounded-xl bg-[#1E3A8A]/8 p-3">
-                  {(() => { const Icon = roleInfo?.icon ?? Shield; return <Icon size={18} style={{color:roleInfo?.color ?? "#1E3A8A"}} />; })()}
-                  <div>
-                    <p className="text-[12px] font-bold text-[#1E3A8A]">{roleInfo?.label}</p>
-                    <p className="text-[10px] text-gray-400">{identifier}</p>
-                  </div>
-                </div>
-
-                <h2 className="text-[17px] font-bold text-[#0d1b3d]">Thibitisha OTP</h2>
-                <p className="mt-1 text-[12px] text-gray-500">OTP imejazwa kiotomatiki. Bonyeza Thibitisha.</p>
-
-                {/* Demo badge */}
-                <div className="mt-3 flex items-center justify-center gap-2 rounded-xl border border-[#2196F3]/30 bg-[#2196F3]/8 py-2.5">
-                  <span className="text-[11px] font-bold text-[#1E3A8A] uppercase tracking-wide">Demo</span>
-                  <span className="rounded-lg bg-[#1E3A8A] px-3 py-0.5 text-[14px] font-bold tracking-[0.4em] text-white">123456</span>
-                </div>
-
-                {/* OTP inputs */}
-                <div className="mt-4 flex justify-center gap-2 sm:gap-3">
-                  {otp.map((digit, i) => (
-                    <input
-                      key={i}
-                      ref={(el) => { otpRefs.current[i] = el; }}
-                      value={digit}
-                      maxLength={1}
-                      inputMode="numeric"
-                      onChange={(e) => handleOtpChange(i, e.target.value)}
-                      onKeyDown={(e) => handleOtpKey(i, e)}
-                      onPaste={handleOtpPaste}
-                      className="h-12 w-10 rounded-xl border-2 border-gray-200 bg-white text-center text-[18px] font-bold text-[#1E3A8A] focus:border-[#2196F3] focus:outline-none sm:h-13 sm:w-12"
-                    />
-                  ))}
-                </div>
-
-                {errorMsg && <p className="mt-2 text-center text-[12px] text-[#EF4444]">{errorMsg}</p>}
-
                 <button
-                  onClick={verifyOtp}
-                  disabled={verifying || otp.join("").length < 6}
-                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] py-3.5 text-[14px] font-bold text-white disabled:opacity-50 transition active:scale-[0.98]"
+                  onClick={() => setMethod("phone")}
+                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${
+                    method === "phone"
+                      ? "bg-police-card text-[#2196F3] shadow-sm"
+                      : "text-police-muted"
+                  }`}
                 >
-                  {verifying ? <RefreshCw size={16} className="animate-spin"/> : <><KeyRound size={16}/> Thibitisha OTP</>}
+                  <Phone size={14} /> Mobile Number
                 </button>
+              </div>
 
-                <button
-                  onClick={() => { setStep("credentials"); setOtp(["","","","","",""]); }}
-                  className="mt-2.5 w-full py-2 text-[12px] font-medium text-gray-400"
-                >
-                  ← Rudi nyuma
-                </button>
+              {/* Identifier Input */}
+              <div className="mt-4">
+                <label className="mb-1.5 block text-[13px] font-medium text-police-navy2">
+                  {method === "username" ? "Username" : "Namba ya Simu"}
+                </label>
+                <div className="flex items-center gap-2 rounded-xl border border-police bg-police-card px-3 focus-within:border-[#2196F3] focus-within:ring-2 focus-within:ring-[#2196F3]/20">
+                  {method === "username" ? (
+                    <User size={20} className="text-[#2196F3]" />
+                  ) : (
+                    <Phone size={20} className="text-[#2196F3]" />
+                  )}
+                  <input
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && sendOtp()}
+                    placeholder={
+                      method === "username"
+                        ? "Ingiza username yako"
+                        : "Ingiza namba ya simu (07XX XXX XXX)"
+                    }
+                    inputMode={method === "phone" ? "tel" : "text"}
+                    className="h-12 flex-1 bg-transparent text-[14px] text-police placeholder:text-police-faint focus:outline-none"
+                  />
+                </div>
+              </div>
 
-                {resendTimer > 0 ? (
-                  <p className="mt-1 text-center text-[11px] text-gray-400">Tuma tena kwa sekunde {resendTimer}</p>
+              {/* Info note */}
+              <div className="mt-3 flex items-start gap-2 rounded-xl bg-[#2196F3]/5 px-3 py-2.5">
+                <Smartphone size={16} className="mt-0.5 shrink-0 text-[#2196F3]" />
+                <p className="text-[11px] leading-snug text-police-muted">
+                  OTP itatumwa kwa simu yako baada ya kuwasilisha.{" "}
+                  <span className="font-medium text-[#2196F3]">Hakuna password inahitajika.</span>
+                </p>
+              </div>
+
+              {errorMsg && (
+                <div className="mt-3 rounded-xl border border-[#EF4444]/20 bg-[#EF4444]/10 px-3 py-2 text-[12px] text-[#EF4444]700">
+                  {errorMsg}
+                </div>
+              )}
+
+              {/* Send OTP Button */}
+              <button
+                onClick={sendOtp}
+                disabled={!identifier.trim() || sending}
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-3.5 text-[15px] font-bold text-white shadow-lg shadow-[#2196F3]/30 transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {sending ? (
+                  <>
+                    <RefreshCw size={18} className="animate-spin" />
+                    Inatuma OTP...
+                  </>
                 ) : (
-                  <button onClick={sendOtp} className="mt-1 w-full text-center text-[12px] font-medium text-[#2196F3]">
-                    <RefreshCw size={12} className="inline mr-1"/> Tuma OTP tena
+                  <>
+                    <KeyRound size={20} />
+                    <span>Tuma OTP</span>
+                    <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
+            </>
+          )}
+
+          {/* STEP 2: OTP */}
+          {step === "otp" && (
+            <>
+              <button
+                onClick={() => {
+                  setStep("credentials");
+                  setOtp(["", "", "", "", "", ""]);
+                }}
+                className="mb-3 flex items-center gap-1 text-[12px] font-medium text-police-muted"
+              >
+                <ArrowLeft size={16} /> Rudi
+              </button>
+
+              <h2 className="text-center text-[19px] font-bold text-police-navy2">Thibitisha OTP</h2>
+              <p className="mt-1 text-center text-[13px] text-police-muted">
+                Tumekutumia OTP yenye tarakimu 6 kwa{" "}
+                <span className="font-semibold text-police-navy2">{maskedIdentifier}</span>
+              </p>
+
+              {/* Demo mode badge */}
+              <div className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-[#1E3A8A]/8 border border-[#1E3A8A]/20 px-4 py-2.5">
+                <span className="text-[11px] font-bold text-[#1E3A8A] uppercase tracking-wide">Demo Mode</span>
+                <span className="text-[12px] text-police-muted">— Tumia tarakimu yoyote 6:</span>
+                <span className="rounded-lg bg-[#1E3A8A] px-2.5 py-0.5 text-[13px] font-bold tracking-widest text-white">123456</span>
+              </div>
+
+              {/* OTP Inputs */}
+              <div className="mt-5 flex justify-between gap-2" onPaste={handleOtpPaste}>
+                {otp.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    ref={(el) => {
+                      otpRefs.current[idx] = el;
+                    }}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleOtpKey(idx, e)}
+                    className={`h-12 w-full rounded-xl border-2 bg-police-card text-center text-[20px] font-bold text-police-navy2 focus:outline-none ${
+                      digit
+                        ? "border-[#2196F3] bg-[#2196F3]/5"
+                        : "border-police focus:border-[#2196F3]"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Resend */}
+              <div className="mt-4 flex items-center justify-center gap-1.5">
+                <span className="text-[12px] text-police-muted">Hujapata OTP?</span>
+                {resendTimer > 0 ? (
+                  <span className="text-[12px] font-medium text-police-faint">
+                    Tuma tena baada ya {resendTimer}s
+                  </span>
+                ) : (
+                  <button
+                    onClick={resendOtp}
+                    className="flex items-center gap-1 text-[12px] font-bold text-[#2196F3]"
+                  >
+                    <RefreshCw size={12} /> Tuma tena
                   </button>
                 )}
-              </>
-            )}
-
-            {/* ── STEP 5: SUCCESS ──────────────────────────── */}
-            {step === "success" && (
-              <div className="flex flex-col items-center py-6">
-                <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-green-50">
-                  <span className="absolute inset-0 animate-ping rounded-full bg-green-200 opacity-40" />
-                  <CheckCircle2 size={44} className="relative z-10 text-green-500" />
-                </div>
-                <h2 className="mt-4 text-[19px] font-bold text-[#0d1b3d]">Login Imefanikiwa!</h2>
-                <p className="mt-1 text-center text-[13px] text-gray-500">
-                  Karibu, {roleInfo?.labelSw}. Inaingia...
-                </p>
-                <div className="mt-4 h-1.5 w-40 overflow-hidden rounded-full bg-gray-100">
-                  <div className="h-full rounded-full bg-[#2196F3]"
-                    style={{animation:"progress-fill 0.85s ease-in-out forwards"}}/>
-                </div>
-                <style>{`@keyframes progress-fill{from{width:0%}to{width:100%}}`}</style>
               </div>
-            )}
 
-          </div>
+              {/* Verify Button */}
+              <button
+                onClick={verifyOtp}
+                disabled={!otpComplete || verifying}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-3.5 text-[15px] font-bold text-white shadow-lg shadow-[#2196F3]/30 transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {verifying ? (
+                  <>
+                    <RefreshCw size={18} className="animate-spin" />
+                    <span>Inathibitisha...</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck size={20} />
+                    <span>Thibitisha na Ingia</span>
+                    <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
+
+              {errorMsg && (
+                <div className="mt-3 rounded-xl border border-[#EF4444]/20 bg-[#EF4444]/10 px-3 py-2 text-[12px] text-[#EF4444]700">
+                  {errorMsg}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* STEP 3: Success */}
+          {step === "success" && (
+            <div className="flex flex-col items-center py-6">
+              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-[#10B981]/10">
+                <div className="absolute inset-0 animate-ping rounded-full bg-[#10B981]/200 opacity-40" />
+                <CheckCircle2 size={48} className="text-[#10B981] relative z-10" />
+              </div>
+              <h2 className="mt-4 text-[19px] font-bold text-police-navy2">Login Imefanikiwa!</h2>
+              <p className="mt-1 text-center text-[13px] text-police-muted">
+                Karibu kwenye mfumo. Inaingia...
+              </p>
+              <div className="mt-4 h-1.5 w-40 overflow-hidden rounded-full bg-police-muted">
+                <div
+                  className="h-full rounded-full bg-[#2196F3]"
+                  style={{ animation: "progress-fill 0.85s ease-in-out forwards" }}
+                />
+              </div>
+              <style>{`@keyframes progress-fill { from { width: 0% } to { width: 100% } }`}</style>
+            </div>
+          )}
         </div>
 
+
+
         {/* Footer */}
-        <p className="mt-5 text-center text-[11px] text-blue-200/60">
-          Mfumo Salama wa Jeshi la Polisi Tanzania • © 2026 Tanzania Police Force
-        </p>
+        <div className="mt-6 text-center">
+          <p className="text-[11px] text-police-muted">
+            Mfumo salama wa Jeshi la Polisi Tanzania
+          </p>
+          <p className="mt-1 text-[11px] text-police-faint">© 2026 Tanzania Police Force</p>
+        </div>
       </div>
     </div>
   );
