@@ -130,7 +130,7 @@ export function IncidentDetailScreen() {
             </div>
             <div>
               <label className="mb-1 block text-[12px] font-medium text-police-muted">Magari Yaliyohusika</label>
-              <input value={form.vehicles} onChange={set("vehicles")} placeholder="T123ABC, T789GHI" className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
+              <input value={form.vehicles} onChange={set("vehicles")} placeholder="T 001 ABC, T 003 GHI" className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
             </div>
           </div>
           <div>

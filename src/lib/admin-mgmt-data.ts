@@ -293,7 +293,7 @@ export const CITIZEN_RESULT = {
     { type: "Pasipoti", number: "TZ12345678", status: "Sahihi" },
   ],
   vehicles: [
-    { plate: "T123ABC", model: "Toyota Hilux", color: "White", year: "2022" },
+    { plate: "T 003 GHI", model: "Toyota Hilux", color: "White", year: "2022" },
   ],
   history: [
     { date: "10 Mei 2026", type: "Mshiriki wa Shahidi", case: "INC-2026-0341", station: "Kituo Kikuu DSM" },

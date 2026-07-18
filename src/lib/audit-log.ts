@@ -47,7 +47,7 @@ auditStore.push(
     action: "create",
     resource: "citations",
     resourceId: "CT-2026-0451",
-    details: { plate: "T123ABC", offense: "Over Speeding" },
+    details: { plate: "T 003 GHI", offense: "Over Speeding" },
     timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
   },
 );

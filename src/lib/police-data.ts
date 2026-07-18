@@ -190,7 +190,7 @@ export const ALERTS = [
     iconColor: "#10B981",
     title: "Citation CT-2026-0451 — Imekubaliwa",
     time: "06:45",
-    message: "Citation namba CT-2026-0451 kwa gari T123ABC imekubaliwa na kusindikizwa kwa mahakama.",
+    message: "Citation namba CT-2026-0451 kwa gari T 003 GHI imekubaliwa na kusindikizwa kwa mahakama.",
     source: "Mfumo wa Kiotomatiki",
     sourceBg: "#E8F5E9",
     dotColor: "#10B981",
@@ -256,9 +256,9 @@ export const PROFILE_STATS = [
 
 export const PROFILE_ACTIVITIES = [
   { title: "Patroli imekamilika", desc: "Kariakoo - Ilala Zone", time: "08:15 AM 15 Mei 2026", icon: "car", color: "#2196F3" },
-  { title: "Citation imetolewa", desc: "Namba ya Gari: T789GHI", time: "07:45 AM 15 Mei 2026", icon: "file-text", color: "#10B981" },
+  { title: "Citation imetolewa", desc: "Namba ya Gari: T 009 YZA", time: "07:45 AM 15 Mei 2026", icon: "file-text", color: "#10B981" },
   { title: "Kukamatwa — Ali Bakari", desc: "Wizi wa Silaha", time: "07:20 AM 15 Mei 2026", icon: "user-x", color: "#EF4444" },
-  { title: "Onyo Limetolewa", desc: "Kasi kupita kiasi — T456DEF", time: "06:50 AM 15 Mei 2026", icon: "alert-triangle", color: "#FF9800" },
+  { title: "Onyo Limetolewa", desc: "Kasi kupita kiasi — T 005 MNO", time: "06:50 AM 15 Mei 2026", icon: "alert-triangle", color: "#FF9800" },
   { title: "Eneo la Patroli", desc: "Morogoro Road, Dar es Salaam", time: "06:30 AM 15 Mei 2026", icon: "map-pin", color: "#1E3A8A" },
 ];
 
@@ -350,7 +350,7 @@ export const PF3_FORM = {
     { name: "Fatuma Hassan", type: "Abiria", injury: "Hakuna Madhara", hospital: "—", status: "Ametoka" },
   ],
   witnesses: [
-    { name: "Saidi Juma", phone: "0788 123 456", statement: "Gari la T123ABC lilipita kasi na kupoteza udhibiti." },
+    { name: "Saidi Juma", phone: "0788 123 456", statement: "Gari la T 003 GHI lilipita kasi na kupoteza udhibiti." },
     { name: "Mariam Ally", phone: "0766 987 654", statement: "Niliona gari la pindi likijaribu kuepuka." },
   ],
 };

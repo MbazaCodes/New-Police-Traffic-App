@@ -1,5 +1,5 @@
 // Vehicle search API
-// GET /api/search/vehicle?plate=T123ABC -> vehicle search result
+// GET /api/search/vehicle?plate=T 001 ABC -> vehicle search result
 
 import { NextResponse } from "next/server";
 import { SEARCH_RESULT } from "@/lib/police-data";

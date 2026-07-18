@@ -95,7 +95,7 @@ export function WarningFormScreen() {
           <h3 className="text-[14px] font-bold text-police">Taarifa za Mpokeaji</h3>
           <FInput label="Jina Kamili" required value={form.recipientName} onChange={set("recipientName")} placeholder="Jina la mpokeaji wa onyo" />
           <div className="grid grid-cols-2 gap-3">
-            <FInput label="Namba ya Gari" value={form.plate} onChange={set("plate")} placeholder="T123ABC" />
+            <FInput label="Namba ya Gari" value={form.plate} onChange={set("plate")} placeholder="T 001 ABC" />
             <FInput label="Namba ya Leseni" value={form.licenseNo} onChange={set("licenseNo")} placeholder="DL..." />
           </div>
           <div>

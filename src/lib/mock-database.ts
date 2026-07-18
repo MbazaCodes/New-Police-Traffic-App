@@ -483,7 +483,7 @@ export function validatePlate(v: string): ValidationResult {
   if (!clean) return { valid: false, error: "Ingiza namba ya gari" };
   // TZ plates: T followed by 3 digits and 2-4 letters, with optional space
   if (!/^T\s?\d{2,4}\s?[A-Z]{2,4}$/.test(clean.replace(/\s/g, "")))
-    return { valid: false, error: "Fomati sahihi: T 001 ABC au T123ABC" };
+    return { valid: false, error: "Fomati sahihi: T 001 ABC au T001ABC" };
   return { valid: true, error: "" };
 }
 

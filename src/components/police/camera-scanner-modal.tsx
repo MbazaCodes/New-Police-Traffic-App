@@ -135,7 +135,7 @@ export function CameraScannerModal() {
             logger: () => {},
           });
           const text = data?.text || "";
-          // Match Tanzanian plate pattern: T + digits + letters (e.g., T123ABC)
+          // Match Tanzanian plate pattern: T + space + digits + space + letters (e.g., T 001 ABC)
           const plateMatch = text.match(/T\s?\d{2,4}\s?[A-Z]{2,3}/i);
           if (plateMatch) {
             const plate = plateMatch[0].replace(/\s/g, "").toUpperCase();
@@ -185,7 +185,7 @@ export function CameraScannerModal() {
 
   // Simulated scan (fallback for demo environments without camera)
   const handleSimulate = () => {
-    const plate = "T123ABC";
+    const plate = "T 003 GHI";
     handleResult(plate);
   };
 
@@ -302,7 +302,7 @@ export function CameraScannerModal() {
             <input
               value={manualInput}
               onChange={(e) => setManualInput(e.target.value)}
-              placeholder={isQR ? "QR value..." : "T123ABC"}
+              placeholder={isQR ? "QR value..." : "T 001 ABC"}
               className="w-full max-w-xs rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-center text-[16px] font-bold uppercase text-white placeholder:text-white/40 focus:border-[#2196F3] focus:outline-none"
               onKeyDown={(e) => e.key === "Enter" && handleManualSubmit()}
             />

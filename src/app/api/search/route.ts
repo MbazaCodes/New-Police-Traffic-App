@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SEARCH_RESULT } from "@/lib/police-data";
 
-// GET /api/search?q=T123ABC&type=plate|nida|license|citizen
+// GET /api/search?q=T 001 ABC&type=plate|nida|license|citizen
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q")?.trim();
