@@ -55,6 +55,7 @@ export function MobileShell() {
   }
 
   const isGeneral = userRole === "officer-general";
+  const isPost = userRole === "officer-post";
   const showNav = !NO_NAV_SCREENS.includes(currentScreen);
 
   return (
@@ -62,7 +63,7 @@ export function MobileShell() {
       <div className="flex h-full flex-col overflow-hidden bg-police">
         <StatusBar />
         <main key={currentScreen} className="police-screen-enter flex-1 overflow-y-auto app-scroll">
-          {renderScreen(currentScreen, isGeneral)}
+          {renderScreen(currentScreen, isGeneral, isPost)}
         </main>
         {showNav && (isGeneral ? <GeneralBottomNav /> : <BottomNav />)}
         <CameraScannerModal />
@@ -71,7 +72,7 @@ export function MobileShell() {
   );
 }
 
-function renderScreen(screen: ScreenId, isGeneral = false) {
+function renderScreen(screen: ScreenId, isGeneral = false, isPost = false) {
   // Shared across all officer roles
   switch (screen) {
     case "arrest-form":       return <ArrestFormScreen />;
@@ -89,6 +90,14 @@ function renderScreen(screen: ScreenId, isGeneral = false) {
     case "alerts":            return <AlertsScreen />;
     case "profile":           return <ProfileScreen />;
     case "history":           return <HistoryScreen />;
+  }
+
+  if (isPost) {
+    switch (screen) {
+      case "home":           return <HomeScreen />;
+      case "search-results": return <SearchResultsScreen />;
+      default:               return <HomeScreen />;
+    }
   }
 
   if (isGeneral) {

@@ -9,7 +9,10 @@ import { MOCK_CITIZENS, MOCK_VEHICLES, MOCK_DEVICES } from "./mock-database";
 export type AppRole =
   | "officer-traffic" | "officer-general" | "admin" | "commander"
   | "national-commissioner" | "regional-commissioner"
-  | "district-commissioner" | "station-commissioner" | "post-officer";
+  | "district-commissioner" | "station-commissioner" | "post-officer"
+  | "cid-officer" | "cyber-crime" | "immigration-liaison" | "prison-liaison"
+  | "emergency-dispatcher" | "evidence-officer" | "investigation-supervisor"
+  | "audit-officer" | "dig";
 
 // ── ROLE USERS (source of truth — no hardcoding) ─────────────
 export interface RoleUser {

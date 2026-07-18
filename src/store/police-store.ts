@@ -24,7 +24,16 @@ export const AUTH_ROLES: { id: AuthRole; label: string; labelSw: string; descrip
   { id: "TRAFFIC_OFFICER", label: "Traffic Officer", labelSw: "Afisa Trafiki", description: "Traffic enforcement & citations", icon: "Car", shellType: "mobile" },
   { id: "POST_OFFICER", label: "Post Officer", labelSw: "Afisa wa Posti", description: "Post station operations & patrol", icon: "MapPin", shellType: "mobile" },
   { id: "GENERAL_OFFICER", label: "General Officer", labelSw: "Afisa Polisi", description: "General policing duties", icon: "UserCheck", shellType: "mobile" },
-  { id: "INVESTIGATOR", label: "CID / Investigator", labelSw: "Mpelelezi", description: "Criminal investigation & intelligence", icon: "Search", shellType: "cid" },
+  { id: "INVESTIGATOR",           label: "CID / Investigator",       labelSw: "Mpelelezi",                      description: "Criminal investigation & intelligence",      icon: "Search",       shellType: "cid" },
+  { id: "CID_OFFICER",            label: "CID Officer",               labelSw: "Afisa CID",                      description: "Criminal Investigation Department officer",   icon: "Search",       shellType: "cid" },
+  { id: "INVESTIGATION_SUPERVISOR",label:"Investigation Supervisor",   labelSw: "Msimamizi wa Uchunguzi",         description: "Supervises investigation teams",             icon:"ClipboardList",  shellType: "cid" },
+  { id: "CYBER_CRIME",            label: "Cyber Crime Unit",          labelSw: "Kitengo cha Uhalifu wa Mtandaoni",description: "Digital forensics & cybercrime",             icon: "Monitor",      shellType: "cid" },
+  { id: "IMMIGRATION_LIAISON",    label: "Immigration Liaison",       labelSw: "Afisa Uhamiaji",                 description: "Immigration & border control",               icon: "Globe",        shellType: "viewer" },
+  { id: "PRISON_LIAISON",         label: "Prison Liaison",            labelSw: "Afisa Magereza",                 description: "Prison & corrections coordination",          icon: "Lock",         shellType: "viewer" },
+  { id: "EMERGENCY_DISPATCHER",   label: "Emergency Dispatcher",      labelSw: "Msimamizi wa Dharura",           description: "911/112 emergency dispatch coordination",    icon: "Phone",        shellType: "system" },
+  { id: "EVIDENCE_OFFICER",       label: "Evidence Officer",          labelSw: "Afisa Ushahidi",                 description: "Evidence collection & chain of custody",     icon: "Package",      shellType: "clerk" },
+  { id: "AUDIT_OFFICER",          label: "Audit / Internal Affairs",  labelSw: "Afisa Ukaguzi",                  description: "Internal affairs & professional standards",  icon: "FileSearch",   shellType: "system" },
+  { id: "DIG",                    label: "Deputy IGP",                labelSw: "Naibu IGP",                      description: "Deputy Inspector General of Police",         icon: "ShieldCheck",  shellType: "admin" },
   { id: "CLERK", label: "Clerk", labelSw: "Karani", description: "Records & file management", icon: "FileText", shellType: "clerk" },
   { id: "VIEWER", label: "Viewer", labelSw: "Mpangaji", description: "Read-only reports & dashboards", icon: "Eye", shellType: "viewer" },
 ];
@@ -32,7 +41,11 @@ export const AUTH_ROLES: { id: AuthRole; label: string; labelSw: string; descrip
 function authRoleToStoreRole(authRole: AuthRole): UserRole {
   if (authRole === "TRAFFIC_OFFICER") return "officer-traffic";
   if (authRole === "GENERAL_OFFICER") return "officer-general";
-  if (authRole === "SUPER_ADMIN" || authRole === "SYSTEM_ADMIN" || authRole === "CLERK" || authRole === "VIEWER") return "admin";
+  if (["SUPER_ADMIN","SYSTEM_ADMIN","CLERK","VIEWER","EVIDENCE_OFFICER"].includes(authRole)) return "admin";
+  if (["EMERGENCY_DISPATCHER","AUDIT_OFFICER"].includes(authRole)) return "admin";
+  if (["INVESTIGATOR","CID_OFFICER","CYBER_CRIME","INVESTIGATION_SUPERVISOR"].includes(authRole)) return "commander";
+  if (["IMMIGRATION_LIAISON","PRISON_LIAISON"].includes(authRole)) return "admin";
+  if (authRole === "DIG") return "commander";
   return "commander";
 }
 export type OfficerRole = "officer-traffic" | "officer-general" | "officer-post";
