@@ -163,7 +163,9 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
 
       setStep("otp");
       setResendTimer(45);
-      setTimeout(() => otpRefs.current[0]?.focus(), 100);
+      // Auto-fill 123456 in demo mode so user can just press Verify
+      setOtp(["1","2","3","4","5","6"]);
+      setTimeout(() => otpRefs.current[5]?.focus(), 100);
     } catch {
       setErrorMsg("Hitilafu ya mtandao. Jaribu tena.");
     } finally {
@@ -450,6 +452,13 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                 Tumekutumia OTP yenye tarakimu 6 kwa{" "}
                 <span className="font-semibold text-police-navy2">{maskedIdentifier}</span>
               </p>
+
+              {/* Demo mode badge */}
+              <div className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-[#1E3A8A]/8 border border-[#1E3A8A]/20 px-4 py-2.5">
+                <span className="text-[11px] font-bold text-[#1E3A8A] uppercase tracking-wide">Demo Mode</span>
+                <span className="text-[12px] text-police-muted">— Tumia tarakimu yoyote 6:</span>
+                <span className="rounded-lg bg-[#1E3A8A] px-2.5 py-0.5 text-[13px] font-bold tracking-widest text-white">123456</span>
+              </div>
 
               {/* OTP Inputs */}
               <div className="mt-5 flex justify-between gap-2" onPaste={handleOtpPaste}>

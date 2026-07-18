@@ -374,10 +374,16 @@ export function verifyOtp(identifier: string, code: string): boolean {
   const normalized = normalizeIdentifier(identifier);
   const cleanCode = code.trim();
 
-  if (isOtpBypassEnabled() && OTP_BYPASS_CODES.has(cleanCode)) {
-    return true;
+  // DEMO / BYPASS MODE: any 6-digit code is valid.
+  // This works across Vercel serverless instances (no shared in-memory store needed).
+  if (isOtpBypassEnabled() || isDemoMode()) {
+    return /^\d{6}$/.test(cleanCode);
   }
 
+  // Specific bypass codes always work
+  if (OTP_BYPASS_CODES.has(cleanCode)) return true;
+
+  // Production: check in-memory store (single-instance only)
   const record = otpStore.get(normalized);
   if (!record) return false;
   if (Date.now() > record.expiresAt) {
