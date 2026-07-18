@@ -144,7 +144,14 @@ export function ProfileScreen() {
                 return;
               }
               if (item.label === "Pakua Ripoti") {
-                toast({ title: "Inapakua", description: "Ripoti inapakuliwa kama PDF." });
+                (() => {
+                    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Ripoti ya Afisa</title><style>body{font-family:Arial,sans-serif;padding:32px}h1{color:#1A237E}</style></head><body><h1>RIPOTI YA AFISA</h1><p>Jina: ${OFFICER.name}</p><p>Cheo: ${OFFICER.rank}</p><p>Kituo: ${OFFICER.station}</p><p>Kitengo: ${OFFICER.unit}</p><p>Namba: ${OFFICER.id}</p><p>Imetolewa: ${new Date().toLocaleDateString("sw-TZ")}</p></body></html>`;
+                    const blob = new Blob([html], { type: "text/html" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a"); a.href = url; a.download = "Ripoti_Afisa.html";
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                    toast({ title: "Ripoti Imepakiwa ✓", description: "Ripoti ya afisa imehifadhiwa." });
+                  })();
                 return;
               }
               toast({ title: item.label, description: item.label });
@@ -174,7 +181,14 @@ export function ProfileScreen() {
         {/* Download Report Button */}
         <button
           onClick={() =>
-            toast({ title: "Inapakua", description: "Ripoti ya shughuli inapakuliwa kama PDF." })
+            (() => {
+              const html = `<!doctype html><html><head><meta charset="utf-8"><title>Ripoti ya Shughuli</title><style>body{font-family:Arial,sans-serif;padding:32px}h1{color:#1A237E}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:8px}th{background:#1A237E;color:#fff}</style></head><body><h1>RIPOTI YA SHUGHULI — ${OFFICER.name}</h1><table><thead><tr><th>Shughuli</th><th>Maelezo</th><th>Wakati</th></tr></thead><tbody>${PROFILE_ACTIVITIES.map(a => `<tr><td>${a.title}</td><td>${a.desc}</td><td>${a.time}</td></tr>`).join("")}</tbody></table><p>Imetolewa: ${new Date().toLocaleDateString("sw-TZ")}</p></body></html>`;
+              const blob = new Blob([html], { type: "text/html" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a"); a.href = url; a.download = "Ripoti_Shughuli.html";
+              document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+              toast({ title: "Ripoti Imepakiwa ✓", description: "Ripoti ya shughuli imehifadhiwa." });
+            })()
           }
           className="flex w-full items-center gap-3 rounded-2xl bg-[#2196F3] p-4 text-left shadow-md shadow-[#2196F3]/20 active:scale-[0.98]"
         >

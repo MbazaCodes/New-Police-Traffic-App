@@ -1,5 +1,3 @@
-import { RolePageShell } from "@/components/role/role-page-shell";
-
-export default function Page() {
-  return <RolePageShell title="viewer  /  settings" />;
-}
+"use client";
+import { ViewerShell } from "@/components/role/viewer-shell";
+export default function Page() { return <ViewerShell />; }

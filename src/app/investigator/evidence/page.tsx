@@ -1,5 +1,3 @@
-﻿import { RolePageShell } from "@/components/role/role-page-shell";
-
-export default function Page() {
-  return <RolePageShell title="investigator / evidence" />;
-}
+"use client";
+import { CidShell } from "@/components/role/cid-shell";
+export default function Page() { return <CidShell />; }

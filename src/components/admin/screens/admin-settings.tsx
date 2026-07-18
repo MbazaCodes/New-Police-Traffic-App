@@ -67,6 +67,10 @@ export function AdminSettings() {
   const [debugMode, setDebugMode] = useState(false);
 
   const handleSave = () => {
+    // Persist to localStorage
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tpf-settings", JSON.stringify(settings));
+    }
     toast({
       title: "Imehifadhiwa",
       description: "Mipangilio yote ya mfumo imesasishwa kwa fanaka",

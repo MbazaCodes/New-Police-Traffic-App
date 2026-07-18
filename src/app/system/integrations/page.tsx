@@ -1,5 +1,3 @@
-import { RolePageShell } from "@/components/role/role-page-shell";
-
-export default function Page() {
-  return <RolePageShell title="system / integrations" />;
-}
+"use client";
+import { SystemShell } from "@/components/role/system-shell";
+export default function Page() { return <SystemShell />; }

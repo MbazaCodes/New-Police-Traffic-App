@@ -21,8 +21,13 @@ export function CitationDetailScreen() {
 
   const isPaid = citation.status === "Imelipwa";
 
-  const handlePrint = () => toast({ title: "Inachapisha", description: `Citation ${citation.id} inatumwa kwa printer.` });
-  const handleShare = () => toast({ title: "Inashiriki", description: `Maelezo ya citation ${citation.id} yanakiliwa.` });
+  const handlePrint = () => window.print();
+  const handleShare = () => {
+    const text = `Citation ${citation.id}\nGari: ${citation.plate}\nKosa: ${citation.offense}\nFaini: ${citation.fine}\nDereva: ${citation.driver}\nTarehe: ${citation.date}`;
+    navigator.clipboard?.writeText(text).then(() => {
+      toast({ title: "Imenakiliwa ✓", description: "Maelezo ya citation yamenakiliwa kwenye clipboard." });
+    }).catch(() => toast({ title: "Kushiriki", description: text }));
+  };
   const handleMarkPaid = () => toast({ title: "Imesasishwa", description: `${citation.id} imewekwa kuwa imelipwa. (Demo)` });
 
   return (

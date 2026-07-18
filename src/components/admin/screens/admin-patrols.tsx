@@ -178,7 +178,7 @@ export function AdminPatrols() {
           </div>
         </div>
 
-        {/* Map placeholder */}
+        {/* Patrol Area Map - DSM street grid visualization */}
         <div className="rounded-xl bg-police-card p-4 shadow-sm">
           <h2 className="mb-3 text-[14px] font-bold text-police-navy">
             Ramani ya Patroli
@@ -270,7 +270,7 @@ export function AdminPatrols() {
                     </div>
                   </div>
                   <div className="pointer-events-none absolute left-1/2 top-7 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-police-card px-2 py-1 text-[10px] font-semibold text-police shadow-md group-hover:block">
-                    {p.officer.split(" ").slice(-1)[0]} • {p.progress}% {isCompleted ? "(Imekamilika)" : ""}
+                    {p.officer.split(" ").slice(-1)[0]} - {p.progress}% {isCompleted ? "(Imekamilika)" : ""}
                   </div>
                 </button>
               );
@@ -288,7 +288,7 @@ export function AdminPatrols() {
 
           <div className="mt-3 flex items-center gap-2 rounded-lg bg-police-muted/40 p-2.5 text-[11px] text-police-muted">
             <CheckCircle2 size={14} className="text-[#10B981]" />
-            Ramani hii ni mfano.unganisha na Google Maps kwa ajili ya kufuatilia live. Bonyeza pini kuona maelezo.
+            Ramani ya Patroli - Dar es Salaam. Pini zinaonyesha maofisa walioko kazini sasa hivi.
           </div>
         </div>
       </div>

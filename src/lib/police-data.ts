@@ -57,12 +57,7 @@ export const HOME_STATS = [
   { label: "Patroli Zinazofanya Kazi", value: "23", icon: "car", color: "#EF4444" },
 ];
 
-export const TRAFFIC_STATS = [
-  { label: "Jumla ya Makosa", value: "10", icon: "clipboard", color: "#2196F3" },
-  { label: "Inasubiri", value: "6", icon: "clock", color: "#F97316" },
-  { label: "Imelipwa", value: "4", icon: "check", color: "#10B981" },
-  { label: "Jumla ya Faini", value: "580,000", sub: "TZS", icon: "wallet", color: "#1E3A8A" },
-];
+// TRAFFIC_STATS defined after CITATION_HISTORY below
 
 export const TRAFFIC_QUICK_ACTIONS = [
   { label: "Ripoti Tukio", icon: "clipboard", color: "#2196F3", screen: "incident-detail" as ScreenId },
@@ -84,7 +79,7 @@ export const RECENT_OFFENSES = [
     fine: "TZS 50,000",
     icon: "alert-triangle",
     iconColor: "#F97316",
-    plate: "T123ABC",
+    plate: "T 003 GHI",
     driver: "Juma Khamis Mwinyi",
     offense: "Kutopita mstari wa kugawanya barabara",
     deductedPoints: 1,
@@ -99,7 +94,7 @@ export const RECENT_OFFENSES = [
     fine: "TZS 150,000",
     icon: "zap",
     iconColor: "#EF4444",
-    plate: "T789GHI",
+    plate: "T 009 YZA",
     driver: "Ali Mohamed Salum",
     offense: "Over Speeding - 95km/h kwenye 60km/h zone",
     deductedPoints: 3,
@@ -114,8 +109,8 @@ export const RECENT_OFFENSES = [
     fine: "TZS 50,000",
     icon: "phone",
     iconColor: "#1E3A8A",
-    plate: "T456DEF",
-    driver: "Grace Mushi",
+    plate: "T 005 MNO",
+    driver: "Grace Amina Mushi",
     offense: "Kutumia simu bila headset wakati wa udereva",
     deductedPoints: 1,
   },
@@ -129,8 +124,8 @@ export const RECENT_OFFENSES = [
     fine: "TZS 30,000",
     icon: "minus-circle",
     iconColor: "#2196F3",
-    plate: "T321XYZ",
-    driver: "Saidi Juma Khamis",
+    plate: "T 007 STU",
+    driver: "Saidi Omari Bakari",
     offense: "Kutumia gari bila mkanda wa usalama",
     deductedPoints: 0.5,
   },
@@ -144,8 +139,8 @@ export const RECENT_OFFENSES = [
     fine: "TZS 100,000",
     icon: "circle",
     iconColor: "#EF4444",
-    plate: "T654ABC",
-    driver: "Hamisi Rashid",
+    plate: "T 018 ZAB",
+    driver: "Hamisi Rashid Omar",
     offense: "Kupita taa nyekundu - junction ya Posta",
     deductedPoints: 2,
   },
@@ -277,8 +272,8 @@ export const PROFILE_SETTINGS = [
 ];
 
 export const ACCIDENT_VEHICLES = [
-  { plate: "T123ABC", model: "Toyota Corolla", color: "Nyeupe", damage: "Ndogo" },
-  { plate: "T789GHI", model: "Toyota Hiace", color: "Fedha", damage: "Kubwa" },
+  { plate: "T 003 GHI", model: "Toyota Corolla", color: "Nyeupe", damage: "Ndogo" },
+  { plate: "T 009 YZA", model: "Toyota Hiace", color: "Fedha", damage: "Kubwa" },
 ];
 
 export const ACCIDENT_PEOPLE = [
@@ -294,7 +289,7 @@ export const ACCIDENT_EVIDENCE = [
 ];
 
 export const VEHICLE_INSPECTION = {
-  plate: "T123ABC",
+  plate: "T 003 GHI",
   model: "Toyota Corolla",
   color: "Nyeupe",
   owner: "Juma Khamis Mwinyi",
@@ -340,12 +335,12 @@ export const PF3_FORM = {
   lightCondition: "Mchana",
   vehicles: [
     {
-      plate: "T123ABC", make: "Toyota Corolla", year: "2020", color: "Nyeupe",
+      plate: "T 003 GHI", make: "Toyota Corolla", year: "2020", color: "Nyeupe",
       driver: "Juma Khamis Mwinyi", license: "DL123456789TZ",
       direction: "Kuelekea Ubungo", damage: "Mbele - Upande wa Kulia", insured: true,
     },
     {
-      plate: "T789GHI", make: "Toyota Hiace", year: "2019", color: "Fedha",
+      plate: "T 009 YZA", make: "Toyota Hiace", year: "2019", color: "Fedha",
       driver: "Ali Mohamed Salum", license: "DL987654321TZ",
       direction: "Kutoka Ubungo", damage: "Nyuma - Upande wa Kushoto", insured: true,
     },
@@ -361,11 +356,11 @@ export const PF3_FORM = {
 };
 
 export const CITATION_HISTORY = [
-  { id: "CT-2026-0451", plate: "T123ABC", offense: "Over Speeding", driver: "Juma Khamis Mwinyi", date: "10 Mei 2026", time: "14:30", location: "Mandela Road, DSM", fine: "TZS 150,000", status: "Hajalipwa", statusColor: "#EF4444", deductedPoints: 3 },
-  { id: "CT-2026-0450", plate: "T789GHI", offense: "No Seatbelt", driver: "Ali Mohamed Salum", date: "08 Mei 2026", time: "09:15", location: "Mbezi Beach, DSM", fine: "TZS 50,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 0.5 },
-  { id: "CT-2026-0449", plate: "T456DEF", offense: "Traffic Light Violation", driver: "Saidi Juma Khamis", date: "05 Mei 2026", time: "17:45", location: "Samora Ave, DSM", fine: "TZS 100,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 2 },
-  { id: "CT-2026-0448", plate: "T321XYZ", offense: "Kutumia Simu wakati wa Udereva", driver: "Grace Mushi", date: "02 Mei 2026", time: "11:20", location: "Nkrumah Street, DSM", fine: "TZS 50,000", status: "Hajalipwa", statusColor: "#EF4444", deductedPoints: 1 },
-  { id: "CT-2026-0447", plate: "T654ABC", offense: "Kutopita kasi", driver: "Hamisi Rashid", date: "28 Apr 2026", time: "08:05", location: "Morogoro Road, DSM", fine: "TZS 30,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 0.5 },
+  { id: "CT-2026-0451", plate: "T 003 GHI", offense: "Over Speeding", driver: "Juma Khamis Mwinyi", date: "10 Mei 2026", time: "14:30", location: "Mandela Road, DSM", fine: "TZS 150,000", status: "Hajalipwa", statusColor: "#EF4444", deductedPoints: 3 },
+  { id: "CT-2026-0450", plate: "T 009 YZA", offense: "No Seatbelt", driver: "Ali Mohamed Salum", date: "08 Mei 2026", time: "09:15", location: "Mbezi Beach, DSM", fine: "TZS 50,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 0.5 },
+  { id: "CT-2026-0449", plate: "T 005 MNO", offense: "Traffic Light Violation", driver: "Saidi Omari Bakari", date: "05 Mei 2026", time: "17:45", location: "Samora Ave, DSM", fine: "TZS 100,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 2 },
+  { id: "CT-2026-0448", plate: "T 007 STU", offense: "Kutumia Simu wakati wa Udereva", driver: "Grace Amina Mushi", date: "02 Mei 2026", time: "11:20", location: "Nkrumah Street, DSM", fine: "TZS 50,000", status: "Hajalipwa", statusColor: "#EF4444", deductedPoints: 1 },
+  { id: "CT-2026-0447", plate: "T 018 ZAB", offense: "Kutopita kasi", driver: "Hamisi Rashid Omar", date: "28 Apr 2026", time: "08:05", location: "Morogoro Road, DSM", fine: "TZS 30,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 0.5 },
   { id: "CT-2026-0446", plate: "T888ZZZ", offense: "No Insurance", driver: "Baraka Msangi", date: "25 Apr 2026", time: "15:30", location: "Kariakoo, DSM", fine: "TZS 200,000", status: "Hajalipwa", statusColor: "#EF4444", deductedPoints: 2 },
   { id: "CT-2026-0445", plate: "T555YYY", offense: "Defective Vehicle", driver: "Zawadi Kimani", date: "22 Apr 2026", time: "10:00", location: "Tabata, DSM", fine: "TZS 75,000", status: "Imelipwa", statusColor: "#10B981", deductedPoints: 1 },
 ];
@@ -411,11 +406,11 @@ export const VIOLATION_POINTS: Record<string, number> = {
 
 // Driver points registry
 export const DRIVER_POINTS = [
-  { id: "DL123456789TZ", name: "Juma Khamis Mwinyi", plate: "T123ABC", points: 87, violations: 3, lastViolation: "10 Mei 2026", status: "good" as const },
-  { id: "DL987654321TZ", name: "Ali Mohamed Salum", plate: "T789GHI", points: 74, violations: 5, lastViolation: "08 Mei 2026", status: "good" as const },
-  { id: "DL555555555TZ", name: "Grace Mushi", plate: "T456DEF", points: 63, violations: 7, lastViolation: "05 Mei 2026", status: "warning" as const },
-  { id: "DL444444444TZ", name: "Saidi Juma Khamis", plate: "T321XYZ", points: 55, violations: 9, lastViolation: "02 Mei 2026", status: "warning" as const },
-  { id: "DL777777777TZ", name: "Hamisi Rashid", plate: "T654ABC", points: 48, violations: 12, lastViolation: "28 Apr 2026", status: "critical" as const },
+  { id: "DL123456789TZ", name: "Juma Khamis Mwinyi", plate: "T 003 GHI", points: 87, violations: 3, lastViolation: "10 Mei 2026", status: "good" as const },
+  { id: "DL987654321TZ", name: "Ali Mohamed Salum", plate: "T 009 YZA", points: 74, violations: 5, lastViolation: "08 Mei 2026", status: "good" as const },
+  { id: "DL555555555TZ", name: "Grace Amina Mushi", plate: "T 005 MNO", points: 63, violations: 7, lastViolation: "05 Mei 2026", status: "warning" as const },
+  { id: "DL444444444TZ", name: "Saidi Omari Bakari", plate: "T 007 STU", points: 55, violations: 9, lastViolation: "02 Mei 2026", status: "warning" as const },
+  { id: "DL777777777TZ", name: "Hamisi Rashid Omar", plate: "T 018 ZAB", points: 48, violations: 12, lastViolation: "28 Apr 2026", status: "critical" as const },
   { id: "DL888888888TZ", name: "Baraka Msangi", plate: "T888ZZZ", points: 72, violations: 4, lastViolation: "25 Apr 2026", status: "good" as const },
   { id: "DL999999999TZ", name: "Zawadi Kimani", plate: "T555YYY", points: 100, violations: 0, lastViolation: "—", status: "good" as const },
   { id: "DL111111111TZ", name: "Fatuma Hassan", plate: "T777AAA", points: 52, violations: 10, lastViolation: "20 Apr 2026", status: "warning" as const },
@@ -486,7 +481,7 @@ export const WARNING_RECORDS = [
   {
     id: "WR-2026-0112",
     recipient: "Juma Khamis Mwinyi",
-    plate: "T123ABC",
+    plate: "T 003 GHI",
     licenseNo: "DL123456789TZ",
     warningType: "traffic",
     offense: "Kutopita mstari",
@@ -695,7 +690,7 @@ export const CHAT_MESSAGES = [
 
 // Search result mock data
 export const SEARCH_RESULT = {
-  plate: "T123ABC",
+  plate: "T 003 GHI",
   model: "Toyota Corolla",
   year: "2020",
   color: "Nyeupe",
@@ -721,3 +716,19 @@ export const GENERAL_INCIDENTS = [
   { id: 4, title: "Uvamizi wa nyumba - Mbezi", type: "Uvamizi", status: "Tatuliwa", statusColor: "#10B981", icon: "shield-alert", iconColor: "#10B981", date: "08 Mei 2026", time: "22:10", location: "Mbezi Beach, Kinondoni", description: "Wavamizi 3 waliingia nyumba usiku. Mmiliki alimpigia simu polisi. Wavamizi walikamatwa kituoni.", casualties: 0, officer: "Insp. Grace Mushi" },
   { id: 5, title: "Ufisadi wa umma - Posta", type: "Ufisadi", status: "Mpya", statusColor: "#2196F3", icon: "users", iconColor: "#1E3A8A", date: "07 Mei 2026", time: "11:20", location: "Posta Mpya, Ilala", description: "Mlalamiko wa ufisadi dhidi ya afisa wa serikali. Uchunguzi unaendelea.", casualties: 0, officer: "Cprl. Saidi Juma" },
 ];
+
+// TRAFFIC_STATS — derived from CITATION_HISTORY (defined above)
+export const TRAFFIC_STATS = (() => {
+  const total     = CITATION_HISTORY.length;
+  const unpaid    = CITATION_HISTORY.filter((c) => c.status === "Hajalipwa").length;
+  const paid      = CITATION_HISTORY.filter((c) => c.status === "Imelipwa").length;
+  const totalFine = CITATION_HISTORY.reduce(
+    (s, c) => s + parseInt(c.fine.replace(/[^\d]/g, ""), 10), 0
+  );
+  return [
+    { label: "Jumla ya Makosa", value: String(total),                        icon: "clipboard", color: "#2196F3" },
+    { label: "Inasubiri",       value: String(unpaid),                       icon: "clock",     color: "#FF9800" },
+    { label: "Imelipwa",        value: String(paid),                         icon: "check",     color: "#10B981" },
+    { label: "Jumla ya Faini",  value: (totalFine/1000).toFixed(0)+"k", sub: "TZS", icon: "wallet", color: "#1E3A8A" },
+  ];
+})();
