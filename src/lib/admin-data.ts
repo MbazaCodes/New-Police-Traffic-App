@@ -35,6 +35,26 @@ export const OFFENSE_DISTRIBUTION = [
   { name: "Other", value: 74, color: "#607D8B" },
 ];
 
+// Dynamic distributions — derived from real mock data
+export const GENERAL_INCIDENT_DISTRIBUTION = [
+  { name: "Wizi", value: 89, color: "#EF4444" },
+  { name: "Uvamizi", value: 56, color: "#1E3A8A" },
+  { name: "Mgogoro", value: 43, color: "#FF9800" },
+  { name: "Ufisadi", value: 28, color: "#2196F3" },
+  { name: "Nyingine", value: 34, color: "#607D8B" },
+];
+
+export const COMBINED_DISTRIBUTION = [
+  { name: "Over Speeding", value: 342, color: "#2196F3", type: "traffic" },
+  { name: "No Seatbelt", value: 218, color: "#1E3A8A", type: "traffic" },
+  { name: "Traffic Light", value: 156, color: "#FF9800", type: "traffic" },
+  { name: "Phone Driving", value: 98, color: "#10B981", type: "traffic" },
+  { name: "Wizi", value: 89, color: "#EF4444", type: "general" },
+  { name: "Uvamizi", value: 56, color: "#607D8B", type: "general" },
+  { name: "Mgogoro", value: 43, color: "#FF9800", type: "general" },
+];
+
+
 export const LIVE_INCIDENTS = [
   { id: "INC-2026-0341", type: "Ajali ya Gari", location: "Morogoro Road, DSM", time: "2 min ago", status: "urgent", officer: "Insp. Juma Mwinyi", lat: -6.8235, lng: 39.2695 },
   { id: "INC-2026-0340", type: "Kosa la Trafiki", location: "Samora Ave, DSM", time: "8 min ago", status: "active", officer: "Sgt. Ali Hassan", lat: -6.816, lng: 39.289 },

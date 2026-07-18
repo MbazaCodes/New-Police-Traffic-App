@@ -23,7 +23,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { INCIDENT_TREND, OFFENSE_DISTRIBUTION, REGION_STATS } from "@/lib/admin-data";
+import { INCIDENT_TREND, OFFENSE_DISTRIBUTION, GENERAL_INCIDENT_DISTRIBUTION, COMBINED_DISTRIBUTION, REGION_STATS } from "@/lib/admin-data";
 import { getReportData } from "@/lib/mock-engine";
 import { toast } from "@/hooks/use-toast";
 
@@ -266,27 +266,33 @@ export function AdminReports() {
           </div>
         </div>
 
-        {/* Pie chart: offense distribution */}
+        {/* Pie chart: offense distribution — filtered by reportType */}
         <div className="rounded-xl bg-police-card p-4 shadow-sm">
-          <h2 className="text-[14px] font-bold text-police-navy">
-            Ugawanyiko wa Makosa
-          </h2>
-          <p className="mb-3 text-[11px] text-police-muted">Aina za makosa yaliyoripotiwa</p>
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="text-[14px] font-bold text-police-navy">Ugawanyiko wa Makosa</h2>
+            <span className="rounded-full px-2.5 py-1 text-[10px] font-bold text-white" style={{ backgroundColor: reportType==="traffic" ? "#2196F3" : reportType==="general" ? "#10B981" : "#1E3A8A" }}>
+              {reportType==="traffic" ? "Trafiki" : reportType==="general" ? "Polisi Jumla" : "Zote"}
+            </span>
+          </div>
+          <p className="mb-3 text-[11px] text-police-muted">
+            {reportType==="traffic" ? "Makosa ya trafiki yaliyoripotiwa" : reportType==="general" ? "Aina za matukio ya polisi jumla" : "Makosa ya trafiki na matukio ya polisi jumla"}
+          </p>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={OFFENSE_DISTRIBUTION}
+                  data={reportType==="traffic" ? OFFENSE_DISTRIBUTION : reportType==="general" ? GENERAL_INCIDENT_DISTRIBUTION : COMBINED_DISTRIBUTION}
                   dataKey="value"
                   nameKey="name"
                   cx="50%"
                   cy="50%"
+                  innerRadius={45}
                   outerRadius={85}
                   paddingAngle={2}
-                  label={(entry) => `${entry.value}`}
+                  label={false}
                   labelLine={false}
                 >
-                  {OFFENSE_DISTRIBUTION.map((entry) => (
+                  {(reportType==="traffic" ? OFFENSE_DISTRIBUTION : reportType==="general" ? GENERAL_INCIDENT_DISTRIBUTION : COMBINED_DISTRIBUTION).map((entry) => (
                     <Cell key={entry.name} fill={entry.color} />
                   ))}
                 </Pie>
@@ -298,6 +304,7 @@ export function AdminReports() {
                     fontSize: 12,
                     color: "var(--police-text)",
                   }}
+                  formatter={(v, n) => [`${v} kesi`, n]}
                 />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: 10 }} />
               </PieChart>

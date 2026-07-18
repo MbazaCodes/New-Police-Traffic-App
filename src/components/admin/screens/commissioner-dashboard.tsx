@@ -8,7 +8,8 @@ import {
 } from "lucide-react";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis,
-  CartesianGrid, Tooltip, PieChart, Pie, Cell, Legend,
+  PieChart, Pie, Cell, Legend,
+  CartesianGrid, Tooltip,
 } from "recharts";
 import { usePoliceStore } from "@/store/police-store";
 import { ROLE_USERS, REGIONS, ADMIN_STATIONS, MISSING_RECORDS } from "@/lib/mock-engine";
@@ -17,7 +18,7 @@ import {
   CITATION_HISTORY, ARREST_RECORDS, WARNING_RECORDS,
   GENERAL_INCIDENTS, DETAINED_CITIZENS,
 } from "@/lib/police-data";
-import { INCIDENT_TREND, OFFENSE_DISTRIBUTION, REGION_STATS } from "@/lib/admin-data";
+import { INCIDENT_TREND, OFFENSE_DISTRIBUTION, GENERAL_INCIDENT_DISTRIBUTION, COMBINED_DISTRIBUTION, REGION_STATS } from "@/lib/admin-data";
 
 type ReportTab = "all" | "traffic" | "general";
 
@@ -262,6 +263,69 @@ export function CommissionerDashboard() {
             {(reportTab==="all"||reportTab==="traffic") && <Area type="monotone" dataKey="citations" stroke="#2196F3" strokeWidth={2} fill="url(#cg2)" name="Citations"/>}
           </AreaChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* Offense Distribution Pie Chart — filtered by reportTab */}
+      <div className="rounded-2xl bg-police-card p-5 shadow-sm">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h2 className="flex items-center gap-2 text-[15px] font-bold text-police">
+              <BarChart3 size={18} className="text-[#1E3A8A]"/> Ugawanyiko wa Makosa
+            </h2>
+            <p className="mt-0.5 text-[11px] text-police-muted">
+              {reportTab==="traffic" ? "Makosa ya trafiki yaliyoripotiwa" : reportTab==="general" ? "Aina za matukio ya polisi jumla" : "Makosa ya trafiki na matukio yote ya polisi"}
+            </p>
+          </div>
+          <span className="rounded-full px-3 py-1.5 text-[11px] font-bold text-white" style={{ backgroundColor: reportTab==="traffic" ? "#2196F3" : reportTab==="general" ? "#10B981" : "#1E3A8A" }}>
+            {reportTab==="traffic" ? "Trafiki" : reportTab==="general" ? "Polisi Jumla" : "Zote Mbili"}
+          </span>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* Pie chart */}
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={reportTab==="traffic" ? OFFENSE_DISTRIBUTION : reportTab==="general" ? GENERAL_INCIDENT_DISTRIBUTION : COMBINED_DISTRIBUTION}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={90}
+                  paddingAngle={2}
+                >
+                  {(reportTab==="traffic" ? OFFENSE_DISTRIBUTION : reportTab==="general" ? GENERAL_INCIDENT_DISTRIBUTION : COMBINED_DISTRIBUTION).map((entry) => (
+                    <Cell key={entry.name} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{ backgroundColor:"var(--police-card)", border:"1px solid var(--police-border)", borderRadius:8, fontSize:12 }}
+                  formatter={(v, n) => [`${v} kesi`, n]}
+                />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: 10 }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          {/* Bar breakdown */}
+          <div className="space-y-2 justify-center flex flex-col">
+            {(reportTab==="traffic" ? OFFENSE_DISTRIBUTION : reportTab==="general" ? GENERAL_INCIDENT_DISTRIBUTION : COMBINED_DISTRIBUTION).map((item) => {
+              const total = (reportTab==="traffic" ? OFFENSE_DISTRIBUTION : reportTab==="general" ? GENERAL_INCIDENT_DISTRIBUTION : COMBINED_DISTRIBUTION).reduce((s,i)=>s+i.value,0);
+              const pct = Math.round((item.value/total)*100);
+              return (
+                <div key={item.name} className="flex items-center gap-2.5">
+                  <div className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }}/>
+                  <span className="w-28 text-[11px] text-police truncate">{item.name}</span>
+                  <div className="flex-1 h-2 overflow-hidden rounded-full bg-police-muted">
+                    <div className="h-full rounded-full transition-all" style={{ width:`${pct}%`, backgroundColor: item.color }}/>
+                  </div>
+                  <span className="w-12 text-right text-[11px] font-bold text-police">{item.value}</span>
+                  <span className="w-8 text-right text-[10px] text-police-faint">{pct}%</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Officers + Wanaotafutwa */}
