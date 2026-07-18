@@ -41,10 +41,12 @@ export const AUTH_ROLES: { id: AuthRole; label: string; labelSw: string; descrip
 function authRoleToStoreRole(authRole: AuthRole): UserRole {
   if (authRole === "TRAFFIC_OFFICER") return "officer-traffic";
   if (authRole === "GENERAL_OFFICER") return "officer-general";
-  if (["SUPER_ADMIN","SYSTEM_ADMIN","CLERK","VIEWER","EVIDENCE_OFFICER"].includes(authRole)) return "admin";
-  if (["EMERGENCY_DISPATCHER","AUDIT_OFFICER"].includes(authRole)) return "admin";
+  // Admin shell roles
+  if (["SUPER_ADMIN","CLERK","VIEWER","EVIDENCE_OFFICER",
+       "EMERGENCY_DISPATCHER","AUDIT_OFFICER","IMMIGRATION_LIAISON",
+       "PRISON_LIAISON","SYSTEM_ADMIN"].includes(authRole)) return "admin";
+  // CID/Investigation roles use commander store role (gets CidShell via admin/page.tsx)
   if (["INVESTIGATOR","CID_OFFICER","CYBER_CRIME","INVESTIGATION_SUPERVISOR"].includes(authRole)) return "commander";
-  if (["IMMIGRATION_LIAISON","PRISON_LIAISON"].includes(authRole)) return "admin";
   if (authRole === "DIG") return "commander";
   return "commander";
 }
@@ -179,10 +181,9 @@ export const usePoliceStore = create<PoliceState>()(
       },
       loginAsRole: (authRole) => {
         const storeRole = authRoleToStoreRole(authRole);
-        // Admin/commander roles must NOT be normalized through the officer normalizer
-        const finalRole: UserRole = (storeRole === "admin" || storeRole === "commander")
-          ? storeRole
-          : normalizeOfficerRole(storeRole);
+        // Never run admin/commander/officer-post through normalizeOfficerRole
+        const isOfficerRole = storeRole === "officer-traffic" || storeRole === "officer-general" || storeRole === "officer-post";
+        const finalRole: UserRole = isOfficerRole ? storeRole : (storeRole === "admin" || storeRole === "commander" ? storeRole : "admin");
         set({ isAuthenticated: true, userRole: finalRole, authRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
       },
       logout: () => {

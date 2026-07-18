@@ -153,44 +153,27 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       });
       const data = await response.json().catch(() => ({}));
 
-      // If API returns error, still allow proceeding in demo mode
+      // If API returns error, still proceed in demo mode for ALL modes
       if (!response.ok || data?.error) {
-        if (mode === "officer") {
-          // Demo mode: proceed to OTP even if API fails
-          // User identity will be resolved from mock DB on the client
-        } else {
-          setErrorMsg(data?.error ?? "Imeshindikana kutuma OTP. Jaribu tena.");
-          return;
-        }
+        // Demo platform: always proceed to OTP regardless of API result
+        // Role identity is resolved from dropdown selection + mock DB on client
+        console.warn("sendOtp API error (demo mode continues):", data?.error);
       }
 
       const apiRole = String(data?.user?.role ?? "");
-      if (mode === "admin" && apiRole) {
-        setWebRole(apiRole);
+      if (apiRole) {
+        // Use DB-resolved role if available (works when API succeeds)
+        setAuthResolvedRole(apiRole);
+        if (mode === "admin") setWebRole(apiRole);
       }
-      // For officer mode: resolve role from mock DB on client side
-      if (mode === "officer" && !apiRole) {
-        // Will fall back to selected role (traffic/general/post) on verify
-        setAuthResolvedRole(null);
-      } else {
-        setAuthResolvedRole(apiRole || null);
-      }
-
-      // Always auto-fill 123456 — demo mode, any 6 digits accepted
+      // Always proceed to OTP — demo mode, any 6 digits accepted
       setOtp(["1","2","3","4","5","6"]);
       setStep("otp");
       setResendTimer(45);
       setTimeout(() => otpRefs.current[5]?.focus(), 100);
     } catch {
-      // Network error — still allow demo mode for officer
-      if (mode === "officer") {
-        setOtp(["1","2","3","4","5","6"]);
-        setStep("otp");
-        setResendTimer(45);
-        setTimeout(() => otpRefs.current[5]?.focus(), 100);
-      } else {
-        setErrorMsg("Hitilafu ya mtandao. Jaribu tena.");
-      }
+      // Network error — always proceed in demo mode (both officer and admin)
+      console.warn("sendOtp network error — proceeding in demo mode");
     } finally {
       setSending(false);
     }
@@ -221,11 +204,14 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       const userRole = authResolvedRole ?? "";
 
       if (mode === "admin") {
+        // Use DB-resolved role if available, otherwise use the dropdown selection
         const resolvedAuthRole = (userRole || webRole) as AuthRole;
         saveLoginIdentifier(cleanIdentifier);
         setLoginIdentifier(cleanIdentifier);
         setStep("success");
-        setTimeout(() => { loginAsRole(resolvedAuthRole); }, 900);
+        setTimeout(() => {
+          loginAsRole(resolvedAuthRole);
+        }, 900);
         return;
       }
 
@@ -319,11 +305,39 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                       onChange={(e) => setWebRole(e.target.value)}
                       className="h-12 w-full appearance-none rounded-xl border border-police bg-police-card px-3 pr-10 text-[14px] text-police focus:border-[#2196F3] focus:outline-none focus:ring-2 focus:ring-[#2196F3]/20"
                     >
-                      {WEB_ROLES.map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {r.label}
-                        </option>
-                      ))}
+                      <optgroup label="═══ UONGOZI WA KITAIFA ═══">
+                        <option value="NATIONAL_COMMANDER">IGP — Inspector General of Police</option>
+                        <option value="DIG">DIG — Deputy Inspector General</option>
+                        <option value="SUPER_ADMIN">Super Admin — Msimamizi Mkuu</option>
+                      </optgroup>
+                      <optgroup label="═══ MAKAMISHNA WA MIKOA ═══">
+                        <option value="REGIONAL_COMMANDER">Regional Commissioner — Mkamishna wa Mkoa</option>
+                        <option value="DISTRICT_COMMANDER">District Commander — Mkamishna wa Wilaya</option>
+                        <option value="STATION_COMMANDER">Station Commissioner — Mkamishna wa Kituo</option>
+                      </optgroup>
+                      <optgroup label="═══ MAAFISA WA UWANJA ═══">
+                        <option value="TRAFFIC_OFFICER">Traffic Officer — Afisa Trafiki</option>
+                        <option value="GENERAL_OFFICER">General Officer — Afisa Polisi</option>
+                        <option value="POST_OFFICER">Post Officer — Afisa wa Posti</option>
+                      </optgroup>
+                      <optgroup label="═══ KITENGO CHA UPELELEZI (CID) ═══">
+                        <option value="INVESTIGATOR">CID / Investigator — Mpelelezi</option>
+                        <option value="CID_OFFICER">CID Officer — Afisa CID</option>
+                        <option value="INVESTIGATION_SUPERVISOR">Investigation Supervisor — Msimamizi wa Uchunguzi</option>
+                        <option value="CYBER_CRIME">Cyber Crime Unit — Uhalifu wa Mtandaoni</option>
+                      </optgroup>
+                      <optgroup label="═══ IDARA MAALUM ═══">
+                        <option value="IMMIGRATION_LIAISON">Immigration Liaison — Afisa Uhamiaji</option>
+                        <option value="PRISON_LIAISON">Prison Liaison — Afisa Magereza</option>
+                        <option value="EMERGENCY_DISPATCHER">Emergency Dispatcher — Msimamizi wa Dharura (911)</option>
+                        <option value="EVIDENCE_OFFICER">Evidence Officer — Afisa Ushahidi</option>
+                        <option value="AUDIT_OFFICER">Audit / Internal Affairs — Afisa Ukaguzi</option>
+                      </optgroup>
+                      <optgroup label="═══ UTAWALA ═══">
+                        <option value="SYSTEM_ADMIN">System Admin — Msimamizi wa Mfumo</option>
+                        <option value="CLERK">Clerk — Karani</option>
+                        <option value="VIEWER">Viewer — Mwangalizi (Read-only)</option>
+                      </optgroup>
                     </select>
                     <ChevronDown size={18} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-police-faint" />
                   </div>
