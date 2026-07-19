@@ -171,7 +171,6 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
         body: JSON.stringify({
           identifier: cleanIdentifier,
           method,
-          // Pre-normalize phone so server doesn't have to guess
           ...(method === "phone" && {
             phone: cleanIdentifier.replace(/\D/g,"").replace(/^(255|0)/,""),
           }),
@@ -179,27 +178,30 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       });
       const data = await response.json().catch(() => ({}));
 
-      // If API returns error, still proceed in demo mode for ALL modes
       if (!response.ok || data?.error) {
-        // Demo platform: always proceed to OTP regardless of API result
-        // Role identity is resolved from dropdown selection + mock DB on client
-        console.warn("sendOtp API error (demo mode continues):", data?.error);
+        setErrorMsg(data?.error ?? "Akaunti haipatikani. Angalia taarifa zako.");
+        setSending(false);
+        return;
       }
 
+      // Store resolved role from Supabase
       const apiRole = String(data?.user?.role ?? "");
       if (apiRole) {
-        // Use DB-resolved role if available (works when API succeeds)
         setAuthResolvedRole(apiRole);
         if (mode === "admin") setWebRole(apiRole);
       }
-      // Always proceed to OTP — demo mode, any 6 digits accepted
-      setOtp(["1","2","3","4","5","6"]);
+
+      // Pre-fill OTP with bypass code if bypass is on
+      if (data?.auth?.devOtp) {
+        const digits = String(data.auth.devOtp).split("").slice(0, 6);
+        setOtp(digits.concat(Array(6 - digits.length).fill("")).slice(0, 6) as string[]);
+      }
+
       setStep("otp");
       setResendTimer(45);
       setTimeout(() => otpRefs.current[5]?.focus(), 100);
     } catch {
-      // Network error — always proceed in demo mode (both officer and admin)
-      console.warn("sendOtp network error — proceeding in demo mode");
+      setErrorMsg("Hitilafu ya mtandao. Angalia muunganisho wako.");
     } finally {
       setSending(false);
     }
@@ -210,44 +212,36 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
   const verifyOtp = async () => {
     const cleanIdentifier = identifier.trim();
     const otpCode = otp.join("");
-
     if (!cleanIdentifier || otpCode.length < 6) return;
-
     setErrorMsg("");
     setVerifying(true);
-
     try {
-      // ── BYPASS (demo mode — works on Vercel serverless) ─────────────
-      // Any 6-digit code is accepted. We skip the API call entirely to
-      // avoid in-memory otpStore mismatch across Vercel serverless instances.
-      if (!/^\d{6}$/.test(otpCode)) {
-        setErrorMsg("OTP lazima iwe na tarakimu 6.");
+      // Strict API verify — no client-side bypass
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier: cleanIdentifier, otp: otpCode }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.ok) {
+        setErrorMsg(data?.error ?? "OTP si sahihi. Jaribu tena.");
         setVerifying(false);
         return;
       }
-
-      // ── Resolve identity from mock DB ────────────────────────────────
       const userRole = authResolvedRole ?? "";
-
       if (mode === "admin") {
-        // Use DB-resolved role if available, otherwise use the dropdown selection
         const resolvedAuthRole = (userRole || webRole) as AuthRole;
         saveLoginIdentifier(cleanIdentifier);
         setLoginIdentifier(cleanIdentifier);
         setStep("success");
-        setTimeout(() => {
-          loginAsRole(resolvedAuthRole);
-        }, 900);
+        setTimeout(() => { loginAsRole(resolvedAuthRole); }, 900);
         return;
       }
-
-      // Officer / Post Officer mode — map DB role to store role
       const mappedRole = toStoreOfficerRole(userRole, role);
       saveLoginIdentifier(cleanIdentifier);
       setLoginIdentifier(cleanIdentifier);
       setStep("success");
       setTimeout(() => { login(mappedRole); }, 900);
-
     } catch {
       setErrorMsg("Hitilafu ya mtandao. Jaribu tena.");
     } finally {

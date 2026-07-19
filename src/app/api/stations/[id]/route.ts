@@ -4,7 +4,6 @@
 // DELETE /api/stations/[id]  -> delete station
 
 import { NextResponse } from "next/server";
-import { STATIONS } from "@/lib/admin-mgmt-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";

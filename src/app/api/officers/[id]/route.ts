@@ -4,7 +4,6 @@
 // DELETE /api/officers/[id]   -> delete officer
 
 import { NextResponse } from "next/server";
-import { OFFICERS } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";

@@ -7,8 +7,6 @@
 
 import { useMemo } from "react";
 import { usePoliceStore } from "@/store/police-store";
-import { ROLE_USERS } from "@/lib/mock-engine";
-
 export function useOfficer() {
   const { loginIdentifier, userRole, isAuthenticated } = usePoliceStore();
 

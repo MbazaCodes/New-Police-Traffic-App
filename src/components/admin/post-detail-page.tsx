@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { ArrowLeft, MapPin, Building2, Users } from "lucide-react";
-import { POSTS } from "@/lib/admin-mgmt-data";
-
 export function PostDetailPage({ postId, basePath }: { postId: string; basePath: "/admin" | "/command" }) {
   const post = POSTS.find((p) => p.id === postId);
   if (!post) {

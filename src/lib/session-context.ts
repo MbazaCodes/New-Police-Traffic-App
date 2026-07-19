@@ -7,7 +7,6 @@
 "use client";
 
 import { usePoliceStore } from "@/store/police-store";
-import { ROLE_USERS, type RoleUser } from "@/lib/mock-engine";
 import type { UserRole } from "@/store/police-store";
 
 // Map store UserRole strings → mock-engine role strings for lookup

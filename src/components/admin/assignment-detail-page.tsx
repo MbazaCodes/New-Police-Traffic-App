@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { ArrowLeft, Building2, Network, User } from "lucide-react";
-import { ASSIGNMENTS } from "@/lib/admin-mgmt-data";
-
 export function AssignmentDetailPage({ assignmentId, basePath }: { assignmentId: string; basePath: "/admin" | "/command" }) {
   const assignment = ASSIGNMENTS.find((a) => a.id === assignmentId);
   if (!assignment) {

@@ -2,11 +2,11 @@
 
 import { ArrowLeft, MapPin, Clock, Car, User, AlertTriangle, FileText, TrendingDown } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { RECENT_OFFENSES } from "@/lib/police-data";
+import { } from "@/lib/police-data";
 
 export function OffenseDetailScreen() {
   const { goBack, selectedOffenseId, navigate } = usePoliceStore();
-  const offense = RECENT_OFFENSES.find((o) => o.id === selectedOffenseId);
+  const offense =.find((o) => o.id === selectedOffenseId);
 
   if (!offense) {
     return (

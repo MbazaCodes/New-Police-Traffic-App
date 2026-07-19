@@ -8,7 +8,7 @@ import {
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
 import { toast } from "@/hooks/use-toast";
-import { CITATION_HISTORY } from "@/lib/police-data";
+import { } from "@/lib/police-data";
 
 // ── Penalty escalation: +5% per 7-day window of overdue ──────────────────
 function calcPenalty(baseAmountStr: string, dueDateStr: string): {
@@ -88,7 +88,7 @@ export function FinePaymentScreen() {
   const receiptNo = useMemo(() => `FP-2026-${Math.floor(1000 + Math.random() * 9000)}`, []);
 
   // ── Search existing unpaid citations ──────────────────────────────────
-  const unpaid = CITATION_HISTORY.filter((c) => c.status === "Hajalipwa");
+  const unpaid =.filter((c) => c.status === "Hajalipwa");
   const filtered = searchQuery.trim()
     ? unpaid.filter((c) =>
         c.driver.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -107,7 +107,7 @@ export function FinePaymentScreen() {
     ? parseInt(newForm.customAmount || "0", 10)
     : (selectedOffense?.amount ?? 0);
 
-  function selectCitation(c: typeof CITATION_HISTORY[0]) {
+  function selectCitation(c: typeof[0]) {
     // Mock due date: 30 days after citation date
     const parts = c.date.split(" ");
     const months: Record<string, number> = {

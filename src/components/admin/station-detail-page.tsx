@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { ArrowLeft, Building2, MapPin, Phone } from "lucide-react";
-import { STATIONS } from "@/lib/admin-mgmt-data";
-
 export function StationDetailPage({ stationId, basePath }: { stationId: string; basePath: "/admin" | "/command" }) {
   const station = STATIONS.find((s) => s.id === stationId);
   if (!station) return <NotFound basePath={basePath} title="Kituo Hakipatikani" id={stationId} />;

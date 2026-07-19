@@ -3,7 +3,6 @@
 // DELETE /api/assignments/[id]  -> unassign
 
 import { NextResponse } from "next/server";
-import { ASSIGNMENTS } from "@/lib/admin-mgmt-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";

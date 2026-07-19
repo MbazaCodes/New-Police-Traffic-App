@@ -7,7 +7,6 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
-import { MOCK_VEHICLES } from "@/lib/mock-database";
 
 export async function GET(request: Request) {
   try {
@@ -28,8 +27,6 @@ export async function GET(request: Request) {
       }
     }
     const results = plate
-      ? MOCK_VEHICLES.filter(v => v.plate.replace(/\s/g,"").toUpperCase().includes(plate.replace(/\s/g,"")))
-      : MOCK_VEHICLES;
     return NextResponse.json({ ok: true, data: results });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

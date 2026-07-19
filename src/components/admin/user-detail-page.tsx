@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { ArrowLeft, Mail, Building2, BadgeCheck } from "lucide-react";
-import { ADMIN_USERS } from "@/lib/admin-data";
-
 export function UserDetailPage({ userId, basePath }: { userId: string; basePath: "/admin" | "/command" }) {
   const user = ADMIN_USERS.find((u) => u.id === userId);
 

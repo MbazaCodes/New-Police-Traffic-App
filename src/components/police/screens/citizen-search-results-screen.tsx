@@ -26,7 +26,6 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { lookupCitizen } from "@/lib/mock-database";
 import { findMatchingMissingAlerts } from "@/lib/shared-missing-alerts";
 import { toast } from "@/hooks/use-toast";
 

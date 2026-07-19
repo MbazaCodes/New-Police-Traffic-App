@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ArrowLeft, CarFront, BadgeDollarSign, Calendar } from "lucide-react";
-import { ADMIN_CITATIONS, OFFICERS } from "@/lib/admin-data";
 import { getOfficerProfilePath } from "@/lib/admin-navigation";
 
 export function CitationDetailPage({ citationId, basePath }: { citationId: string; basePath: "/admin" | "/command" }) {

@@ -12,14 +12,9 @@ import {
   CartesianGrid, Tooltip,
 } from "recharts";
 import { usePoliceStore } from "@/store/police-store";
-import { ROLE_USERS, REGIONS, ADMIN_STATIONS, MISSING_RECORDS } from "@/lib/mock-engine";
-import { MOCK_CITIZENS, MOCK_VEHICLES, MOCK_DEVICES } from "@/lib/mock-database";
-import {
-  CITATION_HISTORY, ARREST_RECORDS, WARNING_RECORDS,
+import {,
   GENERAL_INCIDENTS, DETAINED_CITIZENS,
 } from "@/lib/police-data";
-import { INCIDENT_TREND, OFFENSE_DISTRIBUTION, GENERAL_INCIDENT_DISTRIBUTION, COMBINED_DISTRIBUTION, REGION_STATS } from "@/lib/admin-data";
-
 type ReportTab = "all" | "traffic" | "general" | "cid" | "post" | "investigations" | "prison" | "operations";
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -67,14 +62,14 @@ export function CommissionerDashboard() {
   const myGeneral  = myOfficers.filter((u) => u.role === "officer-general");
   const myRegions  = isNational ? REGIONS : REGIONS.filter((r) => r.name === myRegion);
 
-  const totalFines     = CITATION_HISTORY.reduce((s,c) => s + parseInt(c.fine.replace(/[^\d]/g,""),10), 0);
-  const unpaidFines    = CITATION_HISTORY.filter((c) => c.status==="Hajalipwa").reduce((s,c) => s + parseInt(c.fine.replace(/[^\d]/g,""),10), 0);
-  const trafficCitations = CITATION_HISTORY.filter((c) => reportTab==="all" || reportTab==="traffic");
+  const totalFines     =.reduce((s,c) => s + parseInt(c.fine.replace(/[^\d]/g,""),10), 0);
+  const unpaidFines    =.filter((c) => c.status==="Hajalipwa").reduce((s,c) => s + parseInt(c.fine.replace(/[^\d]/g,""),10), 0);
+  const trafficCitations =.filter((c) => reportTab==="all" || reportTab==="traffic");
   const generalIncidents = GENERAL_INCIDENTS.filter((_) => reportTab==="all" || reportTab==="general");
 
   const primaryKpis = [
     { label:"Maofisa Kazini",    value:String(myActive.length),           sub:`kati ya ${myOfficers.length}`,           color:"#2196F3", icon:<Users size={20}/>,        trend:"up"      },
-    { label:"Citations Leo",     value:String(CITATION_HISTORY.length),   sub:"trafiki — " + trafficCitations.length,  color:"#1E3A8A", icon:<FileText size={20}/>,     trend:"up"      },
+    { label:"Citations Leo",     value:String(.length),   sub:"trafiki — " + trafficCitations.length,  color:"#1E3A8A", icon:<FileText size={20}/>,     trend:"up"      },
     { label:"Matukio (Jumla)",   value:String(GENERAL_INCIDENTS.length),  sub:"general polisi",                         color:"#FF9800", icon:<AlertTriangle size={20}/>, trend:"neutral" },
     { label:"Wanaotafutwa",      value:String(ACTIVE_MISSING.length),     sub:"watu + magari + vifaa",                  color:"#EF4444", icon:<Shield size={20}/>,       trend:"down"    },
     { label:"Waliokamatwa",      value:String(DETAINED.length),           sub:`${DETAINED.length} kazizuizini`,         color:"#1E3A8A", icon:<Users size={20}/>,        trend:"neutral" },
@@ -85,9 +80,9 @@ export function CommissionerDashboard() {
     { label:"Maofisa Trafiki", value:String(myTraffic.length)           },
     { label:"Maofisa Jumla",   value:String(myGeneral.length)           },
     { label:"Wafungwa",        value:String(DETAINED.length)            },
-    { label:"Makamato Yote",   value:String(ARREST_RECORDS.length)      },
-    { label:"Maonyo",          value:String(WARNING_RECORDS.length)     },
-    { label:"Raia (DB)",       value:String(MOCK_CITIZENS.length)       },
+    { label:"Makamato Yote",   value:String(.length)      },
+    { label:"Maonyo",          value:String(.length)     },
+    { label:"Raia (DB)",       value:String(.length)       },
     { label:"Magari (DB)",     value:String(MOCK_VEHICLES.length)       },
   ];
 
@@ -179,8 +174,8 @@ export function CommissionerDashboard() {
             </h2>
             <div className="grid grid-cols-2 gap-3 mb-4">
               {[
-                { label:"Citations Zote",  value:String(CITATION_HISTORY.length),  color:"#1E3A8A" },
-                { label:"Hazijalipwa",     value:String(CITATION_HISTORY.filter(c=>c.status==="Hajalipwa").length), color:"#EF4444" },
+                { label:"Citations Zote",  value:String(.length),  color:"#1E3A8A" },
+                { label:"Hazijalipwa",     value:String(.filter(c=>c.status==="Hajalipwa").length), color:"#EF4444" },
                 { label:"Jumla ya Faini",  value:`TZS ${(totalFines/1000).toFixed(0)}k`,  color:"#1E3A8A" },
                 { label:"Faini Hazijalipwa", value:`TZS ${(unpaidFines/1000).toFixed(0)}k`, color:"#FF9800" },
               ].map((s) => (
@@ -193,7 +188,7 @@ export function CommissionerDashboard() {
             {/* Top 5 citations */}
             <div className="space-y-2">
               <p className="text-[11px] font-bold uppercase tracking-wide text-police-faint">Citations za Hivi Karibuni</p>
-              {CITATION_HISTORY.slice(0,5).map((c,i) => (
+              {.slice(0,5).map((c,i) => (
                 <div key={i} className="flex items-center gap-3 rounded-xl border border-police-soft p-2.5">
                   <div className="rounded-md border-2 border-[#1E3A8A] bg-yellow-50 px-2 py-0.5 text-[11px] font-extrabold tracking-wide text-police-navy">{c.plate}</div>
                   <div className="min-w-0 flex-1">
@@ -219,8 +214,8 @@ export function CommissionerDashboard() {
             <div className="grid grid-cols-3 gap-3 mb-4">
               {[
                 { label:"Matukio",    value:String(GENERAL_INCIDENTS.length),   color:"#FF9800" },
-                { label:"Makamato",   value:String(ARREST_RECORDS.length),      color:"#1E3A8A" },
-                { label:"Maonyo",     value:String(WARNING_RECORDS.length),     color:"#2196F3" },
+                { label:"Makamato",   value:String(.length),      color:"#1E3A8A" },
+                { label:"Maonyo",     value:String(.length),     color:"#2196F3" },
               ].map((s) => (
                 <div key={s.label} className="rounded-xl bg-police-muted p-3 text-center">
                   <p className="text-[20px] font-bold" style={{color:s.color}}>{s.value}</p>

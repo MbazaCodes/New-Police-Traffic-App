@@ -4,7 +4,6 @@
 
 import { NextResponse } from "next/server";
 import { ALERTS } from "@/lib/police-data";
-import { ADMIN_ALERTS_HISTORY } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
 import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";

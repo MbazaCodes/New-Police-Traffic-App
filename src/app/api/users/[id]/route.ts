@@ -3,7 +3,6 @@
 // DELETE /api/users/[id]  -> delete user
 
 import { NextResponse } from "next/server";
-import { ADMIN_USERS } from "@/lib/admin-data";
 import { MOCK_USERS } from "@/lib/auth";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";

@@ -2,7 +2,6 @@
 // PATCH /api/patrols/[id]  -> update patrol (end patrol, update distance/progress)
 
 import { NextResponse } from "next/server";
-import { ACTIVE_PATROLS } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";

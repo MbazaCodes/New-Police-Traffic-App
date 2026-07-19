@@ -8,7 +8,6 @@ import {
   OFFENSE_DISTRIBUTION,
   REGION_STATS,
   LIVE_INCIDENTS,
-} from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
 import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { annotateRecordScope, getScopeContext } from "@/lib/scope";

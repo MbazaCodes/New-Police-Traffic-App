@@ -2,7 +2,6 @@
 
 import { useState, useRef } from "react";
 import { Search, X, Plus, AlertTriangle, Car, Smartphone, User, CheckCircle, Camera, Clock, MapPin } from "lucide-react";
-import { MISSING_RECORDS, type MissingRecord } from "@/lib/mock-engine";
 import { toast } from "@/hooks/use-toast";
 
 type FT = "all" | "person" | "car" | "device";

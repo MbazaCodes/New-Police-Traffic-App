@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { usePoliceStore, type AdminScreen } from "@/store/police-store";
-import { ROLE_USERS } from "@/lib/mock-engine";
 import { AdminDashboard } from "./screens/admin-dashboard";
 import { CommissionerDashboard } from "./screens/commissioner-dashboard";
 import { WaliokamatwaScreen } from "./screens/waliokamatwa-screen";

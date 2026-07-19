@@ -1,8 +1,8 @@
-// Login API — Supabase-first, mock fallback for dev
+// Login API — Supabase ONLY. No mock fallback.
 import { NextResponse } from "next/server";
-import { findUserByIdentifier, generateOtp, isDemoMode, isOtpBypassEnabled, resolveDashboardRoute } from "@/lib/auth";
+import { generateOtp, isOtpBypassEnabled, resolveDashboardRoute } from "@/lib/auth";
 import { findSupabaseUser, mapSupabaseRole } from "@/lib/supabase/auth-bridge";
-import { isSupabaseEnabled } from "@/lib/supabase/client";
+import type { Role } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -13,65 +13,53 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Identifier inahitajika" }, { status: 400 });
     }
 
-    // ── Supabase-first lookup ─────────────────────────────────
-    if (isSupabaseEnabled()) {
-      const sbUser = await findSupabaseUser(identifier);
-      if (!sbUser) {
-        return NextResponse.json(
-          { error: "Akaunti haipatikani. Angalia badge number au jina la mtumiaji." },
-          { status: 404 }
-        );
-      }
-      if (sbUser.status === "suspended") {
-        return NextResponse.json({ error: "Akaunti imesimamishwa. Wasiliana na msimamizi." }, { status: 403 });
-      }
+    // Supabase lookup — no fallback
+    const sbUser = await findSupabaseUser(identifier);
 
-      const authRole = mapSupabaseRole(sbUser.role);
-      const code = generateOtp(identifier);
-
-      return NextResponse.json({
-        ok: true,
-        user: {
-          id: sbUser.id,
-          name: sbUser.name,
-          username: sbUser.username ?? sbUser.badge_no,
-          mobile: sbUser.phone,
-          role: authRole,
-          station: sbUser.station?.name ?? "",
-          badgeNo: sbUser.badge_no,
-          region: sbUser.region,
-          photo: sbUser.photo_url,
-        },
-        auth: {
-          nextStep: "otp",
-          otpBypass: isOtpBypassEnabled(),
-          demoMode: false,
-          devOtp: isOtpBypassEnabled() ? code : undefined,
-        },
-        redirectAfterVerify: resolveDashboardRoute(authRole as Parameters<typeof resolveDashboardRoute>[0]),
-      }, { status: 200 });
-    }
-
-    // ── Fallback: mock engine (dev / offline only) ────────────
-    const user = findUserByIdentifier(identifier);
-    if (!user) {
+    if (!sbUser) {
       return NextResponse.json(
-        { error: "Akaunti haipatikani. Angalia jina la mtumiaji au namba ya simu." },
+        { error: "Akaunti haipatikani. Angalia badge number, simu, au barua pepe yako." },
         { status: 404 }
       );
     }
-    if (user.status === "suspended") {
-      return NextResponse.json({ error: "Akaunti imesimamishwa. Wasiliana na msimamizi." }, { status: 403 });
+
+    if (sbUser.status === "suspended") {
+      return NextResponse.json(
+        { error: "Akaunti yako imesimamishwa. Wasiliana na msimamizi." },
+        { status: 403 }
+      );
     }
 
+    if (sbUser.status !== "active") {
+      return NextResponse.json(
+        { error: "Akaunti haina ruhusa ya kuingia sasa hivi." },
+        { status: 403 }
+      );
+    }
+
+    const authRole = mapSupabaseRole(sbUser.role) as Role;
     const code = generateOtp(identifier);
+
     return NextResponse.json({
       ok: true,
-      user: { id: user.id, username: user.username, mobile: user.mobile, role: user.role, station: user.station },
-      auth: { nextStep: "otp", otpBypass: isOtpBypassEnabled(), demoMode: isDemoMode(), devOtp: isDemoMode() || isOtpBypassEnabled() ? code : undefined },
-      redirectAfterVerify: resolveDashboardRoute(user.role),
+      user: {
+        id:      sbUser.id,
+        name:    sbUser.name,
+        badge:   sbUser.badge_no,
+        role:    authRole,
+        station: sbUser.station?.name ?? "",
+        region:  sbUser.region ?? "",
+      },
+      auth: {
+        nextStep:  "otp",
+        otpBypass: isOtpBypassEnabled(),
+        devOtp:    isOtpBypassEnabled() ? code : undefined,
+      },
+      redirect: resolveDashboardRoute(authRole),
     }, { status: 200 });
+
   } catch (err) {
-    return NextResponse.json({ error: "Hitilafu ya seva", detail: String(err) }, { status: 500 });
+    console.error("[login]", err);
+    return NextResponse.json({ error: "Hitilafu ya seva. Jaribu tena." }, { status: 500 });
   }
 }

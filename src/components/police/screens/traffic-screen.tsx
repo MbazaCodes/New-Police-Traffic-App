@@ -3,7 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { PoliceIcon } from "../police-icons";
-import { TRAFFIC_STATS, TRAFFIC_QUICK_ACTIONS, RECENT_OFFENSES } from "@/lib/police-data";
+import {, TRAFFIC_QUICK_ACTIONS } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 
 export function TrafficScreen() {
@@ -16,7 +16,7 @@ export function TrafficScreen() {
       <div className="space-y-4 p-4">
         {/* Stat Cards */}
         <div className="grid grid-cols-4 gap-2">
-          {TRAFFIC_STATS.map((stat) => (
+          {.map((stat) => (
             <div key={stat.label} className="flex flex-col items-center rounded-xl bg-police-card p-2.5 shadow-sm">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ backgroundColor: `${stat.color}15` }}>
                 <PoliceIcon name={stat.icon} size={18} className="" />
@@ -54,7 +54,7 @@ export function TrafficScreen() {
             <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2196F3]">Angalia Zote</button>
           </div>
           <div className="space-y-2.5">
-            {RECENT_OFFENSES.map((offense) => (
+            {.map((offense) => (
               <button
                 key={offense.id}
                 onClick={() => { setSelectedOffense(offense.id); navigate("offense-detail"); }}

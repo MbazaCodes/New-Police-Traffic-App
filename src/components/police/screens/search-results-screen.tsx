@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { findMatchingMissingAlerts } from "@/lib/shared-missing-alerts";
-import { universalSearch, lookupCitizen } from "@/lib/mock-database";
 import type { MockVehicle, MockCitizen } from "@/lib/mock-database";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, SearchX } from "lucide-react";

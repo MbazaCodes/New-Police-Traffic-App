@@ -7,7 +7,6 @@ import {
   Bell, Radio, Zap, FileText, RefreshCw, Plus, Megaphone,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { ROLE_USERS, avatarUrl } from "@/lib/mock-engine";
 import { DETAINED_CITIZENS } from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 

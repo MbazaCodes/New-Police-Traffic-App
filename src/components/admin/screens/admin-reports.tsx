@@ -23,8 +23,6 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { INCIDENT_TREND, OFFENSE_DISTRIBUTION, GENERAL_INCIDENT_DISTRIBUTION, COMBINED_DISTRIBUTION, REGION_STATS } from "@/lib/admin-data";
-import { getReportData } from "@/lib/mock-engine";
 import { toast } from "@/hooks/use-toast";
 
 const DATE_RANGES = [

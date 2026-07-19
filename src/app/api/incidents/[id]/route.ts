@@ -3,12 +3,10 @@
 // PATCH /api/incidents/[id]  -> update incident (assign officer, change status)
 
 import { NextResponse } from "next/server";
-import { ADMIN_INCIDENTS } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 
-const incidentsStore: typeof ADMIN_INCIDENTS = [...ADMIN_INCIDENTS];
 
 export async function GET(
   _request: Request,

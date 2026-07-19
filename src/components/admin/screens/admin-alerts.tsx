@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Send, Bell, Users, AlertTriangle, Mail, Megaphone } from "lucide-react";
-import { ADMIN_USER } from "@/lib/admin-data";
 import {
   addMissingAlert,
   getMissingAlerts,

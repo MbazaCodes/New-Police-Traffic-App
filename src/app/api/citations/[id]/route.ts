@@ -3,12 +3,10 @@
 // PATCH /api/citations/[id]   -> update citation (typically status)
 
 import { NextResponse } from "next/server";
-import { ADMIN_CITATIONS } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 
-const citationsStore: typeof ADMIN_CITATIONS = [...ADMIN_CITATIONS];
 
 export async function GET(
   _request: Request,

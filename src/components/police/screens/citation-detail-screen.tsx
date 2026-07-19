@@ -2,12 +2,12 @@
 
 import { ArrowLeft, FileText, Car, User, MapPin, Clock, TrendingDown, CheckCircle, XCircle, Printer, Share2 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { CITATION_HISTORY } from "@/lib/police-data";
+import { } from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 
 export function CitationDetailScreen() {
   const { goBack, selectedCitationId } = usePoliceStore();
-  const citation = CITATION_HISTORY.find((c) => c.id === selectedCitationId);
+  const citation =.find((c) => c.id === selectedCitationId);
 
   if (!citation) {
     return (

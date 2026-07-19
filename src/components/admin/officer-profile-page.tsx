@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { ArrowLeft, Phone, Building2, Shield, FileText, AlertTriangle, Route } from "lucide-react";
-import { ACTIVE_PATROLS, ADMIN_CITATIONS, ADMIN_INCIDENTS, OFFICERS } from "@/lib/admin-data";
-
 export function OfficerProfilePage({ officerId, basePath }: { officerId: string; basePath: "/admin" | "/command" }) {
   const officer = OFFICERS.find((o) => o.id === officerId);
 

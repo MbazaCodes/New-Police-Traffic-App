@@ -8,7 +8,6 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
-import { MOCK_DEVICES } from "@/lib/mock-database";
 
 export async function GET(request: Request) {
   try {
@@ -29,12 +28,10 @@ export async function GET(request: Request) {
       }
     }
     const results = query
-      ? MOCK_DEVICES.filter(d =>
           d.serialNo.toLowerCase().includes(query.toLowerCase()) ||
           d.imei?.includes(query) ||
           d.description.toLowerCase().includes(query.toLowerCase())
         )
-      : MOCK_DEVICES;
     return NextResponse.json({ ok: true, data: results });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

@@ -23,12 +23,6 @@ import {
   X,
 } from "lucide-react";
 import { usePoliceStore, type AdminScreen } from "@/store/police-store";
-import {
-  DASHBOARD_KPIS,
-  LIVE_INCIDENTS,
-  OFFICERS,
-  REGION_STATS,
-} from "@/lib/admin-data";
 import { toast } from "@/hooks/use-toast";
 
 // ── Mock data for Command Center ──────────────────────────────────────────────

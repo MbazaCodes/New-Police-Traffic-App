@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ArrowLeft, MapPin, Clock, AlertTriangle } from "lucide-react";
-import { ADMIN_INCIDENTS, OFFICERS } from "@/lib/admin-data";
 import { getOfficerProfilePath } from "@/lib/admin-navigation";
 
 export function IncidentDetailPage({ incidentId, basePath }: { incidentId: string; basePath: "/admin" | "/command" }) {

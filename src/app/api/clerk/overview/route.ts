@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
-import { loadMockDatabase } from "@/services/mock-db.service";
-
 type ClerkAlert = {
   title: string;
   detail: string;

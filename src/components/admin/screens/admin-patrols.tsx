@@ -14,7 +14,6 @@ import {
   X,
   Phone,
 } from "lucide-react";
-import { OFFICERS } from "@/lib/admin-data";
 import { getOfficerProfilePath } from "@/lib/admin-navigation";
 import { useRecordsStore, type AdminPatrolRecord } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";

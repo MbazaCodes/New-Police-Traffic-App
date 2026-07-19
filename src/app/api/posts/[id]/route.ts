@@ -4,7 +4,6 @@
 // DELETE /api/posts/[id]  -> delete post
 
 import { NextResponse } from "next/server";
-import { POSTS } from "@/lib/admin-mgmt-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";

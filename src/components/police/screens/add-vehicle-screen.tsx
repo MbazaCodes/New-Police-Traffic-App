@@ -4,7 +4,6 @@ import { useState } from "react";
 import { ArrowLeft, Car, CheckCircle, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
-import { saveNewVehicle, validatePlate, validateNida, validateMobile, validateLicense, newVehicleRecords } from "@/lib/mock-database";
 import { toast } from "@/hooks/use-toast";
 
 const VEHICLE_TYPES = ["Saloon", "SUV", "Pick Up", "Minibus", "Lori", "Bajaji", "Pikipiki", "Basila"];

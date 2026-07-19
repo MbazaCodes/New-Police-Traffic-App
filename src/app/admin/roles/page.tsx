@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Shield, ChevronRight, Check } from "lucide-react";
 import { ROLE_HIERARCHY, PERMISSIONS } from "@/lib/rbac";
-import { ROLE_USERS } from "@/lib/mock-engine";
 import type { Role } from "@/lib/auth";
 
 export default function RolesPage() {

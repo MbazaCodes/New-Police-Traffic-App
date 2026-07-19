@@ -8,7 +8,7 @@ import {
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
 import { toast } from "@/hooks/use-toast";
-import { ARREST_RECORDS } from "@/lib/police-data";
+import { } from "@/lib/police-data";
 
 const BAIL_RATES: Record<string, number> = {
   "Wizi wa Kawaida": 500000,
@@ -76,7 +76,7 @@ export function BailOutScreen() {
   const receiptNo = useMemo(() => `BL-2026-${Math.floor(1000 + Math.random() * 9000)}`, []);
 
   // Held arrestees eligible for bail
-  const eligible = (ARREST_RECORDS as ArrestRecord[]).filter((a) => a.status === "held");
+  const eligible = ( as ArrestRecord[]).filter((a) => a.status === "held");
 
   const bailAmount = selectedArrest ? getBailAmount(selectedArrest.offense) : 0;
 

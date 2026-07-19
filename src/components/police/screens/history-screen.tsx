@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Search, ChevronRight, FileText, Filter, AlertTriangle, Shield, X } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
-import { CITATION_HISTORY, ARREST_RECORDS, WARNING_RECORDS } from "@/lib/police-data";
+import { } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 import { toast } from "@/hooks/use-toast";
 
@@ -15,7 +15,7 @@ export function HistoryScreen() {
   const [filter, setFilter] = useState<"all" | "paid" | "unpaid">("all");
   const [query, setQuery] = useState("");
 
-  const filteredCitations = CITATION_HISTORY.filter((c) => {
+  const filteredCitations =.filter((c) => {
     if (filter === "paid" && c.status !== "Imelipwa") return false;
     if (filter === "unpaid" && c.status !== "Hajalipwa") return false;
     if (query) {
@@ -26,25 +26,25 @@ export function HistoryScreen() {
     return true;
   });
 
-  const filteredArrests = ARREST_RECORDS.filter((a) => {
+  const filteredArrests =.filter((a) => {
     if (!query) return true;
     const q = query.toLowerCase();
     return a.suspect.toLowerCase().includes(q) || a.offense.toLowerCase().includes(q) || a.id.toLowerCase().includes(q);
   });
 
-  const filteredWarnings = WARNING_RECORDS.filter((w) => {
+  const filteredWarnings =.filter((w) => {
     if (!query) return true;
     const q = query.toLowerCase();
     return w.recipient.toLowerCase().includes(q) || w.offense.toLowerCase().includes(q) || w.id.toLowerCase().includes(q);
   });
 
-  const totalFines = CITATION_HISTORY.reduce((sum, c) => sum + parseInt(c.fine.replace(/[^\d]/g, ""), 10), 0);
-  const unpaidFines = CITATION_HISTORY.filter((c) => c.status === "Hajalipwa").reduce((sum, c) => sum + parseInt(c.fine.replace(/[^\d]/g, ""), 10), 0);
+  const totalFines =.reduce((sum, c) => sum + parseInt(c.fine.replace(/[^\d]/g, ""), 10), 0);
+  const unpaidFines =.filter((c) => c.status === "Hajalipwa").reduce((sum, c) => sum + parseInt(c.fine.replace(/[^\d]/g, ""), 10), 0);
 
   const TABS = [
-    { id: "citations" as HistoryTab, label: "Citations", count: CITATION_HISTORY.length, icon: <FileText size={13} /> },
-    { id: "arrests" as HistoryTab, label: "Makamato", count: ARREST_RECORDS.length, icon: <AlertTriangle size={13} /> },
-    { id: "warnings" as HistoryTab, label: "Maonyo", count: WARNING_RECORDS.length, icon: <AlertTriangle size={13} /> },
+    { id: "citations" as HistoryTab, label: "Citations", count:.length, icon: <FileText size={13} /> },
+    { id: "arrests" as HistoryTab, label: "Makamato", count:.length, icon: <AlertTriangle size={13} /> },
+    { id: "warnings" as HistoryTab, label: "Maonyo", count:.length, icon: <AlertTriangle size={13} /> },
     { id: "patrols" as HistoryTab, label: "Patroli", count: patrolRecords.length, icon: <Shield size={13} /> },
   ];
 
@@ -58,12 +58,12 @@ export function HistoryScreen() {
           <div className="tpf-card p-3">
             <p className="text-[10px] text-police-faint">Jumla ya Faini</p>
             <p className="mt-1 text-[18px] font-bold text-police-navy">TZS {totalFines.toLocaleString()}</p>
-            <p className="mt-0.5 text-[10px] text-police-faint">{CITATION_HISTORY.length} Citations</p>
+            <p className="mt-0.5 text-[10px] text-police-faint">{.length} Citations</p>
           </div>
           <div className="tpf-card p-3">
             <p className="text-[10px] text-police-faint">Haijalipwa</p>
             <p className="mt-1 text-[18px] font-bold text-[#EF4444]">TZS {unpaidFines.toLocaleString()}</p>
-            <p className="mt-0.5 text-[10px] text-police-faint">{CITATION_HISTORY.filter((c) => c.status === "Hajalipwa").length} Hajalipwa</p>
+            <p className="mt-0.5 text-[10px] text-police-faint">{.filter((c) => c.status === "Hajalipwa").length} Hajalipwa</p>
           </div>
         </div>
 

@@ -3,7 +3,6 @@
 // type can be: name | nida | mobile
 
 import { NextResponse } from "next/server";
-import { CITIZEN_RESULT } from "@/lib/admin-mgmt-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";

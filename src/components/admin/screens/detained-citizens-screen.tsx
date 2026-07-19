@@ -6,8 +6,7 @@ import {
   User, Phone, MapPin, Calendar, FileText, Shield,
   ChevronRight, UserCheck, UserX, RefreshCw,
 } from "lucide-react";
-import { DETAINED_CITIZENS, ARREST_RECORDS } from "@/lib/police-data";
-import { avatarUrl } from "@/lib/mock-engine";
+import { DETAINED_CITIZENS } from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 import { usePoliceStore } from "@/store/police-store";
 

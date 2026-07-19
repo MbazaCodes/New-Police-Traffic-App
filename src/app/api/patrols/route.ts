@@ -3,7 +3,6 @@
 // POST /api/patrols  -> start patrol
 
 import { NextResponse } from "next/server";
-import { ACTIVE_PATROLS } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
 import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";

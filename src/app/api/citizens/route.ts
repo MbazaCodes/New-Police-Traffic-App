@@ -7,7 +7,6 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
-import { MOCK_CITIZENS } from "@/lib/mock-database";
 
 export async function GET(request: Request) {
   try {
@@ -28,12 +27,10 @@ export async function GET(request: Request) {
     }
     // Mock fallback
     const results = query
-      ? MOCK_CITIZENS.filter(c =>
           c.name.toLowerCase().includes(query.toLowerCase()) ||
           c.nida?.includes(query) ||
           c.mobile?.includes(query)
         )
-      : MOCK_CITIZENS;
     return NextResponse.json({ ok: true, data: results });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

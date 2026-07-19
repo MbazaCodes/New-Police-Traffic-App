@@ -7,12 +7,6 @@
 
 import { isSupabaseEnabled, getSupabaseAdmin } from "./client";
 import {
-  MOCK_CITIZENS, MOCK_VEHICLES, MOCK_DEVICES,
-  lookupCitizen, lookupVehicle, lookupDevice,
-  type MockCitizen, type MockVehicle, type MockDevice,
-} from "@/lib/mock-database";
-import { ROLE_USERS, ADMIN_STATIONS, ADMIN_POSTS, MISSING_RECORDS } from "@/lib/mock-engine";
-import {
   CITATION_HISTORY, ARREST_RECORDS, WARNING_RECORDS,
   GENERAL_INCIDENTS, DETAINED_CITIZENS,
 } from "@/lib/police-data";

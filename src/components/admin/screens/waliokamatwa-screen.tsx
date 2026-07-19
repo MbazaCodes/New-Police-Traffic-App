@@ -5,8 +5,7 @@ import {
   Clock, AlertTriangle, FileText, Eye, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { DETAINED_CITIZENS } from "@/lib/police-data";
-import { avatarUrl } from "@/lib/mock-engine";
-import { ARREST_RECORDS } from "@/lib/police-data";
+import { } from "@/lib/police-data";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type ViewMode = "list" | "card";
