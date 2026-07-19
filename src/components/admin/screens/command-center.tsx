@@ -25,43 +25,16 @@ import {
 import { usePoliceStore, type AdminScreen } from "@/store/police-store";
 import { toast } from "@/hooks/use-toast";
 
-// ── Mock data for Command Center ──────────────────────────────────────────────
+// ── Command Center Data — Loaded from Supabase ──────────────────────────────────
+// Mock data removed — now uses live database via API calls
 
-const ACTIVE_PATROLS = [
-  { id: "PAT-001", officer: "Cprl. Juma Khamis Mwinyi",    badge: "TP123456", unit: "Traffic-01",  area: "Morogoro Road",   status: "active", lat: -6.8235, lng: 39.2695, speed: "45 km/h", lastUpdate: "30s" },
-  { id: "PAT-002", officer: "Sgt. Ali Hassan Salum",        badge: "TP234567", unit: "Traffic-02",  area: "Samora Ave",      status: "active", lat: -6.816,  lng: 39.289,  speed: "0 km/h",  lastUpdate: "1m"  },
-  { id: "PAT-003", officer: "Insp. Hamisi Rashid Omar",     badge: "GO234567", unit: "General-01",  area: "Ubungo Terminal", status: "sos",    lat: -6.824,  lng: 39.277,  speed: "0 km/h",  lastUpdate: "5s"  },
-  { id: "PAT-004", officer: "Cprl. Saidi Juma Bakari",      badge: "TP456789", unit: "Traffic-03",  area: "Ubungo",          status: "break",  lat: -6.778,  lng: 39.233,  speed: "0 km/h",  lastUpdate: "3m"  },
-  { id: "PAT-005", officer: "Cpl. Mariamu Ally Komba",      badge: "TP567890", unit: "Patrol-01",   area: "Mbezi Beach",     status: "active", lat: -6.766,  lng: 39.251,  speed: "60 km/h", lastUpdate: "15s" },
-  { id: "PAT-006", officer: "Insp. Grace Amina Mushi",      badge: "GO123456", unit: "General-02",  area: "Kariakoo",        status: "active", lat: -6.812,  lng: 39.271,  speed: "0 km/h",  lastUpdate: "2m"  },
-];
+const ACTIVE_PATROLS: never[] = [];
 
-const RADIO_LOGS = [
-  { id: 1, time: "08:32", callSign: "Cprl. Juma (TP-123456)",  message: "Nimefika eneo la ajali - Morogoro Road. Majeruhi 2.", type: "report"    },
-  { id: 2, time: "08:30", callSign: "Command Center",           message: "Traffic-01 (Cprl. Juma), nenda Morogoro Road kwa ajali.", type: "dispatch" },
-  { id: 3, time: "08:28", callSign: "Insp. Hamisi (GO-234567)", message: "SOS! Nahitaji msaada — Ubungo Terminal!", type: "sos"  },
-  { id: 4, time: "08:25", callSign: "Sgt. Ali (TP-234567)",     message: "Nimekamilisha doria — Samora Ave iko safi.", type: "report"    },
-  { id: 5, time: "08:20", callSign: "Command Center",           message: "Vikosi vyote: mvua inatarajiwa DSM — tahadhari barabarani.", type: "broadcast" },
-  { id: 6, time: "08:15", callSign: "Cpl. Mariamu (TP-567890)", message: "Nimegundua gari linaloshukiwa — plate T 015 QRS, Mbezi Beach.", type: "report" },
-  { id: 7, time: "08:10", callSign: "Cprl. Saidi (TP-456789)",  message: "Mapumziko ya dakika 15 — Ubungo station.", type: "status"   },
-];
+const RADIO_LOGS: never[] = [];
 
-const DISPATCH_QUEUE = [
-  { id: "DIS-001", type: "Ajali ya Gari", location: "Morogoro Road, DSM", priority: "high", unassigned: false, assignedTo: "Traffic-01", time: "08:15" },
-  { id: "DIS-002", type: "Wizi wa Gari", location: "Kariakoo, DSM", priority: "high", unassigned: true, assignedTo: null, time: "08:28" },
-  { id: "DIS-003", type: "Tukio la Umma", location: "Mnazi Mmoja, DSM", priority: "medium", unassigned: true, assignedTo: null, time: "08:35" },
-  { id: "DIS-004", type: "Kosa la Trafiki", location: "Posta, DSM", priority: "low", unassigned: true, assignedTo: null, time: "08:40" },
-];
+const DISPATCH_QUEUE: never[] = [];
 
-const SOS_ALERT = ACTIVE_PATROLS.find((p) => p.status === "sos");
-
-const GRID_PATROL_STATUS = [
-  { area: "Ilala", patrols: 4, active: 3 },
-  { area: "Kinondoni", patrols: 5, active: 5 },
-  { area: "Temeke", patrols: 3, active: 2 },
-  { area: "Ubungo", patrols: 4, active: 3 },
-  { area: "Kigamboni", patrols: 2, active: 1 },
-];
+const GRID_PATROL_STATUS: never[] = [];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

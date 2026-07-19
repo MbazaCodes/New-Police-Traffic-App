@@ -67,7 +67,7 @@ export function CommissionerDashboard() {
     { label:"Makamato Yote",   value:String(0)      },
     { label:"Maonyo",          value:String(0)     },
     { label:"Raia (DB)",       value:String(0)       },
-    { label:"Magari (DB)",     value:String(MOCK_VEHICLES.length)       },
+    { label:"Magari (DB)",     value:String(0)       },
   ];
 
   return (

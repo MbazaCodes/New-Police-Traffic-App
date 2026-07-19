@@ -59,11 +59,12 @@ export async function POST(request: Request) {
     if (isSupabaseEnabled()) {
       const admin = getSupabaseAdmin();
       if (admin) {
-        // 1. Create user record
+        // 1. Create user record - respect the role passed from frontend
+        const userRole = role || "officer-general";
         const { data: user, error: userErr } = await admin.from("users").insert({
           name, short_name: name.split(" ").slice(0, 2).join(" "),
           rank: rank || "Constable", rank_short: rankShort || "Cst.",
-          role: role || "officer-general", status: "active",
+          role: userRole, status: "active",
           station_id: stationId, badge_no: badgeNo,
           username: badgeNo.toLowerCase().replace(/[^a-z0-9]/g, ""),
           email: email || null, phone: phone || null,

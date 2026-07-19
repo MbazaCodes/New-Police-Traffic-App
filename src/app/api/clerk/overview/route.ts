@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
+import { isSupabaseEnabled, getSupabaseAdmin } from "@/lib/supabase/client";
+
 type ClerkAlert = {
   title: string;
   detail: string;
@@ -15,84 +17,114 @@ export async function GET() {
       return NextResponse.json({ error: check.error }, { status: check.status });
     }
 
-    const mock = await loadMockDatabase();
+    // Load real data from Supabase (or return empty state)
+    let totalRecords = 0;
+    let pendingReview = 0;
+    let citizensMissingDocs = 0;
+    let invalidNidaCount = 0;
+    let closedCases = 0;
+    let defaultStation = "Station not set";
+    let syncEnabled = true;
+    let offlineEnabled = false;
+    
+    const recentEntries: Array<{ id: string; name: string; status: string; documentCount: number; updatedAt: string }> = [];
+    const documentsQueue: Array<{ id: string; name: string; status: string }> = [];
 
-    const totalRecords = mock.summary.totalRecords;
-    const pendingReview = mock.summary.openCases;
+    if (isSupabaseEnabled()) {
+      const admin = getSupabaseAdmin();
+      if (admin) {
+        try {
+          // Fetch citizens count
+          const { count: citizensCount } = await admin
+            .from("citizens")
+            .select("*", { count: "exact", head: true });
+          totalRecords = citizensCount ?? 0;
 
-    const citizensMissingDocs = mock.citizens.filter((item) => {
-      const docs = ((item as { documents?: unknown[] }).documents ?? []) as unknown[];
-      return docs.length === 0;
-    }).length;
+          // Fetch recent citizens
+          const { data: citizens } = await admin
+            .from("citizens")
+            .select("id, nida, name, status, documents, created_at")
+            .order("created_at", { ascending: false })
+            .limit(8);
 
-    const invalidNidaCount = mock.citizens.filter((item) => {
-      const nida = String((item as { nida?: string }).nida ?? "").replace(/\D/g, "");
-      return nida.length !== 15;
-    }).length;
+          if (citizens) {
+            for (const citizen of citizens) {
+              const docs = (citizen.documents as unknown[] | null) ?? [];
+              
+              // Build recent entries
+              recentEntries.push({
+                id: String(citizen.nida ?? citizen.id),
+                name: String(citizen.name ?? "Unknown"),
+                status: String(citizen.status ?? "Pending"),
+                documentCount: docs.length,
+                updatedAt: citizen.created_at ? new Date(citizen.created_at).toISOString().split('T')[0] : "N/A",
+              });
 
+              // Check missing documents
+              if (docs.length === 0) {
+                citizensMissingDocs++;
+                documentsQueue.push({
+                  id: String(citizen.nida ?? citizen.id),
+                  name: String(citizen.name ?? "Unknown"),
+                  status: String(citizen.status ?? "Pending"),
+                });
+              }
+
+              // Validate NIDA format (15 digits)
+              const nida = String(citizen.nida ?? "").replace(/\D/g, "");
+              if (nida.length !== 15 && nida.length > 0) {
+                invalidNidaCount++;
+              }
+            }
+          }
+
+          // Fetch cases count for pending/closed
+          const { count: openCasesCount } = await admin
+            .from("cases")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "open");
+          pendingReview = openCasesCount ?? 0;
+
+          const { count: closedCasesCount } = await admin
+            .from("cases")
+            .select("*", { count: "exact", head: true })
+            .in("status", ["closed", "resolved", "completed"]);
+          closedCases = closedCasesCount ?? 0;
+
+          // Get first station name
+          const { data: stations } = await admin
+            .from("stations")
+            .select("name, station_name")
+            .limit(1);
+          
+          if (stations && stations.length > 0) {
+            defaultStation = (stations[0].station_name ?? stations[0].name) ?? "Station not set";
+          }
+        } catch (dbError) {
+          console.error("Supabase query error:", dbError);
+          // Continue with empty data on error
+        }
+      }
+    }
+
+    // Calculate derived metrics
     const validated = Math.max(0, totalRecords - pendingReview - invalidNidaCount);
     const accuracy = totalRecords > 0 ? (validated / totalRecords) * 100 : 100;
     const qualityScore = Math.max(1, Math.min(5, Number((accuracy / 20).toFixed(1))));
 
-    const closedCases = mock.cases.filter((item) => {
-      const status = String((item as { status?: string; caseStatus?: string; state?: string }).status
-        ?? (item as { caseStatus?: string }).caseStatus
-        ?? (item as { state?: string }).state
-        ?? "").toLowerCase();
-      return ["closed", "resolved", "completed"].includes(status);
-    }).length;
-
-    const firstStation = mock.stations[0] as { stationName?: string; name?: string } | undefined;
-    const defaultStation = firstStation?.stationName ?? firstStation?.name ?? "Station not set";
-
     const records = {
-      citizens: mock.citizens.length,
-      vehicles: mock.vehicles.length,
-      cases: mock.cases.length,
+      citizens: totalRecords,
+      vehicles: 0, // Will be populated when vehicles table is queried
+      cases: pendingReview + closedCases,
       pendingReview,
-      recentEntries: mock.citizens.slice(0, 8).map((item) => {
-        const citizen = item as {
-          nida?: string;
-          name?: string;
-          status?: string;
-          documents?: unknown[];
-          history?: Array<{ date?: string }>;
-        };
-        const docs = (citizen.documents ?? []) as unknown[];
-        const latestHistory = Array.isArray(citizen.history) && citizen.history.length > 0
-          ? String(citizen.history[0]?.date ?? "N/A")
-          : "N/A";
-        return {
-          id: String(citizen.nida ?? "N/A"),
-          name: String(citizen.name ?? "Unknown"),
-          status: String(citizen.status ?? "Pending"),
-          documentCount: docs.length,
-          updatedAt: latestHistory,
-        };
-      }),
+      recentEntries,
     };
 
     const documents = {
-      totalAttached: mock.citizens.reduce((sum, item) => {
-        const docs = ((item as { documents?: unknown[] }).documents ?? []) as unknown[];
-        return sum + docs.length;
-      }, 0),
+      totalAttached: totalRecords - citizensMissingDocs,
       missing: citizensMissingDocs,
       requiresValidation: invalidNidaCount,
-      queue: mock.citizens
-        .filter((item) => {
-          const docs = ((item as { documents?: unknown[] }).documents ?? []) as unknown[];
-          return docs.length === 0;
-        })
-        .slice(0, 8)
-        .map((item) => {
-          const citizen = item as { nida?: string; name?: string; status?: string };
-          return {
-            id: String(citizen.nida ?? "N/A"),
-            name: String(citizen.name ?? "Unknown"),
-            status: String(citizen.status ?? "Pending"),
-          };
-        }),
+      queue: documentsQueue.slice(0, 8),
     };
 
     const notifications: ClerkAlert[] = [
@@ -126,8 +158,8 @@ export async function GET() {
           settings: {
             defaultStation,
             exportFrequency: "Daily at 18:00",
-            syncEnabled: mock.summary.syncEnabled,
-            offlineEnabled: mock.summary.offlineEnabled,
+            syncEnabled,
+            offlineEnabled,
           },
           profile: {
             recordsEntered: totalRecords,
