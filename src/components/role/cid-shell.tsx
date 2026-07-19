@@ -90,7 +90,7 @@ const CID_NAV: {
   { id: "intel", label: "Konze la Upelelezi", icon: Telescope },
   { id: "cases", label: "Kesi", icon: FolderOpen },
   { id: "suspects", label: "Watuhumiwa", icon: UserX },
-  { id: "wanted", label: "Wanaotafutwa", icon: AlertTriangle, badge: 7 },
+  { id: "wanted", label: "Wanaotafutwa", icon: AlertTriangle },
   { id: "evidence", label: "Ushahidi", icon: FileSearch },
   { id: "interviews", label: "Mahojiano", icon: MessageSquare },
   { id: "pf3", label: "PF3 Forms", icon: FileText },

@@ -56,7 +56,7 @@ const VIEWER_NAV: { id: ViewerScreen; label: string; icon: typeof LayoutDashboar
   { id: "dashboard", label: "Dashibodi", icon: LayoutDashboard },
   { id: "reports", label: "Ripoti", icon: FileText },
   { id: "analytics", label: "Uchambuzi", icon: LineChart },
-  { id: "notifications", label: "Arifa", icon: Bell, badge: 5 },
+  { id: "notifications", label: "Arifa", icon: Bell },
   { id: "help", label: "Msaada", icon: HelpCircle },
 ];
 
@@ -67,17 +67,17 @@ const VIEWER_NAV: { id: ViewerScreen; label: string; icon: typeof LayoutDashboar
 /* ---- ViewerDashboard ---- */
 function ViewerDashboard() {
   const overviewStats = [
-    { label: "Total Officers", value: "847", icon: Users, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400", sub: "Across 31 regions" },
-    { label: "Active Cases", value: "234", icon: FileText, color: "bg-[#FF9800]/15 text-[#FF9800] ", sub: "56 under investigation" },
-    { label: "Stations", value: "56", icon: Building2, color: "bg-[#10B981]/15 text-[#10B981] ", sub: "3 new this quarter" },
-    { label: "Regions", value: "31", icon: MapPin, color: "bg-[#1E3A8A]/15 text-[#1E3A8A] dark:", sub: "All mainland + Zanzibar" },
+    { label: "Total Officers", value: "0", icon: Users, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400", sub: "Data from Supabase" },
+    { label: "Active Cases", value: "0", icon: FileText, color: "bg-[#FF9800]/15 text-[#FF9800] ", sub: "—" },
+    { label: "Stations", value: "0", icon: Building2, color: "bg-[#10B981]/15 text-[#10B981] ", sub: "—" },
+    { label: "Regions", value: "0", icon: MapPin, color: "bg-[#1E3A8A]/15 text-[#1E3A8A] dark:", sub: "—" },
   ];
 
   const keyMetrics = [
-    { label: "Crime Rate (Per 100k)", value: "342", change: "-8.2%", positive: true },
-    { label: "Case Clearance Rate", value: "67%", change: "+3.1%", positive: true },
-    { label: "Avg Response Time", value: "12 min", change: "-2 min", positive: true },
-    { label: "Citizen Satisfaction", value: "78%", change: "+5.4%", positive: true },
+    { label: "Crime Rate (Per 100k)", value: "—", change: "—", positive: false },
+    { label: "Case Clearance Rate", value: "—%", change: "—", positive: false },
+    { label: "Avg Response Time", value: "— min", change: "—", positive: false },
+    { label: "Citizen Satisfaction", value: "—%", change: "—", positive: false },
   ];
 
   const recentActivity: never[] = [];

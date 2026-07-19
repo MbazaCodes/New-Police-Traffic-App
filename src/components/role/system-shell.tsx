@@ -62,10 +62,10 @@ const SYSTEM_USER = {
 const SYSTEM_NAV: { id: SystemScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
   { id: "dashboard", label: "Dashibodi", icon: LayoutDashboard },
   { id: "users", label: "Watumiaji", icon: Users },
-  { id: "system-health", label: "Afya ya Mfumo", icon: Activity, badge: 1 },
+  { id: "system-health", label: "Afya ya Mfumo", icon: Activity },
   { id: "user-management", label: "Usimamizi wa Watumiaji", icon: UserCog },
   { id: "integrations", label: "Miunganisho", icon: Plug },
-  { id: "notifications", label: "Arifa", icon: Bell, badge: 4 },
+  { id: "notifications", label: "Arifa", icon: Bell },
   { id: "settings", label: "Mipangilio", icon: Settings },
 ];
 

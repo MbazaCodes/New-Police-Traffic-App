@@ -58,7 +58,7 @@ const CLERK_NAV: { id: ClerkScreen; label: string; icon: typeof LayoutDashboard;
   { id: "records", label: "Rekodi", icon: FileText },
   { id: "documents", label: "Hatika", icon: FileCheck },
   { id: "file-management", label: "Usimamizi wa Faili", icon: FolderTree },
-  { id: "exports", label: "Uhamishaji", icon: Download, badge: 2 },
+  { id: "exports", label: "Uhamishaji", icon: Download },
   { id: "reports", label: "Ripoti", icon: BarChart3 },
   { id: "settings", label: "Mipangilio", icon: Settings },
 ];

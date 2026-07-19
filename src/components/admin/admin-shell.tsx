@@ -46,33 +46,32 @@ import { AdminMissing } from "./screens/admin-missing";
 const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
   { id: "dashboard",         label: "Dashboard",       icon: LayoutDashboard },
   { id: "officers",          label: "Maofisa",          icon: Users },
-  { id: "incidents",         label: "Matukio",          icon: AlertTriangle, badge: 5 },
+  { id: "incidents",         label: "Matukio",          icon: AlertTriangle },
   { id: "citations",         label: "Citations",        icon: FileText },
-  { id: "patrols",           label: "Patroli",          icon: Shield, badge: 5 },
-  { id: "alerts",            label: "Arifa",            icon: Bell, badge: 3 },
+  { id: "patrols",           label: "Patroli",          icon: Shield },
+  { id: "alerts",            label: "Arifa",            icon: Bell },
   { id: "reports",           label: "Ripoti",           icon: BarChart3 },
-  { id: "detained-citizens", label: "Wafungwa",         icon: Shield, badge: 3 },
-  { id: "waliokamatwa",      label: "Waliokamatwa",     icon: Users, badge: 5 },
-  { id: "requests",         label: "Maombi ya Maafisa",icon: Users, badge: 4 },
-  { id: "missing",           label: "Wanaotafutwa",     icon: AlertTriangle, badge: 7 },
+  { id: "detained-citizens", label: "Wafungwa",         icon: Shield },
+  { id: "waliokamatwa",      label: "Waliokamatwa",     icon: Users },
+  { id: "requests",         label: "Maombi ya Maafisa",icon: Users },
+  { id: "missing",           label: "Wanaotafutwa",     icon: AlertTriangle },
   { id: "stations",          label: "Vituo",            icon: Building2 },
-  { id: "posts",             label: "Posti",            icon: Network, badge: 1 },
-  { id: "assignments",       label: "Mgao",             icon: ArrowRightLeft, badge: 3 },
+  { id: "posts",             label: "Posti",            icon: Network },
+  { id: "assignments",       label: "Mgao",             icon: ArrowRightLeft },
   { id: "settings",          label: "Mipangilio",       icon: Settings },
-  // Commanders do NOT see Watumiaji — that is Admin-only
 ];
 
 // Officer — field operations (web version)
 const OFFICER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
   { id: "dashboard",         label: "Nyumbani",         icon: LayoutDashboard },
   { id: "citations",         label: "Citations",        icon: FileText },
-  { id: "incidents",         label: "Matukio",          icon: AlertTriangle, badge: 5 },
+  { id: "incidents",         label: "Matukio",          icon: AlertTriangle },
   { id: "patrols",           label: "Patroli",          icon: Shield },
   { id: "detained-citizens", label: "Wafungwa",         icon: Shield },
   { id: "waliokamatwa",      label: "Waliokamatwa",     icon: Users },
-  { id: "requests",         label: "Maombi ya Maafisa",icon: Users, badge: 4 },
-  { id: "missing",           label: "Wanaotafutwa",     icon: AlertTriangle, badge: 7 },
-  { id: "alerts",            label: "Arifa",            icon: Bell, badge: 3 },
+  { id: "requests",         label: "Maombi ya Maafisa",icon: Users },
+  { id: "missing",           label: "Wanaotafutwa",     icon: AlertTriangle },
+  { id: "alerts",            label: "Arifa",            icon: Bell },
   { id: "reports",           label: "Ripoti",           icon: BarChart3 },
 ];
 
@@ -82,10 +81,10 @@ const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard;
   { id: "officers", label: "Maofisa", icon: Users },
   { id: "users", label: "Watumiaji", icon: Users },
   { id: "stations", label: "Vituo", icon: Building2 },
-  { id: "posts", label: "Posti", icon: Network, badge: 1 },
-  { id: "assignments", label: "Mgao", icon: ArrowRightLeft, badge: 3 },
+  { id: "posts", label: "Posti", icon: Network },
+  { id: "assignments", label: "Mgao", icon: ArrowRightLeft },
   { id: "reports", label: "Ripoti", icon: BarChart3 },
-  { id: "missing", label: "Wanaotafutwa", icon: AlertTriangle, badge: 7 },
+  { id: "missing", label: "Wanaotafutwa", icon: AlertTriangle },
   { id: "settings", label: "Mipangilio", icon: Settings },
 ];
 
@@ -227,9 +226,6 @@ export function AdminShell() {
           <div className="relative">
             <button onClick={() => setNotifOpen(!notifOpen)} className={`relative flex h-9 w-9 items-center justify-center rounded-lg border transition ${notifOpen ? "border-[var(--tpf-blue)] bg-[var(--tpf-blue-pale)] text-[var(--tpf-blue)]" : "border-[var(--tpf-border)] bg-[var(--tpf-surface-2)] text-[var(--tpf-text-3)] hover:bg-[var(--tpf-border)]"}`}>
               <Bell size={16} />
-              <span className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#DC2626] px-1 text-[9px] font-bold text-white shadow-sm">
-                3
-              </span>
             </button>
 
             {/* Notification Panel */}
@@ -238,30 +234,19 @@ export function AdminShell() {
                 <div className="flex items-center justify-between border-b border-[var(--tpf-border)] px-4 py-3">
                   <div>
                     <span className="text-[14px] font-bold text-[var(--tpf-text)]">Arifa</span>
-                    <span className="ml-2 tpf-badge tpf-badge-red">3</span>
                   </div>
                   <button onClick={() => setNotifOpen(false)} className="flex h-7 w-7 items-center justify-center rounded-lg text-[var(--tpf-text-4)] hover:bg-[var(--tpf-surface-2)] hover:text-[var(--tpf-text)] transition"><X size={14}/></button>
                 </div>
                 <div className="max-h-72 overflow-y-auto divide-y divide-police-soft">
-                  {[
-                    { id:"N1", title:"SOS — Insp. Hamisi anahitaji msaada", time:"sasa hivi", color:"#EF4444", read:false },
-                    { id:"N2", title:"Gari T 003 GHI limeripotiwa libiwa", time:"dk 5", color:"#FF9800", read:false },
-                    { id:"N3", title:"Citation mpya — T 009 YZA — Bajaji bila bima", time:"dk 12", color:"#2196F3", read:false },
-                    { id:"N4", title:"Ripoti ya Patroli imekamilika — ", time:"dk 30", color:"#10B981", read:true },
-                    { id:"N5", title:"Mkutano wa Kamanda — Kesho 09:00", time:"saa 1", color:"#1E3A8A", read:true },
-                  ].map((n) => (
-                    <div key={n.id} className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition hover:bg-[var(--tpf-surface-2)] ${n.read ? "opacity-50" : ""}`}>
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor:n.color }}/>
-                      <div className="min-w-0 flex-1">
-                        <p className={`text-[12.5px] leading-tight text-[var(--tpf-text-2)] ${!n.read ? "font-semibold" : ""}`}>{n.title}</p>
-                        <p className="mt-1 text-[11px] text-[var(--tpf-text-4)]">{n.time}</p>
-                      </div>
-                    </div>
-                  ))}
+                  <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+                    <Bell size={32} className="text-[var(--tpf-text-4)] mb-3" />
+                    <p className="text-[13px] font-medium text-[var(--tpf-text-2)]">Hakuna arifa kwa sasa</p>
+                    <p className="mt-1 text-[11px] text-[var(--tpf-text-4)]">Arifa mpya zitaonekana hapa</p>
+                  </div>
                 </div>
                 <div className="border-t border-[var(--tpf-border)] px-4 py-2.5">
                   <button onClick={() => { setAdminScreen("alerts"); setNotifOpen(false); }} className="text-[12.5px] font-semibold text-[var(--tpf-blue)] hover:text-[#1D4ED8] transition">
-                    Ona arifa zote →
+                    Nenda kurasa ya Arifa →
                   </button>
                 </div>
               </div>
