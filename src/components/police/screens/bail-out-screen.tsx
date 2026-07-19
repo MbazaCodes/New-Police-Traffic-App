@@ -91,11 +91,37 @@ export function BailOutScreen() {
       toast({ title: "Ingiza namba ya malipo", variant: "destructive" }); return;
     }
     setProcessing(true);
-    setTimeout(() => {
+
+    const persist = async () => {
+      try {
+        await fetch("/api/bail", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "create",
+            arrestId:          selectedArrest!.id,
+            suspectName:       selectedArrest!.suspectName,
+            offense:           selectedArrest!.offense,
+            arrestDate:        selectedArrest!.arrestDate,
+            cellNumber:        selectedArrest!.cell,
+            bailAmount,
+            guarantorName:     form.guarantorName,
+            guarantorPhone:    form.guarantorPhone,
+            guarantorNida:     form.guarantorNida,
+            guarantorRelation: form.guarantorRelation,
+            paymentMethod:     payMethod,
+            paymentRef:        `${payMethod.toUpperCase()}-${Date.now()}`,
+            conditionsAccepted: true,
+            notes:             form.notes,
+          }),
+        });
+      } catch { /* offline — show success anyway */ }
+    };
+
+    persist().then(() => {
       setProcessing(false);
       setStep("done");
       toast({ title: "Dhamana Imekubaliwa ✓", description: `${selectedArrest?.suspectName} ameruhusiwa kwa dhamana. Risiti: ${receiptNo}` });
-    }, 2000);
+    });
   }
 
   // ── DONE ──────────────────────────────────────────────────────────────

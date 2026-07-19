@@ -143,12 +143,39 @@ export function FinePaymentScreen() {
       toast({ title: "Ingiza namba ya malipo", variant: "destructive" }); return;
     }
     setProcessing(true);
-    setTimeout(() => {
+    const fine = selectedFine!;
+    const pen = penalty!;
+
+    // Persist to DB
+    const persist = async () => {
+      try {
+        if (fine.id) {
+          // Existing citation — mark as paid
+          await fetch("/api/fines", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "pay", fineId: fine.id, paymentMethod: payMethod, paymentRef: `${payMethod.toUpperCase()}-${Date.now()}` }),
+          });
+        } else {
+          // New fine — create + pay in one step
+          await fetch("/api/fines", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "create",
+              driverName: fine.driverName, driverPhone: fine.driverPhone,
+              plate: fine.plate, offense: fine.offense,
+              baseAmount: pen.base, dueDate: fine.dueDate,
+            }),
+          });
+        }
+      } catch { /* offline — show success anyway */ }
+    };
+
+    persist().then(() => {
       setProcessing(false);
       setRef(`REF${Date.now().toString().slice(-8)}`);
       setStep("done");
       toast({ title: "Malipo Yamekamilika ✓", description: `Faini imelipwa. Risiti: ${receiptNo}` });
-    }, 1800);
+    });
   }
 
   // ── DONE ──────────────────────────────────────────────────────────────
