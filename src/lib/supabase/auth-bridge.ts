@@ -35,21 +35,56 @@ export async function findSupabaseUser(identifier: string): Promise<SupabaseUser
   const admin = getSupabaseAdmin();
   if (!admin) return null;
 
-  const clean = identifier.trim().toLowerCase().replace(/\s+/g, "");
+  const raw = identifier.trim();
 
-  // Try badge_no, username, email first (exact)
-  const { data, error } = await admin
+  // ── Normalize phone number to multiple formats ─────────────
+  // Accept: 0712345678 / 712345678 / +255712345678 / 255712345678
+  const phoneNormalized: string[] = [];
+  const digitsOnly = raw.replace(/\D/g, "");
+  if (digitsOnly.length >= 9) {
+    const core = digitsOnly.startsWith("255")
+      ? digitsOnly.slice(3)        // 255712... → 712...
+      : digitsOnly.startsWith("0")
+      ? digitsOnly.slice(1)        // 0712... → 712...
+      : digitsOnly;                // 712... already
+    phoneNormalized.push(
+      `0${core}`,                  // 0712345678
+      `+255${core}`,               // +255712345678
+      `255${core}`,                // 255712345678
+      core,                        // 712345678
+    );
+  }
+
+  const clean = raw.toLowerCase();
+
+  // ── Try exact badge_no / username / email first ────────────
+  const { data: exact } = await admin
     .from("users")
     .select("*, station:stations(id, name, region)")
     .or(
-      `badge_no.ilike.${clean},username.ilike.${clean},email.ilike.${clean},phone.ilike.%${clean}%`
+      `badge_no.ilike.${clean},username.ilike.${clean},email.ilike.${clean}`
     )
     .eq("status", "active")
     .limit(1)
     .maybeSingle();
 
-  if (error || !data) return null;
-  return data as SupabaseUser;
+  if (exact) return exact as SupabaseUser;
+
+  // ── Try phone number in all normalized formats ─────────────
+  if (phoneNormalized.length > 0) {
+    for (const ph of phoneNormalized) {
+      const { data: byPhone } = await admin
+        .from("users")
+        .select("*, station:stations(id, name, region)")
+        .eq("phone", ph)
+        .eq("status", "active")
+        .limit(1)
+        .maybeSingle();
+      if (byPhone) return byPhone as SupabaseUser;
+    }
+  }
+
+  return null;
 }
 
 /**

@@ -5,8 +5,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   ShieldCheck,
+  Shield,
   User,
   Phone,
+  Mail,
   ArrowRight,
   ArrowLeft,
   KeyRound,
@@ -95,7 +97,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
   const login = usePoliceStore((s) => s.login);
   const setLoginIdentifier = usePoliceStore((s) => s.setLoginIdentifier);
   const [step, setStep] = useState<Step>("credentials");
-  const [method, setMethod] = useState<"username" | "phone">("username");
+  const [method, setMethod] = useState<"username" | "phone" | "email">("username");
   const [identifier, setIdentifier] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [sending, setSending] = useState(false);
@@ -166,7 +168,14 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: cleanIdentifier }),
+        body: JSON.stringify({
+          identifier: cleanIdentifier,
+          method,
+          // Pre-normalize phone so server doesn't have to guess
+          ...(method === "phone" && {
+            phone: cleanIdentifier.replace(/\D/g,"").replace(/^(255|0)/,""),
+          }),
+        }),
       });
       const data = await response.json().catch(() => ({}));
 
@@ -267,7 +276,9 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
   const otpComplete = otp.join("").length === 6;
   const maskedIdentifier =
     method === "phone"
-      ? identifier.replace(/(\d{3})\d+(\d{2})/, "$1•••••$2")
+      ? `+255 ${identifier.replace(/(\d{3})\d+(\d{2})/, "$1•••••$2")}`
+      : method === "email"
+      ? identifier.replace(/(.{2})(.*)(@.*)/, "$1•••$3")
       : identifier;
 
   return (
@@ -513,40 +524,44 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                 </div>
               )}
 
-              {/* Method toggle */}
-              <div className="mt-4 flex gap-2 rounded-xl bg-police-muted p-1">
-                <button
-                  onClick={() => setMethod("username")}
-                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${
-                    method === "username"
-                      ? "bg-police-card text-[#2196F3] shadow-sm"
-                      : "text-police-muted"
-                  }`}
-                >
-                  <User size={14} /> Username
-                </button>
-                <button
-                  onClick={() => setMethod("phone")}
-                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[12px] font-semibold transition ${
-                    method === "phone"
-                      ? "bg-police-card text-[#2196F3] shadow-sm"
-                      : "text-police-muted"
-                  }`}
-                >
-                  <Phone size={14} /> Mobile Number
-                </button>
+              {/* Method toggle — 3 options */}
+              <div className="mt-4 flex gap-1.5 rounded-xl bg-police-muted p-1">
+                {[
+                  { id: "username", label: "Badge / Username", icon: User },
+                  { id: "phone",    label: "Simu",             icon: Phone },
+                  { id: "email",    label: "Email",            icon: Mail },
+                ].map(({ id, label, icon: Icon }) => (
+                  <button
+                    key={id}
+                    onClick={() => { setMethod(id as "username" | "phone"); setIdentifier(""); }}
+                    className={`flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-2 text-[11px] font-semibold transition ${
+                      method === id
+                        ? "bg-police-card text-[#2196F3] shadow-sm"
+                        : "text-police-muted hover:text-police"
+                    }`}
+                  >
+                    <Icon size={14} />
+                    <span className="leading-none">{label}</span>
+                  </button>
+                ))}
               </div>
 
               {/* Identifier Input */}
               <div className="mt-4">
-                <label className="mb-1.5 block text-[13px] font-medium text-police-navy2">
-                  {method === "username" ? "Username" : "Namba ya Simu"}
+                <label className="mb-1.5 block text-[12px] font-bold uppercase tracking-wide text-police-muted">
+                  {method === "username" ? "Badge Number au Username" : method === "phone" ? "Namba ya Simu" : "Barua Pepe"}
                 </label>
                 <div className="flex items-center gap-2 rounded-xl border border-police bg-police-card px-3 focus-within:border-[#2196F3] focus-within:ring-2 focus-within:ring-[#2196F3]/20">
                   {method === "username" ? (
-                    <User size={20} className="text-[#2196F3]" />
+                    <Shield size={18} className="shrink-0 text-[#2196F3]" />
+                  ) : method === "phone" ? (
+                    <Phone size={18} className="shrink-0 text-[#2196F3]" />
                   ) : (
-                    <Phone size={20} className="text-[#2196F3]" />
+                    <Mail size={18} className="shrink-0 text-[#2196F3]" />
+                  )}
+                  {/* Tanzania country code prefix for phone */}
+                  {method === "phone" && (
+                    <span className="shrink-0 border-r border-police-soft pr-2 text-[13px] font-bold text-police-muted">+255</span>
                   )}
                   <input
                     value={identifier}
@@ -554,13 +569,22 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                     onKeyDown={(e) => e.key === "Enter" && sendOtp()}
                     placeholder={
                       method === "username"
-                        ? "Ingiza username yako"
-                        : "Ingiza namba ya simu (07XX XXX XXX)"
+                        ? "e.g. SYSADMIN-001 au asp.sys"
+                        : method === "phone"
+                        ? "7XX XXX XXX"
+                        : "jina@polisi.go.tz"
                     }
-                    inputMode={method === "phone" ? "tel" : "text"}
+                    inputMode={method === "phone" ? "tel" : method === "email" ? "email" : "text"}
+                    autoComplete={method === "email" ? "email" : method === "phone" ? "tel" : "username"}
                     className="h-12 flex-1 bg-transparent text-[14px] text-police placeholder:text-police-faint focus:outline-none"
                   />
                 </div>
+                {/* Helper hint */}
+                <p className="mt-1.5 text-[11px] text-police-muted">
+                  {method === "username" && "Ingiza badge number (e.g. SYSADMIN-001) au username"}
+                  {method === "phone" && "Ingiza namba bila 0 ya kwanza — e.g. 712345678"}
+                  {method === "email" && "Ingiza barua pepe iliyosajiliwa"}
+                </p>
               </div>
 
               {/* Info note */}
