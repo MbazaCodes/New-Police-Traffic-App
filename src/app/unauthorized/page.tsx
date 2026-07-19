@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function UnauthorizedPage() {
+  return (
+    <Suspense>
+      <UnauthorizedContent />
+    </Suspense>
+  );
+}
+
+function UnauthorizedContent() {
   const searchParams = useSearchParams();
   const reason = searchParams.get("reason");
 
   useEffect(() => {
-    // If redirected here due to session expiry, clear stale tokens
     if (reason === "session_expired") {
       try {
         document.cookie.split(";").forEach((c) => {
