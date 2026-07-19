@@ -297,7 +297,7 @@ function CidDashboard() {
   );
 }
 
-// ---- Extended mock data for Intel Console filtering ----------------------
+// Live data from Supabase
 
 const CITIZENS_DB = [
   { name: "Juma Mwenda", nida: "1234567890123", phone: "+255 713 456 789", region: "Dar es Salaam", status: "Clean" },

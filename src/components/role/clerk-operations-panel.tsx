@@ -246,7 +246,7 @@ export function ClerkOperationsPanel({ mode }: ClerkOperationsPanelProps) {
   const alerts = payload?.notifications ?? FALLBACK_ALERTS;
   const settings = useMemo(
     () => payload?.settings ?? {
-      defaultStation: "Oysterbay Station",
+      defaultStation: "",
       exportFrequency: "Daily at 18:00",
       syncEnabled: true,
       offlineEnabled: true,

@@ -16,7 +16,7 @@ const CITIZEN_HINTS: Record<CitizenTab, string> = {
 };
 
 const CITIZEN_PLACEHOLDERS: Record<CitizenTab, string> = {
-  name:   "Juma Khamis Mwinyi",
+  name: "",
   nida:   "199012031234567",
   mobile: "0712 345 678",
 };

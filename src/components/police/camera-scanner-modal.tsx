@@ -185,7 +185,7 @@ export function CameraScannerModal() {
 
   // Simulated scan (fallback for demo environments without camera)
   const handleSimulate = () => {
-    const plate = "T 003 GHI";
+    const plate = "";
     handleResult(plate);
   };
 

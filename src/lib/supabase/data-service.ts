@@ -273,8 +273,8 @@ export async function getDashboardStats(role: string, region?: string, stationId
   }
   // Mock fallback
   return {
-    officers_total: ROLE_USERS.filter((u) => ["officer-traffic","officer-general","post-officer"].includes(u.role)).length,
-    officers_active: ROLE_USERS.filter((u) => u.status === "active" || u.status === "patrol").length,
+    officers_total: 0,
+    officers_active: 0,
     citations_today: CITATION_HISTORY.length,
     incidents_today: GENERAL_INCIDENTS.length,
     arrests_total:   ARREST_RECORDS.length,

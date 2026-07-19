@@ -217,7 +217,7 @@ export function DetainedCitizensScreen() {
         </div>
 
         {[
-          ["Jina Kamili *", "text", "fullName", "Juma Khamis Mwinyi"],
+          ["Jina Kamili *", "text", "fullName", ""],
           ["NIDA", "text", "nida", "199012031234567"],
           ["Tarehe ya Kuzaliwa", "date", "dob", ""],
           ["Simu", "tel", "phone", "0712 345 678"],
@@ -225,7 +225,7 @@ export function DetainedCitizensScreen() {
           ["Kazi", "text", "occupation", "Mfanyabiashara"],
           ["Sababu ya Kizuizi *", "text", "reason", "Wizi wa gari"],
           ["Chumba / Cell", "text", "cell", "C-04"],
-          ["Ndugu wa Karibu", "text", "nextOfKin", "Mama Juma — 0788 000 111"],
+          ["Ndugu wa Karibu", "text", "nextOfKin", ""],
           ["Mwanasheria", "text", "lawyer", "Adv. Said Kombo"],
           ["Tarehe ya Mahakama", "date", "courtDate", ""],
           ["Afisa Aliyemkamata", "text", "officer", "Cprl. Juma Mwinyi"],

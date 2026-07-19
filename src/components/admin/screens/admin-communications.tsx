@@ -29,15 +29,7 @@ interface CommandOrder {
 }
 
 // ── Seed data ──────────────────────────────────────────────────────────────
-const CONVERSATIONS: Conversation[] = ROLE_USERS
-  .filter(u => ["officer-traffic","officer-general","post-officer"].includes(u.role))
-  .map(u => ({
-    id: u.id, name: u.name, badge: u.badgeNo, role: u.role,
-    station: u.station,
-    lastMsg: "Sawa Kamanda, niko tayari.",
-    lastTime: "saa 2:15", unread: Math.floor(Math.random()*3),
-    online: u.status === "active" || u.status === "patrol",
-  }));
+const CONVERSATIONS: never[] = [];
 
 const INIT_MSGS: Record<string, Message[]> = {};
 
@@ -45,7 +37,7 @@ const INIT_ORDERS: CommandOrder[] = [
   { id:"ORD-001", toOfficer:"Cprl. Juma Mwinyi", toBadge:"TP123456",
     order:"Nenda Morogoro Road mara moja — ajali imetokea. Ripoti hali.",
     priority:"urgent", sentBy:"CSP. Yusuph Majaliwa", sentAt:"08:32", status:"acknowledged" },
-  { id:"ORD-002", toOfficer:"Sgt. Ali Hassan", toBadge:"TP234567",
+  { id:"ORD-002", toOfficer:"Sgt. Afisa", toBadge:"TP234567",
     order:"Ongeza doria eneo la Kariakoo masaa 2 ijao.",
     priority:"high", sentBy:"CSP. Yusuph Majaliwa", sentAt:"08:15", status:"sent" },
   { id:"ORD-003", toOfficer:"Insp. Grace Mushi", toBadge:"GO123456",
@@ -351,11 +343,11 @@ export function AdminCommunications() {
               <div>
                 <label className="mb-1 block text-[10px] font-bold uppercase text-police-faint">Afisa</label>
                 <select value={orderForm.toOfficer} onChange={e => {
-                  const officer = ROLE_USERS.find(u=>u.name===e.target.value);
+                  const officer = undefined;
                   setOrderForm(f=>({...f, toOfficer:e.target.value, toBadge:officer?.badgeNo||""}));
                 }} className="h-10 w-full rounded-xl border border-police bg-police-input px-3 text-[12px] text-police focus:outline-none">
                   <option value="">-- Chagua Afisa --</option>
-                  {ROLE_USERS.filter(u=>["officer-traffic","officer-general","post-officer"].includes(u.role)).map(u => (
+                  {[]).map(u => (
                     <option key={u.id} value={u.name}>{u.shortName} ({u.badgeNo}) — {u.station}</option>
                   ))}
                 </select>

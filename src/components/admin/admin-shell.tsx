@@ -90,39 +90,16 @@ const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard;
 ];
 
 export function AdminShell() {
-  const { adminScreen, setAdminScreen, logout, userRole, authRole, loginIdentifier } = usePoliceStore();
+  const { adminScreen, setAdminScreen, logout, userRole, authRole, loginIdentifier, officerProfile } = usePoliceStore();
 
-  // Resolve the real logged-in user from ROLE_USERS
-  const sessionUser = (() => {
-    if (loginIdentifier) {
-      const q = loginIdentifier.trim().toLowerCase().replace(/\s/g, "");
-      const found = ROLE_USERS.find((u) =>
-        u.username.toLowerCase() === q ||
-        u.mobile.replace(/\s/g, "") === q ||
-        u.email.toLowerCase() === q ||
-        u.badgeNo.toLowerCase() === q
-      );
-      if (found) return found;
-    }
-    // Fallback: match by authRole
-    const roleMap: Record<string, string[]> = {
-      SYSTEM_ADMIN: ["admin"], SUPER_ADMIN: ["admin"],
-      NATIONAL_COMMANDER: ["national-commissioner"],
-      REGIONAL_COMMANDER: ["regional-commissioner"],
-      DISTRICT_COMMANDER: ["district-commissioner"],
-      STATION_COMMANDER: ["station-commissioner"],
-    };
-    const matchRoles = roleMap[authRole ?? ""] ?? [];
-    return ROLE_USERS.find((u) => matchRoles.includes(u.role)) ?? ROLE_USERS.find((u) => u.role === "admin");
-  })();
-
-  const displayName  = sessionUser?.shortName ?? "Msimamizi";
-  const displayRank  = sessionUser?.rank ?? "";
-  const displayRole  = authRole?.replace(/_/g, " ") ?? (userRole === "commander" ? "Commander" : "Admin");
-  const displayStation = sessionUser?.station ?? "";
-  const displayUnit  = sessionUser?.unit ?? "";
-  const displayRegion = sessionUser?.region ?? "";
-  const displayPhoto = sessionUser?.photo ?? "";
+  // Use profile stored at login from Supabase — no ROLE_USERS lookup
+  const displayName     = officerProfile?.name ?? "Msimamizi";
+  const displayRank     = officerProfile?.rank ?? "";
+  const displayRole     = authRole?.replace(/_/g, " ") ?? (userRole === "commander" ? "Commander" : "Admin");
+  const displayStation  = officerProfile?.station ?? "";
+  const displayUnit     = officerProfile?.unit ?? "";
+  const displayRegion   = officerProfile?.region ?? "";
+  const displayPhoto    = officerProfile?.photo ?? "";
   const displayInitials = displayName.split(" ").filter(Boolean).slice(0, 2).map((w: string) => w[0]).join("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -270,7 +247,7 @@ export function AdminShell() {
                     { id:"N1", title:"SOS — Insp. Hamisi anahitaji msaada", time:"sasa hivi", color:"#EF4444", read:false },
                     { id:"N2", title:"Gari T 003 GHI limeripotiwa libiwa", time:"dk 5", color:"#FF9800", read:false },
                     { id:"N3", title:"Citation mpya — T 009 YZA — Bajaji bila bima", time:"dk 12", color:"#2196F3", read:false },
-                    { id:"N4", title:"Ripoti ya Patroli imekamilika — Cprl. Juma", time:"dk 30", color:"#10B981", read:true },
+                    { id:"N4", title:"Ripoti ya Patroli imekamilika — ", time:"dk 30", color:"#10B981", read:true },
                     { id:"N5", title:"Mkutano wa Kamanda — Kesho 09:00", time:"saa 1", color:"#1E3A8A", read:true },
                   ].map((n) => (
                     <div key={n.id} className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition hover:bg-[var(--tpf-surface-2)] ${n.read ? "opacity-50" : ""}`}>

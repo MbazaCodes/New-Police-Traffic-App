@@ -35,7 +35,7 @@ export function AlertsScreen() {
   const sendChat = () => {
     if (!chatInput.trim()) return;
     const time = new Date().toLocaleTimeString("sw-TZ", { hour: "2-digit", minute: "2-digit" });
-    setChatMsgs((m) => [...m, { id: Date.now(), from: "Cprl. Juma", role: "officer", message: chatInput, time, mine: true }]);
+    setChatMsgs((m) => [...m, { id: Date.now(), from: "Afisa wa Polisi", role: "officer", message: chatInput, time, mine: true }]);
     setChatInput("");
     setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
   };

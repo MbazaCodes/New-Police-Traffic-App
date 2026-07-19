@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { findMatchingMissingAlerts } from "@/lib/shared-missing-alerts";
-import type { MockVehicle, MockCitizen } from "@/lib/mock-database";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, SearchX } from "lucide-react";
 
@@ -23,8 +22,9 @@ export function SearchResultsScreen() {
   const setArrestPrefill = usePoliceStore((s) => s.setArrestPrefill);
   const setWarningPrefill = usePoliceStore((s) => s.setWarningPrefill);
 
+  // Search results come from Supabase via /api/search
   const { vehicle: foundVehicle, citizen: foundCitizen } = useMemo(
-    () => universalSearch(searchQuery),
+    () => ({ vehicle: null as Record<string,unknown>|null, citizen: null as Record<string,unknown>|null }),
     [searchQuery]
   );
 

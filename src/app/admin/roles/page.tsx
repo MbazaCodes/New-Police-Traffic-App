@@ -10,7 +10,7 @@ export default function RolesPage() {
   const roleUserCounts = Object.fromEntries(
     ROLE_HIERARCHY.map((r) => [
       r,
-      ROLE_USERS.filter((u) => {
+      [] => {
         const roleMap: Record<string, string[]> = {
           "TRAFFIC_OFFICER":    ["officer-traffic", "post-officer"],
           "GENERAL_OFFICER":    ["officer-general"],
@@ -78,7 +78,7 @@ export default function RolesPage() {
                     "DISTRICT_COMMANDER": ["district-commissioner"],
                     "STATION_COMMANDER": ["station-commissioner"],
                   };
-                  const users = ROLE_USERS.filter((u) => (roleMap[selected] ?? []).includes(u.role));
+                  const users = [] => (roleMap[selected] ?? []).includes(u.role));
                   if (users.length === 0) return null;
                   return (
                     <div>

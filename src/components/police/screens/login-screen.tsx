@@ -96,6 +96,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
   const router = useRouter();
   const login = usePoliceStore((s) => s.login);
   const setLoginIdentifier = usePoliceStore((s) => s.setLoginIdentifier);
+  const setOfficerProfile  = usePoliceStore((s) => s.setOfficerProfile);
   const [step, setStep] = useState<Step>("credentials");
   const [method, setMethod] = useState<"username" | "phone" | "email">("username");
   const [identifier, setIdentifier] = useState("");
@@ -184,11 +185,29 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
         return;
       }
 
-      // Store resolved role from Supabase
       const apiRole = String(data?.user?.role ?? "");
       if (apiRole) {
         setAuthResolvedRole(apiRole);
         if (mode === "admin") setWebRole(apiRole);
+      }
+
+      // Store full profile from Supabase for use across the app
+      if (data?.user) {
+        setOfficerProfile({
+          name:      data.user.name      ?? "",
+          shortName: data.user.name?.split(" ").slice(0,2).join(" ") ?? "",
+          rank:      data.user.rank      ?? "",
+          rankShort: data.user.rankShort ?? "",
+          id:        data.user.id        ?? "",
+          badgeNo:   data.user.badge     ?? "",
+          station:   data.user.station   ?? "",
+          unit:      data.user.unit      ?? "",
+          phone:     data.user.phone     ?? "",
+          email:     data.user.email     ?? "",
+          photo:     data.user.photo     ?? "",
+          region:    data.user.region    ?? "",
+          status:    "active",
+        });
       }
 
       // Pre-fill OTP with bypass code if bypass is on

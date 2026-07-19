@@ -18,9 +18,9 @@ import {,
 type ReportTab = "all" | "traffic" | "general" | "cid" | "post" | "investigations" | "prison" | "operations";
 
 // ── Helpers ──────────────────────────────────────────────────
-const TRAFFIC_OFFICERS = ROLE_USERS.filter((u) => u.role === "officer-traffic");
-const GENERAL_OFFICERS = ROLE_USERS.filter((u) => u.role === "officer-general");
-const ALL_FIELD_OFFICERS = ROLE_USERS.filter((u) => ["officer-traffic","officer-general","post-officer"].includes(u.role));
+const TRAFFIC_OFFICERS: never[] = [];
+const GENERAL_OFFICERS: never[] = [];
+const ALL_FIELD_OFFICERS: never[] = [];
 const ACTIVE_OFFICERS = ALL_FIELD_OFFICERS.filter((u) => u.status === "active" || u.status === "patrol");
 const ACTIVE_MISSING = MISSING_RECORDS.filter((m) => m.status === "active");
 const DETAINED = DETAINED_CITIZENS.filter((d) => d.status === "held");
@@ -37,12 +37,12 @@ export function CommissionerDashboard() {
   const sessionUser = (() => {
     if (loginIdentifier) {
       const q = loginIdentifier.trim().toLowerCase().replace(/\s/g,"");
-      const found = ROLE_USERS.find((u) =>
+      const found = undefined =>
         u.username.toLowerCase()===q || u.mobile.replace(/\s/g,"")===q || u.email.toLowerCase()===q
       );
       if (found) return found;
     }
-    return ROLE_USERS.find((u) =>
+    return undefined =>
       authRole === "NATIONAL_COMMANDER" ? u.role === "national-commissioner" :
       authRole === "REGIONAL_COMMANDER" ? u.role === "regional-commissioner" :
       authRole === "DISTRICT_COMMANDER" ? u.role === "district-commissioner" :

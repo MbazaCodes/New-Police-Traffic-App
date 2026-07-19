@@ -96,6 +96,10 @@ interface PoliceState {
   logout: () => void;
   setRole: (role: UserRole) => void;
 
+  // Logged-in officer profile from Supabase
+  officerProfile: import("@/hooks/use-officer").OfficerProfile | null;
+  setOfficerProfile: (p: import("@/hooks/use-officer").OfficerProfile | null) => void;
+
   loginIdentifier: string;
   setLoginIdentifier: (id: string) => void;
 
@@ -172,6 +176,8 @@ export const usePoliceStore = create<PoliceState>()(
       isAuthenticated: false,
       userRole: "officer-traffic",
       authRole: null,
+      officerProfile: null,
+      setOfficerProfile: (p) => set({ officerProfile: p }),
       loginIdentifier: "",
       setLoginIdentifier: (id) => set({ loginIdentifier: id }),
 
@@ -190,7 +196,7 @@ export const usePoliceStore = create<PoliceState>()(
         if (typeof window !== "undefined") {
           localStorage.removeItem("tz-police-auth");
         }
-        set({ isAuthenticated: false, userRole: "officer-traffic", authRole: null, loginIdentifier: "", currentScreen: "login", activeTab: "home", history: [], readAlertIds: [] });
+        set({ isAuthenticated: false, userRole: "officer-traffic", authRole: null, officerProfile: null, loginIdentifier: "", currentScreen: "login", activeTab: "home", history: [], readAlertIds: [] });
       },
   setRole: (role) => set({ userRole: normalizeOfficerRole(role) }),
 
@@ -232,13 +238,11 @@ export const usePoliceStore = create<PoliceState>()(
   setSearchQuery: (q) => set({ searchQuery: q }),
   setSearchEntity: (t) => set({ searchEntity: t }),
   runSearch: (query) => {
-    set({ searchQuery: query, searchStatus: "searching" });
-    setTimeout(async () => {
-      if (!query.trim()) { set({ searchStatus: "not-found" }); return; }
-      // Dynamic import to avoid circular dependency
-      const { universalSearch } = await import("@/lib/mock-database");
-      const { citizen, vehicle, device } = universalSearch(query);
-      set({ searchStatus: (citizen || vehicle || device) ? "found" : "not-found" });
+      set({ searchStatus: "searching", searchQuery: query });
+      fetch(`/api/search?q=${encodeURIComponent(query)}`)
+        .then(r => r.json())
+        .then(d => set({ searchStatus: d.ok && d.data?.length ? "found" : "not-found" }))
+        .catch(() => set({ searchStatus: "not-found" }));
     }, 1000);
   },
   clearSearch: () => set({ searchQuery: "", searchStatus: "idle" }),

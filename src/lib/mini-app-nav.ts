@@ -37,8 +37,8 @@ export const MINI_APP_NAVS: MiniAppNavConfig[] = [
       { label: "Reports", href: "reports" },
       { label: "Analytics", href: "analytics" },
       { label: "Notifications", href: "notifications" },
-      { label: "Simulation", href: "simulation" },
-      { label: "Mock Database", href: "mock-database" },
+      
+      
       { label: "Audit Logs", href: "audit-logs" },
       { label: "Settings", href: "settings" },
       { label: "Profile", href: "profile" },
