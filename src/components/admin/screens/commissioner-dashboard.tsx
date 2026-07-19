@@ -19,6 +19,8 @@ type ReportTab = "all" | "traffic" | "general" | "cid" | "post" | "investigation
 const TRAFFIC_OFFICERS: never[] = [];
 const GENERAL_OFFICERS: never[] = [];
 const ALL_FIELD_OFFICERS: never[] = [];
+const ADMIN_STATIONS: { id: string; name: string; region: string }[] = [];
+const REGIONS: { name: string; commissioner?: string }[] = [];
 const ACTIVE_OFFICERS = ALL_FIELD_OFFICERS.filter((u) => u.status === "active" || u.status === "patrol");
 const ACTIVE_MISSING: never[] = [];
 const DETAINED = [].filter((d) => d.status === "held");
