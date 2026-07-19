@@ -46,7 +46,7 @@ export async function GET() {
         totalCitations = citationCount ?? 0;
 
         // Get active patrols
-        const { count: patrolCount } = await admin.from("patrols").select("*", { count: "exact', head: true }).eq("status", "active");
+        const { count: patrolCount } = await admin.from("patrols").select("*", { count: "exact", head: true }).eq("status", "active");
         activePatrols = patrolCount ?? 0;
 
         // Get today's citations
