@@ -1,378 +1,218 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  Search,
-  Edit3,
-  Ban,
-  Mail,
-  Shield,
-  Clock,
-  X,
-} from "lucide-react";
-import { getAdminCreatePath, getAdminEntityPath } from "@/lib/admin-navigation";
+import { Search, X, Users, Plus, Shield, AlertTriangle, ChevronRight, Mail, Phone } from "lucide-react";
+import { useApiData } from "@/hooks/use-api-data";
 import { toast } from "@/hooks/use-toast";
-import { useRecordsStore, type AdminUserRecord } from "@/store/records-store";
 
-const ROLE_STYLES: Record<string, string> = {
-  commander: "bg-[#1E3A8A]/15 text-[#1E3A8A] border border-[#1E3A8A]/30",
-  admin: "bg-[#2196F3]/15 text-[#2196F3] border border-[#2196F3]/30",
-  regional: "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
-  "district-admin": "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
-  commissioner: "bg-[#1E3A8A]/15 text-[#1E3A8A] border border-[#1E3A8A]/30",
-  "all-staffs": "bg-gray-500/15 text-gray-500 border border-gray-500/30",
+type UserRecord = {
+  id: string; name: string; short_name: string | null; rank: string | null;
+  role: string; status: string; badge_no: string | null; username: string | null;
+  email: string | null; phone: string | null; region: string | null; unit: string | null;
+  station?: { id: string; name: string } | null;
+  created_at: string;
 };
 
-const ROLE_LABEL: Record<string, string> = {
-  commander: "Kamanda",
-  admin: "Msimamizi",
-  regional: "Mkoa",
-  "district-admin": "Msimamizi Wilaya",
-  commissioner: "Kamanda Mkuu",
-  "all-staffs": "Wafanyakazi Wote",
+const ROLE_STYLES: Record<string,string> = {
+  admin:              "bg-[#1E3A8A]/15 text-[#1E3A8A] border border-[#1E3A8A]/30",
+  "officer-traffic":  "bg-[#2196F3]/15 text-[#2196F3] border border-[#2196F3]/30",
+  "officer-general":  "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30",
+  commander:          "bg-[#8B5CF6]/15 text-[#8B5CF6] border border-[#8B5CF6]/30",
 };
-
-const STATUS_STYLES: Record<string, string> = {
-  active: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
-  suspended: "bg-[#EF4444]/100/15 text-[#EF4444] border border-[#EF4444]/500/30",
+const ROLE_LABEL: Record<string,string> = {
+  admin:"Msimamizi", "officer-traffic":"Afisa Trafiki",
+  "officer-general":"Afisa Kawaida", commander:"Kamanda",
 };
-
-const STATUS_LABEL: Record<string, string> = {
-  active: "Hai",
-  suspended: "Imesimwa",
+const STATUS_STYLES: Record<string,string> = {
+  active:    "bg-[#10B981]/15 text-[#10B981]",
+  suspended: "bg-[#EF4444]/15 text-[#EF4444]",
+  "off-duty":"bg-gray-400/15 text-gray-400",
 };
 
 export function AdminUsers() {
-  const pathname = usePathname();
-  const router = useRouter();
   const [query, setQuery] = useState("");
-  const users = useRecordsStore((s) => s.adminUsers);
-  const setAdminUserStatus = useRecordsStore((s) => s.setAdminUserStatus);
-  const updateAdminUser = useRecordsStore((s) => s.updateAdminUser);
-  const [editing, setEditing] = useState<AdminUserRecord | null>(null);
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [selected, setSelected] = useState<UserRecord | null>(null);
 
-  const filtered = users.filter((u) => {
-    if (!query) return true;
-    const q = query.toLowerCase();
-    return (
-      u.name.toLowerCase().includes(q) ||
-      u.email.toLowerCase().includes(q) ||
-      u.station.toLowerCase().includes(q) ||
-      u.rank.toLowerCase().includes(q)
-    );
-  });
-
-  const toggleSuspend = async (u: AdminUserRecord) => {
-    const newStatus: "active" | "suspended" = u.status === "active" ? "suspended" : "active";
-    try {
-      const res = await fetch(`/api/users/${u.id}`, {
-        method: "PATCH", headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ status: newStatus }),
-      });
-      const json = await res.json();
-      if (!res.ok) { toast({ title: "Hitilafu", description: json.error, variant: "destructive" }); return; }
-      setAdminUserStatus(u.id, newStatus);
-      toast({ title: newStatus === "suspended" ? "Amebwa ✓" : "Amerejeshwa ✓", description: `${u.name} ${newStatus === "suspended" ? "amesimamishwa" : "amerejeshwa kwenye mfumo"}` });
-    } catch { toast({ title: "Hitilafu ya mtandao", variant: "destructive" }); }
-  };
+  const { data: users, loading, error, refetch } = useApiData<UserRecord>(
+    "/api/users",
+    { ...(roleFilter !== "all" ? { role: roleFilter } : {}), ...(query ? { search: query } : {}) },
+    [query, roleFilter]
+  );
 
   return (
-    <div className="space-y-5">
-      {/* Heading */}
-      <div>
-        <h1 className="text-xl font-bold text-police-navy">Watumiaji</h1>
-        <p className="text-[13px] text-police-muted">
-          Dhibiti watumiaji wa mfumo wa Admin & Command Center
-        </p>
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-[22px] font-black text-police">Watumiaji</h1>
+          <p className="text-[12px] text-police-muted">{users.length} watumiaji wote</p>
+        </div>
         <button
-          onClick={() => router.push(getAdminCreatePath(pathname, "users"))}
-          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#2196F3]"
+          onClick={() => toast({ title:"Ongeza Mtumiaji", description:"Tumia /api/users POST kuongeza mtumiaji mpya" })}
+          className="flex items-center gap-2 rounded-xl bg-[#1E3A8A] px-4 py-2.5 text-[13px] font-bold text-white shadow-sm hover:bg-[#1a3278] active:scale-95 transition"
         >
-          Ongeza User
+          <Plus size={16} /> Ongeza Mtumiaji
         </button>
       </div>
 
-      {/* Search */}
-      <div className="rounded-xl bg-police-card p-4 shadow-sm">
-        <div className="flex items-center gap-2 rounded-lg bg-police-input px-3">
-          <Search size={16} className="text-police-faint" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Tafuta kwa jina, cheo, barua pepe, kituo..."
-            className="h-9 flex-1 bg-transparent text-[13px] text-police placeholder:text-police-faint focus:outline-none"
-          />
-          {query && (
-            <button onClick={() => setQuery("")} className="text-police-faint">
-              <X size={14} />
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[
+          { label:"Wote",          value: users.length,                                           color:"#2196F3" },
+          { label:"Wasimamizi",    value: users.filter(u=>u.role==="admin").length,               color:"#1E3A8A" },
+          { label:"Maofisa",       value: users.filter(u=>u.role?.startsWith("officer")).length,  color:"#10B981" },
+          { label:"Wamesimamishwa",value: users.filter(u=>u.status==="suspended").length,         color:"#EF4444" },
+        ].map((s) => (
+          <div key={s.label} className="rounded-xl bg-police-card p-4 shadow-sm">
+            <p className="text-[22px] font-black leading-none" style={{ color: s.color }}>{s.value}</p>
+            <p className="mt-1 text-[11px] text-police-muted">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Filters */}
+      <div className="rounded-xl bg-police-card p-3 shadow-sm">
+        <div className="flex flex-1 items-center gap-2 rounded-lg bg-police-input px-3 py-2">
+          <Search size={14} className="shrink-0 text-police-faint" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)}
+            placeholder="Tafuta jina, badge, email..."
+            className="flex-1 bg-transparent text-[13px] text-police placeholder-police-faint focus:outline-none" />
+          {query && <button onClick={() => setQuery("")}><X size={14} className="text-police-faint" /></button>}
+        </div>
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          {[
+            { id:"all", label:"Wote" }, { id:"admin", label:"Wasimamizi" },
+            { id:"officer-traffic", label:"Trafiki" }, { id:"officer-general", label:"Kawaida" },
+            { id:"commander", label:"Makamanda" },
+          ].map((f) => (
+            <button key={f.id} onClick={() => setRoleFilter(f.id)}
+              className={`rounded-lg px-3 py-1.5 text-[12px] font-medium transition ${roleFilter===f.id ? "bg-[#1E3A8A] text-white" : "bg-police-input text-police-muted hover:text-police"}`}>
+              {f.label}
             </button>
-          )}
+          ))}
         </div>
       </div>
 
-      {/* Users table */}
+      {/* Table */}
       <div className="rounded-xl bg-police-card shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1100px] text-left text-[12px]">
-            <thead>
-              <tr className="border-b border-police-soft bg-police-muted/40 text-[10px] uppercase text-police-faint">
-                <th className="px-4 py-3 font-semibold">Jina</th>
-                <th className="px-4 py-3 font-semibold">Nafasi</th>
-                <th className="px-4 py-3 font-semibold">Cheo</th>
-                <th className="px-4 py-3 font-semibold">Barua Pepe</th>
-                <th className="px-4 py-3 font-semibold">Kituo</th>
-                <th className="px-4 py-3 font-semibold">Hadhi</th>
-                <th className="px-4 py-3 font-semibold">Login ya Mwisho</th>
-                <th className="px-4 py-3 text-right font-semibold">Hatua</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((u) => (
-                <tr
-                  key={u.id}
-                  onClick={() => router.push(getAdminEntityPath(pathname, "users", u.id))}
-                  className="border-b border-police-soft transition hover:bg-police-muted/40 last:border-0"
-                >
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        className={`flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold ${
-                          u.role === "commander"
-                            ? "bg-[#1E3A8A]/15 text-[#1E3A8A]"
-                            : "bg-[#2196F3]/15 text-[#2196F3]"
-                        }`}
-                      >
-                        {u.name
-                          .replace(/^(CP\.|ACP\.|SP\.|CSP\.)\s*/, "")
-                          .split(" ")
-                          .slice(0, 2)
-                          .map((n) => n[0])
-                          .join("")}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-police">{u.name}</p>
-                        <p className="font-mono text-[10px] text-police-faint">{u.id}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${
-                        ROLE_STYLES[u.role]
-                      }`}
-                    >
-                      {ROLE_LABEL[u.role]}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-police-muted">{u.rank}</td>
-                  <td className="px-4 py-3">
-                    <a
-                      href={`mailto:${u.email}`}
-                      className="flex items-center gap-1.5 text-police-navy hover:underline"
-                    >
-                      <Mail size={11} className="text-police-faint" />
-                      <span className="truncate">{u.email}</span>
-                    </a>
-                  </td>
-                  <td className="px-4 py-3 text-police-muted">{u.station}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${
-                        STATUS_STYLES[u.status]
-                      }`}
-                    >
-                      {STATUS_LABEL[u.status]}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-police-muted">
-                    <Clock size={11} className="mr-1 inline text-police-faint" />
-                    {u.lastLogin}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditing(u);
-                        }}
-                        className="flex items-center gap-1 rounded-lg bg-police-input px-2 py-1.5 text-[11px] font-semibold text-police-navy hover:bg-police-muted"
-                        title="Hariri"
-                      >
-                        <Edit3 size={12} /> Hariri
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleSuspend(u);
-                        }}
-                        className={`flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-semibold ${
-                          u.status === "active"
-                            ? "bg-[#EF4444]/100/15 text-[#EF4444] hover:bg-[#EF4444]/100/25"
-                            : "bg-[#10B981]/15 text-[#10B981] hover:bg-[#10B981]/25"
-                        }`}
-                        title={u.status === "active" ? "Simsa" : "Rudisha"}
-                      >
-                        <Ban size={12} />
-                        {u.status === "active" ? "Simsa" : "Rudisha"}
-                      </button>
-                    </div>
-                  </td>
+        {loading && (
+          <div className="flex items-center justify-center py-16 gap-3">
+            <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#1E3A8A] border-t-transparent" />
+            <span className="text-[13px] text-police-muted">Inapakia watumiaji...</span>
+          </div>
+        )}
+        {!loading && error && (
+          <div className="flex flex-col items-center py-12 text-center">
+            <AlertTriangle size={32} className="text-[#EF4444]" />
+            <p className="mt-2 text-[13px] font-semibold text-[#EF4444]">{error}</p>
+            <button onClick={refetch} className="mt-3 rounded-xl bg-[#1E3A8A] px-4 py-2 text-[12px] text-white">Jaribu Tena</button>
+          </div>
+        )}
+        {!loading && !error && users.length === 0 && (
+          <div className="flex flex-col items-center py-16 text-center px-6">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#1E3A8A]/10">
+              <Users size={32} className="text-[#1E3A8A] opacity-60" />
+            </div>
+            <p className="mt-4 text-[15px] font-bold text-police">Hakuna Watumiaji Bado</p>
+            <p className="mt-1 text-[12px] text-police-muted max-w-xs">
+              Mfumo unaanza upya. Bonyeza "Ongeza Mtumiaji" kuanza kuongeza wasimamizi na maofisa.
+            </p>
+          </div>
+        )}
+        {!loading && !error && users.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[700px] text-left text-[12px]">
+              <thead>
+                <tr className="border-b border-police-soft bg-police-muted/30 text-[10px] uppercase text-police-faint">
+                  <th className="px-4 py-3 font-semibold">Jina</th>
+                  <th className="px-4 py-3 font-semibold">Badge / Username</th>
+                  <th className="px-4 py-3 font-semibold hidden sm:table-cell">Jukumu</th>
+                  <th className="px-4 py-3 font-semibold hidden md:table-cell">Kituo</th>
+                  <th className="px-4 py-3 font-semibold">Hali</th>
+                  <th className="px-4 py-3 font-semibold hidden lg:table-cell">Email</th>
+                  <th className="px-4 py-3 text-right font-semibold">Hatua</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {filtered.length === 0 && (
-          <div className="py-12 text-center text-[13px] text-police-faint">
-            Hakuna mtumiaji aliyeonekana.
+              </thead>
+              <tbody>
+                {users.map((u) => (
+                  <tr key={u.id} onClick={() => setSelected(u)}
+                    className="cursor-pointer border-b border-police-soft hover:bg-police-muted/30 last:border-0 transition">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1E3A8A]/15 text-[11px] font-bold text-[#1E3A8A]">
+                          {u.name.split(" ").slice(0,2).map((n)=>n[0]).join("")}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-police">{u.name}</p>
+                          <p className="text-[10px] text-police-faint">{u.rank ?? "—"}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 font-mono text-[11px] text-police-muted">
+                      {u.badge_no ?? u.username ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 hidden sm:table-cell">
+                      <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${ROLE_STYLES[u.role] ?? "bg-gray-100 text-gray-600"}`}>
+                        {ROLE_LABEL[u.role] ?? u.role}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-police-muted hidden md:table-cell">{u.station?.name ?? "—"}</td>
+                    <td className="px-4 py-3">
+                      <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${STATUS_STYLES[u.status] ?? ""}`}>
+                        {u.status === "active" ? "Hai" : u.status === "suspended" ? "Amesimamishwa" : u.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-police-muted hidden lg:table-cell text-[11px]">{u.email ?? "—"}</td>
+                    <td className="px-4 py-3 text-right">
+                      <button onClick={(e)=>{e.stopPropagation();setSelected(u)}}
+                        className="flex items-center gap-1 rounded-lg bg-[#1E3A8A]/10 px-2.5 py-1.5 text-[11px] font-semibold text-[#1E3A8A] hover:bg-[#1E3A8A]/20 transition ml-auto">
+                        Angalia <ChevronRight size={12} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
 
-      {/* Edit modal */}
-      {editing && (
-        <EditUserModal
-          user={editing}
-          onClose={() => setEditing(null)}
-          onSave={(updated) => {
-            updateAdminUser(updated.id, updated);
-            toast({
-              title: "Imehifadhiwa",
-              description: `Taarifa za ${updated.name} zimesasishwa`,
-            });
-            setEditing(null);
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-function EditUserModal({
-  user,
-  onClose,
-  onSave,
-}: {
-  user: AdminUserRecord;
-  onClose: () => void;
-  onSave: (u: AdminUserRecord) => void;
-}) {
-  const [name, setName] = useState(user.name);
-  const [rank, setRank] = useState(user.rank);
-  const [email, setEmail] = useState(user.email);
-  const [station, setStation] = useState(user.station);
-  const [role, setRole] = useState<AdminUserRecord["role"]>(user.role);
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden />
-      <div className="relative z-10 w-full max-w-lg overflow-hidden rounded-2xl bg-police-card shadow-2xl">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-police-soft bg-police-muted/40 p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2196F3]/15 text-[#2196F3]">
-              <Shield size={18} />
+      {/* Detail modal */}
+      {selected && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center" onClick={() => setSelected(null)}>
+          <div className="relative w-full max-w-md rounded-2xl bg-police-card p-5 shadow-2xl" onClick={(e)=>e.stopPropagation()}>
+            <button onClick={() => setSelected(null)} className="absolute right-4 top-4 text-police-muted"><X size={18} /></button>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#1E3A8A]/15 text-[16px] font-bold text-[#1E3A8A]">
+                {selected.name.split(" ").slice(0,2).map((n)=>n[0]).join("")}
+              </div>
+              <div>
+                <p className="text-[16px] font-bold text-police">{selected.name}</p>
+                <p className="text-[12px] text-police-muted">{selected.rank ?? "—"}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[15px] font-bold text-police">Hariri Mtumiaji</p>
-              <p className="font-mono text-[11px] text-police-faint">{user.id}</p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-police-faint hover:bg-police-muted"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        <div className="space-y-3 p-4">
-          <Field label="Jina Kamili">
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-police-soft bg-police-input px-3 py-2 text-[13px] text-police focus:border-[#2196F3] focus:outline-none"
-            />
-          </Field>
-          <Field label="Cheo">
-            <input
-              value={rank}
-              onChange={(e) => setRank(e.target.value)}
-              className="w-full rounded-lg border border-police-soft bg-police-input px-3 py-2 text-[13px] text-police focus:border-[#2196F3] focus:outline-none"
-            />
-          </Field>
-          <Field label="Barua Pepe">
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              className="w-full rounded-lg border border-police-soft bg-police-input px-3 py-2 text-[13px] text-police focus:border-[#2196F3] focus:outline-none"
-            />
-          </Field>
-          <Field label="Kituo">
-            <input
-              value={station}
-              onChange={(e) => setStation(e.target.value)}
-              className="w-full rounded-lg border border-police-soft bg-police-input px-3 py-2 text-[13px] text-police focus:border-[#2196F3] focus:outline-none"
-            />
-          </Field>
-          <Field label="Nafasi">
-            <div className="flex gap-2">
-              {(["admin", "commander"] as const).map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setRole(r)}
-                  className={`flex-1 rounded-lg border px-3 py-2 text-[12px] font-semibold transition ${
-                    role === r
-                      ? r === "commander"
-                        ? "border-[#1E3A8A] bg-[#1E3A8A]/10 text-[#1E3A8A]"
-                        : "border-[#2196F3] bg-[#2196F3]/10 text-[#2196F3]"
-                      : "border-police-soft bg-police-input text-police-muted"
-                  }`}
-                >
-                  {ROLE_LABEL[r]}
-                </button>
+            <div className="space-y-2.5 text-[13px]">
+              {[
+                { l:"Badge",    v: selected.badge_no ?? "—" },
+                { l:"Username", v: selected.username ?? "—" },
+                { l:"Jukumu",   v: ROLE_LABEL[selected.role] ?? selected.role },
+                { l:"Kituo",    v: selected.station?.name ?? "—" },
+                { l:"Mkoa",     v: selected.region ?? "—" },
+                { l:"Kitengo",  v: selected.unit ?? "—" },
+                { l:"Email",    v: selected.email ?? "—" },
+                { l:"Simu",     v: selected.phone ?? "—" },
+                { l:"Hali",     v: selected.status === "active" ? "Hai" : "Amesimamishwa" },
+                { l:"Tarehe",   v: new Date(selected.created_at).toLocaleDateString("sw-TZ") },
+              ].map(({l,v}) => (
+                <div key={l} className="flex justify-between gap-4">
+                  <span className="text-police-muted shrink-0">{l}</span>
+                  <span className="text-police font-medium text-right">{v}</span>
+                </div>
               ))}
             </div>
-          </Field>
-
-          <div className="grid grid-cols-2 gap-2 pt-2">
-            <button
-              onClick={onClose}
-              className="rounded-lg bg-police-input py-2.5 text-[12px] font-semibold text-police-navy hover:bg-police-muted"
-            >
-              Ghairi
-            </button>
-            <button
-              onClick={() =>
-                onSave({
-                  ...user,
-                  name,
-                  rank,
-                  email,
-                  station,
-                  role,
-                })
-              }
-              className="rounded-lg bg-[#2196F3] py-2.5 text-[12px] font-semibold text-white hover:bg-[#2196F3]"
-            >
-              Hifadhi
-            </button>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <label className="mb-1 block text-[11px] font-semibold uppercase text-police-faint">
-        {label}
-      </label>
-      {children}
+      )}
     </div>
   );
 }

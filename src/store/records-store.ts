@@ -1,19 +1,6 @@
 "use client";
 
 import { create } from "zustand";
-import {
-  ADMIN_USERS,
-  ADMIN_ALERTS_HISTORY,
-  ADMIN_INCIDENTS,
-  ADMIN_CITATIONS,
-  ACTIVE_PATROLS,
-} from "@/lib/admin-data";
-import {
-  STATIONS,
-  POSTS,
-  ASSIGNMENTS,
-  UNASSIGNED_OFFICERS,
-} from "@/lib/admin-mgmt-data";
 
 // ===== Admin Shared Types =====
 export interface AdminUserRecord {
@@ -323,102 +310,20 @@ export const useRecordsStore = create<RecordsState>((set, get) => ({
   warnings: [],
   arrests: [],
 
-  // Admin shared entities — initialized from mock data
-  adminUsers: ADMIN_USERS.map((u) => ({
-    id: u.id,
-    name: u.name,
-    role: (u.role === "commander" || u.role === "admin" ? u.role : "admin") as AdminUserRecord["role"],
-    rank: u.rank,
-    email: u.email,
-    station: u.station,
-    status: u.status as AdminUserRecord["status"],
-    lastLogin: u.lastLogin,
-  })),
-  adminStations: STATIONS.map((s) => ({
-    id: s.id,
-    name: s.name,
-    region: s.region,
-    district: s.district,
-    address: s.address,
-    phone: s.phone,
-    officersCount: s.officersCount,
-    postsCount: s.postsCount,
-    status: s.status as AdminStationRecord["status"],
-    established: s.established,
-  })),
-  adminPosts: POSTS.map((p) => ({
-    id: p.id,
-    name: p.name,
-    stationId: p.stationId,
-    stationName: p.stationName,
-    location: p.location,
-    type: p.type as AdminPostRecord["type"],
-    officersCount: p.officersCount,
-    status: p.status as AdminPostRecord["status"],
-    shift: p.shift,
-  })),
-  adminAssignments: ASSIGNMENTS.map((a) => ({
-    id: a.id,
-    officerId: a.officerId,
-    officerName: a.officerName,
-    officerRank: a.officerRank,
-    stationId: a.stationId,
-    stationName: a.stationName,
-    postId: a.postId,
-    postName: a.postName,
-    role: a.role,
-    assignedDate: a.assignedDate,
-    status: a.status as AdminAssignmentRecord["status"],
-  })),
-  adminUnassigned: UNASSIGNED_OFFICERS.map((o) => ({
-    id: o.id,
-    name: o.name,
-    rank: o.rank,
-  })),
-  adminAlertsHistory: ADMIN_ALERTS_HISTORY.map((a) => ({
-    id: a.id,
-    title: a.title,
-    audience: a.audience,
-    priority: a.priority as AdminAlertHistoryRecord["priority"],
-    sentBy: a.sentBy,
-    date: a.date,
-    time: a.time,
-    recipients: a.recipients,
-  })),
-  adminIncidents: ADMIN_INCIDENTS.map((i) => ({
-    id: i.id,
-    type: i.type,
-    location: i.location,
-    date: i.date,
-    time: i.time,
-    status: i.status as AdminIncidentRecord["status"],
-    priority: i.priority as AdminIncidentRecord["priority"],
-    assignedTo: i.assignedTo,
-    description: i.description,
-  })),
-  adminCitations: ADMIN_CITATIONS.map((c) => ({
-    id: c.id,
-    plate: c.plate,
-    offense: c.offense,
-    driver: c.driver,
-    date: c.date,
-    amount: c.amount,
-    status: c.status as AdminCitationRecord["status"],
-    officer: c.officer,
-  })),
-  adminPatrols: ACTIVE_PATROLS.map((p) => ({
-    id: p.id,
-    officer: p.officer,
-    area: p.area,
-    start: p.start,
-    distance: p.distance,
-    status: p.status as AdminPatrolRecord["status"],
-    progress: p.progress,
-  })),
+  // Admin shared entities — start EMPTY, populated from API
+  adminUsers: [],
+  adminStations: [],
+  adminPosts: [],
+  adminAssignments: [],
+  adminUnassigned: [],
+  adminAlertsHistory: [],
+  adminIncidents: [],
+  adminCitations: [],
+  adminPatrols: [],
 
   addCitation: (data) => {
     const id = genId();
-    const count = get().citations.length + 453; // continue from mock seed
+    const count = get().citations.length + 1;
     const record: CitationRecord = {
       ...data,
       id,
@@ -487,7 +392,7 @@ export const useRecordsStore = create<RecordsState>((set, get) => ({
 
   addPF3: (data) => {
     const id = genId();
-    const count = get().pf3Forms.length + 893;
+    const count = get().pf3Forms.length + 1;
     const record: PF3Record = {
       ...data,
       id,
