@@ -282,7 +282,7 @@ function OfficerDrawer({
           </button>
         </div>
 
-        <div className="space-y-4 p-4">
+        <div className="space-y-4">
           {/* Status */}
           <div className="flex items-center justify-between rounded-lg border border-police-soft bg-police-muted/40 p-3">
             <span className="text-[12px] text-police-muted">Hadhi ya Sasa</span>

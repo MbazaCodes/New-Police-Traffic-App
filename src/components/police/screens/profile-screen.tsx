@@ -21,7 +21,7 @@ export function ProfileScreen() {
 
       <div className="space-y-4 p-4">
         {/* Profile Header */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <div className="flex items-start gap-3">
             <div className="h-16 w-16 overflow-hidden rounded-full ring-2 ring-gray-200">
               <Image src="/police-logo.png" alt="Avatar" width={64} height={64} className="h-full w-full object-cover" />
@@ -88,7 +88,7 @@ export function ProfileScreen() {
         </div>
 
         {/* Recent Activities */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-[14px] font-bold text-police-navy">Shughuli za Hivi Karibuni</h3>
             <button

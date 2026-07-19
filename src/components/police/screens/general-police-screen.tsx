@@ -46,7 +46,7 @@ export function GeneralPoliceScreen() {
         </div>
 
         {/* Hatua za Haraka — all 6 fully navigating */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <h3 className="mb-3 text-[16px] font-bold text-police">Hatua za Haraka</h3>
           <div className="grid grid-cols-3 gap-2">
             {POLICE_QUICK_ACTIONS.map((action) => (
@@ -61,7 +61,7 @@ export function GeneralPoliceScreen() {
         </div>
 
         {/* Recent Incidents — clickable → incident view */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-[16px] font-bold text-police">Matukio ya Karibuni</h3>
             <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2196F3]">Angalia Zote</button>

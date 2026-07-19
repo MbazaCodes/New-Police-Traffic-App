@@ -149,30 +149,30 @@ export function AdminShell() {
   })();
 
   return (
-    <div className="flex min-h-screen bg-police">
+    <div className="flex min-h-screen" style={{ background: "var(--tpf-surface)" }}>
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-[#0d1b3d] transition-transform duration-300 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex-shrink-0 transform transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        } tpf-sidebar`}
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex items-center gap-3 border-b border-white/10 p-4">
-            <div className="h-10 w-10 overflow-hidden rounded-full ring-2 ring-[#2196F3]">
-              <Image src="/police-logo.png" alt="TPF" width={40} height={40} className="h-full w-full object-cover" />
+          <div className="flex items-center gap-3 border-b border-white/8 px-4 py-3.5">
+            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-[#2563EB] ring-2 ring-[#2563EB]/30 shrink-0">
+              <Image src="/police-logo.png" alt="TPF" width={36} height={36} className="h-full w-full object-cover" />
             </div>
-            <div>
-              <p className="text-[13px] font-bold text-white">TZ Police Force</p>
-              <p className="text-[10px] text-white/60">{displayRole}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-bold text-white leading-tight">TZ Police Force</p>
+              <p className="text-[10px] text-white/45 truncate leading-tight mt-0.5">{displayRole}</p>
             </div>
-            <button onClick={() => setSidebarOpen(false)} className="ml-auto text-white/60 lg:hidden">
-              <X size={20} />
+            <button onClick={() => setSidebarOpen(false)} className="ml-auto flex h-7 w-7 items-center justify-center rounded-lg text-white/40 hover:bg-white/10 hover:text-white transition lg:hidden">
+              <X size={16} />
             </button>
           </div>
 
           {/* Nav */}
-          <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+          <nav className="flex-1 overflow-y-auto px-2.5 py-3 space-y-0.5 app-scroll">
             {navItems.map((item) => {
               const active = adminScreen === item.id;
               const Icon = item.icon;
@@ -183,16 +183,12 @@ export function AdminShell() {
                     setAdminScreen(item.id);
                     setSidebarOpen(false);
                   }}
-                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition ${
-                    active
-                      ? "bg-[#2196F3] text-white shadow-lg shadow-[#2196F3]/30"
-                      : "text-white/70 hover:bg-white/10 hover:text-white"
-                  }`}
+                  className={`tpf-nav-item ${active ? "active" : ""}`}
                 >
-                  <Icon size={18} />
-                  <span className="flex-1 text-[13px] font-medium">{item.label}</span>
+                  <Icon size={16} className="tpf-nav-icon shrink-0" />
+                  <span className="flex-1 truncate">{item.label}</span>
                   {item.badge && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[10px] font-bold text-white">
+                    <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
                       {item.badge}
                     </span>
                   )}
@@ -202,21 +198,20 @@ export function AdminShell() {
           </nav>
 
           {/* User */}
-          <div className="border-t border-white/10 p-3">
-            <div className="flex items-center gap-3 rounded-lg bg-white/5 p-2.5">
+          <div className="border-t border-white/8 p-2.5">
+            <div className="flex items-center gap-2.5 rounded-xl bg-white/5 border border-white/8 p-2.5 hover:bg-white/8 transition group">
               {displayPhoto ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={displayPhoto} alt={displayName} className="h-9 w-9 rounded-full object-cover ring-2 ring-[#2196F3]" />
+                <img src={displayPhoto} alt={displayName} className="h-8 w-8 shrink-0 rounded-xl object-cover ring-2 ring-white/20" />
               ) : (
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2196F3] text-[12px] font-bold text-white">{displayInitials}</div>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-[11px] font-bold text-white">{displayInitials}</div>
               )}
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[11px] font-bold text-white">{displayName}</p>
-                <p className="truncate text-[9px] text-white/70">{displayRank}</p>
-                <p className="truncate text-[9px] text-white/50">{displayStation}</p>
+                <p className="truncate text-[12px] font-semibold text-white leading-tight">{displayName}</p>
+                <p className="truncate text-[10px] text-white/45 leading-tight">{displayRank || displayStation}</p>
               </div>
-              <button onClick={logout} className="text-white/50 hover:text-white">
-                <LogOut size={16} />
+              <button onClick={logout} className="flex h-7 w-7 items-center justify-center rounded-lg text-white/35 hover:bg-white/10 hover:text-white transition opacity-0 group-hover:opacity-100">
+                <LogOut size={14} />
               </button>
             </div>
           </div>
@@ -231,44 +226,45 @@ export function AdminShell() {
       {/* Main content */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-police bg-police-card px-4 py-3">
+        <header className="tpf-header">
           <button onClick={() => setSidebarOpen(true)} className="text-police lg:hidden">
             <Menu size={24} />
           </button>
 
           {/* Search */}
-          <div className="hidden flex-1 max-w-md items-center gap-2 rounded-xl bg-police-muted px-3 sm:flex">
-            <Search size={16} className="text-police-faint" />
-            <input
-              placeholder="Tafuta maofisa, matukio, citations..."
-              className="h-9 flex-1 bg-transparent text-[13px] text-police placeholder:text-police-faint focus:outline-none"
-            />
+          <div className="tpf-search hidden max-w-xs flex-1 sm:flex">
+            <Search size={14} className="shrink-0 text-[var(--tpf-text-4)]" />
+            <input placeholder="Tafuta maofisa, matukio, citations..." />
           </div>
 
           <div className="ml-auto flex items-center gap-2">
             {/* Theme toggle */}
             <button
               onClick={() => setTheme(isDark ? "light" : "dark")}
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police-navy"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--tpf-border)] bg-[var(--tpf-surface-2)] text-[var(--tpf-text-3)] hover:bg-[var(--tpf-border)] hover:text-[var(--tpf-text)] transition"
+              title={isDark ? "Light mode" : "Dark mode"}
             >
-              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
 
             {/* Notifications */}
           <div className="relative">
-            <button onClick={() => setNotifOpen(!notifOpen)} className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-police-muted text-police hover:bg-[#2196F3]/15 transition">
-              <Bell size={18} className={notifOpen ? "text-[#2196F3]" : ""} />
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
+            <button onClick={() => setNotifOpen(!notifOpen)} className={`relative flex h-9 w-9 items-center justify-center rounded-lg border transition ${notifOpen ? "border-[var(--tpf-blue)] bg-[var(--tpf-blue-pale)] text-[var(--tpf-blue)]" : "border-[var(--tpf-border)] bg-[var(--tpf-surface-2)] text-[var(--tpf-text-3)] hover:bg-[var(--tpf-border)]"}`}>
+              <Bell size={16} />
+              <span className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#DC2626] px-1 text-[9px] font-bold text-white shadow-sm">
                 3
               </span>
             </button>
 
             {/* Notification Panel */}
             {notifOpen && (
-              <div className="absolute right-0 top-12 z-50 w-80 rounded-2xl bg-police-card shadow-2xl border border-police-soft overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-police-soft">
-                  <span className="text-[14px] font-bold text-police">Arifa</span>
-                  <button onClick={() => setNotifOpen(false)} className="text-police-faint hover:text-police"><X size={16}/></button>
+              <div className="tpf-popover w-80">
+                <div className="flex items-center justify-between border-b border-[var(--tpf-border)] px-4 py-3">
+                  <div>
+                    <span className="text-[14px] font-bold text-[var(--tpf-text)]">Arifa</span>
+                    <span className="ml-2 tpf-badge tpf-badge-red">3</span>
+                  </div>
+                  <button onClick={() => setNotifOpen(false)} className="flex h-7 w-7 items-center justify-center rounded-lg text-[var(--tpf-text-4)] hover:bg-[var(--tpf-surface-2)] hover:text-[var(--tpf-text)] transition"><X size={14}/></button>
                 </div>
                 <div className="max-h-72 overflow-y-auto divide-y divide-police-soft">
                   {[
@@ -278,17 +274,17 @@ export function AdminShell() {
                     { id:"N4", title:"Ripoti ya Patroli imekamilika — Cprl. Juma", time:"dk 30", color:"#10B981", read:true },
                     { id:"N5", title:"Mkutano wa Kamanda — Kesho 09:00", time:"saa 1", color:"#1E3A8A", read:true },
                   ].map((n) => (
-                    <div key={n.id} className={`flex items-start gap-3 px-4 py-3 hover:bg-police-muted transition cursor-pointer ${n.read ? "opacity-60" : ""}`}>
-                      <span className="mt-1 h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor:n.color }}/>
+                    <div key={n.id} className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition hover:bg-[var(--tpf-surface-2)] ${n.read ? "opacity-50" : ""}`}>
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor:n.color }}/>
                       <div className="min-w-0 flex-1">
-                        <p className={`text-[12px] leading-tight text-police ${!n.read ? "font-bold" : ""}`}>{n.title}</p>
-                        <p className="mt-0.5 text-[10px] text-police-faint">{n.time}</p>
+                        <p className={`text-[12.5px] leading-tight text-[var(--tpf-text-2)] ${!n.read ? "font-semibold" : ""}`}>{n.title}</p>
+                        <p className="mt-1 text-[11px] text-[var(--tpf-text-4)]">{n.time}</p>
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="border-t border-police-soft px-4 py-2.5">
-                  <button onClick={() => { setAdminScreen("alerts"); setNotifOpen(false); }} className="text-[12px] font-semibold text-[#2196F3] hover:underline">
+                <div className="border-t border-[var(--tpf-border)] px-4 py-2.5">
+                  <button onClick={() => { setAdminScreen("alerts"); setNotifOpen(false); }} className="text-[12.5px] font-semibold text-[var(--tpf-blue)] hover:text-[#1D4ED8] transition">
                     Ona arifa zote →
                   </button>
                 </div>
@@ -297,25 +293,24 @@ export function AdminShell() {
 
           </div>
             {/* User chip */}
-            <div className="flex items-center gap-2 rounded-lg bg-police-muted px-2.5 py-1.5">
+            <div className="flex items-center gap-2 rounded-xl border border-[var(--tpf-border)] bg-[var(--tpf-surface-2)] px-2.5 py-1.5 hover:bg-[var(--tpf-border)] transition cursor-default">
               {displayPhoto ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={displayPhoto} alt={displayName} className="h-7 w-7 rounded-full object-cover" />
+                <img src={displayPhoto} alt={displayName} className="h-7 w-7 rounded-lg object-cover" />
               ) : (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2196F3] text-[11px] font-bold text-white">{displayInitials}</div>
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-[10px] font-bold text-white">{displayInitials}</div>
               )}
               <div className="hidden sm:block">
-                <p className="text-[12px] font-bold leading-tight text-police">{displayName}</p>
-                <p className="text-[10px] leading-tight text-police-faint">{displayRank} — {displayRole}</p>
-                <p className="text-[9px] leading-tight text-police-faint">{displayStation}</p>
+                <p className="text-[12px] font-semibold leading-tight text-[var(--tpf-text)]">{displayName}</p>
+                <p className="text-[10px] leading-tight text-[var(--tpf-text-4)]">{displayRank || displayRole}</p>
               </div>
-              <ChevronDown size={14} className="text-police-faint" />
+              <ChevronDown size={13} className="text-[var(--tpf-text-4)]" />
             </div>
           </div>
         </header>
 
         {/* Screen content */}
-        <main key={adminScreen} className="police-screen-enter flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
+        <main key={adminScreen} className="police-screen-enter flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6">
           {renderAdminScreen(adminScreen)}
         </main>
       </div>

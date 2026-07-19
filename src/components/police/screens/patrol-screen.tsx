@@ -124,7 +124,7 @@ export function PatrolScreen() {
         <div className="space-y-2">
           {/* Patrol type selector — visible before starting */}
           {!patrolActive && !showForm && (
-            <div className="rounded-2xl bg-police-card p-3 shadow-sm">
+            <div className="tpf-card p-3">
               <p className="mb-2 text-[12px] font-medium text-police-muted">Aina ya Patroli</p>
               <div className="flex gap-2">
                 {([
@@ -167,7 +167,7 @@ export function PatrolScreen() {
 
         {/* Report Form */}
         {showForm && (
-          <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+          <div className="tpf-card p-4">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-[16px] font-bold text-police-navy">Ripoti ya Patroli</h3>
               <span className="rounded-full bg-[#2196F3]/10 px-3 py-1 text-[11px] font-bold text-[#2196F3]">{formatTime(patrolElapsed)}</span>
@@ -223,7 +223,7 @@ export function PatrolScreen() {
 
         {/* Patrol History */}
         {patrolRecords.length > 0 && !showForm && (
-          <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+          <div className="tpf-card p-4">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-[15px] font-bold text-police">Historia ya Patroli</h3>
               <span className="text-[12px] text-[#2196F3]">{patrolRecords.length} rekodi</span>

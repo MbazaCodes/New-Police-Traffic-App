@@ -130,12 +130,12 @@ export function AdminRequests() {
   }
 
   return (
-    <div className="space-y-5 p-4 sm:p-6">
+    <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-[20px] font-bold text-police-navy">Maombi ya Maafisa</h1>
-          <p className="text-[12px] text-police-muted">
+          <h1 className="tpf-section-title">Maombi ya Maafisa</h1>
+          <p className="tpf-section-subtitle">
             {counts.pending} yanasubiri · {counts.approved} imeidhinishwa · {requests.length} jumla
           </p>
         </div>
@@ -268,7 +268,7 @@ export function AdminRequests() {
                   <label className="block text-[11px] font-semibold text-police-muted mb-1">Kituo Kipya</label>
                   <input value={newStation} onChange={e => setNewStation(e.target.value)}
                     placeholder="Jina la kituo kipya cha kazi..."
-                    className="h-10 w-full rounded-xl border border-police bg-police-input px-3 text-[13px] text-police focus:border-[#2196F3] focus:outline-none"/>
+                    className="tpf-input"/>
                 </div>
               )}
 

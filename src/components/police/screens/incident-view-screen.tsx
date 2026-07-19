@@ -64,7 +64,7 @@ export function IncidentViewScreen() {
         </div>
 
         {/* Details */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <h3 className="mb-3 text-[14px] font-bold text-police">Maelezo ya Tukio</h3>
           <div className="space-y-3">
             <DR icon={<FileText size={15} />} label="Aina ya Tukio" value={incident.type} />
@@ -79,7 +79,7 @@ export function IncidentViewScreen() {
         </div>
 
         {/* Status tracker */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <h3 className="mb-3 text-[14px] font-bold text-police">Hali ya Kesi</h3>
           <div className="flex items-center gap-2">
             {["Mpya", "Yanaendelea", "Tatuliwa"].map((s, i) => {

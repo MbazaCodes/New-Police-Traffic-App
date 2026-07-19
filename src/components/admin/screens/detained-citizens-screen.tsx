@@ -181,13 +181,13 @@ export function DetainedCitizensScreen() {
             <div className="grid grid-cols-2 gap-2">
               {selected.status !== "released" && (
                 <button onClick={() => handleStatusChange(selected.id,"released","Ameachiwa na Kamanda")}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-[#10B981] py-2.5 text-[12px] font-bold text-white">
+                  className="tpf-btn tpf-btn-success w-full">
                   <UserCheck size={14}/> Achilia Huru
                 </button>
               )}
               {selected.status === "held" && (
                 <button onClick={() => handleStatusChange(selected.id,"charged")}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] py-2.5 text-[12px] font-bold text-white">
+                  className="tpf-btn tpf-btn-primary w-full">
                   <Shield size={14}/> Mshtaki
                 </button>
               )}
@@ -232,34 +232,34 @@ export function DetainedCitizensScreen() {
           ["Afisa Aliyemkamata", "text", "officer", "Cprl. Juma Mwinyi"],
         ].map(([label, type, key, placeholder]) => (
           <div key={key as string}>
-            <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-police-faint">{label as string}</label>
+            <label className="tpf-label">{label as string}</label>
             <input type={type as string} value={(form as Record<string,string>)[key as string]}
               onChange={setF(key as keyof typeof form)}
               placeholder={placeholder as string}
-              className="h-10 w-full rounded-xl border border-police-soft bg-police-input px-3 text-[13px] text-police focus:border-[#2196F3] focus:outline-none"/>
+              className="tpf-input"/>
           </div>
         ))}
 
         <div>
-          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-police-faint">Jinsia</label>
+          <label className="tpf-label">Jinsia</label>
           <select value={form.gender} onChange={setF("gender")}
-            className="h-10 w-full rounded-xl border border-police-soft bg-police-input px-3 text-[13px] text-police focus:outline-none">
+            className="tpf-select">
             <option value="Mme">Mme (Male)</option>
             <option value="Mke">Mke (Female)</option>
           </select>
         </div>
 
         <div>
-          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-police-faint">Hali ya Kiafya</label>
+          <label className="tpf-label">Hali ya Kiafya</label>
           <select value={form.medicalStatus} onChange={setF("medicalStatus")}
-            className="h-10 w-full rounded-xl border border-police-soft bg-police-input px-3 text-[13px] text-police focus:outline-none">
+            className="tpf-select">
             {["Nzuri","Jeraha Ndogo","Jeraha Kubwa","Anahitaji Daktari"].map(s => <option key={s}>{s}</option>)}
           </select>
         </div>
 
         <div className="flex gap-2 pt-2">
           <button onClick={() => setShowForm(false)}
-            className="flex-1 rounded-xl border border-police py-2.5 text-[13px] font-semibold text-police-muted">
+            className="tpf-btn tpf-btn-secondary flex-1">
             Ghairi
           </button>
           <button onClick={handleAdd} disabled={saving}
@@ -278,11 +278,11 @@ export function DetainedCitizensScreen() {
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-[20px] font-bold text-police-navy">Wafungwa</h1>
+          <h1 className="tpf-section-title">Wafungwa</h1>
           <p className="text-[12px] text-police-muted">{counts.held} kizuizini · {records.length} jumla</p>
         </div>
         <button onClick={() => setShowForm(true)}
-          className="flex items-center gap-1.5 rounded-xl bg-[#1E3A8A] px-4 py-2 text-[12px] font-bold text-white shadow-sm">
+          className="tpf-btn tpf-btn-primary tpf-btn-sm">
           <Plus size={14}/> Ongeza
         </button>
       </div>
@@ -325,10 +325,10 @@ export function DetainedCitizensScreen() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl bg-police-card shadow-sm">
+      <div className="tpf-table-wrap">
         <div className="overflow-x-auto">
           <table className="w-full text-[11px]">
-            <thead className="bg-[#1E3A8A] text-white">
+            <thead className="">
               <tr>
                 {["Picha","Jina","ID","Sababu","Chumba","Afisa","Tarehe","Hali",""].map(h => (
                   <th key={h} className="px-3 py-3 text-left text-[10px] font-semibold whitespace-nowrap">{h}</th>

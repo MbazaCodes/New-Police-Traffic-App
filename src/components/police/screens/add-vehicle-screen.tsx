@@ -151,7 +151,7 @@ export function AddVehicleScreen() {
 
 function Section({ title, color, children }: { title: string; color: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+    <div className="tpf-card p-4">
       <h3 className="mb-3 text-[14px] font-bold text-police" style={{ borderLeft: `3px solid ${color}`, paddingLeft: "8px" }}>{title}</h3>
       <div className="space-y-3">{children}</div>
     </div>

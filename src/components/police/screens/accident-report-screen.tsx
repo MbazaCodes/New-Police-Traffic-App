@@ -307,7 +307,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+    <div className="tpf-card p-4">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="flex items-center gap-2 text-[14px] font-bold text-police-navy">
           <span className="text-police-navy">{icon}</span>

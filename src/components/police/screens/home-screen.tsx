@@ -231,7 +231,7 @@ export function HomeScreen() {
 
       {/* Recent Incidents */}
       <div className="mt-4 px-4 pb-6">
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-[16px] font-bold text-police">Matukio ya Karibuni</h3>
             <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2196F3]">Angalia Zote</button>

@@ -211,7 +211,7 @@ export function ArrestFormScreen() {
 
 function Section({ title, icon, color, children }: { title: string; icon: React.ReactNode; color: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+    <div className="tpf-card p-4">
       <div className="mb-3 flex items-center gap-2">
         <div className="flex h-7 w-7 items-center justify-center rounded-full" style={{ backgroundColor: `${color}15`, color }}>{icon}</div>
         <h3 className="text-[14px] font-bold text-police">{title}</h3>

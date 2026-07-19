@@ -92,7 +92,7 @@ export function CommissionerDashboard() {
   ];
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       {/* Identity header */}
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -144,7 +144,7 @@ export function CommissionerDashboard() {
       {/* Primary KPIs */}
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {primaryKpis.map((k) => (
-          <div key={k.label} className="rounded-2xl bg-police-card p-5 shadow-sm">
+          <div key={k.label} className="tpf-card p-5">
             <div className="flex items-start justify-between">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{backgroundColor:`${k.color}15`,color:k.color}}>
                 {k.icon}
@@ -164,7 +164,7 @@ export function CommissionerDashboard() {
       <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
         {secondaryKpis.map((k) => (
           <div key={k.label} className="rounded-xl bg-police-card p-3 text-center shadow-sm">
-            <p className="text-[20px] font-bold text-police-navy">{k.value}</p>
+            <p className="tpf-section-title">{k.value}</p>
             <p className="mt-0.5 text-[9px] leading-tight text-police-faint">{k.label}</p>
           </div>
         ))}
@@ -173,7 +173,7 @@ export function CommissionerDashboard() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Traffic Fines Summary */}
         {(reportTab === "all" || reportTab === "traffic") && (
-          <div className="rounded-2xl bg-police-card p-5 shadow-sm">
+          <div className="tpf-card p-5">
             <h2 className="mb-4 flex items-center gap-2 text-[15px] font-bold text-police">
               <Car size={18} className="text-[#2196F3]"/> Muhtasari wa Trafiki
             </h2>
@@ -212,7 +212,7 @@ export function CommissionerDashboard() {
 
         {/* General Police Summary */}
         {(reportTab === "all" || reportTab === "general") && (
-          <div className="rounded-2xl bg-police-card p-5 shadow-sm">
+          <div className="tpf-card p-5">
             <h2 className="mb-4 flex items-center gap-2 text-[15px] font-bold text-police">
               <Shield size={18} className="text-[#10B981]"/> Muhtasari wa Polisi Jumla
             </h2>
@@ -249,7 +249,7 @@ export function CommissionerDashboard() {
       </div>
 
       {/* Trend chart */}
-      <div className="rounded-2xl bg-police-card p-5 shadow-sm">
+      <div className="tpf-card p-5">
         <h2 className="mb-4 flex items-center gap-2 text-[15px] font-bold text-police">
           <BarChart3 size={18} className="text-[#1E3A8A]"/> Mwelekeo wa Wiki Hii
         </h2>
@@ -274,7 +274,7 @@ export function CommissionerDashboard() {
       </div>
 
       {/* Offense Distribution Pie Chart — filtered by reportTab */}
-      <div className="rounded-2xl bg-police-card p-5 shadow-sm">
+      <div className="tpf-card p-5">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h2 className="flex items-center gap-2 text-[15px] font-bold text-police">
@@ -339,7 +339,7 @@ export function CommissionerDashboard() {
       {/* Officers + Wanaotafutwa */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Active Officers */}
-        <div className="rounded-2xl bg-police-card p-5 shadow-sm">
+        <div className="tpf-card p-5">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-[15px] font-bold text-police">
               <Users size={18} className="text-[#2196F3]"/> Maofisa Walioko Kazini
@@ -377,7 +377,7 @@ export function CommissionerDashboard() {
         </div>
 
         {/* Missing Records */}
-        <div className="rounded-2xl bg-police-card p-5 shadow-sm">
+        <div className="tpf-card p-5">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-[15px] font-bold text-police">
               <AlertTriangle size={18} className="text-[#EF4444]"/> Wanaotafutwa
@@ -411,7 +411,7 @@ export function CommissionerDashboard() {
 
       {/* Stations + Regions */}
       {isNational && (
-        <div className="rounded-2xl bg-police-card p-5 shadow-sm">
+        <div className="tpf-card p-5">
           <h2 className="mb-4 flex items-center gap-2 text-[15px] font-bold text-police">
             <MapPin size={18} className="text-[#1E3A8A]"/> Mikoa ya Tanzania — Muhtasari
           </h2>
@@ -448,7 +448,7 @@ export function CommissionerDashboard() {
 
       {/* Regional stations breakdown */}
       {(isRegional || !isNational) && myStations.length > 0 && (
-        <div className="rounded-2xl bg-police-card p-5 shadow-sm">
+        <div className="tpf-card p-5">
           <h2 className="mb-4 flex items-center gap-2 text-[15px] font-bold text-police">
             <Building2 size={18} className="text-[#1E3A8A]"/> Vituo vya Mkoa
           </h2>

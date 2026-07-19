@@ -29,7 +29,7 @@ export function TrafficScreen() {
         </div>
 
         {/* Hatua za Haraka — fully functional */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <h3 className="mb-3 text-[16px] font-bold text-police">Hatua za Haraka</h3>
           <div className="grid grid-cols-3 gap-2">
             {TRAFFIC_QUICK_ACTIONS.map((action) => (
@@ -48,7 +48,7 @@ export function TrafficScreen() {
         </div>
 
         {/* Makosa ya Karibuni — clickable */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-[16px] font-bold text-police">Makosa ya Karibuni</h3>
             <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2196F3]">Angalia Zote</button>

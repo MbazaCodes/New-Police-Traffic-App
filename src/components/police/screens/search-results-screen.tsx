@@ -166,7 +166,7 @@ export function SearchResultsScreen() {
 
           {/* Risk score */}
           {c && (
-            <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+            <div className="tpf-card p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[13px] font-semibold text-police-muted">Kiwango cha Hatari</span>
                 <span className="text-[13px] font-bold" style={{ color: c.riskScore > 70 ? "#EF4444" : c.riskScore > 40 ? "#FF9800" : "#10B981" }}>{c.riskLevel}</span>
@@ -293,7 +293,7 @@ function ActionButton({ icon, label, color, onClick }: { icon: React.ReactNode; 
 
 function SectionCard({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+    <div className="tpf-card p-4">
       <h3 className="mb-2.5 flex items-center gap-2 border-b border-police-soft pb-2 text-[12px] font-bold uppercase tracking-wide text-police-navy">{icon}{title}</h3>
       <div className="space-y-1.5">{children}</div>
     </div>

@@ -74,7 +74,7 @@ export function CitationDetailScreen() {
         </div>
 
         {/* Offense details */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <h3 className="mb-3 text-[14px] font-bold text-police">Maelezo ya Kosa</h3>
           <div className="space-y-3">
             <DR icon={<FileText size={15} />} label="Kosa" value={citation.offense} />

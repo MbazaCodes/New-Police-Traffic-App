@@ -183,7 +183,7 @@ export function CitizenSearchResultsScreen() {
       {(searchStatus === "found" || searchStatus === "idle") && foundCitizen && (
         <div className="space-y-3 p-4">
           {/* Citizen Header Card */}
-          <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+          <div className="tpf-card p-4">
             <div className="flex items-start gap-3">
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#1E3A8A] to-[#2196F3] text-[22px] font-extrabold text-white ring-2 ring-[#2196F3]/20">
                 {initials}
@@ -291,11 +291,11 @@ export function CitizenSearchResultsScreen() {
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
               <div className="rounded-xl bg-police-muted p-2.5 text-center">
-                <p className="text-[18px] font-bold text-police">{r.criminalRecord.cases}</p>
+                <p className="text-[18px] font-bold text-[var(--tpf-text)]">{r.criminalRecord.cases}</p>
                 <p className="text-[9px] text-police-faint">Kesi Zilizowekwa</p>
               </div>
               <div className="rounded-xl bg-police-muted p-2.5 text-center">
-                <p className="text-[18px] font-bold text-police">{r.criminalRecord.convictions}</p>
+                <p className="text-[18px] font-bold text-[var(--tpf-text)]">{r.criminalRecord.convictions}</p>
                 <p className="text-[9px] text-police-faint">Uhukumu</p>
               </div>
             </div>
@@ -458,7 +458,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+    <div className="tpf-card p-4">
       <h3 className="mb-2.5 flex items-center gap-2 border-b border-police-soft pb-2 text-[13px] font-bold uppercase tracking-wide text-police-navy">
         {icon}
         {title}

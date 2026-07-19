@@ -101,7 +101,7 @@ export function WaliokamatwaScreen() {
       {/* KPI Stats */}
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-2xl bg-police-card p-4 shadow-sm">
+          <div key={s.label} className="tpf-card p-4">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ backgroundColor:`${s.color}15`, color:s.color }}>{s.icon}</div>
             <p className="mt-2 text-[26px] font-bold text-police">{s.value}</p>
             <p className="text-[11px] text-police-muted">{s.label}</p>
@@ -110,7 +110,7 @@ export function WaliokamatwaScreen() {
       </div>
 
       {/* Monthly bar chart */}
-      <div className="rounded-2xl bg-police-card p-5 shadow-sm">
+      <div className="tpf-card p-5">
         <h2 className="mb-3 text-[14px] font-bold text-police">Takwimu za Kila Mwezi</h2>
         <div className="flex h-20 items-end gap-2">
           {MONTHLY.map((m) => {
@@ -154,7 +154,7 @@ export function WaliokamatwaScreen() {
         <div className="rounded-2xl bg-police-card shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-[12px]">
-              <thead className="bg-[#1E3A8A] text-white">
+              <thead className="">
                 <tr>{["Picha","Jina","Arrest ID","Mashtaka","Afisa","Kituo","Tarehe","Hali",""].map((h) => (
                   <th key={h} className="px-4 py-3 text-left text-[11px] font-semibold">{h}</th>
                 ))}</tr>
@@ -195,7 +195,7 @@ export function WaliokamatwaScreen() {
       {view === "card" && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {paged.map((r) => (
-            <div key={r.id} className="rounded-2xl bg-police-card p-4 shadow-sm">
+            <div key={r.id} className="tpf-card p-4">
               <div className="flex items-start gap-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={r.photo} alt={r.fullName} className="h-12 w-12 shrink-0 rounded-xl object-cover"/>

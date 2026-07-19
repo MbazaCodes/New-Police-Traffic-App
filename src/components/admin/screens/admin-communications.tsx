@@ -205,7 +205,7 @@ export function AdminCommunications() {
   return (
     <div className="flex h-full flex-col">
       {/* Tabs */}
-      <div className="flex border-b border-police-soft bg-police-card">
+      <div className="flex border-b border-[var(--tpf-border)] bg-[var(--tpf-card)]">
         {([
           ["messages","💬 Ujumbe"],
           ["wafungwa","🔒 Wafungwa"],
@@ -298,7 +298,7 @@ export function AdminCommunications() {
 
           {/* Detained list */}
           {filtDetained.map(d => (
-            <div key={d.id} className="rounded-2xl bg-police-card p-3.5 shadow-sm">
+            <div key={d.id} className="tpf-card p-3.5">
               <div className="flex items-center gap-3">
                 <img src={avatarUrl(d.fullName)} alt={d.fullName} className="h-10 w-10 rounded-full object-cover"/>
                 <div className="min-w-0 flex-1">
@@ -386,7 +386,7 @@ export function AdminCommunications() {
 
               <div className="flex gap-2">
                 <button onClick={()=>setShowOrderForm(false)}
-                  className="flex-1 rounded-xl border border-police py-2 text-[12px] font-semibold text-police-muted">
+                  className="tpf-btn tpf-btn-secondary flex-1">
                   Ghairi
                 </button>
                 <button onClick={sendOrder}
@@ -399,7 +399,7 @@ export function AdminCommunications() {
 
           {/* Orders list */}
           {orders.map(o => (
-            <div key={o.id} className="rounded-2xl bg-police-card p-4 shadow-sm">
+            <div key={o.id} className="tpf-card p-4">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
                   <img src={avatarUrl(o.toOfficer)} alt={o.toOfficer} className="h-8 w-8 rounded-full object-cover"/>

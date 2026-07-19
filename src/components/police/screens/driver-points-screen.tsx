@@ -222,7 +222,7 @@ export function DriverPointsScreen() {
           </div>
 
           {/* Deductions log */}
-          <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+          <div className="tpf-card p-4">
             <h3 className="mb-3 text-[14px] font-bold text-police">Historia ya Makosa {new Date().getFullYear()}</h3>
             {record.deductions.length === 0 ? (
               <div className="flex flex-col items-center py-6 text-center">

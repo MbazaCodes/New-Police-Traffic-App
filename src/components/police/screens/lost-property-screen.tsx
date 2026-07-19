@@ -61,7 +61,7 @@ export function LostPropertyScreen() {
           <p className="text-[11px] text-white/70">{CAT_MAP[selected.category] ?? selected.category}</p>
         </div>
         <div className="space-y-4 p-4">
-          <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+          <div className="tpf-card p-4">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-[14px] font-bold text-police">Maelezo ya Mali</h3>
               <span className="rounded-full px-3 py-1 text-[11px] font-bold text-white" style={{ backgroundColor: st.color }}>{st.label}</span>
@@ -72,7 +72,7 @@ export function LostPropertyScreen() {
               <Row label="Nambari ya Kifaa" value={selected.deviceNo} />
             </div>
           </div>
-          <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+          <div className="tpf-card p-4">
             <h3 className="mb-3 text-[14px] font-bold text-police">Mmiliki</h3>
             <div className="space-y-2">
               <Row label="Jina" value={selected.owner} />
@@ -80,7 +80,7 @@ export function LostPropertyScreen() {
               <Row label="NIDA" value={selected.ownerNida} />
             </div>
           </div>
-          <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+          <div className="tpf-card p-4">
             <h3 className="mb-3 text-[14px] font-bold text-police">Taarifa za Kesi</h3>
             <div className="space-y-2">
               <Row label="Iliripotiwa" value={`${selected.reportedDate} @ ${selected.reportedStation}`} />

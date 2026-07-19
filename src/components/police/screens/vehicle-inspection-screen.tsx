@@ -80,7 +80,7 @@ export function VehicleInspectionScreen() {
 
       <div className="space-y-3 p-4 pb-8">
         {/* Vehicle Info Header */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
               {isEditing ? (
@@ -159,7 +159,7 @@ export function VehicleInspectionScreen() {
         </div>
 
         {/* Section 3: Load */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <h3 className="mb-3 text-[14px] font-bold text-police-navy">3. Upakiaji (Load)</h3>
           <div className="grid grid-cols-3 gap-2">
             <LoadField label="Aina ya Mizigo" value="Abiria" />
@@ -196,7 +196,7 @@ export function VehicleInspectionScreen() {
         </div>
 
         {/* Section 4: Photos */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <h3 className="mb-1 text-[14px] font-bold text-police-navy">4. Picha / Uthibitisho</h3>
           <p className="mb-3 text-[10px] text-police-faint">
             Piga picha sehemu muhimu za gari (nje, ndani, namba ya usajili, kasoro n.k.)
@@ -221,7 +221,7 @@ export function VehicleInspectionScreen() {
         </div>
 
         {/* Section 5: Results */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <h3 className="mb-3 text-[14px] font-bold text-police-navy">5. Matokelo ya Ukaguzi</h3>
           <div className="space-y-2">
             <button
@@ -260,7 +260,7 @@ export function VehicleInspectionScreen() {
         </div>
 
         {/* Section 6: Officer Signature */}
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+        <div className="tpf-card p-4">
           <h3 className="mb-3 text-[14px] font-bold text-police-navy">6. Saini ya Afisa</h3>
           <div className="grid grid-cols-2 gap-2">
             <LoadField label="Jina la Afisa" value={OFFICER.name} />
@@ -305,7 +305,7 @@ function ChecklistSection({
   items: { label: string; status: string; pass: boolean }[];
 }) {
   return (
-    <div className="rounded-2xl bg-police-card p-4 shadow-sm">
+    <div className="tpf-card p-4">
       <h3 className="mb-3 text-[14px] font-bold text-police-navy">{title}</h3>
       <div className="space-y-2">
         {items.map((item, i) => (

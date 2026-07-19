@@ -43,7 +43,7 @@ export function EditProfileScreen() {
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#10B981]/15">
           <CheckCircle size={44} className="text-[#10B981]" />
         </div>
-        <p className="text-[18px] font-bold text-police">Imehifadhiwa</p>
+        <p className="text-[18px] font-bold text-[var(--tpf-text)]">Imehifadhiwa</p>
         <p className="text-[13px] text-police-muted">Inarudi kwenye profaili...</p>
       </div>
     );

@@ -55,12 +55,12 @@ export function HistoryScreen() {
       <div className="space-y-3 p-4 pb-8">
         {/* Summary cards */}
         <div className="grid grid-cols-2 gap-2.5">
-          <div className="rounded-2xl bg-police-card p-3 shadow-sm">
+          <div className="tpf-card p-3">
             <p className="text-[10px] text-police-faint">Jumla ya Faini</p>
             <p className="mt-1 text-[18px] font-bold text-police-navy">TZS {totalFines.toLocaleString()}</p>
             <p className="mt-0.5 text-[10px] text-police-faint">{CITATION_HISTORY.length} Citations</p>
           </div>
-          <div className="rounded-2xl bg-police-card p-3 shadow-sm">
+          <div className="tpf-card p-3">
             <p className="text-[10px] text-police-faint">Haijalipwa</p>
             <p className="mt-1 text-[18px] font-bold text-[#EF4444]">TZS {unpaidFines.toLocaleString()}</p>
             <p className="mt-0.5 text-[10px] text-police-faint">{CITATION_HISTORY.filter((c) => c.status === "Hajalipwa").length} Hajalipwa</p>
@@ -122,7 +122,7 @@ export function HistoryScreen() {
         {tab === "arrests" && (
           <div className="space-y-2.5">
             {filteredArrests.length === 0 ? <EmptyState label="Hakuna makamato" /> : filteredArrests.map((a) => (
-              <div key={a.id} className="rounded-2xl bg-police-card p-3 shadow-sm">
+              <div key={a.id} className="tpf-card p-3">
                 <div className="flex items-start gap-3">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1E3A8A]/10">
                     <AlertTriangle size={20} className="text-[#1E3A8A]" />
@@ -148,7 +148,7 @@ export function HistoryScreen() {
         {tab === "warnings" && (
           <div className="space-y-2.5">
             {filteredWarnings.length === 0 ? <EmptyState label="Hakuna maonyo" /> : filteredWarnings.map((w) => (
-              <div key={w.id} className="rounded-2xl bg-police-card p-3 shadow-sm">
+              <div key={w.id} className="tpf-card p-3">
                 <div className="flex items-start gap-3">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#FF9800]/10">
                     <AlertTriangle size={20} className="text-[#FF9800]" />
@@ -180,7 +180,7 @@ export function HistoryScreen() {
                 <p className="text-[11px] text-police-muted">Anza patroli kwenye ukurasa wa Patroli.</p>
               </div>
             ) : patrolRecords.map((p) => (
-              <div key={p.id} className="rounded-2xl bg-police-card p-3 shadow-sm">
+              <div key={p.id} className="tpf-card p-3">
                 <div className="flex items-start gap-3">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2196F3]/10">
                     <Shield size={20} className="text-[#2196F3]" />
