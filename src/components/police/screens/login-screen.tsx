@@ -51,7 +51,7 @@ const WEB_ROLES: WebRoleOption[] = [
   { id: "STATION_COMMANDER", label: "Station Commander", route: "/command/station/dashboard", storeRole: "commander" },
   { id: "TRAFFIC_OFFICER", label: "Traffic Officer", route: "/officer/traffic/home", storeRole: "officer-traffic" },
   { id: "GENERAL_OFFICER", label: "General Officer", route: "/officer/general/home", storeRole: "officer-general" },
-  { id: "POST_OFFICER", label: "Post Officer (Afisa wa Posti)", route: "/", storeRole: "officer-post" },
+  { id: "POST_OFFICER", label: "Post Officer (Afisa wa Posti)", route: "/officer/post/home", storeRole: "officer-post" },
   { id: "INVESTIGATOR",            label: "CID / Investigator",         route: "/cid/home",           storeRole: "investigator"     },
   { id: "CID_OFFICER",             label: "CID Officer",                route: "/cid/home",           storeRole: "investigator"     },
   { id: "INVESTIGATION_SUPERVISOR",label: "Investigation Supervisor",   route: "/cid/home",           storeRole: "investigator"     },

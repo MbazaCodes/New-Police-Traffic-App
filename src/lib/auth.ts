@@ -9,7 +9,7 @@ import { findSupabaseUser, mapSupabaseRole } from "@/lib/supabase/auth-bridge";
 export const ROLES = [
   "SUPER_ADMIN","COMMANDER","OFFICER","SYSTEM_ADMIN",
   "NATIONAL_COMMANDER","REGIONAL_COMMANDER","DISTRICT_COMMANDER",
-  "STATION_COMMANDER","TRAFFIC_OFFICER","GENERAL_OFFICER",
+  "STATION_COMMANDER","TRAFFIC_OFFICER","GENERAL_OFFICER","POST_OFFICER",
   "INVESTIGATOR","CLERK","VIEWER",
 ] as const;
 
@@ -96,6 +96,7 @@ export function resolveDashboardRoute(role: Role): string {
     TRAFFIC_OFFICER:     "/officer/traffic/home",
     OFFICER:             "/officer/traffic/home",
     GENERAL_OFFICER:     "/officer/general/home",
+    POST_OFFICER:        "/officer/post/home",
     INVESTIGATOR:        "/cid/home",
     CLERK:               "/clerk/records",
     VIEWER:              "/viewer/dashboard",
