@@ -51,9 +51,9 @@ export type SystemScreen =
   | "settings";
 
 const SYSTEM_USER = {
-  shortName: "ACP. Thomas Mbatia",
-  rank: "Assistant Commissioner",
-  initials: "TM",
+  shortName: "",
+  rank: "",
+  initials: "SA",
 };
 
 /* ------------------------------------------------------------------ */
@@ -76,28 +76,15 @@ const SYSTEM_NAV: { id: SystemScreen; label: string; icon: typeof LayoutDashboar
 /* ---- SystemDashboard ---- */
 function SystemDashboard() {
   const systemStats = [
-    { label: "CPU Usage", value: "45%", icon: Cpu, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400", bar: 45, barColor: "bg-blue-500" },
-    { label: "Memory Usage", value: "62%", icon: MemoryStick, color: "bg-[#1E3A8A]/15 text-[#1E3A8A] ", bar: 62, barColor: "bg-[#1E3A8A]" },
-    { label: "Uptime", value: "99.9%", icon: Zap, color: "bg-[#10B981]/15 text-[#10B981] ", bar: 99.9, barColor: "bg-[#10B981]" },
-    { label: "Active Users", value: "23", icon: Users, color: "bg-[#FF9800]/15 text-[#FF9800] ", bar: 23, barColor: "bg-[#FF9800]" },
+    { label: "CPU Usage", value: "—%", icon: Cpu, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400", bar: 0, barColor: "bg-blue-500" },
+    { label: "Memory Usage", value: "—%", icon: MemoryStick, color: "bg-[#1E3A8A]/15 text-[#1E3A8A] ", bar: 0, barColor: "bg-[#1E3A8A]" },
+    { label: "Uptime", value: "—%", icon: Zap, color: "bg-[#10B981]/15 text-[#10B981] ", bar: 0, barColor: "bg-[#10B981]" },
+    { label: "Active Users", value: "0", icon: Users, color: "bg-[#FF9800]/15 text-[#FF9800] ", bar: 0, barColor: "bg-[#FF9800]" },
   ];
 
-  const serverStatus = [
-    { name: "Web Server (Next.js)", status: "Online", region: "Dar es Salaam", load: "32%", icon: Server },
-    { name: "API Gateway", status: "Online", region: "Dar es Salaam", load: "18%", icon: Cloud },
-    { name: "Worker Queue", status: "Online", region: "Dodoma", load: "5 jobs", icon: RefreshCw },
-    { name: "CDN Edge", status: "Online", region: "Multi-region", load: "N/A", icon: Wifi },
-  ];
+  const serverStatus: never[] = [];
 
-  const recentEvents = [
-    { event: "Auto-backup completed successfully", time: "5 min ago", type: "success" },
-    { event: "User Cpl. Juma logged in from new device", time: "15 min ago", type: "warning" },
-    { event: "Database optimization job completed", time: "32 min ago", type: "success" },
-    { event: "Rate limit triggered for IP 196.43.x.x", time: "1 hr ago", type: "alert" },
-    { event: "SSL certificate renewed for police.go.tz", time: "2 hrs ago", type: "success" },
-    { event: "SMS Gateway reconnected after timeout", time: "3 hrs ago", type: "warning" },
-    { event: "New user account created: PC. Rashid", time: "4 hrs ago", type: "info" },
-  ];
+  const recentEvents: never[] = [];
 
   const eventColor: Record<string, string> = {
     success: "bg-[#10B981]",
@@ -195,16 +182,7 @@ function SystemDashboard() {
 
 /* ---- SystemUsers ---- */
 function SystemUsers() {
-  const users = [
-    { name: "Insp. Fatma Hassan", role: "Clerk / Karani", status: "Online", lastLogin: "2024-12-15 14:30", initials: "FH" },
-    { name: "PC. John Makalla", role: "Viewer / Mpangaji", status: "Online", lastLogin: "2024-12-15 14:15", initials: "JM" },
-    { name: "Sgt. Joseph Kimaro", role: "Station Commander", status: "Offline", lastLogin: "2024-12-15 09:00", initials: "JK" },
-    { name: "Cpl. Amina Juma", role: "Traffic Officer", status: "Online", lastLogin: "2024-12-15 13:45", initials: "AJ" },
-    { name: "PC. Hamisi Rashid", role: "General Officer", status: "Offline", lastLogin: "2024-12-14 17:30", initials: "HR" },
-    { name: "ASP. Grace Mwangi", role: "Regional Commander", status: "Online", lastLogin: "2024-12-15 12:00", initials: "GM" },
-    { name: "IP. David Omary", role: "Investigator / CID", status: "Away", lastLogin: "2024-12-15 11:20", initials: "DO" },
-    { name: "ACP. Thomas Mbatia", role: "System Admin", status: "Online", lastLogin: "2024-12-15 14:00", initials: "TM" },
-  ];
+  const users: never[] = [];
 
   const statusDot: Record<string, string> = {
     Online: "bg-[#10B981]",
@@ -276,12 +254,7 @@ function SystemUsers() {
 
 /* ---- SystemHealth ---- */
 function SystemHealth() {
-  const servers = [
-    { name: "API Server", status: "Healthy", responseTime: "45ms", uptime: "99.98%", lastCheck: "30 sec ago", icon: Server, details: ["Region: Dar es Salaam", "Port: 443 (HTTPS)", "Version: v2.14.3"] },
-    { name: "Database (PostgreSQL)", status: "Healthy", responseTime: "12ms", uptime: "99.99%", lastCheck: "15 sec ago", icon: Database, details: ["Region: Dodoma", "Connections: 23/100", "Storage: 4.2 GB / 50 GB"] },
-    { name: "Redis Cache", status: "Healthy", responseTime: "2ms", uptime: "99.97%", lastCheck: "10 sec ago", icon: Zap, details: ["Memory: 256 MB", "Keys: 12,847", "Hit Rate: 94.2%"] },
-    { name: "File Storage", status: "Warning", responseTime: "120ms", uptime: "99.5%", lastCheck: "45 sec ago", icon: HardDrive, details: ["Region: Multi-CDN", "Storage: 180 GB / 200 GB", "Files: 84,231"] },
-  ];
+  const servers: never[] = [];
 
   const statusConfig: Record<string, { color: string; textColor: string; dot: string }> = {
     Healthy: { color: "bg-[#10B981]/15", textColor: "text-[#10B981] ", dot: "bg-[#10B981]" },
@@ -336,14 +309,7 @@ function SystemHealth() {
 
 /* ---- SystemUserManagement ---- */
 function SystemUserManagement() {
-  const users = [
-    { id: 1, name: "Insp. Fatma Hassan", email: "f.hassan@police.go.tz", role: "Clerk", status: "Active", created: "2024-03-15", lastLogin: "2024-12-15" },
-    { id: 2, name: "PC. John Makalla", email: "j.makalla@police.go.tz", role: "Viewer", status: "Active", created: "2024-05-22", lastLogin: "2024-12-15" },
-    { id: 3, name: "Sgt. Joseph Kimaro", email: "j.kimaro@police.go.tz", role: "Station Commander", status: "Active", created: "2024-01-10", lastLogin: "2024-12-15" },
-    { id: 4, name: "Cpl. Amina Juma", email: "a.juma@police.go.tz", role: "Traffic Officer", status: "Active", created: "2024-06-01", lastLogin: "2024-12-15" },
-    { id: 5, name: "PC. Hamisi Rashid", email: "h.rashid@police.go.tz", role: "General Officer", status: "Suspended", created: "2024-02-28", lastLogin: "2024-12-14" },
-    { id: 6, name: "ASP. Grace Mwangi", email: "g.mwangi@police.go.tz", role: "Regional Commander", status: "Active", created: "2024-01-05", lastLogin: "2024-12-15" },
-  ];
+  const users: never[] = [];
 
   const statusStyle: Record<string, string> = {
     Active: "bg-[#10B981]/15 text-[#10B981] ",

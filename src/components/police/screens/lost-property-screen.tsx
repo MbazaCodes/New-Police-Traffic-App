@@ -187,7 +187,7 @@ export function LostPropertyScreen() {
             <div>
               <label className="mb-1 block text-[12px] font-medium text-police-muted">Kituo cha Kuripoti</label>
               <select value={form.station} onChange={set("station")} className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:outline-none">
-                {["Kituo Kikuu DSM", "Kituo cha Ilala", "Kituo cha Kinondoni", "Kituo cha Temeke", "Kituo cha Ubungo"].map((s) => <option key={s}>{s}</option>)}
+                <option value="">— Chagua Kituo —</option>
               </select>
             </div>
             <div>

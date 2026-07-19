@@ -1,11 +1,12 @@
 // Citizen search API
-// GET /api/search/citizen?query=Juma&type=name -> citizen search result
+// GET /api/search/citizen?query=Juma&type=name -> citizen search result from Supabase
 // type can be: name | nida | mobile
 
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
+import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function GET(request: Request) {
   try {
@@ -26,25 +27,50 @@ export async function GET(request: Request) {
       );
     }
 
-    // In production: lookup citizen by name/nida/mobile in NIDA / civil registry.
-    // Mock: return CITIZEN_RESULT (overriding the queried field) for any query.
-    const result = {
-      ...CITIZEN_RESULT,
-      name: type === "name" ? query : CITIZEN_RESULT.name,
-      nida: type === "nida" ? query : CITIZEN_RESULT.nida,
-      mobile: type === "mobile" ? query : CITIZEN_RESULT.mobile,
-    };
+    if (isSupabaseEnabled()) {
+      const admin = getSupabaseAdmin();
+      if (admin) {
+        // Search citizen in Supabase
+        const { data, error } = await admin.rpc("search_citizen", {
+          p_query: query,
+          p_type: type,
+        });
 
-    logAction(
-      session!.user.id,
-      "search_citizen",
-      "search",
-      null,
-      { type, query, found: true },
-      session!.user.name,
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const result = data[0];
+          logAction(
+            session!.user.id,
+            "search_citizen",
+            "search",
+            null,
+            { type, query, found: true },
+            session!.user.name,
+          );
+          return NextResponse.json({ data: result, found: true }, { status: 200 });
+        }
+
+        logAction(
+          session!.user.id,
+          "search_citizen",
+          "search",
+          null,
+          { type, query, found: false },
+          session!.user.name,
+        );
+        return NextResponse.json(
+          { data: null, found: false, message: "Citizen not found in registry" },
+          { status: 404 },
+        );
+      }
+    }
+
+    // Supabase not available
+    return NextResponse.json(
+      { error: "Search service unavailable", message: "Supabase haijawezeshwa" },
+      { status: 503 },
     );
-
-    return NextResponse.json({ data: result, found: true }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
       { error: "Failed to search citizen", detail: String(err) },

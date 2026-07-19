@@ -158,8 +158,8 @@ export async function POST(request: Request) {
       }
     }
 
-    const mockId = `BL-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
-    return NextResponse.json({ ok: true, data: { ...payload, id: mockId, created_at: new Date().toISOString() } }, { status: 201 });
+    // Supabase required for bail creation
+    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }

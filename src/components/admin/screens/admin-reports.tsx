@@ -25,6 +25,28 @@ import {
 } from "recharts";
 import { toast } from "@/hooks/use-toast";
 
+// ── Chart data (empty — loaded from Supabase in production) ────────────
+const INCIDENT_TREND = [
+  { day: "Jumatatu", incidents: 0, citations: 0 },
+  { day: "Jumanne", incidents: 0, citations: 0 },
+  { day: "Jumatano", incidents: 0, citations: 0 },
+  { day: "Alhamisi", incidents: 0, citations: 0 },
+  { day: "Ijumaa", incidents: 0, citations: 0 },
+  { day: "Jumamosi", incidents: 0, citations: 0 },
+  { day: "Jumapili", incidents: 0, citations: 0 },
+];
+const REGION_STATS: never[] = [];
+const OFFENSE_DISTRIBUTION = [
+  { name: "Kasi", value: 1, color: "#EF4444" },
+];
+const GENERAL_INCIDENT_DISTRIBUTION = [
+  { name: "Mengine", value: 1, color: "#2196F3" },
+];
+const COMBINED_DISTRIBUTION = [
+  { name: "Trafiki", value: 1, color: "#FF9800" },
+  { name: "Jumla", value: 1, color: "#10B981" },
+];
+
 const DATE_RANGES = [
   { id: "7d", label: "Siku 7" },
   { id: "30d", label: "Siku 30" },

@@ -44,9 +44,9 @@ export type ViewerScreen =
   | "help";
 
 const VIEWER_USER = {
-  shortName: "PC. John Makalla",
-  rank: "Police Constable",
-  initials: "JM",
+  shortName: "",
+  rank: "",
+  initials: "V",
 };
 
 /* ------------------------------------------------------------------ */
@@ -80,13 +80,7 @@ function ViewerDashboard() {
     { label: "Citizen Satisfaction", value: "78%", change: "+5.4%", positive: true },
   ];
 
-  const recentActivity = [
-    { action: "New incident reported in Kinondoni", time: "5 min ago", type: "incident" },
-    { action: "Case C-2024-0561 updated status to 'Under Investigation'", time: "23 min ago", type: "case" },
-    { action: "Officer deployment completed for Tanga region", time: "1 hr ago", type: "deploy" },
-    { action: "Monthly crime statistics report published", time: "2 hrs ago", type: "report" },
-    { action: "Station Ilala flagged for review", time: "3 hrs ago", type: "alert" },
-  ];
+  const recentActivity: never[] = [];
 
   const activityColor: Record<string, string> = {
     incident: "bg-[#EF4444]/100/15 text-[#EF4444]",
@@ -164,16 +158,7 @@ function ViewerDashboard() {
 function ViewerReports() {
   const [filterType, setFilterType] = useState<string>("all");
 
-  const reports = [
-    { id: "RPT-2024-089", name: "Monthly Crime Statistics - December 2024", type: "Crime", date: "2024-12-15", format: "PDF", size: "2.1 MB" },
-    { id: "RPT-2024-088", name: "Regional Performance Report Q4 2024", type: "Performance", date: "2024-12-14", format: "PDF", size: "4.5 MB" },
-    { id: "RPT-2024-087", name: "Station Audit Report - Dar es Salaam", type: "Audit", date: "2024-12-13", format: "Excel", size: "1.8 MB" },
-    { id: "RPT-2024-086", name: "Traffic Violations Summary - November", type: "Traffic", date: "2024-12-12", format: "PDF", size: "3.2 MB" },
-    { id: "RPT-2024-085", name: "Officer Deployment Analysis", type: "Deployment", date: "2024-12-11", format: "PDF", size: "2.7 MB" },
-    { id: "RPT-2024-084", name: "Case Clearance Statistics - Q4", type: "Crime", date: "2024-12-10", format: "PDF", size: "1.4 MB" },
-    { id: "RPT-2024-083", name: "Citizen Complaint Review - October", type: "Audit", date: "2024-12-09", format: "PDF", size: "980 KB" },
-    { id: "RPT-2024-082", name: "Arusha Region Monthly Summary", type: "Regional", date: "2024-12-08", format: "PDF", size: "2.3 MB" },
-  ];
+  const reports: never[] = [];
 
   const types = ["all", "Crime", "Performance", "Audit", "Traffic", "Deployment", "Regional"];
   const filtered = filterType === "all" ? reports : reports.filter((r) => r.type === filterType);
@@ -308,15 +293,7 @@ function ViewerAnalytics() {
 
 /* ---- ViewerNotifications ---- */
 function ViewerNotifications() {
-  const notifications = [
-    { id: 1, title: "New Crime Statistics Published", message: "Monthly crime statistics for December 2024 are now available in the Reports section.", time: "2 hours ago", type: "info", read: false },
-    { id: 2, title: "System Maintenance Scheduled", message: "The platform will undergo scheduled maintenance on Dec 20, 2024 from 02:00-04:00 EAT.", time: "5 hours ago", type: "warning", read: false },
-    { id: 3, title: "Quarterly Report Available", message: "Q4 2024 Regional Performance Report has been published and is available for download.", time: "1 day ago", type: "info", read: false },
-    { id: 4, title: "Case C-2024-0561 Status Update", message: "Case status has changed to 'Under Investigation'. You can view details in the dashboard.", time: "1 day ago", type: "info", read: true },
-    { id: 5, title: "New Deployment in Tanga", message: "Officer deployment has been completed for the Tanga region operation.", time: "2 days ago", type: "success", read: true },
-    { id: 6, title: "Station Audit Completed", message: "Kinondoni station audit report has been finalized and published.", time: "3 days ago", type: "success", read: true },
-    { id: 7, title: "Access Permissions Updated", message: "Your view permissions have been updated to include Dodoma region reports.", time: "4 days ago", type: "info", read: true },
-  ];
+  const notifications: never[] = [];
 
   const typeConfig: Record<string, { icon: typeof Info; color: string }> = {
     info: { icon: Info, color: "bg-blue-500/15 text-blue-500" },

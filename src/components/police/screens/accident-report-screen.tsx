@@ -86,7 +86,7 @@ export function AccidentReportScreen() {
   const buildPayload = () => ({
     date: today,
     time: currentTime,
-    location: "Morogoro Road, Dar es Salaam",
+    location: "",
     severity: hasInjuries ? "Kubwa" : "Ndogo",
     vehicles: vehicles.map((v) => ({
       plate: v.plate,
@@ -128,13 +128,13 @@ export function AccidentReportScreen() {
             <Field label="Tarehe ya Ajali" icon={<Calendar size={14} />} value={today} />
             <Field label="Saa ya Ajali" icon={<Clock size={14} />} value={currentTime} />
           </div>
-          <Field label="Eneo la Ajali" icon={<MapPin size={14} />} value="Morogoro Road, Dar es Salaam" />
+          <Field label="Eneo la Ajali" icon={<MapPin size={14} />} value="" />
           <div>
             <label className="mb-1 block text-[11px] font-medium text-police-muted">
               Mahali Halisi (Maelezo ya Eneo)
             </label>
             <div className="rounded-xl border border-police bg-police-input px-3 py-2.5 text-[12px] text-police">
-              Kwenye makutano ya Morogoro Road na Ubungo Terminal
+              —
             </div>
           </div>
         </Section>

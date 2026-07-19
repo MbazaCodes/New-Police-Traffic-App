@@ -31,9 +31,9 @@ export async function GET(request: Request) {
           ...h,
           ownerId: String(h.sentBy ?? ""),
           isPublic: true,
-          region: "Dar es Salaam",
-          district: "Kinondoni",
-          station: "Oysterbay Station",
+          region: "",
+          district: "",
+          station: "",
         }, scope),
       );
       hist = enforceDataScope(hist, scope);
@@ -48,9 +48,9 @@ export async function GET(request: Request) {
         ...a,
         ownerId: String(a.source ?? ""),
         isPublic: true,
-        region: "Dar es Salaam",
-        district: "Kinondoni",
-        station: "Oysterbay Station",
+        region: "",
+        district: "",
+        station: "",
       }, scope),
     );
     result = enforceDataScope(result, scope);

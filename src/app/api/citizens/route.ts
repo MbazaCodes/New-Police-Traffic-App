@@ -65,9 +65,8 @@ export async function POST(request: Request) {
         return NextResponse.json({ ok: true, data }, { status: 201 });
       }
     }
-    // Mock fallback
-    const mock = { id: `CIT-${Date.now()}`, ...body, addedAt: new Date().toISOString() };
-    return NextResponse.json({ ok: true, data: mock }, { status: 201 });
+    // Supabase required for citizen creation
+    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
   }

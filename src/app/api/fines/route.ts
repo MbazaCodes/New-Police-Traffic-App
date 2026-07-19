@@ -8,13 +8,7 @@ import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
 
-// ── Fallback in-memory store (demo / offline) ─────────────────────────────
-const MOCK_FINES: Record<string, unknown>[] = [
-  { id: "FP-2026-1001", driver_name: "Juma Khamis Mwinyi",  plate: "T 003 GHI", offense: "Over Speeding",      base_amount: 150000, penalty_amount: 0,     total_amount: 150000, weeks_overdue: 0, status: "unpaid", due_date: new Date(Date.now() + 20 * 86400000).toISOString(), created_at: new Date().toISOString() },
-  { id: "FP-2026-1002", driver_name: "Grace Amina Mushi",   plate: "T 007 STU", offense: "Kutumia Simu",       base_amount:  50000, penalty_amount: 0,     total_amount:  50000, weeks_overdue: 0, status: "unpaid", due_date: new Date(Date.now() + 15 * 86400000).toISOString(), created_at: new Date().toISOString() },
-  { id: "FP-2026-1003", driver_name: "Baraka Msangi",       plate: "T888ZZZ",   offense: "No Insurance",       base_amount: 200000, penalty_amount: 30000, total_amount: 230000, weeks_overdue: 2, status: "unpaid", due_date: new Date(Date.now() - 14 * 86400000).toISOString(), created_at: new Date().toISOString() },
-  { id: "FP-2026-1004", driver_name: "Hamisi Rashid Omar",  plate: "T 018 ZAB", offense: "Kutopita kasi",      base_amount:  30000, penalty_amount: 4500,  total_amount:  34500, weeks_overdue: 3, status: "unpaid", due_date: new Date(Date.now() - 21 * 86400000).toISOString(), created_at: new Date().toISOString() },
-];
+// ── No fallback mock data — requires Supabase ──────────────────────────
 
 export async function GET(request: Request) {
   try {
@@ -40,16 +34,8 @@ export async function GET(request: Request) {
       }
     }
 
-    // Fallback mock
-    let result = [...MOCK_FINES];
-    if (status && status !== "all") result = result.filter((f) => f.status === status);
-    if (plate) result = result.filter((f) => String(f.plate).toLowerCase() === plate.toLowerCase());
-    if (search) result = result.filter((f) =>
-      String(f.driver_name).toLowerCase().includes(search) ||
-      String(f.plate).toLowerCase().includes(search) ||
-      String(f.offense).toLowerCase().includes(search)
-    );
-    return NextResponse.json({ ok: true, data: result, total: result.length });
+    // Supabase required — return empty when not available
+    return NextResponse.json({ ok: true, data: [], total: 0 });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }
@@ -124,8 +110,8 @@ export async function POST(request: Request) {
       }
     }
 
-    const mockId = `FP-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
-    return NextResponse.json({ ok: true, data: { ...payload, id: mockId, created_at: new Date().toISOString() } }, { status: 201 });
+    // Supabase required for fine creation
+    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }

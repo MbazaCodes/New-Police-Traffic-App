@@ -32,17 +32,7 @@ const CONVERSATIONS: never[] = [];
 
 const INIT_MSGS: Record<string, Message[]> = {};
 
-const INIT_ORDERS: CommandOrder[] = [
-  { id:"ORD-001", toOfficer:"Cprl. Juma Mwinyi", toBadge:"TP123456",
-    order:"Nenda Morogoro Road mara moja — ajali imetokea. Ripoti hali.",
-    priority:"urgent", sentBy:"CSP. Yusuph Majaliwa", sentAt:"08:32", status:"acknowledged" },
-  { id:"ORD-002", toOfficer:"Sgt. Afisa", toBadge:"TP234567",
-    order:"Ongeza doria eneo la Kariakoo masaa 2 ijao.",
-    priority:"high", sentBy:"CSP. Yusuph Majaliwa", sentAt:"08:15", status:"sent" },
-  { id:"ORD-003", toOfficer:"Insp. Grace Mushi", toBadge:"GO123456",
-    order:"Fika CID HQ saa 4 asubuhi kwa mkutano wa dharura.",
-    priority:"normal", sentBy:"CSP. Yusuph Majaliwa", sentAt:"07:50", status:"completed" },
-];
+const INIT_ORDERS: CommandOrder[] = [];
 
 const ORDER_COLOR = { urgent:"#EF4444", high:"#FF9800", normal:"#2196F3" };
 const ORDER_LABEL = { urgent:"Dharura", high:"Muhimu", normal:"Kawaida" };

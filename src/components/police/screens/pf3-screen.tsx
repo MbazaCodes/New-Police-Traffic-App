@@ -120,8 +120,8 @@ export function Pf3Screen() {
             <Field label="Mkuliko" value={f.severity} icon={<ShieldCheck size={14} />} />
             <Field label="Tarehe" value="15 Mei 2026" icon={<Calendar size={14} />} />
             <Field label="Saa" value="08:15 AM" icon={<Clock size={14} />} />
-            <Field label="Eneo" value="Morogoro Road, Dar es Salaam" icon={<MapPin size={14} />} full />
-            <Field label="Mahali Halisi" value="Makutano ya Morogoro Road na Ubungo Terminal" full />
+            <Field label="Eneo" value="" icon={<MapPin size={14} />} full />
+            <Field label="Mahali Halisi" value="" full />
           </div>
           <div className="grid grid-cols-3 gap-2 pt-1">
             <ConditionChip icon={<CloudSun size={14} />} label="Hali ya Hewa" value={f.weather} />

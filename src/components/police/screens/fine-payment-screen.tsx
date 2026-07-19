@@ -118,7 +118,7 @@ export function FinePaymentScreen() {
     const yr = parseInt(parts[2], 10);
     const due = new Date(yr, mon, day + 30);
     setSelectedFine({
-      id: c.id, driverName: c.driver, driverPhone: "0712 345 678",
+      id: c.id, driverName: c.driver, driverPhone: "",
       plate: c.plate, offense: c.offense, fineAmount: c.fine,
       dueDate: due.toISOString(), isNew: false,
     });

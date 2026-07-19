@@ -76,8 +76,8 @@ export type CidScreen =
 // ---------------------------------------------------------------------------
 
 const CID_USER = {
-  shortName: "DCP. Grace Mwangi",
-  rank: "Deputy Commissioner",
+  shortName: "",
+  rank: "",
 };
 
 const CID_NAV: {
@@ -102,73 +102,19 @@ const CID_NAV: {
 // Mock data
 // ---------------------------------------------------------------------------
 
-const CASES = [
-  { id: "CID-2025-0041", type: "Wizi", status: "Active", date: "2025-06-12", officer: "IP. Juma Mwenda", region: "Dar es Salaam" },
-  { id: "CID-2025-0039", type: "Uhujumu Uchumi", status: "Under Review", date: "2025-06-10", officer: "SP. Aisha Mohammed", region: "Dodoma" },
-  { id: "CID-2025-0037", type: "Uhalifu wa Dawa", status: "Active", date: "2025-06-08", officer: "IP. Rashid Kimaro", region: "Mwanza" },
-  { id: "CID-2025-0035", type: "Ubakaji", status: "Closed", date: "2025-06-05", officer: "ASP. Fatma Hassan", region: "Arusha" },
-  { id: "CID-2025-0033", type: "Wizi wa Gari", status: "Active", date: "2025-06-02", officer: "IP. Peter Msigwa", region: "Mbeya" },
-  { id: "CID-2025-0031", type: "Uhuni", status: "Pending", date: "2025-05-28", officer: "SP. Halima Mzee", region: "Tanga" },
-  { id: "CID-2025-0029", type: "Ulaghai", status: "Active", date: "2025-05-25", officer: "IP. George Kapufi", region: "Zanzibar" },
-  { id: "CID-2025-0027", type: "Mauaji", status: "Under Review", date: "2025-05-20", officer: "ASP. Joyce Lyimo", region: "Kilimanjaro" },
-];
+const CASES: never[] = [];
 
-const SUSPECTS = [
-  { name: "Hassan Omary", nida: "1234567890123", case: "CID-2025-0041", status: "Held", risk: "High" },
-  { name: "Amina Yusuf", nida: "2345678901234", case: "CID-2025-0039", status: "Released", risk: "Medium" },
-  { name: "Juma Bakari", nida: "3456789012345", case: "CID-2025-0037", status: "On Bail", risk: "High" },
-  { name: "Rehema Saidi", nida: "4567890123456", case: "CID-2025-0033", status: "Held", risk: "Low" },
-  { name: "Khalid Mnengu", nida: "5678901234567", case: "CID-2025-0031", status: "Wanted", risk: "High" },
-  { name: "Zainab Maalim", nida: "6789012345678", case: "CID-2025-0029", status: "On Bail", risk: "Medium" },
-];
+const SUSPECTS: never[] = [];
 
-const WANTED_PERSONS = [
-  { name: "Idris Makene", crime: "Wizi wa Pesa — TZS 450,000,000", reward: 5_000_000, color: "bg-[#EF4444]/600" },
-  { name: "Salma Juma", crime: "Uhalifu wa Dawa Haramu", reward: 3_000_000, color: "bg-amber-600" },
-  { name: "Baraka Mcharo", crime: "Ubakaji na Kujeruhi", reward: 2_500_000, color: "bg-[#EF4444]/700" },
-  { name: "Neema Malima", crime: "Uhujumu Uchumi na Ulaghai", reward: 10_000_000, color: "bg-[#1E3A8A]/600" },
-  { name: "Thomas Ngowi", crime: "Wizi wa Gari — 3 Vehicles", reward: 1_500_000, color: "bg-[#FF9800]/600" },
-  { name: "Farida Hassan", crime: "Mtandao wa Dawa Haramu", reward: 7_000_000, color: "bg-rose-600" },
-  { name: "Gideon Mrema", crime: "Mauaji ya Kiusalama", reward: 8_000_000, color: "bg-[#EF4444]/800" },
-];
+const WANTED_PERSONS: never[] = [];
 
-const EVIDENCE = [
-  { id: "EV-001", case: "CID-2025-0041", type: "Simu ya Mkononi", status: "Stored", location: "Mahakama Kuu — Sanduku #12" },
-  { id: "EV-002", case: "CID-2025-0041", type: "Kompyuta", status: "In Analysis", location: "Lab ya Digital — PC-04" },
-  { id: "EV-003", case: "CID-2025-0037", type: "Fedha ya Pesa", status: "Stored", location: "Benki ya NBC — Akiba #9931" },
-  { id: "EV-004", case: "CID-2025-0037", type: "Vifaa vya Kiume", status: "Stored", location: "Mahakama Kuu — Sanduku #15" },
-  { id: "EV-005", case: "CID-2025-0035", type: "Gari — Toyota Corolla", status: "Impounded", location: "Yard ya Polisi — Upo Mbagala" },
-  { id: "EV-006", case: "CID-2025-0039", type: "Hati za Benki", status: "Under Review", location: "Ofisi ya CID — Kijitonyama" },
-];
+const EVIDENCE: never[] = [];
 
-const INTERVIEWS = [
-  { date: "2025-06-14 09:00", suspect: "Hassan Omary", case: "CID-2025-0041", officer: "IP. Juma Mwenda" },
-  { date: "2025-06-14 11:30", suspect: "Juma Bakari", case: "CID-2025-0037", officer: "IP. Rashid Kimaro" },
-  { date: "2025-06-14 14:00", suspect: "Zainab Maalim", case: "CID-2025-0029", officer: "IP. George Kapufi" },
-  { date: "2025-06-15 09:00", suspect: "Rehema Saidi", case: "CID-2025-0033", officer: "IP. Peter Msigwa" },
-  { date: "2025-06-15 10:30", suspect: "Amina Yusuf", case: "CID-2025-0039", officer: "SP. Aisha Mohammed" },
-  { date: "2025-06-15 14:00", suspect: "Khalid Mnengu", case: "CID-2025-0031", officer: "SP. Halima Mzee" },
-  { date: "2025-06-16 09:00", suspect: "Hassan Omary", case: "CID-2025-0041", officer: "IP. Juma Mwenda" },
-  { date: "2025-06-16 11:00", suspect: "Juma Bakari", case: "CID-2025-0037", officer: "IP. Rashid Kimaro" },
-];
+const INTERVIEWS: never[] = [];
 
-const PF3_FORMS = [
-  { id: "PF3-2025-0101", case: "CID-2025-0041", suspect: "Hassan Omary", date: "2025-06-12", status: "Submitted" },
-  { id: "PF3-2025-0098", case: "CID-2025-0037", suspect: "Juma Bakari", date: "2025-06-08", status: "Approved" },
-  { id: "PF3-2025-0095", case: "CID-2025-0033", suspect: "Rehema Saidi", date: "2025-06-02", status: "Pending" },
-  { id: "PF3-2025-0092", case: "CID-2025-0031", suspect: "Khalid Mnengu", date: "2025-05-28", status: "Rejected" },
-  { id: "PF3-2025-0089", case: "CID-2025-0029", suspect: "Zainab Maalim", date: "2025-05-25", status: "Submitted" },
-  { id: "PF3-2025-0086", case: "CID-2025-0039", suspect: "Amina Yusuf", date: "2025-05-20", status: "Approved" },
-];
+const PF3_FORMS: never[] = [];
 
-const RECENT_ACTIVITY = [
-  { time: "10 min ago", event: "Kesi mpya imerekodiwa — CID-2025-0041", icon: FolderOpen },
-  { time: "25 min ago", event: "PF3 fomu imethibitishwa — PF3-2025-0098", icon: FileText },
-  { time: "1 hr ago", event: "Mtuhumiwa amekamatwa — Hassan Omary", icon: UserX },
-  { time: "2 hrs ago", event: "Ushahidi mpya — Kompyuta kutoka eneo la tukio", icon: FileSearch },
-  { time: "3 hrs ago", event: "Mahojiano yamekamilika — Amina Yusuf", icon: MessageSquare },
-  { time: "5 hrs ago", event: "Tangazo la mtafutwa — Idris Makene", icon: AlertTriangle },
-];
+const RECENT_ACTIVITY: never[] = [];
 
 // ---------------------------------------------------------------------------
 // Helper
