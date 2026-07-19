@@ -58,17 +58,17 @@ export async function findSupabaseUser(identifier: string): Promise<SupabaseUser
   const clean = raw.toLowerCase();
 
   // ── Try exact badge_no / username / email first ────────────
-  const { data: exact } = await admin
-    .from("users")
-    .select("*, station:stations(id, name, region)")
-    .or(
-      `badge_no.ilike.${clean},username.ilike.${clean},email.ilike.${clean}`
-    )
-    .eq("status", "active")
-    .limit(1)
-    .maybeSingle();
+  // Use separate .eq() calls to avoid PostgREST .or() escaping issues with @ symbol
+  const searches = [
+    admin.from("users").select("*, station:stations(id, name, region)").ilike("badge_no", clean).eq("status", "active").limit(1).maybeSingle(),
+    admin.from("users").select("*, station:stations(id, name, region)").ilike("username", clean).eq("status", "active").limit(1).maybeSingle(),
+    admin.from("users").select("*, station:stations(id, name, region)").ilike("email", clean).eq("status", "active").limit(1).maybeSingle(),
+  ];
 
-  if (exact) return exact as SupabaseUser;
+  for (const query of searches) {
+    const { data } = await query;
+    if (data) return data as SupabaseUser;
+  }
 
   // ── Try phone number in all normalized formats ─────────────
   if (phoneNormalized.length > 0) {
