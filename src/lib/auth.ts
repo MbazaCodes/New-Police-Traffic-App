@@ -170,15 +170,39 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET || "tz-police-secret-change-in-production",
 };
 
-import { getServerSession as getNextAuthServerSession } from "next-auth";
-import { headers } from "next/headers";
-export async function getServerSession() {
-  return getNextAuthServerSession({
-    ...authOptions,
-    // Next.js App Router requires headers to be passed so NextAuth
-    // can read the session cookie from the incoming request.
-    // Without this, session is always null in Route Handlers.
-    // @ts-ignore — next-auth v4 accepts this undocumented but necessary arg
-    req: { headers: Object.fromEntries((await headers()).entries()) },
+import { getToken } from "next-auth/jwt";
+import { headers as nextHeaders } from "next/headers";
+import type { Session } from "next-auth";
+
+/**
+ * getServerSession — works correctly in Next.js App Router Route Handlers.
+ *
+ * NextAuth v4 getServerSession() cannot read cookies in App Router route handlers.
+ * We use getToken() instead, which reads the JWT cookie directly from request headers,
+ * then reconstruct a Session-shaped object so all requirePermission() calls work.
+ */
+export async function getServerSession(): Promise<Session | null> {
+  const hdrs = await nextHeaders();
+  const token = await getToken({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    req: { headers: Object.fromEntries(hdrs.entries()) } as any,
+    secret: process.env.NEXTAUTH_SECRET ?? "tz-police-secret-change-in-production",
   });
+
+  if (!token?.id) return null;
+
+  return {
+    user: {
+      id:       String(token.id),
+      name:     (token.name as string) ?? null,
+      email:    (token.email as string) ?? null,
+      role:     token.role as Role,
+      idNumber: String(token.idNumber ?? token.id),
+      station:  String(token.station ?? ""),
+      badgeNo:  token.badgeNo as string | undefined,
+      region:   token.region as string | undefined,
+      unit:     token.unit as string | undefined,
+    },
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+  };
 }
