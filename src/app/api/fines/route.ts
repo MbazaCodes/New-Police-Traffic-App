@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 // ── No fallback mock data — requires Supabase ──────────────────────────
 
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     const search = url.searchParams.get("search")?.toLowerCase() ?? "";
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         let q = admin.from("citizen_fines").select("*").order("created_at", { ascending: false });
         if (status && status !== "all") q = q.eq("status", status);
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "fineId na paymentMethod vinahitajika" }, { status: 400 });
       }
       if (isSupabaseEnabled()) {
-        const admin = getSupabaseAdmin();
+        const admin = getSupabaseAdminAny();
         if (admin) {
           const { data, error } = await admin.from("citizen_fines")
             .update({ status: "paid", payment_method: paymentMethod, payment_ref: paymentRef, paid_at: new Date().toISOString() })
@@ -101,7 +101,7 @@ export async function POST(request: Request) {
     };
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data, error } = await admin.from("citizen_fines").insert(payload).select().single();
         if (error) throw error;

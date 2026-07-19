@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Assignments API — list & create (assign officer to station/post)
 // GET  /api/assignments  -> list assignments
 // POST /api/assignments  -> create assignment

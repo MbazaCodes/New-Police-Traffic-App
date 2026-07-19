@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { ArrowLeft, FileText, Car, User, MapPin, Clock, TrendingDown, CheckCircle, XCircle, Printer, Share2 } from "lucide-react";

@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 import { getScopeContext } from "@/lib/scope";
 
 export async function GET(request: Request) {
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     const search = url.searchParams.get("search")?.toLowerCase() ?? "";
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         let q = admin.from("citations").select("*").order("created_at", { ascending: false });
         if (status && status !== "all") q = q.eq("status", status === "Imelipwa" ? "paid" : status === "Hajalipwa" ? "unpaid" : status);
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     const citationNumber = `CT-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data, error } = await admin.from("citations").insert({
           citation_number: citationNumber,

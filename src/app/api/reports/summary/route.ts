@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { annotateRecordScope, getScopeContext } from "@/lib/scope";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function GET() {
   try {
@@ -30,7 +30,7 @@ export async function GET() {
     let offenseDistribution: any[] = [];
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         // Get officers count
         const { count: officerCount } = await admin.from("users").select("*", { count: "exact", head: true }).eq("status", "active");

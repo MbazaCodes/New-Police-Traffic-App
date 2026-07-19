@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function GET(request: Request) {
   try {
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
     const station = url.searchParams.get("station");
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         let q = admin.from("officers").select(`
           *, user:users(id, name, short_name, rank, rank_short, email, phone, photo_url, badge_no, status, region, unit),
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     }
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         // 1. Create user record - respect the role passed from frontend
         const userRole = role || "officer-general";

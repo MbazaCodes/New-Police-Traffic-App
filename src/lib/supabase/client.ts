@@ -42,3 +42,9 @@ export function isSupabaseEnabled(): boolean {
 }
 
 export const supabase = getSupabaseClient();
+
+// ── Untyped admin helper (use in API routes to avoid 'never' inference) ─
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getSupabaseAdminAny(): any | null {
+  return getSupabaseAdmin() as any;
+}

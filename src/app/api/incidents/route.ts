@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function GET(request: Request) {
   try {
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
     const search   = url.searchParams.get("search")?.toLowerCase() ?? "";
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         let q = admin.from("incidents").select("*").order("created_at", { ascending: false });
         if (status && status !== "all") q = q.eq("status", status);
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     const incidentNumber = `INC-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data, error } = await admin.from("incidents").insert({
           incident_number: incidentNumber,

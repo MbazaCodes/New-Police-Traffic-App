@@ -24,9 +24,7 @@ interface Pf3Form {
   status?: string;
 }
 
-const pf3Store: Pf3Form[] = [
-  { ...[], createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), status: "submitted" },
-];
+const pf3Store: Pf3Form[] = [];
 
 export async function GET(
   _request: Request,

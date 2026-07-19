@@ -5,14 +5,18 @@ import { persist } from "zustand/middleware";
 import type { ScreenId } from "@/lib/police-data";
 import { ALERTS } from "@/lib/police-data";
 
-export type UserRole = "officer-traffic" | "officer-general" | "officer-post" | "admin" | "commander";
+export type UserRole = "officer-traffic" | "officer-general" | "officer-post" | "admin" | "commander" | "investigator" | "clerk" | "viewer" | "system";
 
 // Full 11-role auth system
 export type AuthRole =
   | "SUPER_ADMIN" | "SYSTEM_ADMIN"
   | "NATIONAL_COMMANDER" | "REGIONAL_COMMANDER" | "DISTRICT_COMMANDER" | "STATION_COMMANDER"
-  | "TRAFFIC_OFFICER" | "GENERAL_OFFICER"
-  | "INVESTIGATOR" | "CLERK" | "VIEWER";
+  | "TRAFFIC_OFFICER" | "GENERAL_OFFICER" | "POST_OFFICER"
+  | "INVESTIGATOR" | "CID_OFFICER" | "INVESTIGATION_SUPERVISOR" | "CYBER_CRIME"
+  | "IMMIGRATION_LIAISON" | "PRISON_LIAISON"
+  | "EMERGENCY_DISPATCHER" | "EVIDENCE_OFFICER" | "AUDIT_OFFICER"
+  | "DIG"
+  | "CLERK" | "VIEWER";
 
 export const AUTH_ROLES: { id: AuthRole; label: string; labelSw: string; description: string; icon: string; shellType: "mobile" | "admin" | "cid" | "clerk" | "viewer" | "system" }[] = [
   { id: "SUPER_ADMIN", label: "Super Admin", labelSw: "Msimamizi Mkuu", description: "Full system control & user management", icon: "ShieldCheck", shellType: "admin" },
@@ -41,13 +45,13 @@ export const AUTH_ROLES: { id: AuthRole; label: string; labelSw: string; descrip
 function authRoleToStoreRole(authRole: AuthRole): UserRole {
   if (authRole === "TRAFFIC_OFFICER") return "officer-traffic";
   if (authRole === "GENERAL_OFFICER") return "officer-general";
-  // Admin shell roles
-  if (["SUPER_ADMIN","CLERK","VIEWER","EVIDENCE_OFFICER",
-       "EMERGENCY_DISPATCHER","AUDIT_OFFICER","IMMIGRATION_LIAISON",
-       "PRISON_LIAISON","SYSTEM_ADMIN"].includes(authRole)) return "admin";
-  // CID/Investigation roles use commander store role (gets CidShell via admin/page.tsx)
-  if (["INVESTIGATOR","CID_OFFICER","CYBER_CRIME","INVESTIGATION_SUPERVISOR"].includes(authRole)) return "commander";
-  if (authRole === "DIG") return "commander";
+  if (authRole === "POST_OFFICER") return "officer-post";
+  if (authRole === "CLERK" || authRole === "EVIDENCE_OFFICER" || authRole === "AUDIT_OFFICER") return "clerk";
+  if (authRole === "VIEWER" || authRole === "IMMIGRATION_LIAISON" || authRole === "PRISON_LIAISON") return "viewer";
+  if (authRole === "SYSTEM_ADMIN" || authRole === "EMERGENCY_DISPATCHER") return "system";
+  if (["INVESTIGATOR","CID_OFFICER","CYBER_CRIME","INVESTIGATION_SUPERVISOR"].includes(authRole)) return "investigator";
+  // Admin/command roles
+  if (["SUPER_ADMIN","NATIONAL_COMMANDER","REGIONAL_COMMANDER","DISTRICT_COMMANDER","STATION_COMMANDER","DIG"].includes(authRole)) return "admin";
   return "commander";
 }
 export type OfficerRole = "officer-traffic" | "officer-general" | "officer-post";
@@ -121,7 +125,7 @@ interface PoliceState {
   setAlertFilter: (f: "all" | "mine" | "important") => void;
 
   // Unread alerts count — derived from ALERTS unread flags + readIds
-  readAlertIds: number[];
+  readAlertIds: (string | number)[];
   markAlertRead: (id: number) => void;
   markAllAlertsRead: () => void;
   unreadAlertCount: () => number;
@@ -229,8 +233,8 @@ export const usePoliceStore = create<PoliceState>()(
   // Alerts
   readAlertIds: [],
   markAlertRead: (id) => set((s) => ({ readAlertIds: s.readAlertIds.includes(id) ? s.readAlertIds : [...s.readAlertIds, id] })),
-  markAllAlertsRead: () => set({ readAlertIds: ALERTS.map((a) => a.id) }),
-  unreadAlertCount: () => ALERTS.filter((a) => a.unread && !get().readAlertIds.includes(a.id)).length,
+  markAllAlertsRead: () => set({ readAlertIds: ALERTS.map((a: Record<string, unknown>) => a.id as string | number) }),
+  unreadAlertCount: () => ALERTS.filter((a: Record<string, unknown>) => a.unread && !get().readAlertIds.includes(a.id as string | number)).length,
 
   searchQuery: "",
   searchEntity: "car",

@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function GET(request: Request) {
   try {
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     const plate = url.searchParams.get("plate")?.trim().toUpperCase() ?? "";
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data } = plate
           ? await admin.rpc("search_vehicle", { p_plate: plate })
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     }
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data, error } = await admin.from("vehicles").insert({
           plate:             body.plate.trim().toUpperCase(),

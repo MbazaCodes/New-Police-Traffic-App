@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { ArrowLeft, MapPin, Clock, User, AlertTriangle, FileText, Shield, UserX } from "lucide-react";

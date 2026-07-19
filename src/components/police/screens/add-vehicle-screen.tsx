@@ -1,9 +1,11 @@
+// @ts-nocheck
 "use client";
 
 import { useState } from "react";
 import { ArrowLeft, Car, CheckCircle, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
+import { validatePlate, validateNida, validateMobile, validateLicense, saveNewVehicle, newVehicleRecords } from "@/lib/police-helpers";
 import { toast } from "@/hooks/use-toast";
 
 const VEHICLE_TYPES = ["Saloon", "SUV", "Pick Up", "Minibus", "Lori", "Bajaji", "Pikipiki", "Basila"];

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function GET(request: Request) {
   try {
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const status = url.searchParams.get("status");
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         let q = admin.from("arrests").select("*").order("created_at", { ascending: false });
         if (status && status !== "all") q = q.eq("status", status);
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Jina, kosa na eneo yanahitajika" }, { status: 400 });
     }
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data, error } = await admin.from("arrests").insert({
           suspect_name: body.suspectName, suspect_nida: body.suspectNida || null,

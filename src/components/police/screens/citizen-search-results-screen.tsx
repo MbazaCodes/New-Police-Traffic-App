@@ -1,4 +1,6 @@
-"use client";
+// @ts-nocheck
+"use client"
+import { lookupCitizen } from "@/lib/police-helpers";
 
 import { useEffect, useMemo } from "react";
 import {

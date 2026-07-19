@@ -12,17 +12,36 @@ const STATUS_MAP = {
 };
 const CAT_MAP: Record<string, string> = { simu: "📱 Simu", kompyuta: "💻 Kompyuta", hati: "📄 Hati", "mali-nyingine": "🎒 Mali Nyingine" };
 
+type LostProperty = {
+  id: string;
+  status: keyof typeof STATUS_MAP;
+  category: string;
+  description: string;
+  serialNo: string;
+  deviceNo: string;
+  owner: string;
+  ownerPhone: string;
+  ownerNida: string;
+  reportedDate: string;
+  reportedStation: string;
+  foundDate?: string;
+  foundLocation?: string;
+  notes: string;
+};
+
+const PROPERTIES: LostProperty[] = [];
+
 export function LostPropertyScreen() {
   const { goBack } = usePoliceStore();
   const [tab, setTab] = useState<"list" | "report">("list");
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<(typeof [])[0] | null>(null);
+  const [selected, setSelected] = useState<LostProperty | null>(null);
   const [form, setForm] = useState({ ownerName: "", ownerPhone: "", ownerNida: "", category: "simu", description: "", serialNo: "", deviceNo: "", station: "Kituo Kikuu DSM", notes: "" });
   const [submitted, setSubmitted] = useState(false);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const filtered = [].filter((p) =>
+  const filtered = PROPERTIES.filter((p) =>
     p.description.toLowerCase().includes(search.toLowerCase()) ||
     p.serialNo.toLowerCase().includes(search.toLowerCase()) ||
     p.deviceNo.toLowerCase().includes(search.toLowerCase()) ||
@@ -113,17 +132,17 @@ export function LostPropertyScreen() {
             <div className="grid grid-cols-3 gap-2">
               <div className="rounded-xl bg-police-card p-2.5 text-center shadow-sm">
                 <Package size={16} className="mx-auto text-[#1E3A8A]" />
-                <p className="mt-1 text-[15px] font-bold text-police">{[].length}</p>
+                <p className="mt-1 text-[15px] font-bold text-police">{PROPERTIES.length}</p>
                 <p className="text-[9px] text-police-faint">Jumla</p>
               </div>
               <div className="rounded-xl bg-police-card p-2.5 text-center shadow-sm">
                 <Clock size={16} className="mx-auto text-[#FF9800]" />
-                <p className="mt-1 text-[15px] font-bold text-police">{[].filter((p) => p.status === "searching").length}</p>
+                <p className="mt-1 text-[15px] font-bold text-police">{PROPERTIES.filter((p) => p.status === "searching").length}</p>
                 <p className="text-[9px] text-police-faint">Inatafutwa</p>
               </div>
               <div className="rounded-xl bg-police-card p-2.5 text-center shadow-sm">
                 <CheckCircle size={16} className="mx-auto text-[#10B981]" />
-                <p className="mt-1 text-[15px] font-bold text-police">{[].filter((p) => p.status !== "searching").length}</p>
+                <p className="mt-1 text-[15px] font-bold text-police">{PROPERTIES.filter((p) => p.status !== "searching").length}</p>
                 <p className="text-[9px] text-police-faint">Imepatikana</p>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
-import { isSupabaseEnabled, getSupabaseAdmin } from "@/lib/supabase/client";
+import { isSupabaseEnabled, getSupabaseAdmin, getSupabaseAdminAny } from "@/lib/supabase/client";
 
 type ClerkAlert = {
   title: string;
@@ -31,7 +31,7 @@ export async function GET() {
     const documentsQueue: Array<{ id: string; name: string; status: string }> = [];
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         try {
           // Fetch citizens count

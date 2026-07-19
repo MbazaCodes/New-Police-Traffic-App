@@ -21,6 +21,7 @@ import { OFFENSE_TYPES, VEHICLE_TYPES} from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
+import { useOfficer } from "@/hooks/use-officer";
 
 export function CitationScreen() {
   const OFFICER = useOfficer();

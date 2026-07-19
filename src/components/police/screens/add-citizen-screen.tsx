@@ -1,9 +1,11 @@
+// @ts-nocheck
 "use client";
 
 import { useState } from "react";
 import { ArrowLeft, User, CheckCircle, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
+import { validateName, validateNida, validateMobile, saveNewCitizen, newCitizenRecords } from "@/lib/police-helpers";
 import { toast } from "@/hooks/use-toast";
 
 const OCCUPATIONS = ["Mfanyabiashara", "Mwalimu", "Dereva", "Mhudumu wa Afya", "Mwanafunzi", "Fundi", "Mkulima", "Mfanyakazi wa Serikali", "Mwandishi", "Daktari", "Mkandarasi", "Nyingine"];

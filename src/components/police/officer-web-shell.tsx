@@ -24,7 +24,7 @@ const SearchResultsScreen    = dynamic(() => import("./screens/search-results-sc
 const CitizenSearchResults   = dynamic(() => import("./screens/citizen-search-results-screen").then(m=>({default:m.CitizenSearchResultsScreen})), {ssr:false});
 const CitationScreen         = dynamic(() => import("./screens/citation-screen").then(m=>({default:m.CitationScreen})),               {ssr:false});
 const CitationDetailScreen   = dynamic(() => import("./screens/citation-detail-screen").then(m=>({default:m.CitationDetailScreen})),   {ssr:false});
-const PF3Screen              = dynamic(() => import("./screens/pf3-screen").then(m=>({default:m.PF3Screen})),                         {ssr:false});
+const PF3Screen              = dynamic(() => import("./screens/pf3-screen").then(m=>({default:m.Pf3Screen})),                         {ssr:false});
 const VehicleInspectionScreen= dynamic(() => import("./screens/vehicle-inspection-screen").then(m=>({default:m.VehicleInspectionScreen})),{ssr:false});
 const PatrolScreen           = dynamic(() => import("./screens/patrol-screen").then(m=>({default:m.PatrolScreen})),                   {ssr:false});
 const AlertsScreen           = dynamic(() => import("./screens/alerts-screen").then(m=>({default:m.AlertsScreen})),                   {ssr:false});
@@ -112,7 +112,8 @@ function renderOfficerScreen(screen: ScreenId, isGeneral: boolean) {
 
 // ── Shell ─────────────────────────────────────────────────────────────────
 export function OfficerWebShell() {
-  const { currentScreen, navigate, logout, authRole, unreadAlertCount } = usePoliceStore();
+  const { currentScreen, navigate, logout, authRole, unreadAlertCount: _unreadAlertCount } = usePoliceStore();
+  const unreadAlertCount = typeof _unreadAlertCount === "function" ? _unreadAlertCount() : _unreadAlertCount;
   const OFFICER = useOfficer();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

@@ -30,6 +30,7 @@ export type ScreenId =
   | "add-citizen"
   | "fine-payment"
   | "bail-out"
+  | "officer-request"
 
 // ── Officer profile (empty — populated from Supabase at login) ──────────
 export const OFFICER = {
@@ -46,7 +47,7 @@ export const OFFICER = {
 };
 
 // ── Officers list (empty — loaded from Supabase) ───────────────────────
-export const OFFICERS_LIST: never[] = [];
+export const OFFICERS_LIST: Record<string, unknown>[] = [];
 
 // ── Home stats (zeros until loaded from Supabase) ──────────────────────
 export const HOME_STATS = [
@@ -77,7 +78,7 @@ export const PATROL_STATS = [
 ];
 
 // ── Alerts (empty — loaded from Supabase) ───────────────────────────────
-export const ALERTS: never[] = [];
+export const ALERTS: Record<string, unknown>[] = [];
 
 // ── Profile stats (zeros until loaded from Supabase) ────────────────────
 export const PROFILE_STATS = [
@@ -89,7 +90,7 @@ export const PROFILE_STATS = [
 ];
 
 // ── Profile activities (empty — loaded from Supabase) ───────────────────
-export const PROFILE_ACTIVITIES: never[] = [];
+export const PROFILE_ACTIVITIES: Record<string, unknown>[] = [];
 
 // ── Profile settings (UI config — not mock data) ───────────────────────
 export const PROFILE_SETTINGS = [
@@ -102,9 +103,9 @@ export const PROFILE_SETTINGS = [
 ];
 
 // ── Accident form templates (empty — filled by officer) ────────────────
-export const ACCIDENT_VEHICLES: never[] = [];
-export const ACCIDENT_PEOPLE: never[] = [];
-export const ACCIDENT_EVIDENCE: never[] = [];
+export const ACCIDENT_VEHICLES: Record<string, unknown>[] = [];
+export const ACCIDENT_PEOPLE: Record<string, unknown>[] = [];
+export const ACCIDENT_EVIDENCE: Record<string, unknown>[] = [];
 
 // ── Vehicle inspection template (empty defaults) ───────────────────────
 export const VEHICLE_INSPECTION = {
@@ -229,13 +230,13 @@ export interface CitizenPointsRecord {
 export const CITIZEN_POINTS: CitizenPointsRecord[] = [];
 
 // ── Lost properties (empty — loaded from Supabase) ─────────────────────
-export const LOST_PROPERTIES: never[] = [];
+export const LOST_PROPERTIES: Record<string, unknown>[] = [];
 
 // ── Detained citizens (empty — loaded from Supabase) ──────────────────
-export const DETAINED_CITIZENS: never[] = [];
+export const DETAINED_CITIZENS: Record<string, unknown>[] = [];
 
 // ── Chat messages (empty — loaded from Supabase) ──────────────────────
-export const CHAT_MESSAGES: never[] = [];
+export const CHAT_MESSAGES: Record<string, unknown>[] = [];
 
 // ── Search result (empty template) ────────────────────────────────────
 export const SEARCH_RESULT = {
@@ -258,7 +259,7 @@ export const SEARCH_RESULT = {
 };
 
 // ── General incidents (empty — loaded from Supabase) ──────────────────
-export const GENERAL_INCIDENTS: never[] = [];
+export const GENERAL_INCIDENTS: Record<string, unknown>[] = [];
 
 // ── Traffic stats (zeros until loaded from Supabase) ───────────────────
 export const TRAFFIC_STATS = [

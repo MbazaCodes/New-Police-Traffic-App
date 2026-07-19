@@ -23,23 +23,7 @@ interface Inspection {
   officer?: string;
 }
 
-const inspectionsStore: Inspection[] = [
-  {
-    id: "INS-2026-001",
-    plate: [].plate,
-    model: [].model,
-    color: [].color,
-    owner: [].owner,
-    phone: [].phone,
-    location: [].location,
-    datetime: [].datetime,
-    documents: [].documents,
-    mechanical: [].mechanical,
-    photos: [].photos,
-    overallStatus: "fail",
-    officer: "Insp. Juma Mwinyi",
-  },
-];
+const inspectionsStore: Inspection[] = [];
 
 export async function GET(request: Request) {
   try {

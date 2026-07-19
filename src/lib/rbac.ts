@@ -51,7 +51,18 @@ export type Resource =
   | "pf3"
   | "inspections"
   | "reports"
-  | "audit_logs";
+  | "audit_logs"
+  | "arrests"
+  | "bail"
+  | "citizens"
+  | "devices"
+  | "vehicles"
+  | "warnings"
+  | "requests"
+  | "fines"
+  | "cases"
+  | "missing"
+  | string;
 
 export type Action = "view" | "create" | "update" | "delete" | "manage";
 

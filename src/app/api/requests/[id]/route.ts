@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function PATCH(
   request: Request,
@@ -11,14 +11,14 @@ export async function PATCH(
 ) {
   try {
     const session = await getServerSession();
-    const check = requirePermission(session, "requests", "approve");
+    const check = requirePermission(session, "requests", "manage");
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const { id } = await params;
     const body = await request.json().catch(() => ({}));
     const { action, response, newStation } = body;
 
-    if (!["approve","reject","reallocate"].includes(action)) {
+    if (!["manage","reject","reallocate"].includes(action)) {
       return NextResponse.json({ error: "action lazima iwe: approve | reject | reallocate" }, { status: 400 });
     }
 
@@ -27,7 +27,7 @@ export async function PATCH(
     };
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data, error } = await admin.from("officer_requests").update({
           status:       statusMap[action],

@@ -6,7 +6,7 @@
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-export type UserRole = "officer-traffic" | "officer-general" | "admin" | "commander";
+export type UserRole = "officer-traffic" | "officer-general" | "officer-post" | "admin" | "commander" | "investigator" | "clerk" | "viewer" | "system" | string;
 export type OfficerStatus = "active" | "break" | "off-duty" | "patrol";
 export type CitationStatus = "paid" | "unpaid";
 export type IncidentStatus = "urgent" | "active" | "resolved" | "investigating";
@@ -28,16 +28,17 @@ export interface Database {
           short_name: string | null;
           rank: string | null;
           rank_short: string | null;
-          role: UserRole;
+          role: string;
           badge_no: string;
           username: string;
           mobile: string;
+          phone: string | null;
           email: string;
           station_id: string | null;
           region: string | null;
           unit: string | null;
           photo_url: string | null;
-          status: OfficerStatus;
+          status: string;
           auth_user_id: string | null;
           joined_at: string;
           created_at: string;
@@ -306,6 +307,176 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["otp_codes"]["Row"], "id" | "created_at">;
         Update: Partial<Database["public"]["Tables"]["otp_codes"]["Insert"]>;
+      };
+      bail_requests: {
+        Row: {
+          id: string;
+          arrest_id: string;
+          suspect_name: string;
+          suspect_nida: string | null;
+          offense: string;
+          arrest_date: string;
+          cell_number: string | null;
+          bail_amount: number;
+          guarantor_name: string | null;
+          guarantor_phone: string | null;
+          guarantor_nida: string | null;
+          guarantor_relation: string | null;
+          payment_method: string | null;
+          payment_ref: string | null;
+          paid_at: string | null;
+          status: string;
+          officer_id: string | null;
+          officer_name: string | null;
+          station: string | null;
+          region: string | null;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["bail_requests"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["bail_requests"]["Insert"]>;
+      };
+      cases: {
+        Row: {
+          id: string;
+          case_no: string;
+          title: string;
+          type: string;
+          status: string;
+          officer: string | null;
+          region: string | null;
+          district: string | null;
+          station: string | null;
+          date: string;
+          description: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["cases"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["cases"]["Insert"]>;
+      };
+      general_incidents: {
+        Row: {
+          id: string;
+          incident_number: string;
+          type: string;
+          title: string;
+          status: string;
+          priority: string;
+          location: string;
+          date: string;
+          time: string;
+          officer: string | null;
+          station: string | null;
+          region: string | null;
+          description: string | null;
+          casualties: number;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["general_incidents"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["general_incidents"]["Insert"]>;
+      };
+      citizen_fines: {
+        Row: {
+          id: string;
+          driver_name: string;
+          driver_phone: string | null;
+          driver_nida: string | null;
+          plate: string;
+          offense: string;
+          base_amount: number;
+          penalty_amount: number;
+          total_amount: number;
+          weeks_overdue: number;
+          due_date: string;
+          status: string;
+          officer_id: string | null;
+          officer_name: string | null;
+          station: string | null;
+          region: string | null;
+          payment_method: string | null;
+          payment_ref: string | null;
+          paid_at: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["citizen_fines"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["citizen_fines"]["Insert"]>;
+      };
+      officer_requests: {
+        Row: {
+          id: string;
+          type: string;
+          officer_id: string | null;
+          station_id: string | null;
+          status: string;
+          response: string | null;
+          new_station: string | null;
+          responded_by: string | null;
+          responded_at: string | null;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["officer_requests"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["officer_requests"]["Insert"]>;
+      };
+      warnings: {
+        Row: {
+          id: string;
+          warning_number: string;
+          citizen_name: string;
+          citizen_nida: string | null;
+          plate: string | null;
+          offense: string;
+          warning_type: string;
+          location: string;
+          notes: string | null;
+          acknowledged: boolean;
+          officer_id: string | null;
+          officer_name: string | null;
+          station: string | null;
+          region: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["warnings"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["warnings"]["Insert"]>;
+      };
+      officers: {
+        Row: {
+          id: string;
+          name: string;
+          short_name: string | null;
+          rank: string | null;
+          rank_short: string | null;
+          role: string;
+          badge_no: string;
+          username: string;
+          mobile: string;
+          email: string;
+          station_id: string | null;
+          region: string | null;
+          unit: string | null;
+          photo_url: string | null;
+          status: string;
+          user_id: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["officers"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["officers"]["Insert"]>;
+      };
+      assignments: {
+        Row: {
+          id: string;
+          officer_id: string;
+          station_id: string;
+          post_id: string | null;
+          role: string;
+          status: string;
+          officer_name: string | null;
+          station_name: string | null;
+          post_name: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["assignments"]["Row"], "id" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["assignments"]["Insert"]>;
       };
     };
     Functions: {

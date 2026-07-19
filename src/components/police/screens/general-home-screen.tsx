@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Bell, Search, X, ChevronRight, UserCheck, AlertTriangle, ShieldCheck, Package, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { GENERAL_INCIDENTS } from "@/lib/police-data";
+import { getSuggestions, validateSerial, validateNida, validateMobile, validateName } from "@/lib/police-helpers";
 import { useOfficer } from "@/hooks/use-officer";
 type SearchMode = "citizen" | "serial";
 type CitizenTab = "name" | "nida" | "mobile";

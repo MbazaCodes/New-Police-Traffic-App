@@ -61,8 +61,9 @@ function nextId(): string {
 /**
  * logAction: append a new audit log entry.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function logAction(
-  userId: string | null,
+  sessionOrUserId: any,
   action: string,
   resource: string,
   resourceId: string | null,
@@ -70,10 +71,19 @@ export function logAction(
   userName: string | null = null,
   meta?: { ip?: string | null; userAgent?: string | null },
 ): AuditLogEntry {
+  // Accept either a session object or a userId string
+  let userId: string | null = null;
+  let resolvedUserName: string | null = userName;
+  if (sessionOrUserId && typeof sessionOrUserId === "object") {
+    userId = sessionOrUserId?.user?.id ?? null;
+    resolvedUserName = resolvedUserName ?? sessionOrUserId?.user?.name ?? null;
+  } else {
+    userId = sessionOrUserId ?? null;
+  }
   const entry: AuditLogEntry = {
     id: nextId(),
     userId,
-    userName,
+    userName: resolvedUserName,
     action,
     resource,
     resourceId,

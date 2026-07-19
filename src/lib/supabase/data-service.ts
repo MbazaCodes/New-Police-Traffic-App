@@ -1,6 +1,8 @@
 // ============================================================
 // DATA SERVICE — Supabase-first data layer
 // All operations require Supabase. No mock/fallback data.
+// Uses `any` cast on the admin client to bypass Supabase's
+// strict generics where table/rpc inference falls short.
 // ============================================================
 
 import { isSupabaseEnabled, getSupabaseAdmin } from "./client";
@@ -30,42 +32,43 @@ export interface DeviceResult {
   status: string; report_date: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getAdmin(): any | null {
+  return getSupabaseAdmin() as any;
+}
+
 // ── SEARCH ───────────────────────────────────────────────────
 
 export async function searchCitizen(query: string, type: "name" | "nida" | "mobile" | "license"): Promise<CitizenResult | null> {
   if (!isSupabaseEnabled()) return null;
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return null;
-
   const { data } = await admin.rpc("search_citizen", { p_query: query, p_type: type });
-  return (data && data.length > 0) ? data[0] as CitizenResult : null;
+  return (data && (data as unknown[]).length > 0) ? (data as CitizenResult[])[0] : null;
 }
 
 export async function searchVehicle(plate: string): Promise<VehicleResult | null> {
   if (!isSupabaseEnabled()) return null;
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return null;
-
   const { data } = await admin.rpc("search_vehicle", { p_plate: plate });
-  return (data && data.length > 0) ? data[0] as VehicleResult : null;
+  return (data && (data as unknown[]).length > 0) ? (data as VehicleResult[])[0] : null;
 }
 
 export async function searchDevice(query: string): Promise<DeviceResult[] | null> {
   if (!isSupabaseEnabled()) return null;
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return null;
-
   const { data } = await admin.rpc("search_device", { p_query: query });
-  return data as DeviceResult[] ?? null;
+  return (data as DeviceResult[]) ?? null;
 }
 
 // ── CITIZENS ─────────────────────────────────────────────────
 
 export async function getAllCitizens(): Promise<CitizenResult[]> {
   if (!isSupabaseEnabled()) return [];
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return [];
-
   const { data } = await admin.from("citizens").select("*").order("created_at", { ascending: false });
   return (data as CitizenResult[]) ?? [];
 }
@@ -74,9 +77,8 @@ export async function getAllCitizens(): Promise<CitizenResult[]> {
 
 export async function getAllVehicles(): Promise<VehicleResult[]> {
   if (!isSupabaseEnabled()) return [];
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return [];
-
   const { data } = await admin.from("vehicles").select("*").order("created_at", { ascending: false });
   return (data as VehicleResult[]) ?? [];
 }
@@ -85,14 +87,13 @@ export async function getAllVehicles(): Promise<VehicleResult[]> {
 
 export async function getCitations(filter?: { type?: "traffic" | "general"; officerId?: string; stationId?: string }) {
   if (!isSupabaseEnabled()) return [];
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return [];
-
   let query = admin.from("citations").select("*").order("created_at", { ascending: false });
   if (filter?.type) query = query.eq("type", filter.type);
   if (filter?.officerId) query = query.eq("officer_id", filter.officerId);
   const { data } = await query;
-  return data ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function createCitation(citation: {
@@ -101,9 +102,8 @@ export async function createCitation(citation: {
   officerId: string; officerName: string; stationId: string; type: "traffic" | "general";
 }) {
   if (!isSupabaseEnabled()) return { data: null, error: "Supabase haijawezeshwa" };
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return { data: null, error: "Supabase client error" };
-
   const { data, error } = await admin.from("citations").insert({
     citation_number: `CT-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`,
     officer_id: citation.officerId,
@@ -125,12 +125,11 @@ export async function createCitation(citation: {
 
 export async function getIncidents(filter?: { type?: "traffic" | "general" }) {
   if (!isSupabaseEnabled()) return [];
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return [];
-
-  let query = admin.from("incidents").select("*").order("created_at", { ascending: false });
+  const query = admin.from("incidents").select("*").order("created_at", { ascending: false });
   const { data } = await query;
-  return data ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function createIncident(incident: {
@@ -138,9 +137,8 @@ export async function createIncident(incident: {
   casualties: number; officerId: string; stationId: string; citizenId?: string;
 }) {
   if (!isSupabaseEnabled()) return { data: null, error: "Supabase haijawezeshwa" };
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return { data: null, error: "Supabase client error" };
-
   const { data, error } = await admin.from("incidents").insert({
     incident_number: `INC-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`,
     officer_id: incident.officerId,
@@ -151,8 +149,8 @@ export async function createIncident(incident: {
     casualties: incident.casualties,
     date: new Date().toISOString().split("T")[0],
     time: new Date().toLocaleTimeString("en-US", { hour12: false }),
-    status: "active" as const,
-    priority: "medium" as const,
+    status: "active",
+    priority: "medium",
     station_id: incident.stationId,
     citizen_id: incident.citizenId ?? null,
   }).select().single();
@@ -166,9 +164,8 @@ export async function createArrest(arrest: {
   offense: string; location: string; officerId: string; stationId: string;
 }) {
   if (!isSupabaseEnabled()) return { data: null, error: "Supabase haijawezeshwa" };
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return { data: null, error: "Supabase client error" };
-
   const { data, error } = await admin.from("arrests").insert({
     arrest_number: `AR-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`,
     officer_id: arrest.officerId,
@@ -179,7 +176,7 @@ export async function createArrest(arrest: {
     location: arrest.location,
     arrest_date: new Date().toISOString().split("T")[0],
     arrest_time: new Date().toLocaleTimeString("en-US", { hour12: false }),
-    status: "held" as const,
+    status: "held",
     station_id: arrest.stationId,
   }).select().single();
   return { data, error };
@@ -192,9 +189,8 @@ export async function createPatrol(patrol: {
   events: string; photosCount: number; officerId: string; stationId: string;
 }) {
   if (!isSupabaseEnabled()) return { data: null, error: "Supabase haijawezeshwa" };
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return { data: null, error: "Supabase client error" };
-
   const { data, error } = await admin.from("patrols").insert({
     patrol_number: `PT-${Date.now()}`,
     officer_id: patrol.officerId,
@@ -205,7 +201,7 @@ export async function createPatrol(patrol: {
     duration_secs: patrol.durationSecs,
     events: patrol.events,
     photos_count: patrol.photosCount,
-    status: "completed" as const,
+    status: "completed",
     station_id: patrol.stationId,
   }).select().single();
   return { data, error };
@@ -215,11 +211,10 @@ export async function createPatrol(patrol: {
 
 export async function getMissingRecords() {
   if (!isSupabaseEnabled()) return [];
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return [];
-
   const { data } = await admin.from("missing_records").select("*").order("created_at", { ascending: false });
-  return data ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function createMissingRecord(record: {
@@ -228,9 +223,8 @@ export async function createMissingRecord(record: {
   reportedBy: string; stationId: string;
 }) {
   if (!isSupabaseEnabled()) return { data: null, error: "Supabase haijawezeshwa" };
-  const admin = getSupabaseAdmin();
+  const admin = getAdmin();
   if (!admin) return { data: null, error: "Supabase client error" };
-
   const { data, error } = await admin.from("missing_records").insert({
     case_no: `MS-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`,
     type: record.type,
@@ -243,53 +237,27 @@ export async function createMissingRecord(record: {
     reported_by: record.reportedBy,
     reported_date: new Date().toISOString().split("T")[0],
     station_id: record.stationId,
-    status: "active" as const,
+    status: "active",
   }).select().single();
   return { data, error };
 }
 
 // ── DASHBOARD STATS ──────────────────────────────────────────
 
-export async function getDashboardStats(role: string, region?: string, stationId?: string) {
-  if (!isSupabaseEnabled()) {
-    return {
-      officers_total: 0,
-      officers_active: 0,
-      citations_today: 0,
-      incidents_today: 0,
-      arrests_total: 0,
-      missing_active: 0,
-      stations_total: 0,
-      posts_total: 0,
-    };
-  }
-  const admin = getSupabaseAdmin();
-  if (!admin) {
-    return {
-      officers_total: 0,
-      officers_active: 0,
-      citations_today: 0,
-      incidents_today: 0,
-      arrests_total: 0,
-      missing_active: 0,
-      stations_total: 0,
-      posts_total: 0,
-    };
-  }
+const EMPTY_STATS = {
+  officers_total: 0, officers_active: 0, citations_today: 0,
+  incidents_today: 0, arrests_total: 0, missing_active: 0,
+  stations_total: 0, posts_total: 0,
+};
 
+export async function getDashboardStats(role: string, region?: string, stationId?: string) {
+  if (!isSupabaseEnabled()) return EMPTY_STATS;
+  const admin = getAdmin();
+  if (!admin) return EMPTY_STATS;
   const { data } = await admin.rpc("get_dashboard_stats", {
     p_role: role,
     p_region: region,
     p_station_id: stationId,
   });
-  return data ?? {
-    officers_total: 0,
-    officers_active: 0,
-    citations_today: 0,
-    incidents_today: 0,
-    arrests_total: 0,
-    missing_active: 0,
-    stations_total: 0,
-    posts_total: 0,
-  };
+  return (data as typeof EMPTY_STATS) ?? EMPTY_STATS;
 }

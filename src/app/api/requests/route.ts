@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 // In-memory store fallback (empty — data from Supabase)
 interface OfficerRequest {
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     const type   = url.searchParams.get("type") ?? "";
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         let q = admin.from("officer_requests").select("*").order("created_at", { ascending: false });
         if (status) q = q.eq("status", status);
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
     };
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data, error } = await admin.from("officer_requests").insert({
           type:          newReq.type,

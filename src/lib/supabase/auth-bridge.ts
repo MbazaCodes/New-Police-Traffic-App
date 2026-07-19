@@ -25,6 +25,18 @@ export interface SupabaseUser {
   station?: { id: string; name: string; region: string } | null;
 }
 
+async function fetchStationForUser(stationId: string) {
+  const admin = getSupabaseAdmin();
+  if (!admin) return null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: st } = await (admin as any)
+    .from("stations")
+    .select("id, name, region")
+    .eq("id", stationId)
+    .maybeSingle();
+  return st ?? null;
+}
+
 /**
  * Look up a user by badge_no, username, email, or phone.
  * Used by the login flow in the admin web shell.
@@ -37,11 +49,13 @@ export async function findSupabaseUser(identifier: string): Promise<SupabaseUser
   const raw = identifier.trim();
   const clean = raw.toLowerCase();
 
-  // Try each field individually — avoids PostgREST .or() escaping issues with @ in email
-  // Note: We don't join stations here to avoid "multiple relationships" error
-  const cols: Array<"badge_no" | "username" | "email"> = ["badge_no", "username", "email"];
+  // Use `any` cast to avoid column-narrowing issues with Supabase's strict generic typing
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const adminAny = admin as any;
+
+  const cols = ["badge_no", "username", "email"];
   for (const col of cols) {
-    const { data } = await admin
+    const { data } = await adminAny
       .from("users")
       .select("*")
       .ilike(col, clean)
@@ -49,16 +63,7 @@ export async function findSupabaseUser(identifier: string): Promise<SupabaseUser
       .limit(1)
       .maybeSingle();
     if (data) {
-      // Fetch station separately if station_id exists
-      let station = null;
-      if (data.station_id) {
-        const { data: st } = await admin
-          .from("stations")
-          .select("id, name, region")
-          .eq("id", data.station_id)
-          .maybeSingle();
-        if (st) station = st;
-      }
+      const station = data.station_id ? await fetchStationForUser(data.station_id) : null;
       return { ...data, station } as SupabaseUser;
     }
   }
@@ -69,24 +74,15 @@ export async function findSupabaseUser(identifier: string): Promise<SupabaseUser
     const core = digitsOnly.startsWith("255") ? digitsOnly.slice(3)
       : digitsOnly.startsWith("0") ? digitsOnly.slice(1) : digitsOnly;
     for (const ph of [`0${core}`, `+255${core}`, `255${core}`, core]) {
-      const { data } = await admin
+      const { data } = await adminAny
         .from("users")
         .select("*")
-        .eq("phone", ph)
+        .eq("mobile", ph)
         .eq("status", "active")
         .limit(1)
         .maybeSingle();
       if (data) {
-        // Fetch station separately if station_id exists
-        let station = null;
-        if (data.station_id) {
-          const { data: st } = await admin
-            .from("stations")
-            .select("id, name, region")
-            .eq("id", data.station_id)
-            .maybeSingle();
-          if (st) station = st;
-        }
+        const station = data.station_id ? await fetchStationForUser(data.station_id) : null;
         return { ...data, station } as SupabaseUser;
       }
     }
@@ -110,19 +106,20 @@ export function mapSupabaseRole(role: string): string {
     "station-commissioner":    "STATION_COMMANDER",
     "officer-traffic":         "TRAFFIC_OFFICER",
     "officer-general":         "GENERAL_OFFICER",
-    "post-officer":            "GENERAL_OFFICER",
+    "post-officer":            "POST_OFFICER",
     "cid-officer":             "INVESTIGATOR",
     "investigation-supervisor":"INVESTIGATOR",
     "cyber-crime":             "INVESTIGATOR",
-    "immigration-liaison":     "OFFICER",
-    "prison-liaison":          "OFFICER",
-    "emergency-dispatcher":    "OFFICER",
-    "evidence-officer":        "OFFICER",
-    "audit-officer":           "CLERK",
+    "immigration-liaison":     "IMMIGRATION_LIAISON",
+    "prison-liaison":          "PRISON_LIAISON",
+    "emergency-dispatcher":    "EMERGENCY_DISPATCHER",
+    "evidence-officer":        "EVIDENCE_OFFICER",
+    "audit-officer":           "AUDIT_OFFICER",
     "investigator":            "INVESTIGATOR",
     "viewer":                  "VIEWER",
-    "dig":                     "NATIONAL_COMMANDER",
+    "dig":                     "DIG",
     "commander":               "NATIONAL_COMMANDER",
+    "clerk":                   "CLERK",
   };
   return map[role.toLowerCase()] ?? "VIEWER";
 }

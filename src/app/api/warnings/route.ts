@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function GET() {
   try {
@@ -10,13 +10,13 @@ export async function GET() {
     const check = requirePermission(session, "warnings", "view");
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data } = await admin.from("warnings").select("*").order("created_at", { ascending: false });
         return NextResponse.json({ ok: true, data });
       }
     }
-    return NextResponse.json({ ok: true, data: WARNING_RECORDS });
+    return NextResponse.json({ ok: true, data: ([] as {id:string;[k:string]:unknown}[]) });
   } catch (e) { return NextResponse.json({ error: String(e) }, { status: 500 }); }
 }
 
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Jina na kosa yanahitajika" }, { status: 400 });
     }
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data, error } = await admin.from("warnings").insert({
           citizen_name:  body.citizenName,

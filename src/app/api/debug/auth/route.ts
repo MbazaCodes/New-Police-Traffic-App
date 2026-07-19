@@ -1,7 +1,7 @@
 // Debug endpoint — remove after confirming Supabase works
 // GET /api/debug/auth?email=admin@tpfs.go.tz
 import { NextResponse } from "next/server";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? "SET" : "MISSING",
   };
 
-  const admin = getSupabaseAdmin();
+  const admin = getSupabaseAdminAny();
   checks.adminClientCreated = Boolean(admin);
 
   if (admin && email) {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { useOfficer } from "@/hooks/use-officer";

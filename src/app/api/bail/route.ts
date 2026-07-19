@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
+import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 const BAIL_CONDITIONS = [
   "Mshtakiwa lazima aripoti kituoni kila wiki",
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     const arrestId = url.searchParams.get("arrestId");
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         let q = admin.from("bail_requests").select("*").order("created_at", { ascending: false });
         if (status && status !== "all") q = q.eq("status", status);
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       if (!bailId) return NextResponse.json({ error: "bailId inahitajika" }, { status: 400 });
 
       if (isSupabaseEnabled()) {
-        const admin = getSupabaseAdmin();
+        const admin = getSupabaseAdminAny();
         if (admin) {
           const update: Record<string, unknown> = {
             status:      action === "approve" ? "approved" : "rejected",
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "bailId na paymentMethod vinahitajika" }, { status: 400 });
       }
       if (isSupabaseEnabled()) {
-        const admin = getSupabaseAdmin();
+        const admin = getSupabaseAdminAny();
         if (admin) {
           const { data, error } = await admin.from("bail_requests")
             .update({ payment_method: paymentMethod, payment_ref: paymentRef, paid_at: new Date().toISOString(), status: "approved" })
@@ -145,7 +145,7 @@ export async function POST(request: Request) {
     };
 
     if (isSupabaseEnabled()) {
-      const admin = getSupabaseAdmin();
+      const admin = getSupabaseAdminAny();
       if (admin) {
         const { data, error } = await admin.from("bail_requests").insert(payload).select().single();
         if (error) throw error;

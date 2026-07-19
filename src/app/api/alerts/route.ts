@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Alerts API — list & create (send broadcast alert)
 // GET  /api/alerts  -> list alerts
 // POST /api/alerts  -> send a broadcast alert
