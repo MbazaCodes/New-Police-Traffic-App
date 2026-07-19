@@ -1,66 +1,40 @@
-// Incidents API — list & create
-// GET  /api/incidents  -> list incidents (with filters: status, priority, type, search)
-// POST /api/incidents  -> create incident
+// Incidents API — Supabase-first
+// GET  /api/incidents   -> list incidents
+// POST /api/incidents   -> create incident
 
 import { NextResponse } from "next/server";
-import { ADMIN_INCIDENTS } from "@/lib/admin-data";
 import { getServerSession } from "@/lib/auth";
-import { enforceDataScope, requirePermission } from "@/lib/rbac";
+import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { annotateRecordScope, getScopeContext } from "@/lib/scope";
-
-const incidentsStore: typeof ADMIN_INCIDENTS = [...ADMIN_INCIDENTS];
+import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function GET(request: Request) {
   try {
     const session = await getServerSession();
     const check = requirePermission(session, "incidents", "view");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
+    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const url = new URL(request.url);
-    const status = url.searchParams.get("status");
+    const status   = url.searchParams.get("status");
     const priority = url.searchParams.get("priority");
-    const type = url.searchParams.get("type");
-    const search = url.searchParams.get("search")?.toLowerCase() ?? "";
-    const scope = getScopeContext(session);
+    const search   = url.searchParams.get("search")?.toLowerCase() ?? "";
 
-    let result = incidentsStore.map((i) =>
-      annotateRecordScope({
-        ...i,
-        ownerId: String(i.assignedTo ?? ""),
-        region: "Dar es Salaam",
-        district: "Kinondoni",
-        station: "Oysterbay Station",
-      }, scope),
-    );
-    result = enforceDataScope(result, scope);
-    if (status && status !== "all") {
-      result = result.filter((i) => i.status === status);
-    }
-    if (priority && priority !== "all") {
-      result = result.filter((i) => i.priority === priority);
-    }
-    if (type && type !== "all") {
-      result = result.filter((i) => i.type.toLowerCase().includes(type.toLowerCase()));
-    }
-    if (search) {
-      result = result.filter(
-        (i) =>
-          i.id.toLowerCase().includes(search) ||
-          i.type.toLowerCase().includes(search) ||
-          i.location.toLowerCase().includes(search) ||
-          i.assignedTo.toLowerCase().includes(search),
-      );
+    if (isSupabaseEnabled()) {
+      const admin = getSupabaseAdmin();
+      if (admin) {
+        let q = admin.from("incidents").select("*").order("created_at", { ascending: false });
+        if (status && status !== "all") q = q.eq("status", status);
+        if (priority && priority !== "all") q = q.eq("priority", priority);
+        if (search) q = q.or(`type.ilike.%${search}%,location.ilike.%${search}%,incident_number.ilike.%${search}%`);
+        const { data, error } = await q;
+        if (error) throw error;
+        return NextResponse.json({ ok: true, data: data ?? [], total: data?.length ?? 0 });
+      }
     }
 
-    return NextResponse.json({ data: result, total: result.length }, { status: 200 });
+    return NextResponse.json({ ok: true, data: [], total: 0 });
   } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to list incidents", detail: String(err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }
 
@@ -68,51 +42,37 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession();
     const check = requirePermission(session, "incidents", "create");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
+    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const body = await request.json().catch(() => ({}));
-    for (const field of ["type", "location", "description"]) {
-      if (!body[field]) {
-        return NextResponse.json(
-          { error: `Missing required field: ${field}` },
-          { status: 400 },
-        );
+    const { type, location, description, priority, citizenName, citizenPhone, citizenNida } = body;
+
+    if (!type || !location) {
+      return NextResponse.json({ error: "Aina ya tukio na eneo vinahitajika" }, { status: 400 });
+    }
+
+    const incidentNumber = `INC-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
+
+    if (isSupabaseEnabled()) {
+      const admin = getSupabaseAdmin();
+      if (admin) {
+        const { data, error } = await admin.from("incidents").insert({
+          incident_number: incidentNumber,
+          type, location, description: description || null,
+          priority: priority || "medium", status: "active",
+          citizen_name: citizenName || null,
+          citizen_phone: citizenPhone || null,
+          citizen_nida: citizenNida || null,
+          officer_id: session?.user?.id || null,
+        }).select().single();
+        if (error) throw error;
+        await logAction(session, "incident_created", "incidents", data.id, { type, location });
+        return NextResponse.json({ ok: true, data }, { status: 201 });
       }
     }
 
-    const now = new Date();
-    const scope = getScopeContext(session);
-    const newIncident = annotateRecordScope({
-      id: body.id ?? `INC-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      type: String(body.type),
-      location: String(body.location),
-      date: body.date ?? now.toLocaleDateString("sw-TZ"),
-      time: body.time ?? now.toLocaleTimeString("sw-TZ", { hour: "2-digit", minute: "2-digit" }),
-      status: body.status ?? "active",
-      priority: body.priority ?? "medium",
-      assignedTo: body.assignedTo ?? session!.user.name ?? "Unassigned",
-      description: String(body.description),
-      ownerId: session!.user.id,
-      isPublic: false,
-    }, scope);
-    incidentsStore.unshift(newIncident);
-
-    logAction(
-      session!.user.id,
-      "create",
-      "incidents",
-      newIncident.id,
-      { incident: newIncident },
-      session!.user.name,
-    );
-
-    return NextResponse.json({ data: newIncident }, { status: 201 });
+    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to create incident", detail: String(err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }

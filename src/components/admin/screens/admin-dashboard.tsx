@@ -1,461 +1,136 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  Users,
-  Shield,
-  AlertTriangle,
-  FileText,
-  TrendingUp,
-  TrendingDown,
-  MapPin,
-  Radio,
-  RefreshCw,
-  Activity,
-  Database,
-  Wifi,
-  BadgeDollarSign,
-  CheckCircle2,
-} from "lucide-react";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from "recharts";
-import {
-  DASHBOARD_KPIS,
-  INCIDENT_TREND,
-  OFFENSE_DISTRIBUTION,
-  LIVE_INCIDENTS,
-  REGION_STATS,
-  OFFICERS,
-} from "@/lib/admin-data";
-import { getOfficerProfilePath } from "@/lib/admin-navigation";
-import { usePoliceStore } from "@/store/police-store";
+import { useEffect, useState } from "react";
+import { Users, FileText, AlertTriangle, Shield, BarChart3, Activity, Building2, Network } from "lucide-react";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
-const ICON_MAP: Record<string, typeof Users> = {
-  users: Users,
-  shield: Shield,
-  "alert-triangle": AlertTriangle,
-  "file-text": FileText,
-};
+interface LiveStats {
+  officers: number; citations: number; incidents: number; patrols: number;
+  stations: number; posts: number; arrests: number; unpaidFines: number;
+}
 
-const STATUS_STYLES: Record<string, string> = {
-  urgent: "bg-[#EF4444]/100/15 text-[#EF4444] border border-[#EF4444]/500/30",
-  active: "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
-  resolved: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  urgent: "MUHIMU",
-  active: "Haijatatuliwa",
-  resolved: "Imetatuliwa",
-};
+const EMPTY: LiveStats = { officers:0, citations:0, incidents:0, patrols:0, stations:0, posts:0, arrests:0, unpaidFines:0 };
 
 export function AdminDashboard() {
-  const pathname = usePathname();
-  const { setAdminScreen } = usePoliceStore();
-  const [simulationState, setSimulationState] = useState<{ running: boolean; startedAt: string | null; updatedAt: string } | null>(null);
-  const [mockSummary, setMockSummary] = useState<{ totalRecords: number; onlineOfficers: number; openCases: number; todayFines: number; syncEnabled: boolean; offlineEnabled: boolean } | null>(null);
+  const [stats, setStats] = useState<LiveStats>(EMPTY);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
+    async function load() {
+      const sb = getSupabaseClient();
+      if (!sb) { setLoading(false); return; }
 
-    async function loadDashboardStats() {
       try {
-        const [simResponse, mockResponse] = await Promise.all([
-          fetch("/api/simulation/status", { cache: "no-store" }),
-          fetch("/api/mock-db/refresh", { method: "POST" }),
+        const [officers, citations, incidents, patrols, stations, posts, arrests, fines] = await Promise.all([
+          sb.from("officers").select("*", { count:"exact", head:true }),
+          sb.from("citations").select("*", { count:"exact", head:true }),
+          sb.from("incidents").select("*", { count:"exact", head:true }).neq("status", "resolved"),
+          sb.from("patrols").select("*", { count:"exact", head:true }).eq("status", "active"),
+          sb.from("stations").select("*", { count:"exact", head:true }),
+          sb.from("posts").select("*", { count:"exact", head:true }),
+          sb.from("arrests").select("*", { count:"exact", head:true }).eq("status", "held"),
+          sb.from("citations").select("*", { count:"exact", head:true }).eq("status", "unpaid"),
         ]);
-
-        const simJson = await simResponse.json();
-        const mockJson = await mockResponse.json();
-
-        if (!active) return;
-
-        setSimulationState(simJson.data ?? null);
-        setMockSummary(mockJson.data?.summary ?? null);
-      } catch {
-        if (!active) return;
-        setSimulationState({ running: false, startedAt: null, updatedAt: new Date().toISOString() });
-        setMockSummary({ totalRecords: 0, onlineOfficers: 0, openCases: 0, todayFines: 0, syncEnabled: false, offlineEnabled: false });
-      }
+        setStats({
+          officers:   officers.count ?? 0,
+          citations:  citations.count ?? 0,
+          incidents:  incidents.count ?? 0,
+          patrols:    patrols.count ?? 0,
+          stations:   stations.count ?? 0,
+          posts:      posts.count ?? 0,
+          arrests:    arrests.count ?? 0,
+          unpaidFines: fines.count ?? 0,
+        });
+      } catch { /* ignore — stay at zeros */ }
+      setLoading(false);
     }
-
-    void loadDashboardStats();
-
-    return () => {
-      active = false;
-    };
+    load();
   }, []);
 
-  const dashboardCards = useMemo(() => {
-    const simulationActive = simulationState?.running ?? false;
-    const syncEnabled = mockSummary?.syncEnabled ?? false;
-
-    return [
-      {
-        label: "Simulation Status",
-        value: simulationActive ? "Running" : "Stopped",
-        meta: simulationState?.startedAt ? `Started ${new Date(simulationState.startedAt).toLocaleTimeString("sw-TZ", { hour: "2-digit", minute: "2-digit" })}` : "Not started",
-        icon: Activity,
-        tone: simulationActive ? "green" : "slate",
-      },
-      {
-        label: "Mock DB Records",
-        value: String(mockSummary?.totalRecords ?? 0),
-        meta: "Citizens, vehicles, officers, stations, cases",
-        icon: Database,
-        tone: "blue",
-      },
-      {
-        label: "Online Officers",
-        value: String(mockSummary?.onlineOfficers ?? 0),
-        meta: "Live duty status",
-        icon: Wifi,
-        tone: "emerald",
-      },
-      {
-        label: "Open Cases",
-        value: String(mockSummary?.openCases ?? 0),
-        meta: "Awaiting resolution",
-        icon: FileText,
-        tone: "orange",
-      },
-      {
-        label: "Today's Fines",
-        value: String(mockSummary?.todayFines ?? 0),
-        meta: "Collected citations",
-        icon: BadgeDollarSign,
-        tone: "violet",
-      },
-      {
-        label: "Sync Status",
-        value: syncEnabled ? "Synced" : "Offline",
-        meta: mockSummary?.offlineEnabled ? "Offline mode enabled" : "Live sync disabled",
-        icon: CheckCircle2,
-        tone: syncEnabled ? "green" : "slate",
-      },
-    ];
-  }, [mockSummary, simulationState]);
+  const kpis = [
+    { label:"Maofisa",       value: stats.officers,    icon: Users,         color:"#2196F3" },
+    { label:"Citations",     value: stats.citations,   icon: FileText,      color:"#10B981" },
+    { label:"Matukio Hai",   value: stats.incidents,   icon: AlertTriangle, color:"#EF4444" },
+    { label:"Patroli Sasa",  value: stats.patrols,     icon: Shield,        color:"#FF9800" },
+    { label:"Vituo",         value: stats.stations,    icon: Building2,     color:"#1E3A8A" },
+    { label:"Posti",         value: stats.posts,       icon: Network,       color:"#8B5CF6" },
+    { label:"Wafungwa",      value: stats.arrests,     icon: Shield,        color:"#EF4444" },
+    { label:"Faini Hazijalipwa", value: stats.unpaidFines, icon: BarChart3, color:"#FF9800" },
+  ];
 
   return (
-    <div className="space-y-5">
-      {/* Page heading */}
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-police-navy">Dashboard ya Amri</h1>
-          <p className="text-[13px] text-police-muted">
-            Muhtasari wa shughuli za polisi — leo, 15 Mei 2026
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-[24px] font-black text-police">Dashboard</h1>
+        <p className="text-[12px] text-police-muted mt-0.5">Muhtasari wa mfumo — data ya moja kwa moja kutoka Supabase</p>
+      </div>
+
+      {loading ? (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {Array.from({length:8}).map((_,i) => (
+            <div key={i} className="h-20 animate-pulse rounded-xl bg-police-card" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {kpis.map((k) => (
+            <div key={k.label} className="rounded-xl bg-police-card p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <k.icon size={16} style={{ color: k.color }} />
+              </div>
+              <p className="text-[26px] font-black leading-none" style={{ color: k.color }}>{k.value}</p>
+              <p className="mt-1 text-[11px] text-police-muted leading-tight">{k.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Getting Started Guide */}
+      {!loading && stats.officers === 0 && stats.stations === 0 && (
+        <div className="rounded-2xl border border-[#2196F3]/20 bg-[#2196F3]/5 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2196F3]/15">
+              <Activity size={20} className="text-[#2196F3]" />
+            </div>
+            <div>
+              <p className="text-[15px] font-bold text-police">Karibu! Anza Kusakinisha Mfumo</p>
+              <p className="text-[12px] text-police-muted">Fuata hatua hizi ili mfumo uanze kufanya kazi</p>
+            </div>
+          </div>
+          <ol className="space-y-3">
+            {[
+              { step:1, label:"Ongeza Vituo", desc:"Nenda Vituo → ongeza kituo cha kwanza cha polisi", nav:"stations" },
+              { step:2, label:"Ongeza Posti",  desc:"Kila kituo kinaweza kuwa na posti nyingi", nav:"posts" },
+              { step:3, label:"Ongeza Watumiaji", desc:"Ongeza maofisa na wasimamizi wapya", nav:"users" },
+              { step:4, label:"Weka Maofisa",  desc:"Gawanya maofisa kwenye vituo na posti", nav:"assignments" },
+            ].map(({step, label, desc}) => (
+              <li key={step} className="flex items-start gap-3">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#2196F3] text-[11px] font-bold text-white">{step}</div>
+                <div>
+                  <p className="text-[13px] font-semibold text-police">{label}</p>
+                  <p className="text-[11px] text-police-muted">{desc}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {/* Activity placeholder when data exists */}
+      {!loading && (stats.officers > 0 || stats.stations > 0) && (
+        <div className="rounded-xl bg-police-card p-5 shadow-sm">
+          <h2 className="text-[14px] font-bold text-police mb-3 flex items-center gap-2">
+            <Activity size={16} className="text-[#2196F3]" />
+            Mfumo Unafanya Kazi
+          </h2>
+          <p className="text-[12px] text-police-muted">
+            Vituo: <strong className="text-police">{stats.stations}</strong> •
+            Maofisa: <strong className="text-police">{stats.officers}</strong> •
+            Citations: <strong className="text-police">{stats.citations}</strong> •
+            Wafungwa: <strong className="text-police">{stats.arrests}</strong>
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg bg-police-card px-3 py-1.5 text-[12px] text-police-muted shadow-sm">
-          <Radio size={14} className="text-[#10B981]" />
-          <span>Mfumo wa Moja kwa Moja</span>
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#10B981]" />
-        </div>
-      </div>
-
-      {/* Simulation / DB cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {dashboardCards.map((card) => {
-          const Icon = card.icon;
-          const tones: Record<string, string> = {
-            green: "bg-[#10B981]/15 text-[#10B981]",
-            blue: "bg-[#2196F3]/15 text-[#2196F3]",
-            emerald: "bg-[#10B981]/15 text-[#10B981]",
-            orange: "bg-[#FF9800]/15 text-[#FF9800]",
-            violet: "bg-[#1E3A8A]/15 text-[#1E3A8A]",
-            slate: "bg-slate-500/15 text-slate-600",
-          };
-
-          return (
-            <div key={card.label} className="rounded-xl bg-police-card p-4 shadow-sm">
-              <div className="flex items-start justify-between">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${tones[card.tone] ?? tones.slate}`}>
-                  <Icon size={20} />
-                </div>
-                <RefreshCw size={14} className="text-police-faint" />
-              </div>
-              <p className="mt-3 text-2xl font-bold text-police-navy">{card.value}</p>
-              <p className="mt-0.5 text-[12px] font-semibold text-police">{card.label}</p>
-              <p className="mt-1 text-[11px] text-police-muted">{card.meta}</p>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* KPI cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {DASHBOARD_KPIS.map((kpi) => {
-          const Icon = ICON_MAP[kpi.icon] ?? Users;
-          const isUp = kpi.trend === "up";
-          return (
-            <div
-              key={kpi.label}
-              className="rounded-xl bg-police-card p-4 shadow-sm"
-            >
-              <div className="flex items-start justify-between">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-lg"
-                  style={{ backgroundColor: `${kpi.color}1A`, color: kpi.color }}
-                >
-                  <Icon size={20} />
-                </div>
-                <span
-                  className={`flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${
-                    isUp
-                      ? "bg-[#10B981]/15 text-[#10B981]"
-                      : "bg-[#EF4444]/100/15 text-[#EF4444]"
-                  }`}
-                >
-                  {isUp ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
-                  {kpi.change}
-                </span>
-              </div>
-              <p className="mt-3 text-2xl font-bold text-police-navy">{kpi.value}</p>
-              <p className="mt-0.5 text-[12px] text-police-muted">{kpi.label}</p>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="rounded-xl bg-police-card p-4 shadow-sm">
-        <h2 className="mb-3 text-[14px] font-bold text-police-navy">Admin Operations</h2>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-          <button onClick={() => setAdminScreen("officers")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Officers</button>
-          <button onClick={() => setAdminScreen("users")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Users</button>
-          <button onClick={() => setAdminScreen("stations")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Stations</button>
-          <button onClick={() => setAdminScreen("posts")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Posts</button>
-          <button onClick={() => setAdminScreen("assignments")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Assignments</button>
-          <button onClick={() => setAdminScreen("incidents")} className="rounded-lg bg-police-input px-3 py-2 text-[12px] font-semibold text-police-navy hover:bg-police-muted">Incidents</button>
-        </div>
-      </div>
-
-      {/* Charts row */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        {/* Incident trend */}
-        <div className="rounded-xl bg-police-card p-4 shadow-sm lg:col-span-2">
-          <div className="mb-3 flex items-center justify-between">
-            <div>
-              <h2 className="text-[14px] font-bold text-police-navy">
-                Mwelekeo wa Matukio na Citations
-              </h2>
-              <p className="text-[11px] text-police-muted">Siku 7 zilizopita</p>
-            </div>
-            <div className="flex items-center gap-3 text-[11px]">
-              <span className="flex items-center gap-1 text-police-muted">
-                <span className="h-2 w-2 rounded-full bg-[#FF9800]" /> Matukio
-              </span>
-              <span className="flex items-center gap-1 text-police-muted">
-                <span className="h-2 w-2 rounded-full bg-[#2196F3]" /> Citations
-              </span>
-            </div>
-          </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={INCIDENT_TREND}
-                margin={{ top: 5, right: 5, left: -20, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="incGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#FF9800" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#FF9800" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="citGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2196F3" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#2196F3" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(120,120,120,0.15)" />
-                <XAxis
-                  dataKey="day"
-                  tick={{ fontSize: 11, fill: "currentColor" }}
-                  className="text-police-muted"
-                  stroke="rgba(120,120,120,0.3)"
-                />
-                <YAxis
-                  tick={{ fontSize: 11, fill: "currentColor" }}
-                  className="text-police-muted"
-                  stroke="rgba(120,120,120,0.3)"
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "var(--police-card)",
-                    border: "1px solid var(--police-border)",
-                    borderRadius: 8,
-                    fontSize: 12,
-                    color: "var(--police-text)",
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="incidents"
-                  stroke="#FF9800"
-                  strokeWidth={2}
-                  fill="url(#incGrad)"
-                  name="Matukio"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="citations"
-                  stroke="#2196F3"
-                  strokeWidth={2}
-                  fill="url(#citGrad)"
-                  name="Citations"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Offense distribution pie */}
-        <div className="rounded-xl bg-police-card p-4 shadow-sm">
-          <h2 className="text-[14px] font-bold text-police-navy">
-            Ugawanyiko wa Makosa
-          </h2>
-          <p className="text-[11px] text-police-muted">Mwezi huu</p>
-          <div className="h-56 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={OFFENSE_DISTRIBUTION}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={45}
-                  outerRadius={75}
-                  paddingAngle={2}
-                >
-                  {OFFENSE_DISTRIBUTION.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "var(--police-card)",
-                    border: "1px solid var(--police-border)",
-                    borderRadius: 8,
-                    fontSize: 12,
-                    color: "var(--police-text)",
-                  }}
-                />
-                <Legend
-                  iconType="circle"
-                  wrapperStyle={{ fontSize: 10 }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* Live incidents + region stats */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        {/* Live incidents */}
-        <div className="rounded-xl bg-police-card p-4 shadow-sm lg:col-span-2">
-          <div className="mb-3 flex items-center justify-between">
-            <div>
-              <h2 className="text-[14px] font-bold text-police-navy">
-                Matukio ya Moja kwa Moja
-              </h2>
-              <p className="text-[11px] text-police-muted">
-                  Sasisho la mwisho: sasa hivi
-                </p>
-            </div>
-            <button
-              onClick={() => setAdminScreen("incidents")}
-              className="rounded-lg bg-police-muted px-3 py-1.5 text-[12px] font-semibold text-police-navy hover:bg-police-input"
-            >
-              Angalia Zote
-            </button>
-          </div>
-          <div className="space-y-2">
-            {LIVE_INCIDENTS.map((inc) => (
-              <div
-                key={inc.id}
-                className="flex items-center gap-3 rounded-lg border border-police-soft bg-police-muted/40 p-3"
-              >
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-police-input text-police-navy">
-                  <AlertTriangle size={16} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="truncate text-[13px] font-semibold text-police">
-                      {inc.type}
-                    </p>
-                    <span className="text-[10px] text-police-faint">{inc.time}</span>
-                  </div>
-                  <p className="truncate text-[11px] text-police-muted">
-                    <MapPin size={10} className="mr-0.5 inline" />
-                    {inc.location} • {(() => {
-                      const officer = OFFICERS.find((o) => o.name === inc.officer);
-                      if (!officer) return inc.officer;
-                      return (
-                        <Link href={getOfficerProfilePath(pathname, officer.id)} className="font-medium text-[#2196F3] hover:underline">
-                          {inc.officer}
-                        </Link>
-                      );
-                    })()}
-                  </p>
-                </div>
-                <span
-                  className={`shrink-0 rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${
-                    STATUS_STYLES[inc.status]
-                  }`}
-                >
-                  {STATUS_LABEL[inc.status]}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Region stats table */}
-        <div className="rounded-xl bg-police-card p-4 shadow-sm">
-          <h2 className="text-[14px] font-bold text-police-navy">
-            Takwimu za Mikoa
-          </h2>
-          <p className="mb-3 text-[11px] text-police-muted">Maofisa, matukio, citations</p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-[12px]">
-              <thead>
-                <tr className="border-b border-police-soft text-[10px] uppercase text-police-faint">
-                  <th className="pb-2 font-semibold">Mkoa</th>
-                  <th className="pb-2 text-right font-semibold">Walioko</th>
-                  <th className="pb-2 text-right font-semibold">Matukio</th>
-                  <th className="pb-2 text-right font-semibold">Citations</th>
-                </tr>
-              </thead>
-              <tbody>
-                {REGION_STATS.map((r) => (
-                  <tr
-                    key={r.region}
-                    className="border-b border-police-soft last:border-0"
-                  >
-                    <td className="py-2 font-semibold text-police">{r.region}</td>
-                    <td className="py-2 text-right text-police-navy">{r.officers}</td>
-                    <td className="py-2 text-right text-[#FF9800]">{r.incidents}</td>
-                    <td className="py-2 text-right text-[#2196F3]">{r.citations}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
