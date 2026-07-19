@@ -45,7 +45,8 @@ export async function POST(request: Request) {
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const body = await request.json().catch(() => ({}));
-    const { name, rank, rankShort, role, badgeNo, email, phone, stationId, unit, region, status } = body;
+    const { name, firstName, lastName, rank, rankShort, role, badgeNo, username,
+            email, phone, gender, idNumber, stationId, unit, region, status } = body;
 
     if (!name || !badgeNo || !role) {
       return NextResponse.json({ error: "Jina, badge number, na jukumu vinahitajika" }, { status: 400 });
@@ -60,14 +61,19 @@ export async function POST(request: Request) {
 
         const { data, error } = await admin.from("users").insert({
           name,
-          short_name: name.split(" ").slice(0, 2).join(" "),
-          rank: rank || null, rank_short: rankShort || null,
-          role, status: status || "active",
-          station_id: stationId || null,
-          badge_no: badgeNo,
-          username: badgeNo.toLowerCase().replace(/[^a-z0-9]/g, ""),
-          email: email || null, phone: phone || null,
-          region: region || null, unit: unit || null,
+          short_name: firstName && lastName ? `${firstName.slice(0,1)}. ${lastName}` : name.split(" ").slice(0,2).join(" "),
+          rank:       rank       || null,
+          rank_short: rankShort  || null,
+          role,
+          status:     status     || "active",
+          station_id: stationId  || null,
+          badge_no:   badgeNo,
+          username:   username   || badgeNo.toLowerCase().replace(/[^a-z0-9]/g, ""),
+          email:      email      || null,
+          phone:      phone      || null,
+          region:     region     || null,
+          unit:       unit       || null,
+          id_number:  idNumber   || null,
         }).select().single();
         if (error) throw error;
         await logAction(session, "user_created", "users", data.id, { name, role, badgeNo });
