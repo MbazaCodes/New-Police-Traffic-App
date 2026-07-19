@@ -9,10 +9,10 @@ import { GENERAL_INCIDENTS, ARREST_RECORDS, WARNING_RECORDS } from "@/lib/police
 const POLICE_QUICK_ACTIONS = [
   { label: "Ripoti Tukio",      icon: "clipboard",   color: "#2196F3", screen: "incident-detail"        },
   { label: "Tafuta Raia",       icon: "search",      color: "#1E3A8A", screen: "citizen-search-results" },
-  { label: "Rekodi Taarifa",    icon: "file-text",   color: "#10B981", screen: "incident-detail"        },
+  { label: "Lipa Faini",        icon: "wallet",      color: "#10B981", screen: "fine-payment"           },
   { label: "Kamata Mtuhumiwa",  icon: "user-x",      color: "#EF4444", screen: "arrest-form"            },
+  { label: "Dhamana",           icon: "shield",      color: "#8B5CF6", screen: "bail-out"               },
   { label: "Toa Onyo",          icon: "alert-triangle", color: "#FF9800", screen: "warning-form"        },
-  { label: "Historia",          icon: "clock",       color: "#2196F3", screen: "history"                },
 ];
 
 export function GeneralPoliceScreen() {

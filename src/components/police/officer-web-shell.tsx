@@ -43,6 +43,8 @@ const AccidentReportScreen   = dynamic(() => import("./screens/accident-report-s
 const TrafficScreen          = dynamic(() => import("./screens/traffic-screen").then(m=>({default:m.TrafficScreen})),                 {ssr:false});
 const OfficerRequestScreen = dynamic(() => import("./screens/officer-request-screen").then(m=>({default:m.OfficerRequestScreen})), {ssr:false});
 const EditProfileScreen      = dynamic(() => import("./screens/edit-profile-screen").then(m=>({default:m.EditProfileScreen})),         {ssr:false});
+const FinePaymentScreen      = dynamic(() => import("./screens/fine-payment-screen").then(m=>({default:m.FinePaymentScreen})),         {ssr:false});
+const BailOutScreen          = dynamic(() => import("./screens/bail-out-screen").then(m=>({default:m.BailOutScreen})),                 {ssr:false});
 
 // ── Nav definitions ────────────────────────────────────────────────────────
 const TRAFFIC_NAV = [
@@ -79,6 +81,8 @@ function renderOfficerScreen(screen: ScreenId, isGeneral: boolean) {
     case "incident-view":      return <IncidentViewScreen />;
     case "add-vehicle":        return <AddVehicleScreen />;
     case "add-citizen":        return <AddCitizenScreen />;
+    case "fine-payment":       return <FinePaymentScreen />;
+    case "bail-out":           return <BailOutScreen />;
     case "patrol":             return <PatrolScreen />;
     case "alerts":             return <AlertsScreen />;
     case "profile":            return <ProfileScreen />;

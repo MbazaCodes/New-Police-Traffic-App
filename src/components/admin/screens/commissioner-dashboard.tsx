@@ -161,7 +161,7 @@ export function CommissionerDashboard() {
       </div>
 
       {/* Secondary KPIs */}
-      <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-8">
         {secondaryKpis.map((k) => (
           <div key={k.label} className="rounded-xl bg-police-card p-3 text-center shadow-sm">
             <p className="tpf-section-title">{k.value}</p>

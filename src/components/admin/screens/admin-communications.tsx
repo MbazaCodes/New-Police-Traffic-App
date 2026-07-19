@@ -263,7 +263,7 @@ export function AdminCommunications() {
       {tab==="wafungwa" && (
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {/* Stats */}
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {[
               ["Jumla", detained.length, "#1E3A8A"],
               ["Kizuizini", detained.filter(d=>d.status==="held").length, "#EF4444"],

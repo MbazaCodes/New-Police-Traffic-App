@@ -27,6 +27,8 @@ export type ScreenId =
   | "citizen-detail"
   | "add-vehicle"
   | "add-citizen"
+  | "fine-payment"
+  | "bail-out"
 
 
 export const OFFICER = {
@@ -60,12 +62,14 @@ export const HOME_STATS = [
 // TRAFFIC_STATS defined after CITATION_HISTORY below
 
 export const TRAFFIC_QUICK_ACTIONS = [
-  { label: "Ripoti Tukio", icon: "clipboard", color: "#2196F3", screen: "incident-detail" as ScreenId },
-  { label: "Tafuta Raia", icon: "search", color: "#1E3A8A", screen: "citizen-search-results" as ScreenId },
-  { label: "Rekodi Taarifa", icon: "file-text", color: "#10B981", screen: "citation" as ScreenId },
-  { label: "Kamata Mtuhumiwa", icon: "user-x", color: "#EF4444", screen: "arrest-form" as ScreenId },
-  { label: "Ripoti Ajali", icon: "alert-triangle", color: "#F97316", screen: "accident-report" as ScreenId },
-  { label: "Historia", icon: "clock", color: "#2196F3", screen: "history" as ScreenId },
+  { label: "Ripoti Tukio",    icon: "clipboard",      color: "#2196F3", screen: "incident-detail"        as ScreenId },
+  { label: "Tafuta Raia",     icon: "search",          color: "#1E3A8A", screen: "citizen-search-results" as ScreenId },
+  { label: "Rekodi Taarifa",  icon: "file-text",       color: "#10B981", screen: "citation"               as ScreenId },
+  { label: "Lipa Faini",      icon: "wallet",          color: "#10B981", screen: "fine-payment"           as ScreenId },
+  { label: "Kamata Mtuhumiwa",icon: "user-x",          color: "#EF4444", screen: "arrest-form"            as ScreenId },
+  { label: "Dhamana",         icon: "shield",          color: "#8B5CF6", screen: "bail-out"               as ScreenId },
+  { label: "Ripoti Ajali",    icon: "alert-triangle",  color: "#F97316", screen: "accident-report"        as ScreenId },
+  { label: "Historia",        icon: "clock",           color: "#2196F3", screen: "history"                as ScreenId },
 ];
 
 export const RECENT_OFFENSES = [

@@ -288,7 +288,7 @@ export function DetainedCitizensScreen() {
       </div>
 
       {/* KPI stats */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {([
           ["Jumla",  counts.all,          "#1E3A8A"],
           ["Kizuizini", counts.held,      "#EF4444"],

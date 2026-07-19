@@ -93,7 +93,7 @@ export function AdminMissing() {
       <div className="rounded-2xl bg-police-card p-5 shadow-sm space-y-4">
         <div>
           <label className="mb-1 block text-[12px] font-medium text-police-muted">Aina</label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {(["person","car","device"] as const).map((t) => (
               <button key={t} onClick={() => setForm((f) => ({...f,type:t}))} className={`rounded-xl py-2.5 text-[12px] font-bold transition ${form.type===t?"text-white":"bg-police-muted text-police-muted"}`} style={form.type===t?{backgroundColor:TC[t]}:{}}>{TL[t]}</button>
             ))}
@@ -132,7 +132,7 @@ export function AdminMissing() {
         <div><h1 className="text-xl font-bold text-police-navy">Wanaotafutwa</h1><p className="text-[13px] text-police-muted">{records.filter((r) => r.status==="active").length} kesi zinazoendelea kati ya {records.length} zote</p></div>
         <button onClick={() => setShowForm(true)} className="flex items-center gap-2 rounded-xl bg-[#EF4444] px-4 py-2.5 text-[13px] font-bold text-white"><Plus size={16} /> Ripoti Mpya</button>
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {(["person","car","device"] as const).map((t) => (
           <div key={t} className="rounded-xl bg-police-card p-3 text-center shadow-sm">
             <p className="text-[18px] font-bold" style={{ color:TC[t] }}>{records.filter((r)=>r.type===t&&r.status==="active").length}</p>
