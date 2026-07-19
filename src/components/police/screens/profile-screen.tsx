@@ -5,7 +5,6 @@ import { Pencil, ChevronRight, LogOut, Download } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { PoliceIcon } from "../police-icons";
 import { ThemeToggle } from "../theme-toggle";
-import { PROFILE_STATS, PROFILE_ACTIVITIES, PROFILE_SETTINGS } from "@/lib/police-data";
 import { useOfficer } from "@/hooks/use-officer";
 import { usePoliceStore } from "@/store/police-store";
 import { toast } from "@/hooks/use-toast";
@@ -60,7 +59,7 @@ export function ProfileScreen() {
         <div>
           <h3 className="mb-2 px-1 text-[14px] font-bold text-police-navy">Muhtasari wa Dashibodi</h3>
           <div className="grid grid-cols-2 gap-2.5">
-            {PROFILE_STATS.map((stat) => (
+            {[].map((stat) => (
               <div key={stat.label} className="rounded-xl bg-police-card p-3 shadow-sm">
                 <div className="flex items-center gap-2">
                   <div
@@ -99,7 +98,7 @@ export function ProfileScreen() {
             </button>
           </div>
           <div className="space-y-3">
-            {PROFILE_ACTIVITIES.map((act, i) => (
+            {[].map((act, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
@@ -137,7 +136,7 @@ export function ProfileScreen() {
 
           <div className="mx-3 border-t border-police-soft" />
 
-          {PROFILE_SETTINGS.map((item) => {
+          {[].map((item) => {
             const handleSettingClick = () => {
               if (item.label === "Historia ya Shughuli") {
                 navigate("history");
@@ -182,7 +181,7 @@ export function ProfileScreen() {
         <button
           onClick={() =>
             (() => {
-              const html = `<!doctype html><html><head><meta charset="utf-8"><title>Ripoti ya Shughuli</title><style>body{font-family:Arial,sans-serif;padding:32px}h1{color:#1A237E}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:8px}th{background:#1A237E;color:#fff}</style></head><body><h1>RIPOTI YA SHUGHULI — ${OFFICER.name}</h1><table><thead><tr><th>Shughuli</th><th>Maelezo</th><th>Wakati</th></tr></thead><tbody>${PROFILE_ACTIVITIES.map(a => `<tr><td>${a.title}</td><td>${a.desc}</td><td>${a.time}</td></tr>`).join("")}</tbody></table><p>Imetolewa: ${new Date().toLocaleDateString("sw-TZ")}</p></body></html>`;
+              const html = `<!doctype html><html><head><meta charset="utf-8"><title>Ripoti ya Shughuli</title><style>body{font-family:Arial,sans-serif;padding:32px}h1{color:#1A237E}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:8px}th{background:#1A237E;color:#fff}</style></head><body><h1>RIPOTI YA SHUGHULI — ${OFFICER.name}</h1><table><thead><tr><th>Shughuli</th><th>Maelezo</th><th>Wakati</th></tr></thead><tbody>${[].map(a => `<tr><td>${a.title}</td><td>${a.desc}</td><td>${a.time}</td></tr>`).join("")}</tbody></table><p>Imetolewa: ${new Date().toLocaleDateString("sw-TZ")}</p></body></html>`;
               const blob = new Blob([html], { type: "text/html" });
               const url = URL.createObjectURL(blob);
               const a = document.createElement("a"); a.href = url; a.download = "Ripoti_Shughuli.html";

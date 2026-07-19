@@ -8,7 +8,7 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 
-const officersStore: typeof OFFICERS = [...OFFICERS];
+const officersStore: {id:string;name:string;rank:string;status:string;badgeNo:string}[] = [];
 
 export async function GET(
   _request: Request,

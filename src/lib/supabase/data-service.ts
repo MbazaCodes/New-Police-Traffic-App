@@ -7,7 +7,7 @@
 
 import { isSupabaseEnabled, getSupabaseAdmin } from "./client";
 import {
-  CITATION_HISTORY, ARREST_RECORDS, WARNING_RECORDS,
+  [], [], [],
   GENERAL_INCIDENTS, DETAINED_CITIZENS,
 } from "@/lib/police-data";
 
@@ -86,7 +86,7 @@ export async function getCitations(filter?: { type?: "traffic" | "general"; offi
       if (data) return data;
     }
   }
-  return CITATION_HISTORY;
+  return [];
 }
 
 export async function createCitation(citation: {
@@ -226,7 +226,7 @@ export async function getMissingRecords() {
       if (data) return data;
     }
   }
-  return MISSING_RECORDS;
+  return [];
 }
 
 export async function createMissingRecord(record: {
@@ -275,10 +275,10 @@ export async function getDashboardStats(role: string, region?: string, stationId
   return {
     officers_total: 0,
     officers_active: 0,
-    citations_today: CITATION_HISTORY.length,
+    citations_today: [].length,
     incidents_today: GENERAL_INCIDENTS.length,
-    arrests_total:   ARREST_RECORDS.length,
-    missing_active:  MISSING_RECORDS.filter((m) => m.status === "active").length,
+    arrests_total:   [].length,
+    missing_active:  0,
     stations_total:  ADMIN_STATIONS.length,
     posts_total:     ADMIN_POSTS.length,
   };

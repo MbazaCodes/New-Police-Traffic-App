@@ -144,7 +144,7 @@ export function DetainedCitizensScreen() {
         {/* Header card */}
         <div className="rounded-2xl bg-[#1E3A8A] p-5 text-white">
           <div className="flex items-center gap-4">
-            <img src={avatarUrl(selected.fullName)} alt={selected.fullName}
+            <img src={""} alt={selected.fullName}
               className="h-16 w-16 rounded-full object-cover ring-2 ring-white/30"/>
             <div>
               <h2 className="text-[18px] font-bold">{selected.fullName}</h2>
@@ -340,7 +340,7 @@ export function DetainedCitizensScreen() {
                 return (
                   <tr key={c.id} className="hover:bg-police-muted transition cursor-pointer" onClick={() => setSelected(c)}>
                     <td className="px-3 py-2">
-                      <img src={avatarUrl(c.fullName)} alt={c.fullName} className="h-8 w-8 rounded-full object-cover"/>
+                      <img src={""} alt={c.fullName} className="h-8 w-8 rounded-full object-cover"/>
                     </td>
                     <td className="px-3 py-2 font-bold text-police whitespace-nowrap">{c.fullName}</td>
                     <td className="px-3 py-2 font-mono text-[9px] text-police-faint">{c.id}</td>

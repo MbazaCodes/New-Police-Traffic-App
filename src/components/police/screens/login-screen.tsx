@@ -7,6 +7,8 @@ import {
   ShieldCheck,
   Shield,
   User,
+  Car,
+  UserCheck,
   Phone,
   Mail,
   ArrowRight,

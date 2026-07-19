@@ -8,7 +8,6 @@ import {
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
 import { toast } from "@/hooks/use-toast";
-import { } from "@/lib/police-data";
 
 const BAIL_RATES: Record<string, number> = {
   "Wizi wa Kawaida": 500000,

@@ -2,7 +2,6 @@
 
 import { ArrowLeft, FileText, Car, User, MapPin, Clock, TrendingDown, CheckCircle, XCircle, Printer, Share2 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { } from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 
 export function CitationDetailScreen() {

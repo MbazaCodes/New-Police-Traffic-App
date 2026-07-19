@@ -5,7 +5,6 @@ import {
   Clock, AlertTriangle, FileText, Eye, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { DETAINED_CITIZENS } from "@/lib/police-data";
-import { } from "@/lib/police-data";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type ViewMode = "list" | "card";
@@ -14,7 +13,7 @@ type StatusFilter = "all" | "held" | "released" | "charged" | "investigating";
 // ── Enrich DETAINED_CITIZENS with photos and extra fields ──────────────────
 const RECORDS = DETAINED_CITIZENS.map((c) => ({
   ...c,
-  photo: avatarUrl(c.fullName),
+  photo: "",
   arrestId: c.id,
   charges: c.reason,
   station: c.station,

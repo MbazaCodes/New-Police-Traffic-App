@@ -2,7 +2,6 @@
 // GET /api/search/vehicle?plate=T 001 ABC -> vehicle search result
 
 import { NextResponse } from "next/server";
-import { SEARCH_RESULT } from "@/lib/police-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
@@ -25,9 +24,9 @@ export async function GET(request: Request) {
     }
 
     // In production: lookup vehicle by plate in vehicle registry.
-    // Mock: return the SEARCH_RESULT (overriding the plate) if it starts with "T".
+    // Mock: return the null (overriding the plate) if it starts with "T".
     if (plate.startsWith("T")) {
-      const result = { ...SEARCH_RESULT, plate };
+      const result = { ...null, plate };
       logAction(
         session!.user.id,
         "search_vehicle",

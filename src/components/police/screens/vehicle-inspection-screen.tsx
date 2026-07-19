@@ -15,14 +15,13 @@ import {
   Trash2,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
-import { VEHICLE_INSPECTION } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 
 export function VehicleInspectionScreen() {
   const OFFICER = useOfficer();
-  const v = VEHICLE_INSPECTION;
+  const v = {} as Record<string,unknown>;
   const goBack = usePoliceStore((s) => s.goBack);
   const addInspection = useRecordsStore((s) => s.addInspection);
 

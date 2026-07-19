@@ -8,7 +8,7 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 
-const stationsStore: typeof STATIONS = [...STATIONS];
+const stationsStore: {id:string;name:string;region:string;status:string}[] = [];
 
 export async function GET(
   _request: Request,

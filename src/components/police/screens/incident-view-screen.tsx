@@ -2,7 +2,6 @@
 
 import { ArrowLeft, MapPin, Clock, User, AlertTriangle, FileText, Shield, UserX } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { GENERAL_INCIDENTS } from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -14,7 +13,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export function IncidentViewScreen() {
   const { goBack, selectedIncidentId, navigate, setArrestPrefill, setIncidentPrefill } = usePoliceStore();
-  const incident = GENERAL_INCIDENTS.find((i) => i.id === selectedIncidentId);
+  const incident = [].find((i) => i.id === selectedIncidentId);
 
   if (!incident) {
     return (

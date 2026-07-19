@@ -2,7 +2,6 @@
 
 import { ArrowLeft, MapPin, Clock, Car, User, AlertTriangle, FileText, TrendingDown } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { } from "@/lib/police-data";
 
 export function OffenseDetailScreen() {
   const { goBack, selectedOffenseId, navigate } = usePoliceStore();

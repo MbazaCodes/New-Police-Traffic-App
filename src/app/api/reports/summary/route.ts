@@ -16,7 +16,7 @@ export async function GET() {
 
     const scope = getScopeContext(session);
     const scopedRegions = enforceDataScope(
-      REGION_STATS.map((r) =>
+      [].map((r) =>
         annotateRecordScope(
           {
             ...r,
@@ -32,7 +32,7 @@ export async function GET() {
     );
 
     const scopedLiveIncidents = enforceDataScope(
-      LIVE_INCIDENTS.filter((i) => i.status !== "resolved").map((i) =>
+      [].filter((i) => i.status !== "resolved").map((i) =>
         annotateRecordScope(
           {
             ...i,
@@ -56,7 +56,7 @@ export async function GET() {
     const resolutionRate = totalIncidents > 0 ? Math.round((totalResolved / totalIncidents) * 100) : 0;
 
     const summary = {
-      kpis: DASHBOARD_KPIS,
+      kpis: [],
       aggregated: {
         totalOfficers,
         totalIncidents,
@@ -67,8 +67,8 @@ export async function GET() {
         todayCitations: 89,
       },
       trends: {
-        incidentTrend: INCIDENT_TREND,
-        offenseDistribution: OFFENSE_DISTRIBUTION,
+        incidentTrend: [],
+        offenseDistribution: [],
       },
       distribution: {
         regionStats: scopedRegions,

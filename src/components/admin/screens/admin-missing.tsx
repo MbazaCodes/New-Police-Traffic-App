@@ -23,7 +23,7 @@ export function AdminMissing() {
   const [form, setForm] = useState({ type:"person" as "person"|"car"|"device", title:"", identifier:"", details:"", lastSeen:"", lastSeenLocation:"", reportedBy:"", station:"Kituo Kikuu cha Polisi DSM" });
   const setF = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>) => setForm((f) => ({...f,[k]:e.target.value}));
 
-  const records = [...MISSING_RECORDS];
+  const records: never[] = [];
   const filtered = records.filter((r) => {
     if (typeFilter !== "all" && r.type !== typeFilter) return false;
     if (statusFilter !== "all" && r.status !== statusFilter) return false;

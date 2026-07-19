@@ -7,7 +7,7 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 
-const assignmentsStore: typeof ASSIGNMENTS = [...ASSIGNMENTS];
+const assignmentsStore: {id:string;officerId:string;stationId:string;postId?:string;role:string;status:string}[] = [];
 
 export async function GET(request: Request) {
   try {

@@ -7,10 +7,6 @@ import {
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
-import {
-  DRIVER_POINTS, CITIZEN_POINTS, POINTS_STATUS_LABEL, POINTS_STATUS_COLOR,
-  type DriverPointsRecord, type CitizenPointsRecord,
-} from "@/lib/police-data";
 
 type Tab = "driver" | "citizen";
 

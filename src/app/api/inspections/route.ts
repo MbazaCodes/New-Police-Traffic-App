@@ -3,7 +3,6 @@
 // POST /api/inspections  -> create inspection
 
 import { NextResponse } from "next/server";
-import { VEHICLE_INSPECTION } from "@/lib/police-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
@@ -27,16 +26,16 @@ interface Inspection {
 const inspectionsStore: Inspection[] = [
   {
     id: "INS-2026-001",
-    plate: VEHICLE_INSPECTION.plate,
-    model: VEHICLE_INSPECTION.model,
-    color: VEHICLE_INSPECTION.color,
-    owner: VEHICLE_INSPECTION.owner,
-    phone: VEHICLE_INSPECTION.phone,
-    location: VEHICLE_INSPECTION.location,
-    datetime: VEHICLE_INSPECTION.datetime,
-    documents: VEHICLE_INSPECTION.documents,
-    mechanical: VEHICLE_INSPECTION.mechanical,
-    photos: VEHICLE_INSPECTION.photos,
+    plate: [].plate,
+    model: [].model,
+    color: [].color,
+    owner: [].owner,
+    phone: [].phone,
+    location: [].location,
+    datetime: [].datetime,
+    documents: [].documents,
+    mechanical: [].mechanical,
+    photos: [].photos,
     overallStatus: "fail",
     officer: "Insp. Juma Mwinyi",
   },

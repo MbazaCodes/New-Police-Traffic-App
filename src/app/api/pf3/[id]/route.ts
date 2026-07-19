@@ -3,7 +3,6 @@
 // PATCH /api/pf3/[id]  -> update PF3 form
 
 import { NextResponse } from "next/server";
-import { PF3_FORM } from "@/lib/police-data";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
@@ -26,7 +25,7 @@ interface Pf3Form {
 }
 
 const pf3Store: Pf3Form[] = [
-  { ...PF3_FORM, createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), status: "submitted" },
+  { ...[], createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), status: "submitted" },
 ];
 
 export async function GET(

@@ -641,18 +641,10 @@ export const GENERAL_INCIDENTS = [
   { id: 5, title: "Ufisadi wa umma - Posta", type: "Ufisadi", status: "Mpya", statusColor: "#2196F3", icon: "users", iconColor: "#1E3A8A", date: "07 Mei 2026", time: "11:20", location: "Posta Mpya, Ilala", description: "Mlalamiko wa ufisadi dhidi ya afisa wa serikali. Uchunguzi unaendelea.", casualties: 0, officer: "Cprl. Saidi Juma" },
 ];
 
-// TRAFFIC_STATS — derived from CITATION_HISTORY (defined above)
-export const TRAFFIC_STATS = (() => {
-  const total     = CITATION_HISTORY.length;
-  const unpaid    = CITATION_HISTORY.filter((c) => c.status === "Hajalipwa").length;
-  const paid      = CITATION_HISTORY.filter((c) => c.status === "Imelipwa").length;
-  const totalFine = CITATION_HISTORY.reduce(
-    (s, c) => s + parseInt(c.fine.replace(/[^\d]/g, ""), 10), 0
-  );
-  return [
-    { label: "Jumla ya Makosa", value: String(total),                        icon: "clipboard", color: "#2196F3" },
-    { label: "Inasubiri",       value: String(unpaid),                       icon: "clock",     color: "#FF9800" },
-    { label: "Imelipwa",        value: String(paid),                         icon: "check",     color: "#10B981" },
-    { label: "Jumla ya Faini",  value: (totalFine/1000).toFixed(0)+"k", sub: "TZS", icon: "wallet", color: "#1E3A8A" },
-  ];
-})();
+// TRAFFIC_STATS — live from Supabase (zeros until loaded)
+export const TRAFFIC_STATS = [
+  { label: "Jumla ya Makosa", value: "0", icon: "clipboard", color: "#2196F3" },
+  { label: "Inasubiri",       value: "0", icon: "clock",     color: "#FF9800" },
+  { label: "Imelipwa",        value: "0", icon: "check",     color: "#10B981" },
+  { label: "Jumla ya Faini",  value: "0k", sub: "TZS", icon: "wallet", color: "#1E3A8A" },
+];

@@ -19,7 +19,6 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
-import { ACCIDENT_VEHICLES, ACCIDENT_PEOPLE, ACCIDENT_EVIDENCE } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
@@ -55,13 +54,13 @@ export function AccidentReportScreen() {
   const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 
   const [vehicles, setVehicles] = useState<VehicleRow[]>(
-    ACCIDENT_VEHICLES.map((v) => ({ plate: v.plate, model: v.model, color: v.color, damage: v.damage }))
+    [].map((v) => ({ plate: v.plate, model: v.model, color: v.color, damage: v.damage }))
   );
   const [people, setPeople] = useState<PersonRow[]>(
-    ACCIDENT_PEOPLE.map((p) => ({ name: p.name, role: p.role, phone: p.phone, condition: p.condition }))
+    [].map((p) => ({ name: p.name, role: p.role, phone: p.phone, condition: p.condition }))
   );
   const [evidence, setEvidence] = useState<EvidenceRow[]>(
-    ACCIDENT_EVIDENCE.map((e) => ({ name: e.name, size: e.size, type: e.type }))
+    [].map((e) => ({ name: e.name, size: e.size, type: e.type }))
   );
   const [description, setDescription] = useState("");
   const [hasInjuries, setHasInjuries] = useState(true);

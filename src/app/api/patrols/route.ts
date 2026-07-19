@@ -8,7 +8,7 @@ import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { annotateRecordScope, getScopeContext } from "@/lib/scope";
 
-const patrolsStore: typeof ACTIVE_PATROLS = [...ACTIVE_PATROLS];
+const patrolsStore: {id:string;officer:string;area:string;status:string;start:string}[] = [];
 
 export async function GET(request: Request) {
   try {

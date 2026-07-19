@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SEARCH_RESULT } from "@/lib/police-data";
 
 // GET /api/search?q=T 001 ABC&type=plate|nida|license|citizen
 export async function GET(req: NextRequest) {
@@ -18,7 +17,7 @@ export async function GET(req: NextRequest) {
       found: true,
       type,
       query: q,
-      data: { ...SEARCH_RESULT, plate: type === "plate" ? q.toUpperCase() : SEARCH_RESULT.plate },
+      data: { ...null, plate: type === "plate" ? q.toUpperCase() : null.plate },
     });
   }
 

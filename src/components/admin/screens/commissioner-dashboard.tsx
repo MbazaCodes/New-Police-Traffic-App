@@ -20,7 +20,7 @@ const TRAFFIC_OFFICERS: never[] = [];
 const GENERAL_OFFICERS: never[] = [];
 const ALL_FIELD_OFFICERS: never[] = [];
 const ACTIVE_OFFICERS = ALL_FIELD_OFFICERS.filter((u) => u.status === "active" || u.status === "patrol");
-const ACTIVE_MISSING = MISSING_RECORDS.filter((m) => m.status === "active");
+const ACTIVE_MISSING: never[] = [];
 const DETAINED = [].filter((d) => d.status === "held");
 
 const STATUS_COLOR = { active:"#10B981", patrol:"#2196F3", break:"#FF9800", "off-duty":"#9E9E9E" } as Record<string,string>;

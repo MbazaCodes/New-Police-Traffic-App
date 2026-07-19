@@ -3,14 +3,13 @@
 // POST /api/alerts  -> send a broadcast alert
 
 import { NextResponse } from "next/server";
-import { ALERTS } from "@/lib/police-data";
 import { getServerSession } from "@/lib/auth";
 import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { annotateRecordScope, getScopeContext } from "@/lib/scope";
 
-const alertsStore: typeof ALERTS = [...ALERTS];
-const alertHistoryStore: typeof ADMIN_ALERTS_HISTORY = [...ADMIN_ALERTS_HISTORY];
+const alertsStore: {id:string;title:string;message:string;priority:string;category:string;isRead:boolean;createdAt:string}[] = [];
+const alertHistoryStore: {id:string;title:string;audience:string;priority:string;sentBy:string;date:string;time:string;recipients:number}[] = [];
 
 export async function GET(request: Request) {
   try {
