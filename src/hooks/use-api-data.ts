@@ -13,7 +13,11 @@ interface FetchState<T> {
 /**
  * Universal hook to fetch from any /api/* endpoint.
  * Returns data[], loading, error, and a refetch function.
- * Falls back to empty array on error — screens show empty state.
+ *
+ * Handles HTTP status codes properly:
+ * - 401: Session expired → redirects to login
+ * - 403: Forbidden → Swahili error message
+ * - Other errors: Swahili error messages
  */
 export function useApiData<T = Record<string, unknown>>(
   endpoint: string,
@@ -41,7 +45,32 @@ export function useApiData<T = Record<string, unknown>>(
     }
 
     fetch(url.toString())
-      .then((r) => r.json())
+      .then((r) => {
+        // ── 401: session expired → redirect to login ──
+        if (r.status === 401) {
+          if (typeof window !== "undefined") {
+            window.location.href = "/?reason=session_expired";
+          }
+          throw new Error("Kikao chako kimekwisha. Tafadhali ingia tena.");
+        }
+
+        // ── 403: forbidden ──
+        if (r.status === 403) {
+          throw new Error("Huna ruhusa ya kutazama rasilimali hii.");
+        }
+
+        // ── 429: rate limited ──
+        if (r.status === 429) {
+          throw new Error("Ombi lako limekataliwa. Tafadhali subiri kidogo kisha jaribu tena.");
+        }
+
+        // ── 5xx: server error ──
+        if (r.status >= 500) {
+          throw new Error("Hitilafu ya seva. Tafadhali jaribu tena baadaye.");
+        }
+
+        return r.json();
+      })
       .then((json) => {
         if (cancelled) return;
         if (json.ok === false || json.error) {
@@ -53,7 +82,10 @@ export function useApiData<T = Record<string, unknown>>(
         }
       })
       .catch((e) => {
-        if (!cancelled) { setError(String(e)); setData([]); }
+        if (!cancelled) {
+          setError(String(e));
+          setData([]);
+        }
       })
       .finally(() => { if (!cancelled) setLoading(false); });
 

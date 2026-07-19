@@ -344,11 +344,11 @@ export function requireRole(
   allowedRoles: Role[],
 ): AuthCheckResult {
   if (!session?.user) {
-    return { ok: false, status: 401, error: "Unauthorized — authentication required" };
+    return { ok: false, status: 401, error: "Uthibitishaji umekosea. Tafadhali ingia tena." };
   }
   const userRole = session.user.role as Role;
   if (!allowedRoles.includes(userRole)) {
-    return { ok: false, status: 403, error: "Forbidden — insufficient role" };
+    return { ok: false, status: 403, error: "Huna ruhusa ya kufanya hivyo." };
   }
   return { ok: true, status: 200, session };
 }
@@ -363,11 +363,11 @@ export function requirePermission(
   action: Action,
 ): AuthCheckResult {
   if (!session?.user) {
-    return { ok: false, status: 401, error: "Unauthorized — authentication required" };
+    return { ok: false, status: 401, error: "Uthibitishaji umekosea. Tafadhali ingia tena." };
   }
   const userRole = session.user.role as Role;
   if (!canAccess(userRole, resource, action)) {
-    return { ok: false, status: 403, error: `Forbidden — cannot ${action} ${resource}` };
+    return { ok: false, status: 403, error: "Huna ruhusa ya kufanya kitendo hiki." };
   }
   return { ok: true, status: 200, session };
 }

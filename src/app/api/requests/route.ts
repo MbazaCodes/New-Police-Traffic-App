@@ -32,7 +32,7 @@ const requestsStore: OfficerRequest[] = [];
 export async function GET(request: Request) {
   try {
     const session = await getServerSession();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.user) return NextResponse.json({ error: "Uthibitishaji umekosea. Tafadhali ingia tena." }, { status: 401 });
 
     const url = new URL(request.url);
     const status = url.searchParams.get("status") ?? "";
@@ -62,7 +62,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession();
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.user) return NextResponse.json({ error: "Uthibitishaji umekosea. Tafadhali ingia tena." }, { status: 401 });
 
     const body = await request.json().catch(() => ({}));
     if (!body.type || !body.details) {

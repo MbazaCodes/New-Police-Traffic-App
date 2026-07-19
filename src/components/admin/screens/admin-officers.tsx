@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Filter, X, Shield, AlertTriangle, Phone, ChevronRight, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, X, Shield, AlertTriangle, ChevronRight, Plus, Save, Loader2 } from "lucide-react";
 import { useApiData } from "@/hooks/use-api-data";
+import { authFetch } from "@/lib/client-auth";
 import { toast } from "@/hooks/use-toast";
 
 type Officer = {
@@ -10,6 +11,8 @@ type Officer = {
   station?: { id: string; name: string; region: string } | null;
   user?: { email: string | null; phone: string | null; photo_url: string | null; unit: string | null; badge_no: string | null } | null;
 };
+
+type StationOption = { id: string; name: string };
 
 const STATUS_STYLES: Record<string, string> = {
   active:    "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30",
@@ -26,6 +29,8 @@ export function AdminOfficers() {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Officer | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const { data: officers, loading, error, refetch } = useApiData<Officer>(
     "/api/officers",
@@ -44,7 +49,7 @@ export function AdminOfficers() {
           <p className="text-[12px] text-police-muted">{officers.length} maofisa wote • {activeCount} kazini sasa</p>
         </div>
         <button
-          onClick={() => toast({ title:"Fungua fomu", description:"Tumia /api/officers POST kuongeza afisa" })}
+          onClick={() => setShowAddModal(true)}
           className="flex items-center gap-2 rounded-xl bg-[#2196F3] px-4 py-2.5 text-[13px] font-bold text-white shadow-sm hover:bg-[#1E88E5] active:scale-95 transition"
         >
           <Plus size={16} /> Ongeza Afisa
@@ -97,8 +102,7 @@ export function AdminOfficers() {
         {!loading && error && (
           <div className="flex flex-col items-center py-12 text-center">
             <AlertTriangle size={32} className="text-[#EF4444]" />
-            <p className="mt-2 text-[13px] font-semibold text-[#EF4444]">Hitilafu ya kupakia</p>
-            <p className="text-[12px] text-police-muted mt-1">{error}</p>
+            <p className="mt-2 text-[13px] font-semibold text-[#EF4444]">{error}</p>
             <button onClick={refetch} className="mt-3 rounded-xl bg-[#2196F3] px-4 py-2 text-[12px] text-white">Jaribu Tena</button>
           </div>
         )}
@@ -108,7 +112,7 @@ export function AdminOfficers() {
               <Shield size={32} className="text-[#2196F3] opacity-60" />
             </div>
             <p className="mt-4 text-[15px] font-bold text-police">Hakuna Maofisa Bado</p>
-            <p className="mt-1 text-[12px] text-police-muted max-w-xs">Mfumo umeanza upya. Bonyeza "Ongeza Afisa" kuanza kuingiza maofisa.</p>
+            <p className="mt-1 text-[12px] text-police-muted max-w-xs">Mfumo umeanza upya. Bonyeza &quot;Ongeza Afisa&quot; kuanza kuingiza maofisa.</p>
           </div>
         )}
         {!loading && !error && officers.length > 0 && (
@@ -193,6 +197,150 @@ export function AdminOfficers() {
           </div>
         </div>
       )}
+
+      {/* ── Add Officer Modal ─────────────────────────────── */}
+      {showAddModal && (
+        <AddOfficerModal
+          onClose={() => setShowAddModal(false)}
+          onSaved={() => { setShowAddModal(false); refetch(); }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Add Officer Modal Component ──────────────────────────────────────
+
+function AddOfficerModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [stations, setStations] = useState<StationOption[]>([]);
+
+  const [name, setName] = useState("");
+  const [rank, setRank] = useState("Constable");
+  const [badgeNo, setBadgeNo] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [stationId, setStationId] = useState("");
+
+  // Load stations on mount
+  useEffect(() => {
+    fetch("/api/stations")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.data) setStations(json.data.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
+      })
+      .catch(() => {});
+  }, []);
+
+  async function handleSubmit() {
+    setFormError(null);
+
+    if (!name.trim()) { setFormError("Jina la afisa linahitajika"); return; }
+    if (!badgeNo.trim()) { setFormError("Namba ya badge inahitajika"); return; }
+    if (!stationId) { setFormError("Tafadhali chagua kituo"); return; }
+
+    setSaving(true);
+    const { error } = await authFetch("/api/officers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name.trim(),
+        rank,
+        badgeNo: badgeNo.trim(),
+        phone: phone.trim() || undefined,
+        email: email.trim() || undefined,
+        stationId,
+      }),
+    });
+    setSaving(false);
+
+    if (error) {
+      setFormError(error);
+      return;
+    }
+
+    toast({ title: "Afisa ameongezwa", description: `${name.trim()} ameongezwa kwenye mfumo` });
+    onSaved();
+  }
+
+  const fields: { label: string; value: string; onChange: (v: string) => void; placeholder: string; type?: string; required?: boolean }[] = [
+    { label: "Jina *", value: name, onChange: setName, placeholder: "Mfano: John Mwenda", required: true },
+    { label: "Nafasi / Cheo", value: rank, onChange: setRank, placeholder: "Mfano: Constable" },
+    { label: "Namba ya Badge *", value: badgeNo, onChange: setBadgeNo, placeholder: "Mfano: TPF-1234", required: true },
+    { label: "Simu", value: phone, onChange: setPhone, placeholder: "Mfano: +255 700 000 000", type: "tel" },
+    { label: "Barua Pepe", value: email, onChange: setEmail, placeholder: "Mfano: afisa@police.go.tz", type: "email" },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center" onClick={onClose}>
+      <div className="relative w-full max-w-md rounded-2xl bg-police-card p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute right-4 top-4 text-police-muted hover:text-police">
+          <X size={18} />
+        </button>
+
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2196F3]/15 text-[#2196F3]">
+            <Shield size={18} />
+          </div>
+          <div>
+            <p className="text-[15px] font-bold text-police">Ongeza Afisa Mpya</p>
+            <p className="text-[11px] text-police-faint">Jaza taarifa za afisa mpya</p>
+          </div>
+        </div>
+
+        {formError && (
+          <div className="mb-4 rounded-lg bg-[#EF4444]/10 border border-[#EF4444]/30 px-3 py-2.5 text-[12px] text-[#EF4444]">
+            {formError}
+          </div>
+        )}
+
+        <div className="space-y-3">
+          {fields.map(({ label, value, onChange, placeholder, type }) => (
+            <div key={label}>
+              <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">{label}</label>
+              <input
+                type={type ?? "text"}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police placeholder-police-faint focus:outline-none focus:border-[#2196F3]"
+              />
+            </div>
+          ))}
+
+          <div>
+            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kituo *</label>
+            <select
+              value={stationId}
+              onChange={(e) => setStationId(e.target.value)}
+              className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police focus:outline-none focus:border-[#2196F3]"
+            >
+              <option value="">— Chagua Kituo —</option>
+              {stations.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <button
+            onClick={onClose}
+            disabled={saving}
+            className="rounded-xl bg-police-input py-2.5 text-[13px] font-semibold text-police-navy hover:bg-police-muted transition disabled:opacity-60"
+          >
+            Ghairi
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={saving}
+            className="flex items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-2.5 text-[13px] font-bold text-white hover:bg-[#1E88E5] transition active:scale-95 disabled:opacity-60"
+          >
+            {saving ? <><Loader2 size={14} className="animate-spin" /> Inahifadhi...</> : <><Save size={14} /> Hifadhi</>}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

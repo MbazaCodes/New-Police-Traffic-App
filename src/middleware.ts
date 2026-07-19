@@ -68,14 +68,14 @@ export async function middleware(request: NextRequest) {
     }
 
     if (pathname.startsWith("/api")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Uthibitishaji umekosea. Tafadhali ingia tena." }, { status: 401 });
     }
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/?reason=session_expired", request.url));
   }
 
   if (!canRoleAccessPath(role, pathname)) {
     if (pathname.startsWith("/api")) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json({ error: "Huna ruhusa ya kufikia rasilimali hii." }, { status: 403 });
     }
 
     const defaultRoute = getDefaultRouteForRole(role);

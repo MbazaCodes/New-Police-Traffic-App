@@ -192,14 +192,33 @@ export async function getServerSession(): Promise<Session | null> {
   const headerMap = Object.fromEntries(hdrs.entries());
 
   // Parse cookies from the Cookie header so getToken can find the session token.
-  // On Vercel (HTTPS) the cookie is __Secure-next-auth.session-token.
-  // On localhost (HTTP) it is next-auth.session-token.
+  // Checks multiple cookie names for maximum compatibility:
+  //   - NextAuth standard: __Secure-next-auth.session-token (HTTPS), next-auth.session-token (HTTP)
+  //   - Fallback names: token, accessToken, authToken
   const cookieHeader = headerMap["cookie"] ?? "";
   const cookies: Record<string, string> = {};
   for (const part of cookieHeader.split(";")) {
     const eq = part.indexOf("=");
     if (eq === -1) continue;
     cookies[part.slice(0, eq).trim()] = decodeURIComponent(part.slice(eq + 1).trim());
+  }
+
+  // If NextAuth cookie not found, try fallback cookie names
+  const NEXTAUTH_COOKIE_NAMES = [
+    "__Secure-next-auth.session-token",
+    "next-auth.session-token",
+  ];
+  const hasNextAuthCookie = NEXTAUTH_COOKIE_NAMES.some((n) => cookies[n]);
+
+  if (!hasNextAuthCookie) {
+    const FALLBACK_NAMES = ["token", "accessToken", "authToken"];
+    for (const fb of FALLBACK_NAMES) {
+      if (cookies[fb]) {
+        // Inject into the standard NextAuth cookie slot so getToken picks it up
+        cookies["next-auth.session-token"] = cookies[fb];
+        break;
+      }
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

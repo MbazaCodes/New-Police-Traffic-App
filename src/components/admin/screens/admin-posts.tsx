@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import {
   Search,
   X,
@@ -17,7 +16,6 @@ import {
   TrafficCone,
   Save,
 } from "lucide-react";
-import { getAdminCreatePath, getAdminEntityPath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
 import { useRecordsStore, type AdminPostRecord } from "@/store/records-store";
 
@@ -45,8 +43,6 @@ const FILTER_TABS = [
 type ModalMode = "create" | "edit" | "view";
 
 export function AdminPosts() {
-  const pathname = usePathname();
-  const router = useRouter();
   const posts = useRecordsStore((s) => s.adminPosts);
   const stations = useRecordsStore((s) => s.adminStations);
   const addAdminPost = useRecordsStore((s) => s.addAdminPost);
@@ -117,20 +113,12 @@ export function AdminPosts() {
             Dhibiti posti na vituo vya ukaguzi wa polisi
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={openCreate}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#2196F3]"
-          >
-            <Plus size={14} /> Ongeza Posti (Modal)
-          </button>
-          <button
-            onClick={() => router.push(getAdminCreatePath(pathname, "posts"))}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-police-card px-3.5 py-2 text-[12px] font-semibold text-police-navy shadow-sm hover:bg-police-muted"
-          >
-            <Plus size={14} /> Ongeza Posti (Ukurasa)
-          </button>
-        </div>
+        <button
+          onClick={openCreate}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#2196F3] px-3.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-[#2196F3] transition"
+        >
+          <Plus size={14} /> Ongeza Posti
+        </button>
       </div>
 
       {/* Stats summary */}
@@ -304,7 +292,6 @@ export function AdminPosts() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(getAdminEntityPath(pathname, "assignments", p.id));
                           toast({
                             title: "Fomu ya mgao",
                             description: `Inafungua fomu ya kumgawia afisa kwenye ${p.name}`,
