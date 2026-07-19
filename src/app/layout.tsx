@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
+import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
   title: "TZ Police Digital Platform",
@@ -34,10 +35,12 @@ export default function RootLayout({
   return (
     <html lang="sw" suppressHydrationWarning>
       <body className="antialiased bg-background text-foreground">
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

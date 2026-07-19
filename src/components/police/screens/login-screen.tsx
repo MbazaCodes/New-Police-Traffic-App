@@ -255,15 +255,31 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       // Create NextAuth session cookie so API routes can read auth state.
       // The OTP is already consumed above, so we pass a pre-verified token
       // that the authorize() function accepts without re-checking the OTP.
+      //
+      // NOTE: with `redirect: false`, signIn() resolves (does NOT throw) on
+      // auth failure — it returns { ok: false, error: "CredentialsSignin" }.
+      // We must inspect the result and abort if no session was created,
+      // otherwise the Zustand store gets marked authenticated while the server
+      // has no cookie, causing every subsequent /api/* call to 401.
       const userId = data?.userId ?? "";
+      let sessionOk = false;
       try {
-        await signIn("credentials", {
+        const result = await signIn("credentials", {
           username: cleanIdentifier,
           otp:      `verified:${userId}`,   // authorize() recognises this pattern
           redirect: false,
         });
-      } catch {
-        console.warn("[login] NextAuth signIn failed — API routes may return 401");
+        sessionOk = Boolean(result && result.ok && !result.error);
+        if (!sessionOk) {
+          console.warn("[login] NextAuth signIn failed:", result?.error ?? "unknown");
+        }
+      } catch (err) {
+        console.warn("[login] NextAuth signIn threw:", err);
+      }
+      if (!sessionOk) {
+        setErrorMsg("Imeshindwa kuanzisha kikao cha msingi. Tafadhali jaribu tena.");
+        setVerifying(false);
+        return;
       }
 
       if (mode === "admin") {
