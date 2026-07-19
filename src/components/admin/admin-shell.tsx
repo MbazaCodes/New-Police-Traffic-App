@@ -29,6 +29,7 @@ import { AdminDashboard } from "./screens/admin-dashboard";
 import { CommissionerDashboard } from "./screens/commissioner-dashboard";
 import { WaliokamatwaScreen } from "./screens/waliokamatwa-screen";
 import { AdminRequests } from "./screens/admin-requests";
+import { AdminCommunications } from "./screens/admin-communications";
 import { AdminOfficers } from "./screens/admin-officers";
 import { AdminIncidents } from "./screens/admin-incidents";
 import { AdminCitations } from "./screens/admin-citations";
@@ -356,6 +357,8 @@ function renderAdminScreen(screen: AdminScreen) {
       return <DetainedCitizensScreen />;
     case "requests":
       return <AdminRequests />;
+    case "communications":
+      return <AdminCommunications />;
     case "waliokamatwa":
       return <WaliokamatwaScreen />;
     case "missing":

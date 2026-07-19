@@ -1,266 +1,371 @@
 "use client";
 
-import { useState } from "react";
-import { Search, X, Plus, Shield, Clock, CheckCircle, AlertTriangle, User, Phone, MapPin, Calendar, FileText } from "lucide-react";
-import { DETAINED_CITIZENS } from "@/lib/police-data";
+import { useState, useMemo } from "react";
+import {
+  Search, X, Plus, CheckCircle, Clock, AlertTriangle,
+  User, Phone, MapPin, Calendar, FileText, Shield,
+  ChevronRight, UserCheck, UserX, RefreshCw,
+} from "lucide-react";
+import { DETAINED_CITIZENS, ARREST_RECORDS } from "@/lib/police-data";
 import { avatarUrl } from "@/lib/mock-engine";
 import { toast } from "@/hooks/use-toast";
+import { usePoliceStore } from "@/store/police-store";
 
 const STATUS_MAP = {
-  held: { label: "Kizuizini", color: "#EF4444", bg: "#FEF2F2" },
-  released: { label: "Ameachiwa", color: "#10B981", bg: "#F0FDF4" },
-  charged: { label: "Ameshtakiwa", color: "#1E3A8A", bg: "#F5F3FF" },
-};
+  held:         { label:"Kizuizini",   color:"#EF4444", bg:"#FEF2F2" },
+  released:     { label:"Ameachiwa",   color:"#10B981", bg:"#F0FDF4" },
+  charged:      { label:"Ameshtakiwa", color:"#1E3A8A", bg:"#EFF6FF" },
+  investigating:{ label:"Uchunguzi",   color:"#FF9800", bg:"#FFF7ED" },
+} as const;
 
-const TYPE_MAP = {
-  arrested: { label: "Kukamatwa", color: "#EF4444" },
-  detained: { label: "Kizuizini", color: "#FF9800" },
-  traffic: { label: "Trafiki", color: "#2196F3" },
+type Status = keyof typeof STATUS_MAP;
+
+interface DetainedRecord {
+  id: string; fullName: string; nida: string; dob: string; gender: string;
+  address: string; phone: string; occupation: string;
+  reason: string; type: string; cell: string;
+  detainedDate: string; detainedTime: string;
+  courtDate: string; nextOfKin: string; lawyer: string;
+  medicalStatus: string; officer: string; station: string;
+  status: Status; notes?: string;
+}
+
+// Merge static DETAINED_CITIZENS with any newly added
+const BASE: DetainedRecord[] = (DETAINED_CITIZENS as unknown as DetainedRecord[]);
+
+const EMPTY_FORM: Omit<DetainedRecord,"id"> = {
+  fullName:"", nida:"", dob:"", gender:"Mme", address:"", phone:"", occupation:"",
+  reason:"", type:"arrested", cell:"", detainedDate:"", detainedTime:"",
+  courtDate:"", nextOfKin:"", lawyer:"", medicalStatus:"Nzuri",
+  officer:"", station:"", status:"held",
 };
 
 export function DetainedCitizensScreen() {
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"all" | "held" | "released" | "charged">("all");
-  const [selected, setSelected] = useState<(typeof DETAINED_CITIZENS)[0] | null>(null);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ fullName: "", nida: "", dob: "", gender: "Mme", address: "", phone: "", occupation: "", reason: "", type: "arrested", cell: "", courtDate: "", nextOfKin: "", medicalStatus: "Nzuri", officer: "", notes: "" });
+  const { authRole } = usePoliceStore();
+  const [records, setRecords]     = useState<DetainedRecord[]>(BASE);
+  const [search, setSearch]       = useState("");
+  const [filter, setFilter]       = useState<"all"|Status>("all");
+  const [selected, setSelected]   = useState<DetainedRecord|null>(null);
+  const [showForm, setShowForm]   = useState(false);
+  const [form, setForm]           = useState<Omit<DetainedRecord,"id">>(EMPTY_FORM);
+  const [saving, setSaving]       = useState(false);
 
-  const setF = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  const isCommander = ["NATIONAL_COMMANDER","REGIONAL_COMMANDER","DISTRICT_COMMANDER",
+    "STATION_COMMANDER","SUPER_ADMIN","DIG"].includes(authRole ?? "");
 
-  const filtered = DETAINED_CITIZENS.filter((c) => {
-    const matchFilter = filter === "all" || c.status === filter;
-    const matchSearch = c.fullName.toLowerCase().includes(search.toLowerCase()) || c.reason.toLowerCase().includes(search.toLowerCase()) || c.id.toLowerCase().includes(search.toLowerCase());
-    return matchFilter && matchSearch;
-  });
+  const filtered = useMemo(() => {
+    let r = records;
+    if (filter !== "all") r = r.filter(c => c.status === filter);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      r = r.filter(c =>
+        c.fullName.toLowerCase().includes(q) ||
+        c.reason.toLowerCase().includes(q) ||
+        c.id.toLowerCase().includes(q) ||
+        c.nida.toLowerCase().includes(q) ||
+        c.cell.toLowerCase().includes(q)
+      );
+    }
+    return r;
+  }, [records, filter, search]);
 
-  const handleSave = () => {
-    if (!form.fullName || !form.reason) { toast({ title: "Kosa", description: "Jaza jina na sababu.", variant: "destructive" }); return; }
-    toast({ title: "Mfungwa Amesajiliwa ✓", description: `${form.fullName} amewekwa kwenye rekodi ya kituo.` });
-    setShowForm(false);
+  const counts = {
+    all: records.length,
+    held: records.filter(r=>r.status==="held").length,
+    released: records.filter(r=>r.status==="released").length,
+    charged: records.filter(r=>r.status==="charged").length,
+    investigating: records.filter(r=>r.status==="investigating").length,
   };
 
+  const setF = (k: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>) =>
+      setForm(f => ({ ...f, [k]: e.target.value }));
+
+  // Add new detained person
+  async function handleAdd() {
+    if (!form.fullName || !form.reason) {
+      toast({ title:"Kosa", description:"Jaza jina na sababu.", variant:"destructive" }); return;
+    }
+    setSaving(true);
+    const now = new Date();
+    const newRecord: DetainedRecord = {
+      ...form,
+      id: `DET-${Date.now()}`,
+      detainedDate: form.detainedDate || now.toLocaleDateString("sw-TZ"),
+      detainedTime: form.detainedTime || now.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",hour12:false}),
+    };
+    try {
+      await fetch("/api/arrests", {
+        method: "POST", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          suspectName: form.fullName, suspectNida: form.nida,
+          suspectPhone: form.phone, offense: form.reason,
+          location: form.address, cell: form.cell,
+          nextOfKin: form.nextOfKin, lawyer: form.lawyer, notes: form.notes,
+        }),
+      });
+    } catch { /* offline — local only */ }
+    setRecords(r => [newRecord, ...r]);
+    setShowForm(false);
+    setForm(EMPTY_FORM);
+    setSaving(false);
+    toast({ title:`${form.fullName} Amesajiliwa ✓`, description:`Chumba: ${form.cell || "Hajapewa"}` });
+  }
+
+  // Release / update status
+  async function handleStatusChange(id: string, newStatus: Status, reason?: string) {
+    try {
+      await fetch(`/api/arrests/${id}`, {
+        method: "PATCH", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ status: newStatus, notes: reason }),
+      });
+    } catch { /* offline */ }
+    setRecords(r => r.map(rec => rec.id === id ? { ...rec, status: newStatus } : rec));
+    setSelected(s => s ? { ...s, status: newStatus } : null);
+    toast({
+      title: newStatus==="released" ? "Ameachiwa Huru ✓" : newStatus==="charged" ? "Ameshtakiwa ✓" : "Hali Imebadilishwa ✓",
+      description: `Rekodi imesasishwa`,
+    });
+  }
+
+  // ── Detail view ─────────────────────────────────────────────────────────
   if (selected) {
-    const st = STATUS_MAP[selected.status as keyof typeof STATUS_MAP];
-    const ty = TYPE_MAP[selected.type as keyof typeof TYPE_MAP];
+    const st = STATUS_MAP[selected.status];
     return (
-      <div className="p-4 space-y-4">
+      <div className="space-y-4 p-4 pb-8">
         <div className="flex items-center justify-between">
-          <button onClick={() => setSelected(null)} className="flex items-center gap-1.5 text-[13px] font-medium text-[#2196F3]">← Rudi kwenye Orodha</button>
-          <span className="rounded-full px-3 py-1 text-[11px] font-bold text-white" style={{ backgroundColor: st.color }}>{st.label}</span>
+          <button onClick={() => setSelected(null)}
+            className="flex items-center gap-1.5 text-[13px] font-medium text-[#2196F3]">
+            ← Rudi kwenye Orodha
+          </button>
+          <span className="rounded-full px-3 py-1 text-[11px] font-bold text-white"
+            style={{ backgroundColor: st.color }}>{st.label}</span>
         </div>
 
         {/* Header card */}
         <div className="rounded-2xl bg-[#1E3A8A] p-5 text-white">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15"><User size={28} className="text-white" /></div>
+            <img src={avatarUrl(selected.fullName)} alt={selected.fullName}
+              className="h-16 w-16 rounded-full object-cover ring-2 ring-white/30"/>
             <div>
               <h2 className="text-[18px] font-bold">{selected.fullName}</h2>
-              <p className="text-[12px] text-white/70">{selected.id} • {selected.cell} • <span style={{ color: ty.color === "#EF4444" ? "#fca5a5" : ty.color === "#FF9800" ? "#fcd34d" : "#93c5fd" }}>{ty.label}</span></p>
+              <p className="text-[12px] text-white/70">{selected.id} · Chumba {selected.cell || "—"}</p>
+              <p className="text-[11px] text-white/50">{selected.reason}</p>
             </div>
           </div>
         </div>
 
-        {/* Personal */}
-        <div className="rounded-2xl bg-white dark:bg-[#1a2332] p-4 shadow-sm">
-          <h3 className="mb-3 text-[14px] font-bold text-police">Taarifa Binafsi</h3>
-          <div className="space-y-2">
-            <DR icon={<User size={14} />} label="NIDA" value={selected.nida} />
-            <DR icon={<Calendar size={14} />} label="Tarehe ya Kuzaliwa" value={`${selected.dob} (${selected.gender})`} />
-            <DR icon={<MapPin size={14} />} label="Makazi" value={selected.address} />
-            <DR icon={<Phone size={14} />} label="Simu" value={selected.phone} />
-            <DR icon={<FileText size={14} />} label="Kazi" value={selected.occupation} />
-          </div>
+        {/* Info grid */}
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            ["NIDA", selected.nida], ["Simu", selected.phone],
+            ["Tarehe ya Kuzaliwa", selected.dob], ["Jinsia", selected.gender],
+            ["Makazi", selected.address], ["Kazi", selected.occupation],
+            ["Alipokamatwa", `${selected.detainedDate} ${selected.detainedTime}`],
+            ["Afisa Aliyemkamata", selected.officer || "—"],
+            ["Hali ya Kiafya", selected.medicalStatus], ["Chumba", selected.cell || "—"],
+            ["Tarehe ya Mahakama", selected.courtDate || "—"], ["Ndugu", selected.nextOfKin || "—"],
+            ["Mwanasheria", selected.lawyer || "—"], ["Sababu", selected.reason],
+          ].map(([l,v]) => (
+            <div key={l} className="rounded-xl bg-police-muted p-2.5">
+              <p className="text-[9px] font-bold uppercase tracking-wide text-police-faint">{l}</p>
+              <p className="mt-0.5 text-[11px] font-medium text-police">{v}</p>
+            </div>
+          ))}
         </div>
 
-        {/* Detention */}
-        <div className="rounded-2xl bg-white dark:bg-[#1a2332] p-4 shadow-sm">
-          <h3 className="mb-3 text-[14px] font-bold text-police">Taarifa za Kizuizi</h3>
+        {/* Action buttons — commanders only */}
+        {isCommander && (
           <div className="space-y-2">
-            <DR icon={<AlertTriangle size={14} />} label="Sababu" value={selected.reason} />
-            <DR icon={<Clock size={14} />} label="Alipokamatwa" value={`${selected.detainedDate} saa ${selected.detainedTime}`} />
-            <DR icon={<Shield size={14} />} label="Chumba" value={`${selected.cell} — ${selected.station}`} />
-            <DR icon={<User size={14} />} label="Ofisa Aliyemkamata" value={selected.officer} />
-            <DR icon={<Calendar size={14} />} label="Tarehe ya Mahakama" value={selected.courtDate} />
-            <DR icon={<Shield size={14} />} label="Hali ya Afya" value={selected.medicalStatus} />
+            <p className="text-[11px] font-bold uppercase tracking-wide text-police-faint">Vitendo vya Kamanda</p>
+            <div className="grid grid-cols-2 gap-2">
+              {selected.status !== "released" && (
+                <button onClick={() => handleStatusChange(selected.id,"released","Ameachiwa na Kamanda")}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[#10B981] py-2.5 text-[12px] font-bold text-white">
+                  <UserCheck size={14}/> Achilia Huru
+                </button>
+              )}
+              {selected.status === "held" && (
+                <button onClick={() => handleStatusChange(selected.id,"charged")}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] py-2.5 text-[12px] font-bold text-white">
+                  <Shield size={14}/> Mshtaki
+                </button>
+              )}
+              {selected.status !== "investigating" && selected.status !== "released" && (
+                <button onClick={() => handleStatusChange(selected.id,"investigating")}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[#FF9800] py-2.5 text-[12px] font-bold text-white">
+                  <Search size={14}/> Uchunguzi
+                </button>
+              )}
+              <button onClick={() => { window.print(); }}
+                className="flex items-center justify-center gap-2 rounded-xl border border-police py-2.5 text-[12px] font-semibold text-police col-span-2">
+                <FileText size={14}/> Chapisha Rekodi
+              </button>
+            </div>
           </div>
-        </div>
-
-        {/* Contacts */}
-        <div className="rounded-2xl bg-white dark:bg-[#1a2332] p-4 shadow-sm">
-          <h3 className="mb-3 text-[14px] font-bold text-police">Mawasiliano</h3>
-          <div className="space-y-2">
-            <DR icon={<Phone size={14} />} label="Ndugu wa Karibu" value={selected.nextOfKin} />
-            <DR icon={<User size={14} />} label="Wakili" value={selected.lawyer} />
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="grid grid-cols-2 gap-2">
-          <button onClick={() => { toast({ title: "Hati Imepakiwa", description: "Hati ya kizuizi imeandaliwa." }); }} className="rounded-xl bg-[#2196F3] py-2.5 text-[13px] font-bold text-white">Chapisha Hati</button>
-          <button onClick={() => { toast({ title: "Imesasishwa", description: "Hali imebadilishwa." }); }} className="rounded-xl bg-[#10B981] py-2.5 text-[13px] font-bold text-white">Sasisha Hali</button>
-        </div>
+        )}
       </div>
     );
   }
 
+  // ── Add form ─────────────────────────────────────────────────────────────
   if (showForm) {
     return (
-      <div className="p-4 space-y-4">
+      <div className="space-y-4 p-4 pb-8">
         <div className="flex items-center justify-between">
-          <button onClick={() => setShowForm(false)} className="text-[13px] font-medium text-[#2196F3]">← Rudi</button>
-          <h2 className="text-[16px] font-bold text-police">Ongeza Mfungwa / Mzuiziwaji</h2>
-          <div className="w-12" />
+          <h2 className="text-[17px] font-bold text-police">Sajili Mfungwa Mpya</h2>
+          <button onClick={() => setShowForm(false)} className="rounded-lg p-1.5 text-police-faint"><X size={18}/></button>
         </div>
-        <div className="rounded-2xl bg-white dark:bg-[#1a2332] p-4 shadow-sm space-y-3">
-          <FI label="Jina Kamili" required value={form.fullName} onChange={setF("fullName")} placeholder="Jina na jina la ukoo" />
-          <div className="grid grid-cols-2 gap-3">
-            <FI label="NIDA" value={form.nida} onChange={setF("nida")} placeholder="19XX..." />
-            <FI label="Tarehe ya Kuzaliwa" value={form.dob} onChange={setF("dob")} placeholder="DD/MM/YYYY" />
+
+        {[
+          ["Jina Kamili *", "text", "fullName", "Juma Khamis Mwinyi"],
+          ["NIDA", "text", "nida", "199012031234567"],
+          ["Tarehe ya Kuzaliwa", "date", "dob", ""],
+          ["Simu", "tel", "phone", "0712 345 678"],
+          ["Makazi", "text", "address", "Kariakoo, Ilala"],
+          ["Kazi", "text", "occupation", "Mfanyabiashara"],
+          ["Sababu ya Kizuizi *", "text", "reason", "Wizi wa gari"],
+          ["Chumba / Cell", "text", "cell", "C-04"],
+          ["Ndugu wa Karibu", "text", "nextOfKin", "Mama Juma — 0788 000 111"],
+          ["Mwanasheria", "text", "lawyer", "Adv. Said Kombo"],
+          ["Tarehe ya Mahakama", "date", "courtDate", ""],
+          ["Afisa Aliyemkamata", "text", "officer", "Cprl. Juma Mwinyi"],
+        ].map(([label, type, key, placeholder]) => (
+          <div key={key as string}>
+            <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-police-faint">{label as string}</label>
+            <input type={type as string} value={(form as Record<string,string>)[key as string]}
+              onChange={setF(key as keyof typeof form)}
+              placeholder={placeholder as string}
+              className="h-10 w-full rounded-xl border border-police-soft bg-police-input px-3 text-[13px] text-police focus:border-[#2196F3] focus:outline-none"/>
           </div>
-          <div>
-            <label className="mb-1 block text-[12px] font-medium text-police-muted">Jinsia</label>
-            <select value={form.gender} onChange={setF("gender")} className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:outline-none">
-              <option>Mme</option><option>Mke</option>
-            </select>
-          </div>
-          <FI label="Makazi" value={form.address} onChange={setF("address")} placeholder="Mtaa, Kata, Wilaya" />
-          <div className="grid grid-cols-2 gap-3">
-            <FI label="Simu" value={form.phone} onChange={setF("phone")} placeholder="07XX..." />
-            <FI label="Kazi" value={form.occupation} onChange={setF("occupation")} placeholder="Shughuli" />
-          </div>
-          <div>
-            <label className="mb-1 block text-[12px] font-medium text-police-muted">Sababu ya Kizuizi <span className="text-[#EF4444]">*</span></label>
-            <input value={form.reason} onChange={setF("reason")} placeholder="Kosa au sababu..." className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
-          </div>
-          <div>
-            <label className="mb-1 block text-[12px] font-medium text-police-muted">Aina ya Kizuizi</label>
-            <select value={form.type} onChange={setF("type")} className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:outline-none">
-              <option value="arrested">Kukamatwa</option>
-              <option value="detained">Kizuizi cha Muda</option>
-              <option value="traffic">Kosa la Trafiki</option>
-            </select>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <FI label="Nambari ya Chumba" value={form.cell} onChange={setF("cell")} placeholder="A-1, B-3..." />
-            <FI label="Tarehe ya Mahakama" value={form.courtDate} onChange={setF("courtDate")} placeholder="DD/MM/YYYY" />
-          </div>
-          <div>
-            <label className="mb-1 block text-[12px] font-medium text-police-muted">Hali ya Afya</label>
-            <select value={form.medicalStatus} onChange={setF("medicalStatus")} className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:outline-none">
-              <option>Nzuri</option><option>Maumivu Madogo</option><option>Nahitaji Matibabu</option>
-            </select>
-          </div>
-          <FI label="Ofisa Aliyemkamata" value={form.officer} onChange={setF("officer")} placeholder="Jina na cheo" />
-          <FI label="Ndugu wa Karibu" value={form.nextOfKin} onChange={setF("nextOfKin")} placeholder="Jina na nambari ya simu" />
-          <div>
-            <label className="mb-1 block text-[12px] font-medium text-police-muted">Maelezo ya Ziada</label>
-            <textarea rows={3} value={form.notes} onChange={setF("notes")} placeholder="Maelezo mengine..." className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
-          </div>
-          <button onClick={handleSave} className="w-full rounded-xl bg-[#1E3A8A] py-3 text-[15px] font-bold text-white active:scale-[0.98]">
-            Hifadhi Rekodi
+        ))}
+
+        <div>
+          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-police-faint">Jinsia</label>
+          <select value={form.gender} onChange={setF("gender")}
+            className="h-10 w-full rounded-xl border border-police-soft bg-police-input px-3 text-[13px] text-police focus:outline-none">
+            <option value="Mme">Mme (Male)</option>
+            <option value="Mke">Mke (Female)</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-police-faint">Hali ya Kiafya</label>
+          <select value={form.medicalStatus} onChange={setF("medicalStatus")}
+            className="h-10 w-full rounded-xl border border-police-soft bg-police-input px-3 text-[13px] text-police focus:outline-none">
+            {["Nzuri","Jeraha Ndogo","Jeraha Kubwa","Anahitaji Daktari"].map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+
+        <div className="flex gap-2 pt-2">
+          <button onClick={() => setShowForm(false)}
+            className="flex-1 rounded-xl border border-police py-2.5 text-[13px] font-semibold text-police-muted">
+            Ghairi
+          </button>
+          <button onClick={handleAdd} disabled={saving}
+            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] py-2.5 text-[13px] font-bold text-white disabled:opacity-50">
+            {saving ? <RefreshCw size={14} className="animate-spin"/> : <Plus size={14}/>}
+            Sajili Mfungwa
           </button>
         </div>
       </div>
     );
   }
 
+  // ── List view ─────────────────────────────────────────────────────────────
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4 p-4 pb-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-[20px] font-bold text-police">Wafungwa / Wazuiziwaji</h2>
-          <p className="text-[13px] text-police-muted">{DETAINED_CITIZENS.length} rekodi • Kituo cha DSM</p>
+          <h1 className="text-[20px] font-bold text-police-navy">Wafungwa</h1>
+          <p className="text-[12px] text-police-muted">{counts.held} kizuizini · {records.length} jumla</p>
         </div>
-        <button onClick={() => setShowForm(true)} className="flex items-center gap-1.5 rounded-xl bg-[#1E3A8A] px-4 py-2.5 text-[13px] font-bold text-white">
-          <Plus size={16} /> Ongeza
+        <button onClick={() => setShowForm(true)}
+          className="flex items-center gap-1.5 rounded-xl bg-[#1E3A8A] px-4 py-2 text-[12px] font-bold text-white shadow-sm">
+          <Plus size={14}/> Ongeza
         </button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        <StatCard icon={<AlertTriangle size={18} className="text-[#EF4444]" />} value={DETAINED_CITIZENS.filter((c) => c.status === "held").length} label="Kizuizini" color="#EF4444" />
-        <StatCard icon={<CheckCircle size={18} className="text-[#10B981]" />} value={DETAINED_CITIZENS.filter((c) => c.status === "released").length} label="Wameachiwa" color="#10B981" />
-        <StatCard icon={<Shield size={18} className="text-[#1E3A8A]" />} value={DETAINED_CITIZENS.filter((c) => c.status === "charged").length} label="Wameshtakiwa" color="#1E3A8A" />
+      {/* KPI stats */}
+      <div className="grid grid-cols-4 gap-2">
+        {([
+          ["Jumla",  counts.all,          "#1E3A8A"],
+          ["Kizuizini", counts.held,      "#EF4444"],
+          ["Uchunguzi",counts.investigating,"#FF9800"],
+          ["Wameachiwa",counts.released,  "#10B981"],
+        ] as const).map(([l,v,c]) => (
+          <div key={l} className="rounded-xl bg-police-card p-2.5 text-center shadow-sm">
+            <p className="text-[20px] font-bold" style={{ color: c }}>{v}</p>
+            <p className="text-[9px] text-police-faint">{l}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Status filter */}
+      <div className="flex gap-1.5 overflow-x-auto pb-1">
+        {(["all","held","charged","investigating","released"] as const).map(s => (
+          <button key={s} onClick={() => setFilter(s)}
+            className={`shrink-0 rounded-xl px-3 py-1.5 text-[11px] font-semibold transition ${
+              filter===s ? "text-white shadow-sm" : "bg-police-card border border-police text-police-muted"
+            }`}
+            style={filter===s ? { backgroundColor: s==="all"?"#1E3A8A":STATUS_MAP[s as Status]?.color } : {}}>
+            {s==="all" ? "Wote" : STATUS_MAP[s as Status]?.label} ({s==="all"?counts.all:(counts as Record<string,number>)[s]})
+          </button>
+        ))}
       </div>
 
       {/* Search */}
       <div className="flex items-center gap-2 rounded-xl border border-police bg-police-card px-3 shadow-sm">
-        <Search size={16} className="text-police-faint" />
-        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tafuta kwa jina, ID, au kosa..." className="h-10 flex-1 bg-transparent text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
-        {search && <button onClick={() => setSearch("")}><X size={14} className="text-police-faint" /></button>}
+        <Search size={14} className="text-police-faint"/>
+        <input value={search} onChange={e => setSearch(e.target.value)}
+          placeholder="Tafuta jina, NIDA, sababu, chumba..."
+          className="h-9 flex-1 bg-transparent text-[12px] text-police placeholder:text-police-faint focus:outline-none"/>
+        {search && <button onClick={() => setSearch("")}><X size={12} className="text-police-faint"/></button>}
       </div>
 
-      {/* Filter */}
-      <div className="flex gap-2 overflow-x-auto">
-        {([["all", "Yote"], ["held", "Kizuizini"], ["released", "Wameachiwa"], ["charged", "Wameshtakiwa"]] as const).map(([id, label]) => (
-          <button key={id} onClick={() => setFilter(id)} className={`shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-semibold transition ${filter === id ? "bg-[#1E3A8A] text-white" : "bg-police-muted text-police-muted"}`}>{label}</button>
-        ))}
+      {/* Table */}
+      <div className="overflow-hidden rounded-2xl bg-police-card shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-[11px]">
+            <thead className="bg-[#1E3A8A] text-white">
+              <tr>
+                {["Picha","Jina","ID","Sababu","Chumba","Afisa","Tarehe","Hali",""].map(h => (
+                  <th key={h} className="px-3 py-3 text-left text-[10px] font-semibold whitespace-nowrap">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-police-soft">
+              {filtered.map(c => {
+                const st = STATUS_MAP[c.status];
+                return (
+                  <tr key={c.id} className="hover:bg-police-muted transition cursor-pointer" onClick={() => setSelected(c)}>
+                    <td className="px-3 py-2">
+                      <img src={avatarUrl(c.fullName)} alt={c.fullName} className="h-8 w-8 rounded-full object-cover"/>
+                    </td>
+                    <td className="px-3 py-2 font-bold text-police whitespace-nowrap">{c.fullName}</td>
+                    <td className="px-3 py-2 font-mono text-[9px] text-police-faint">{c.id}</td>
+                    <td className="px-3 py-2 text-police-muted max-w-[120px] truncate">{c.reason}</td>
+                    <td className="px-3 py-2 text-police-faint">{c.cell || "—"}</td>
+                    <td className="px-3 py-2 text-police-muted whitespace-nowrap">{c.officer || "—"}</td>
+                    <td className="px-3 py-2 text-police-faint whitespace-nowrap">{c.detainedDate}</td>
+                    <td className="px-3 py-2">
+                      <span className="rounded-full px-2 py-0.5 text-[9px] font-bold text-white"
+                        style={{ backgroundColor: st.color }}>{st.label}</span>
+                    </td>
+                    <td className="px-2 py-2">
+                      <ChevronRight size={14} className="text-police-faint"/>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {filtered.length === 0 && (
+            <div className="py-8 text-center text-[13px] text-police-faint">Hakuna rekodi zilizopatikana</div>
+          )}
+        </div>
       </div>
-
-      {/* List */}
-      <div className="space-y-2">
-        {filtered.map((c) => {
-          const st = STATUS_MAP[c.status as keyof typeof STATUS_MAP];
-          const ty = TYPE_MAP[c.type as keyof typeof TYPE_MAP];
-          return (
-            <button key={c.id} onClick={() => setSelected(c)} className="w-full rounded-xl bg-white dark:bg-[#1a2332] p-3 text-left shadow-sm border border-police-soft active:scale-[0.99]">
-              <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1E3A8A]/10">
-                  <User size={18} className="text-[#1E3A8A]" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-[14px] font-bold text-police">{c.fullName}</p>
-                    <span className="shrink-0 rounded-full px-2 py-0.5 text-[9px] font-bold text-white" style={{ backgroundColor: st.color }}>{st.label}</span>
-                  </div>
-                  <div className="mt-0.5 flex items-center gap-2">
-                    <span className="text-[10px] font-medium" style={{ color: ty.color }}>{ty.label}</span>
-                    <span className="text-[10px] text-police-faint">•</span>
-                    <span className="text-[10px] text-police-faint">{c.cell} • {c.station}</span>
-                  </div>
-                  <p className="mt-0.5 text-[11px] text-police-muted">{c.reason}</p>
-                  <p className="mt-0.5 text-[10px] text-police-faint">{c.detainedDate} • Mahakama: {c.courtDate}</p>
-                </div>
-              </div>
-            </button>
-          );
-        })}
-        {filtered.length === 0 && (
-          <div className="py-8 text-center text-[13px] text-police-muted">Hakuna rekodi zinazofanana na utafutaji wako.</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function StatCard({ icon, value, label, color }: { icon: React.ReactNode; value: number; label: string; color: string }) {
-  return (
-    <div className="rounded-xl bg-white dark:bg-[#1a2332] p-3 shadow-sm text-center">
-      <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-full" style={{ backgroundColor: `${color}15` }}>{icon}</div>
-      <p className="text-[18px] font-bold text-police">{value}</p>
-      <p className="text-[10px] text-police-muted">{label}</p>
-    </div>
-  );
-}
-
-function DR({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div className="flex items-start gap-3 py-1.5 border-b border-police-soft last:border-0">
-      <span className="mt-0.5 text-police-faint">{icon}</span>
-      <div>
-        <p className="text-[10px] text-police-faint">{label}</p>
-        <p className="text-[12px] font-medium text-police">{value}</p>
-      </div>
-    </div>
-  );
-}
-
-function FI({ label, required, value, onChange, placeholder }: { label: string; required?: boolean; value: string; onChange: React.ChangeEventHandler<HTMLInputElement>; placeholder?: string }) {
-  return (
-    <div>
-      <label className="mb-1 block text-[12px] font-medium text-police-muted">{label}{required && <span className="ml-0.5 text-[#EF4444]">*</span>}</label>
-      <input value={value} onChange={onChange} placeholder={placeholder} className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
     </div>
   );
 }

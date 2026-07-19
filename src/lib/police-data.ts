@@ -385,37 +385,142 @@ export const OFFENSE_TYPES = [
 export const VEHICLE_TYPES = ["Saloon", "Pick Up", "Minibus", "Lori", "Pikipiki", "Bajaji", "Basila"];
 
 // Violation points deduction table
+// Points deducted per offense (0.5–3 scale)
 export const VIOLATION_POINTS: Record<string, number> = {
-  "Over Speeding": 3,
-  "Driving Under Influence": 3,
-  "Wrong Overtaking": 2,
-  "Traffic Light Violation": 2,
-  "No Insurance": 2,
-  "No Seatbelt": 0.5,
-  "Kutumia Simu wakati wa Udereva": 1,
-  "Kutopita kasi": 0.5,
-  "Kutopita mstari": 1,
-  "Gari bila Bima": 2,
-  "Leseni imekwisha": 1.5,
-  "Kukata kona hatari": 2,
-  "Kuepuka kodi": 1,
-  "Overloading": 1.5,
-  "No Inspection Certificate": 1,
-  "Defective Vehicle": 1,
+  // Traffic offenses
+  "Over Speeding":                    3.0,
+  "Driving Under Influence":          3.0,
+  "Wrong Overtaking":                 2.0,
+  "Traffic Light Violation":          2.0,
+  "No Insurance / Gari bila Bima":    2.0,
+  "No Seatbelt":                      0.5,
+  "Kutumia Simu wakati wa Udereva":   1.0,
+  "Kukata kona hatari":               2.0,
+  "Overloading":                      1.5,
+  "No Inspection Certificate":        1.0,
+  "Defective Vehicle":                1.0,
+  "Leseni imekwisha":                 1.5,
+  "Kutopita kasi":                    0.5,
+  "Kutopita mstari":                  1.0,
+  "Kuepuka kodi":                     1.0,
+  // Warning/citizen offenses
+  "Ugomvi na Mapigano":               2.0,
+  "Kelele za Usiku":                  0.5,
+  "Kunywa pombe hadharani":           1.0,
+  "Kutotii Amri za Polisi":           1.5,
+  "Kuzuia Utekelezaji wa Sheria":     2.5,
+  "Uvunjaji wa Amri ya Mahakama":     3.0,
+  "Ulevi wa Kupindukia":              2.0,
+  "Uchafuzi wa Mazingira":            0.5,
 };
 
+// Points system constants
+export const POINTS_YEAR_START = 100;  // Everyone starts at 100 on Jan 1
+export const POINTS_STATUS = (pts: number) =>
+  pts >= 80 ? "good" : pts >= 60 ? "warning" : pts >= 40 ? "critical" : "suspended";
+export const POINTS_STATUS_LABEL = (pts: number) =>
+  pts >= 80 ? "Nzuri" : pts >= 60 ? "Tahadhari" : pts >= 40 ? "Hatari" : "Imesimamishwa";
+export const POINTS_STATUS_COLOR = (pts: number) =>
+  pts >= 80 ? "#10B981" : pts >= 60 ? "#FF9800" : pts >= 40 ? "#EF4444" : "#7C3AED";
+
 // Driver points registry
-export const DRIVER_POINTS = [
-  { id: "DL123456789TZ", name: "Juma Khamis Mwinyi", plate: "T 003 GHI", points: 87, violations: 3, lastViolation: "10 Mei 2026", status: "good" as const },
-  { id: "DL987654321TZ", name: "Ali Mohamed Salum", plate: "T 009 YZA", points: 74, violations: 5, lastViolation: "08 Mei 2026", status: "good" as const },
-  { id: "DL555555555TZ", name: "Grace Amina Mushi", plate: "T 005 MNO", points: 63, violations: 7, lastViolation: "05 Mei 2026", status: "warning" as const },
-  { id: "DL444444444TZ", name: "Saidi Omari Bakari", plate: "T 007 STU", points: 55, violations: 9, lastViolation: "02 Mei 2026", status: "warning" as const },
-  { id: "DL777777777TZ", name: "Hamisi Rashid Omar", plate: "T 018 ZAB", points: 48, violations: 12, lastViolation: "28 Apr 2026", status: "critical" as const },
-  { id: "DL888888888TZ", name: "Baraka Msangi", plate: "T888ZZZ", points: 72, violations: 4, lastViolation: "25 Apr 2026", status: "good" as const },
-  { id: "DL999999999TZ", name: "Zawadi Kimani", plate: "T555YYY", points: 100, violations: 0, lastViolation: "—", status: "good" as const },
-  { id: "DL111111111TZ", name: "Fatuma Hassan", plate: "T777AAA", points: 52, violations: 10, lastViolation: "20 Apr 2026", status: "warning" as const },
-  { id: "DL222222222TZ", name: "Rashid Omari", plate: "T222BBB", points: 38, violations: 15, lastViolation: "15 Apr 2026", status: "critical" as const },
-  { id: "DL333333333TZ", name: "Amina Said", plate: "T333CCC", points: 91, violations: 2, lastViolation: "01 Apr 2026", status: "good" as const },
+export interface PointsDeduction {
+  date: string; offense: string; deducted: number; type: "citation" | "warning";
+  officer: string; location: string;
+}
+export interface DriverPointsRecord {
+  id: string;           // license number
+  nida: string;
+  name: string;
+  plate: string;
+  yearStart: number;    // always 100 on Jan 1
+  points: number;       // current remaining
+  deducted: number;     // total deducted this year
+  violations: number;
+  lastViolation: string;
+  status: "good" | "warning" | "critical" | "suspended";
+  deductions: PointsDeduction[];
+}
+export const DRIVER_POINTS: DriverPointsRecord[] = [
+  { id:"DL001001TZ", nida:"199012031234567", name:"Juma Khamis Mwinyi",   plate:"T 001 ABC", yearStart:100, points:87, deducted:13, violations:4,  lastViolation:"10 Mei 2026", status:"good",
+    deductions:[
+      {date:"10 Mei 2026",offense:"Over Speeding",           deducted:3.0,type:"citation",officer:"Sgt. Ali Hassan",   location:"Morogoro Rd"},
+      {date:"02 Apr 2026",offense:"No Seatbelt",             deducted:0.5,type:"citation",officer:"Cprl. Juma Mwinyi", location:"Samora Ave"},
+      {date:"15 Feb 2026",offense:"Traffic Light Violation", deducted:2.0,type:"citation",officer:"Sgt. Fatuma Hassan",location:"Posta, Ilala"},
+      {date:"10 Jan 2026",offense:"No Seatbelt",             deducted:0.5,type:"warning", officer:"Cprl. Juma Mwinyi", location:"Kariakoo"},
+    ]
+  },
+  { id:"DL003003TZ", nida:"198803221234569", name:"Ali Mohamed Salum",    plate:"T 003 GHI", yearStart:100, points:74, deducted:26, violations:6,  lastViolation:"08 Mei 2026", status:"good",
+    deductions:[
+      {date:"08 Mei 2026",offense:"Wrong Overtaking",        deducted:2.0,type:"citation",officer:"Cprl. Juma Mwinyi", location:"Morogoro Rd"},
+      {date:"20 Apr 2026",offense:"Over Speeding",           deducted:3.0,type:"citation",officer:"Sgt. Ali Hassan",   location:"Bagamoyo Rd"},
+      {date:"05 Mar 2026",offense:"No Insurance / Gari bila Bima",deducted:2.0,type:"citation",officer:"Sgt. Fatuma Hassan",location:"Temeke"},
+    ]
+  },
+  { id:"DL005005TZ", nida:"197612301234571", name:"Saidi Omari Bakari",   plate:"T 005 MNO", yearStart:100, points:63, deducted:37, violations:8,  lastViolation:"05 Mei 2026", status:"warning",
+    deductions:[
+      {date:"05 Mei 2026",offense:"Overloading",             deducted:1.5,type:"citation",officer:"Sgt. Ali Hassan",   location:"Dar–Moshi Hwy"},
+      {date:"18 Apr 2026",offense:"Defective Vehicle",       deducted:1.0,type:"citation",officer:"Cprl. Juma Mwinyi", location:"Temeke Rd"},
+      {date:"02 Mar 2026",offense:"Over Speeding",           deducted:3.0,type:"citation",officer:"Sgt. Fatuma Hassan",location:"Kilwa Rd"},
+    ]
+  },
+  { id:"DL007007TZ", nida:"200005121234573", name:"Baraka John Mwanga",   plate:"T 007 STU", yearStart:100, points:78, deducted:22, violations:5,  lastViolation:"02 Mei 2026", status:"good",
+    deductions:[
+      {date:"02 Mei 2026",offense:"Traffic Light Violation", deducted:2.0,type:"citation",officer:"Sgt. Ali Hassan",   location:"Ubungo"},
+      {date:"12 Mar 2026",offense:"Kutumia Simu wakati wa Udereva",deducted:1.0,type:"warning",officer:"Insp. Grace Mushi",location:"Mwenge"},
+    ]
+  },
+  { id:"DL009009TZ", nida:"197805091234575", name:"Hamisi Rashid Omar",   plate:"T 009 YZA", yearStart:100, points:48, deducted:52, violations:14, lastViolation:"28 Apr 2026", status:"critical",
+    deductions:[
+      {date:"28 Apr 2026",offense:"Driving Under Influence", deducted:3.0,type:"citation",officer:"Cprl. Juma Mwinyi", location:"Kariakoo"},
+      {date:"15 Apr 2026",offense:"Wrong Overtaking",        deducted:2.0,type:"citation",officer:"Sgt. Ali Hassan",   location:"Bagamoyo Rd"},
+      {date:"01 Mar 2026",offense:"Over Speeding",           deducted:3.0,type:"citation",officer:"Sgt. Fatuma Hassan",location:"Morogoro Rd"},
+      {date:"10 Feb 2026",offense:"No Insurance / Gari bila Bima",deducted:2.0,type:"citation",officer:"Insp. Grace Mushi",location:"Ilala"},
+    ]
+  },
+  { id:"DL011011TZ", nida:"199811271234577", name:"Mariamu Ally Komba",   plate:"T 011 EFG", yearStart:100, points:91, deducted:9,  violations:2,  lastViolation:"01 Apr 2026", status:"good",
+    deductions:[
+      {date:"01 Apr 2026",offense:"No Seatbelt",             deducted:0.5,type:"warning", officer:"Cprl. Juma Mwinyi", location:"Sinza"},
+    ]
+  },
+  { id:"DL015015TZ", nida:"199309251234581", name:"Sikudhani Mwema Nyota",plate:"T 015 QRS", yearStart:100, points:100,deducted:0,  violations:0,  lastViolation:"—",           status:"good",
+    deductions:[]
+  },
+  { id:"DL018018TZ", nida:"198905231234584", name:"Nassoro Kombo Mataka", plate:"T 018 ZAB", yearStart:100, points:35, deducted:65, violations:18, lastViolation:"20 Apr 2026", status:"suspended",
+    deductions:[
+      {date:"20 Apr 2026",offense:"Driving Under Influence", deducted:3.0,type:"citation",officer:"Insp. Grace Mushi", location:"Goba"},
+      {date:"05 Apr 2026",offense:"Kuzuia Utekelezaji wa Sheria",deducted:2.5,type:"warning",officer:"Cprl. Juma Mwinyi",location:"Kinondoni"},
+      {date:"20 Mar 2026",offense:"Over Speeding",           deducted:3.0,type:"citation",officer:"Sgt. Ali Hassan",   location:"Mbezi Rd"},
+    ]
+  },
+];
+
+// Citizen conduct points (same system — warnings deduct)
+export interface CitizenPointsRecord {
+  nida: string; name: string; phone: string;
+  yearStart: number; points: number; deducted: number;
+  incidents: number; lastIncident: string;
+  status: "good" | "warning" | "critical" | "suspended";
+  deductions: PointsDeduction[];
+}
+export const CITIZEN_POINTS: CitizenPointsRecord[] = [
+  { nida:"197805091234575", name:"Hamisi Rashid Omar",    phone:"0766 222 444", yearStart:100, points:60, deducted:40, incidents:4, lastIncident:"28 Apr 2026", status:"warning",
+    deductions:[
+      {date:"28 Apr 2026",offense:"Ugomvi na Mapigano",         deducted:2.0,type:"warning",officer:"Insp. Grace Mushi", location:"Kariakoo"},
+      {date:"10 Mar 2026",offense:"Ulevi wa Kupindukia",        deducted:2.0,type:"warning",officer:"Cprl. Emmanuel",    location:"Ubungo"},
+    ]
+  },
+  { nida:"198905231234584", name:"Nassoro Kombo Mataka",  phone:"0712 222 333", yearStart:100, points:25, deducted:75, incidents:9, lastIncident:"20 Apr 2026", status:"suspended",
+    deductions:[
+      {date:"20 Apr 2026",offense:"Kuzuia Utekelezaji wa Sheria",deducted:2.5,type:"warning",officer:"Cprl. Juma Mwinyi",location:"Goba"},
+      {date:"15 Mar 2026",offense:"Uvunjaji wa Amri ya Mahakama",deducted:3.0,type:"warning",officer:"Insp. Grace Mushi", location:"Kinondoni"},
+    ]
+  },
+  { nida:"199012031234567", name:"Juma Khamis Mwinyi",    phone:"0712 345 678", yearStart:100, points:95, deducted:5,  incidents:1, lastIncident:"10 Jan 2026", status:"good",  deductions:[{date:"10 Jan 2026",offense:"Kelele za Usiku",deducted:0.5,type:"warning",officer:"Cst. Baraka John",location:"Mbezi Beach"}] },
+  { nida:"199209141234570", name:"Grace Amina Mushi",     phone:"0766 456 789", yearStart:100, points:100,deducted:0,  incidents:0, lastIncident:"—",           status:"good",  deductions:[] },
+  { nida:"197612301234571", name:"Saidi Omari Bakari",    phone:"0788 321 654", yearStart:100, points:72, deducted:28, incidents:3, lastIncident:"05 Mei 2026", status:"good",
+    deductions:[{date:"05 Mei 2026",offense:"Uchafuzi wa Mazingira",deducted:0.5,type:"warning",officer:"Cprl. Emmanuel",location:"Temeke"}]
+  },
 ];
 
 // Arrest records
