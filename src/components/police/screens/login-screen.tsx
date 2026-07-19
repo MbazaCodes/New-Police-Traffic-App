@@ -168,7 +168,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
     setErrorMsg("");
     setSending(true);
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch("/api/police/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -238,7 +238,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
     setVerifying(true);
     try {
       // Strict API verify — no client-side bypass
-      const res = await fetch("/api/auth/verify-otp", {
+      const res = await fetch("/api/police/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifier: cleanIdentifier, otp: otpCode }),

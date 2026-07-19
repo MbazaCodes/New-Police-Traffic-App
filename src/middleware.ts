@@ -12,6 +12,9 @@ const PUBLIC_PATHS = new Set([
   "/api/auth/verify-otp",
   "/api/auth/session",
   "/api/auth/logout",
+  "/api/police/login",
+  "/api/police/verify-otp",
+  "/api/debug/auth",
 ]);
 
 const PUBLIC_LOGIN_ENTRY_PATHS = new Set(["/", "/admin", "/command"]);
@@ -35,7 +38,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith("/api") && pathname.startsWith("/api/auth")) {
+  if (pathname.startsWith("/api/auth") || pathname.startsWith("/api/police") || pathname.startsWith("/api/debug")) {
     return NextResponse.next();
   }
 
@@ -87,5 +90,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/(.*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon|icon|manifest|sw\.js|robots\.txt|police-logo).*)",
+  ],
 };
