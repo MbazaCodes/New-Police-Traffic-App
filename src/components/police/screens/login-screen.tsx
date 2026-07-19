@@ -280,6 +280,114 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
         </svg>
       </div>
 
+      {/* ── OTP MODAL POPUP ────────────────────────────────────────── */}
+      {step === "otp" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(10,20,50,0.75)", backdropFilter: "blur(6px)" }}>
+          <div
+            className="relative w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden"
+            style={{ background: "var(--tpf-card, #fff)", animation: "otpSlideUp 0.28s cubic-bezier(0.34,1.56,0.64,1)" }}
+          >
+            {/* Top accent bar */}
+            <div className="h-1.5 w-full" style={{ background: "linear-gradient(90deg,#1E3A8A,#2196F3,#10B981)" }} />
+
+            <div className="p-6">
+              {/* Icon + heading */}
+              <div className="flex flex-col items-center mb-5">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#2196F3]/10 mb-3">
+                  <ShieldCheck size={32} className="text-[#2196F3]" />
+                </div>
+                <h2 className="text-[20px] font-black text-police-navy2">Thibitisha OTP</h2>
+                <p className="mt-1 text-center text-[12px] text-police-muted leading-relaxed">
+                  Nambari ya uthibitisho imetumwa kwa<br />
+                  <span className="font-bold text-[#1E3A8A]">{maskedIdentifier}</span>
+                </p>
+              </div>
+
+              {/* OTP code hint banner */}
+              <div className="mb-4 flex items-center gap-3 rounded-2xl border border-[#2196F3]/25 bg-[#2196F3]/8 px-4 py-3">
+                <Smartphone size={18} className="shrink-0 text-[#2196F3]" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-wide text-[#2196F3]">OTP Yako</p>
+                  <p className="text-[11px] text-police-muted">Tumia nambari hii kuingia</p>
+                </div>
+                <div className="flex gap-1">
+                  {["1","2","3","4","5","6"].map((d, i) => (
+                    <span key={i} className="flex h-7 w-6 items-center justify-center rounded-lg bg-[#1E3A8A] text-[13px] font-black text-white shadow-sm">{d}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* OTP Inputs */}
+              <div className="flex justify-between gap-2 mb-4" onPaste={handleOtpPaste}>
+                {otp.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    ref={(el) => { otpRefs.current[idx] = el; }}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleOtpKey(idx, e)}
+                    className={`h-13 w-full rounded-xl border-2 bg-police-card text-center text-[22px] font-black focus:outline-none transition-all ${
+                      digit
+                        ? "border-[#2196F3] bg-[#2196F3]/8 text-[#1E3A8A]"
+                        : "border-police-soft text-police-navy2 focus:border-[#2196F3] focus:bg-[#2196F3]/5"
+                    }`}
+                    style={{ height: "52px" }}
+                  />
+                ))}
+              </div>
+
+              {errorMsg && (
+                <div className="mb-3 rounded-xl border border-[#EF4444]/20 bg-[#EF4444]/8 px-3 py-2 text-[12px] text-[#EF4444] text-center">
+                  {errorMsg}
+                </div>
+              )}
+
+              {/* Verify button */}
+              <button
+                onClick={verifyOtp}
+                disabled={!otpComplete || verifying}
+                className="flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-[15px] font-black text-white shadow-lg transition active:scale-[0.98] disabled:opacity-50"
+                style={{ background: otpComplete ? "linear-gradient(135deg,#1E3A8A,#2196F3)" : undefined, backgroundColor: otpComplete ? undefined : "#9CA3AF" }}
+              >
+                {verifying ? (
+                  <><RefreshCw size={18} className="animate-spin" /> Inathibitisha...</>
+                ) : (
+                  <><ShieldCheck size={20} /> Thibitisha na Ingia <ArrowRight size={18} /></>
+                )}
+              </button>
+
+              {/* Resend + back */}
+              <div className="mt-4 flex items-center justify-between">
+                <button
+                  onClick={() => { setStep("credentials"); setOtp(["","","","","",""]); }}
+                  className="flex items-center gap-1 text-[12px] font-medium text-police-muted hover:text-police transition"
+                >
+                  <ArrowLeft size={14} /> Rudi
+                </button>
+                {resendTimer > 0 ? (
+                  <span className="text-[12px] text-police-faint">Tuma tena {resendTimer}s</span>
+                ) : (
+                  <button onClick={resendOtp} className="flex items-center gap-1 text-[12px] font-bold text-[#2196F3]">
+                    <RefreshCw size={12} /> Tuma tena
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <style>{`
+            @keyframes otpSlideUp {
+              from { opacity: 0; transform: translateY(40px) scale(0.95); }
+              to   { opacity: 1; transform: translateY(0)    scale(1);    }
+            }
+          `}</style>
+        </div>
+      )}
+
       {/* Content */}
       <div className="relative z-10 flex flex-1 flex-col items-center px-6 pb-8 pt-8">
         {/* Logo */}
@@ -489,100 +597,6 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                   </>
                 )}
               </button>
-            </>
-          )}
-
-          {/* STEP 2: OTP */}
-          {step === "otp" && (
-            <>
-              <button
-                onClick={() => {
-                  setStep("credentials");
-                  setOtp(["", "", "", "", "", ""]);
-                }}
-                className="mb-3 flex items-center gap-1 text-[12px] font-medium text-police-muted"
-              >
-                <ArrowLeft size={16} /> Rudi
-              </button>
-
-              <h2 className="text-center text-[19px] font-bold text-police-navy2">Thibitisha OTP</h2>
-              <p className="mt-1 text-center text-[13px] text-police-muted">
-                Tumekutumia OTP yenye tarakimu 6 kwa{" "}
-                <span className="font-semibold text-police-navy2">{maskedIdentifier}</span>
-              </p>
-
-              {/* Demo mode badge */}
-              <div className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-[#1E3A8A]/8 border border-[#1E3A8A]/20 px-4 py-2.5">
-                <span className="text-[11px] font-bold text-[#1E3A8A] uppercase tracking-wide">Demo Mode</span>
-                <span className="text-[12px] text-police-muted">— Tumia tarakimu yoyote 6:</span>
-                <span className="rounded-lg bg-[#1E3A8A] px-2.5 py-0.5 text-[13px] font-bold tracking-widest text-white">123456</span>
-              </div>
-
-              {/* OTP Inputs */}
-              <div className="mt-5 flex justify-between gap-2" onPaste={handleOtpPaste}>
-                {otp.map((digit, idx) => (
-                  <input
-                    key={idx}
-                    ref={(el) => {
-                      otpRefs.current[idx] = el;
-                    }}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(idx, e.target.value)}
-                    onKeyDown={(e) => handleOtpKey(idx, e)}
-                    className={`h-12 w-full rounded-xl border-2 bg-police-card text-center text-[20px] font-bold text-police-navy2 focus:outline-none ${
-                      digit
-                        ? "border-[#2196F3] bg-[#2196F3]/5"
-                        : "border-police focus:border-[#2196F3]"
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {/* Resend */}
-              <div className="mt-4 flex items-center justify-center gap-1.5">
-                <span className="text-[12px] text-police-muted">Hujapata OTP?</span>
-                {resendTimer > 0 ? (
-                  <span className="text-[12px] font-medium text-police-faint">
-                    Tuma tena baada ya {resendTimer}s
-                  </span>
-                ) : (
-                  <button
-                    onClick={resendOtp}
-                    className="flex items-center gap-1 text-[12px] font-bold text-[#2196F3]"
-                  >
-                    <RefreshCw size={12} /> Tuma tena
-                  </button>
-                )}
-              </div>
-
-              {/* Verify Button */}
-              <button
-                onClick={verifyOtp}
-                disabled={!otpComplete || verifying}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-3.5 text-[15px] font-bold text-white shadow-lg shadow-[#2196F3]/30 transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {verifying ? (
-                  <>
-                    <RefreshCw size={18} className="animate-spin" />
-                    <span>Inathibitisha...</span>
-                  </>
-                ) : (
-                  <>
-                    <ShieldCheck size={20} />
-                    <span>Thibitisha na Ingia</span>
-                    <ArrowRight size={18} />
-                  </>
-                )}
-              </button>
-
-              {errorMsg && (
-                <div className="mt-3 rounded-xl border border-[#EF4444]/20 bg-[#EF4444]/10 px-3 py-2 text-[12px] text-[#EF4444]700">
-                  {errorMsg}
-                </div>
-              )}
             </>
           )}
 
