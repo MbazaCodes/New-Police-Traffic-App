@@ -38,16 +38,29 @@ export async function findSupabaseUser(identifier: string): Promise<SupabaseUser
   const clean = raw.toLowerCase();
 
   // Try each field individually — avoids PostgREST .or() escaping issues with @ in email
+  // Note: We don't join stations here to avoid "multiple relationships" error
   const cols: Array<"badge_no" | "username" | "email"> = ["badge_no", "username", "email"];
   for (const col of cols) {
     const { data } = await admin
       .from("users")
-      .select("*, station:stations(id, name, region)")
+      .select("*")
       .ilike(col, clean)
       .eq("status", "active")
       .limit(1)
       .maybeSingle();
-    if (data) return data as SupabaseUser;
+    if (data) {
+      // Fetch station separately if station_id exists
+      let station = null;
+      if (data.station_id) {
+        const { data: st } = await admin
+          .from("stations")
+          .select("id, name, region")
+          .eq("id", data.station_id)
+          .maybeSingle();
+        if (st) station = st;
+      }
+      return { ...data, station } as SupabaseUser;
+    }
   }
 
   // Phone number lookup with TZ normalization
@@ -58,12 +71,24 @@ export async function findSupabaseUser(identifier: string): Promise<SupabaseUser
     for (const ph of [`0${core}`, `+255${core}`, `255${core}`, core]) {
       const { data } = await admin
         .from("users")
-        .select("*, station:stations(id, name, region)")
+        .select("*")
         .eq("phone", ph)
         .eq("status", "active")
         .limit(1)
         .maybeSingle();
-      if (data) return data as SupabaseUser;
+      if (data) {
+        // Fetch station separately if station_id exists
+        let station = null;
+        if (data.station_id) {
+          const { data: st } = await admin
+            .from("stations")
+            .select("id, name, region")
+            .eq("id", data.station_id)
+            .maybeSingle();
+          if (st) station = st;
+        }
+        return { ...data, station } as SupabaseUser;
+      }
     }
   }
 
