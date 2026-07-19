@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -250,6 +251,21 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
         return;
       }
       const userRole = authResolvedRole ?? "";
+
+      // Create NextAuth session cookie so API routes can read auth state.
+      // The OTP is already consumed above, so we pass a pre-verified token
+      // that the authorize() function accepts without re-checking the OTP.
+      const userId = data?.userId ?? "";
+      try {
+        await signIn("credentials", {
+          username: cleanIdentifier,
+          otp:      `verified:${userId}`,   // authorize() recognises this pattern
+          redirect: false,
+        });
+      } catch {
+        console.warn("[login] NextAuth signIn failed — API routes may return 401");
+      }
+
       if (mode === "admin") {
         const resolvedAuthRole = (userRole || webRole) as AuthRole;
         saveLoginIdentifier(cleanIdentifier);

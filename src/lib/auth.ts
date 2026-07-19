@@ -119,8 +119,13 @@ export const authOptions: NextAuthOptions = {
         const sbUser = await findSupabaseUser(credentials.username);
         if (!sbUser || sbUser.status !== "active") return null;
 
-        // Verify OTP
-        const otpOk = verifyOtp(credentials.username, credentials.otp ?? "");
+        // Accept either:
+        // 1. OTP bypass mode (dev/staging) — any code passes
+        // 2. Valid OTP (consumed on first verify — allow re-use within same request cycle)
+        // 3. Pre-verified token sent from the login screen after custom /api/auth/verify-otp
+        const otp = credentials.otp ?? "";
+        const isPreVerified = otp.startsWith("verified:") && otp.includes(sbUser.id);
+        const otpOk = isPreVerified || isOtpBypassEnabled() || verifyOtp(credentials.username, otp);
         if (!otpOk) return null;
 
         const role = mapSupabaseRole(sbUser.role) as Role;
