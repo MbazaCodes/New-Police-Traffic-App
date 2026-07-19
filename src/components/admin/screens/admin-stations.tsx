@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Search, X, Building2, Plus, AlertTriangle, MapPin, Phone, ChevronRight } from "lucide-react";
 import { useApiData } from "@/hooks/use-api-data";
 import { toast } from "@/hooks/use-toast";
@@ -20,6 +21,7 @@ const STATUS_STYLES: Record<string,string> = {
 const STATUS_LABEL: Record<string,string> = { active:"Inafanya Kazi", maintenance:"Matengenezo", inactive:"Imefungwa" };
 
 export function AdminStations() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Station | null>(null);
   const [showAdd, setShowAdd] = useState(false);
@@ -59,10 +61,16 @@ export function AdminStations() {
           <h1 className="text-[22px] font-black text-police">Vituo vya Polisi</h1>
           <p className="text-[12px] text-police-muted">{stations.length} vituo</p>
         </div>
-        <button onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 rounded-xl bg-[#1E3A8A] px-4 py-2.5 text-[13px] font-bold text-white shadow-sm hover:bg-[#1a3278] active:scale-95 transition">
-          <Plus size={16} /> Ongeza Kituo
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 rounded-xl bg-[#1E3A8A] px-4 py-2.5 text-[13px] font-bold text-white shadow-sm hover:bg-[#1a3278] active:scale-95 transition">
+            <Plus size={16} /> Ongeza Kituo
+          </button>
+          <button onClick={() => router.push("/admin/stations/create")}
+            className="flex items-center gap-2 rounded-xl border border-[#1E3A8A]/30 bg-police-card px-4 py-2.5 text-[13px] font-bold text-[#1E3A8A] hover:bg-[#1E3A8A]/5 active:scale-95 transition">
+            <Plus size={16} /> Ukurasa Kamili
+          </button>
+        </div>
       </div>
 
       {/* Search */}

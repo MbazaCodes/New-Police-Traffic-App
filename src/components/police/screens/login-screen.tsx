@@ -446,63 +446,47 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                 Chagua nafasi yako kisha ingia
               </p>
 
-              {/* Role selector */}
+              {/* Role selector — Single Dropdown */}
               {mode === "admin" ? (
                 <div className="mt-4">
-                  {roleCategory === "all" ? (
-                    /* ── STEP A: Category picker ── */
-                    <>
-                      <label className="mb-2 block text-[13px] font-medium text-police-navy2">
-                        Chagua Aina ya Akaunti
-                      </label>
-                      <div className="grid grid-cols-1 gap-2">
-                        {ROLE_CATEGORIES.filter(c => c.id !== "all").map((cat) => (
-                          <button
-                            key={cat.id}
-                            onClick={() => {
-                              setRoleCategory(cat.id);
-                              setWebRole(cat.roles[0]);
-                            }}
-                            className="flex items-center justify-between rounded-xl border border-police bg-police-card px-4 py-3 text-left transition hover:border-[#2196F3] hover:bg-[#2196F3]/5 active:scale-[0.99]"
-                          >
-                            <div>
-                              <p className="text-[13px] font-bold text-police">{cat.labelSw}</p>
-                              <p className="text-[11px] text-police-muted">{cat.label}</p>
-                            </div>
-                            <ChevronDown size={16} className="rotate-[-90deg] text-police-faint" />
-                          </button>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    /* ── STEP B: Role picker for selected category ── */
-                    <>
-                      <div className="mb-3 flex items-center gap-2">
-                        <button
-                          onClick={() => setRoleCategory("all")}
-                          className="flex items-center gap-1 text-[12px] font-semibold text-[#2196F3]"
-                        >
-                          <ChevronDown size={14} className="rotate-90" /> Rudi
-                        </button>
-                        <span className="text-[12px] text-police-muted">
-                          / {ROLE_CATEGORIES.find(c=>c.id===roleCategory)?.labelSw}
-                        </span>
-                      </div>
-                      <label className="mb-1.5 block text-[13px] font-medium text-police-navy2">Role</label>
-                      <div className="relative">
-                        <select
-                          value={webRole}
-                          onChange={(e) => setWebRole(e.target.value)}
-                          className="h-12 w-full appearance-none rounded-xl border border-police bg-police-card px-3 pr-10 text-[14px] text-police focus:border-[#2196F3] focus:outline-none focus:ring-2 focus:ring-[#2196F3]/20"
-                        >
-                          {filteredWebRoles.map((r) => (
+                  <label className="mb-2 block text-[13px] font-medium text-police-navy2">
+                    Chagua Aina ya Akaunti
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={webRole}
+                      onChange={(e) => {
+                        setWebRole(e.target.value);
+                        // Auto-detect category from selected role
+                        const selectedRole = WEB_ROLES.find(r => r.id === e.target.value);
+                        if (selectedRole) {
+                          const category = ROLE_CATEGORIES.find(c => c.roles.includes(selectedRole.id));
+                          if (category) setRoleCategory(category.id);
+                        }
+                      }}
+                      className="h-12 w-full appearance-none rounded-xl border border-police bg-police-card px-4 pr-10 text-[14px] font-medium text-police focus:border-[#2196F3] focus:outline-none focus:ring-2 focus:ring-[#2196F3]/20"
+                    >
+                      {/* Grouped options by category */}
+                      {ROLE_CATEGORIES.filter(c => c.id !== "all").map((cat) => (
+                        <optgroup key={cat.id} label={`${cat.labelSw} (${cat.label})`}>
+                          {WEB_ROLES.filter(r => cat.roles.includes(r.id)).map((r) => (
                             <option key={r.id} value={r.id}>{r.label}</option>
                           ))}
-                        </select>
-                        <ChevronDown size={18} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-police-faint" />
-                      </div>
-                    </>
-                  )}
+                        </optgroup>
+                      ))}
+                    </select>
+                    <ChevronDown size={18} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#2196F3]" />
+                  </div>
+                  {/* Selected role badge */}
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#1E3A8A]/10 px-3 py-1.5 text-[11px] font-bold text-[#1E3A8A]">
+                      <Shield size={12} />
+                      {WEB_ROLES.find(r => r.id === webRole)?.label || "Chagua..."}
+                    </span>
+                    <span className="text-[10px] text-police-faint">
+                      → {WEB_ROLES.find(r => r.id === webRole)?.route || "/admin/dashboard"}
+                    </span>
+                  </div>
                 </div>
               ) : (
                 <div className="mt-4 grid grid-cols-2 gap-2">
