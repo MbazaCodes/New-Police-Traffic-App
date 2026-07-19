@@ -183,9 +183,22 @@ import type { Session } from "next-auth";
  */
 export async function getServerSession(): Promise<Session | null> {
   const hdrs = await nextHeaders();
+  const headerMap = Object.fromEntries(hdrs.entries());
+
+  // Parse cookies from the Cookie header so getToken can find the session token.
+  // On Vercel (HTTPS) the cookie is __Secure-next-auth.session-token.
+  // On localhost (HTTP) it is next-auth.session-token.
+  const cookieHeader = headerMap["cookie"] ?? "";
+  const cookies: Record<string, string> = {};
+  for (const part of cookieHeader.split(";")) {
+    const eq = part.indexOf("=");
+    if (eq === -1) continue;
+    cookies[part.slice(0, eq).trim()] = decodeURIComponent(part.slice(eq + 1).trim());
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const token = await getToken({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    req: { headers: Object.fromEntries(hdrs.entries()) } as any,
+    req: { headers: headerMap, cookies } as any,
     secret: process.env.NEXTAUTH_SECRET ?? "tz-police-secret-change-in-production",
   });
 
