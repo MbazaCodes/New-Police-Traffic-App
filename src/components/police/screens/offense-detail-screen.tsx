@@ -6,7 +6,7 @@ import { } from "@/lib/police-data";
 
 export function OffenseDetailScreen() {
   const { goBack, selectedOffenseId, navigate } = usePoliceStore();
-  const offense =.find((o) => o.id === selectedOffenseId);
+  const offense = ([] as {id:number;[key:string]:unknown}[]).find((o) => o.id === selectedOffenseId);
 
   if (!offense) {
     return (

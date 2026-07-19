@@ -2,12 +2,6 @@
 // GET /api/reports/summary -> aggregated dashboard data
 
 import { NextResponse } from "next/server";
-import {
-  DASHBOARD_KPIS,
-  INCIDENT_TREND,
-  OFFENSE_DISTRIBUTION,
-  REGION_STATS,
-  LIVE_INCIDENTS,
 import { getServerSession } from "@/lib/auth";
 import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { annotateRecordScope, getScopeContext } from "@/lib/scope";

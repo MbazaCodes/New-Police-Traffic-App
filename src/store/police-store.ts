@@ -243,7 +243,6 @@ export const usePoliceStore = create<PoliceState>()(
         .then(r => r.json())
         .then(d => set({ searchStatus: d.ok && d.data?.length ? "found" : "not-found" }))
         .catch(() => set({ searchStatus: "not-found" }));
-    }, 1000);
   },
   clearSearch: () => set({ searchQuery: "", searchStatus: "idle" }),
 

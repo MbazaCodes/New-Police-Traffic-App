@@ -26,11 +26,7 @@ export async function GET(request: Request) {
       }
     }
     // Mock fallback
-    const results = query
-          c.name.toLowerCase().includes(query.toLowerCase()) ||
-          c.nida?.includes(query) ||
-          c.mobile?.includes(query)
-        )
+    const results = []; // use Supabase
     return NextResponse.json({ ok: true, data: results });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

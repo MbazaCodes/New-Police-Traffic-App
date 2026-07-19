@@ -21,7 +21,7 @@ import {
 import { usePoliceStore, AUTH_ROLES, type AuthRole } from "@/store/police-store";
 import { saveLoginIdentifier, clearLoginIdentifier } from "@/lib/session-context";
 import type { UserRole } from "@/store/police-store";
-import { Shield, Car, UserCheck } from "lucide-react";
+
 
 type Step = "credentials" | "otp" | "success";
 

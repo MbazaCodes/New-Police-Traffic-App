@@ -88,7 +88,7 @@ export function FinePaymentScreen() {
   const receiptNo = useMemo(() => `FP-2026-${Math.floor(1000 + Math.random() * 9000)}`, []);
 
   // ── Search existing unpaid citations ──────────────────────────────────
-  const unpaid =.filter((c) => c.status === "Hajalipwa");
+  const unpaid = ([] as {status:string;id:string;driver:string;plate:string;offense:string;fine:string;date:string}[]).filter((c) => c.status === "Hajalipwa");
   const filtered = searchQuery.trim()
     ? unpaid.filter((c) =>
         c.driver.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -107,7 +107,7 @@ export function FinePaymentScreen() {
     ? parseInt(newForm.customAmount || "0", 10)
     : (selectedOffense?.amount ?? 0);
 
-  function selectCitation(c: typeof[0]) {
+  function selectCitation(c: {id:string;driver:string;plate:string;offense:string;fine:string;date:string;status:string}) {
     // Mock due date: 30 days after citation date
     const parts = c.date.split(" ");
     const months: Record<string, number> = {

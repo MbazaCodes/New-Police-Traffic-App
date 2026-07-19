@@ -4,7 +4,7 @@
 // Falls back to nothing — no more mock users in production.
 // ============================================================
 
-import { getSupabaseAdmin, isSupabaseEnabled } from "./supabase/client";
+import { getSupabaseAdmin, isSupabaseEnabled } from "./client";
 
 export interface SupabaseUser {
   id: string;

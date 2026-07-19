@@ -20,8 +20,8 @@ export function GeneralPoliceScreen() {
 
   const activeIncidents  = GENERAL_INCIDENTS.filter((i) => i.status === "Yanaendelea" || i.status === "Mpya").length;
   const resolvedIncidents = GENERAL_INCIDENTS.filter((i) => i.status === "Tatuliwa").length;
-  const heldArrests =.filter((a) => a.status === "held").length;
-  const totalWarnings =.length;
+  const heldArrests = ([] as {status:string}[]).filter((a) => a.status === "held").length;
+  const totalWarnings = 0;
 
   const policeStats = [
     { label: "Matukio Yote",    value: String(GENERAL_INCIDENTS.length), color: "#1E3A8A" },
@@ -90,7 +90,7 @@ export function GeneralPoliceScreen() {
         <div className="flex gap-2 overflow-x-auto pb-1">
           {[
             { label: `${totalWarnings} Maonyo`, color: "#FF9800" },
-            { label: `${.length} Makamato Yote`, color: "#1E3A8A" },
+            { label: `0 Makamato Yote`, color: "#1E3A8A" },
             { label: `${GENERAL_INCIDENTS.filter((i) => i.casualties > 0).length} Matukio ya Majeruhi`, color: "#EF4444" },
           ].map((p) => (
             <span key={p.label} className="shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-medium" style={{ borderColor: `${p.color}40`, color: p.color, backgroundColor: `${p.color}10` }}>

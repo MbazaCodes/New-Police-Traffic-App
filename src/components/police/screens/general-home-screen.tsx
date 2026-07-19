@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Bell, Search, X, ChevronRight, UserCheck, AlertTriangle, ShieldCheck, Package, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import {, GENERAL_INCIDENTS } from "@/lib/police-data";
+import { GENERAL_INCIDENTS } from "@/lib/police-data";
 import { useOfficer } from "@/hooks/use-officer";
 type SearchMode = "citizen" | "serial";
 type CitizenTab = "name" | "nida" | "mobile";
@@ -37,8 +37,8 @@ export function GeneralHomeScreen() {
 
   const homeStats = [
     { label: "Matukio",    value: String(GENERAL_INCIDENTS.length),                             color: "#1E3A8A" },
-    { label: "Makamato",   value: String(.filter((a) => a.status === "held").length), color: "#1E3A8A" },
-    { label: "Maonyo",     value: String(.length),                               color: "#FF9800" },
+    { label: "Makamato",   value: String(0), color: "#1E3A8A" },
+    { label: "Maonyo",     value: String(0),                               color: "#FF9800" },
     { label: "Patroli Leo", value: String(todayPatrols || "0"),                                 color: "#10B981" },
   ];
 

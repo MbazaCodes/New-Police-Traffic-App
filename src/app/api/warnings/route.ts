@@ -3,7 +3,6 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getSupabaseAdmin, isSupabaseEnabled } from "@/lib/supabase/client";
-import { WARNING_RECORDS } from "@/lib/police-data";
 
 export async function GET() {
   try {

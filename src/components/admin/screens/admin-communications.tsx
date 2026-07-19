@@ -7,7 +7,6 @@ import {
   Bell, Radio, Zap, FileText, RefreshCw, Plus, Megaphone,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import { DETAINED_CITIZENS } from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -65,7 +64,7 @@ export function AdminCommunications() {
   const [text, setText]           = useState("");
   const [search, setSearch]       = useState("");
   const [orders, setOrders]       = useState<CommandOrder[]>(INIT_ORDERS);
-  const [detained, setDetained]   = useState(DETAINED_CITIZENS as {id:string;fullName:string;reason:string;status:string;cell:string;detainedDate:string;officer:string}[]);
+  const [detained, setDetained]   = useState([] as {id:string;fullName:string;reason:string;status:string;cell:string;detainedDate:string;officer:string}[]);
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [orderForm, setOrderForm] = useState({ toOfficer:"", toBadge:"", order:"", priority:"normal" as "urgent"|"high"|"normal" });
   const [detSearch, setDetSearch] = useState("");
@@ -347,7 +346,7 @@ export function AdminCommunications() {
                   setOrderForm(f=>({...f, toOfficer:e.target.value, toBadge:officer?.badgeNo||""}));
                 }} className="h-10 w-full rounded-xl border border-police bg-police-input px-3 text-[12px] text-police focus:outline-none">
                   <option value="">-- Chagua Afisa --</option>
-                  {[]).map(u => (
+                  {([] as {name:string;role:string}[]).map(u => (
                     <option key={u.id} value={u.name}>{u.shortName} ({u.badgeNo}) — {u.station}</option>
                   ))}
                 </select>

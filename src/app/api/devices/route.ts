@@ -27,11 +27,7 @@ export async function GET(request: Request) {
         return NextResponse.json({ ok: true, data });
       }
     }
-    const results = query
-          d.serialNo.toLowerCase().includes(query.toLowerCase()) ||
-          d.imei?.includes(query) ||
-          d.description.toLowerCase().includes(query.toLowerCase())
-        )
+    const results = []; // use Supabase
     return NextResponse.json({ ok: true, data: results });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

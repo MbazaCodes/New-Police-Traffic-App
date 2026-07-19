@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Bell, Search, Camera, ScanLine, ChevronRight, X, AlertCircle } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import {, PATROL_STATS } from "@/lib/police-data";
+import { PATROL_STATS } from "@/lib/police-data";
 import { useOfficer } from "@/hooks/use-officer";
 import { PoliceIcon } from "../police-icons";
 type Tab = "plate" | "license" | "nida";
@@ -40,11 +40,11 @@ export function HomeScreen() {
   const unread = unreadAlertCount();
   const todayStr = new Date().toLocaleDateString("sw-TZ");
   const todayPatrols = patrolRecords.filter((p) => p.date === todayStr).length;
-  const unpaidCount  =.filter((c) => c.status === "Hajalipwa").length;
-  const arrestsCount =.filter((a) => a.status === "held").length;
+  const unpaidCount  = ([] as {status:string}[]).filter((c) => c.status === "Hajalipwa").length;
+  const arrestsCount = ([] as {status:string}[]).filter((a) => a.status === "held").length;
 
   const homeStats = [
-    { label: "Makosa Yangu", value: String(.length), color: "#1E3A8A" },
+    { label: "Makosa Yangu", value: String(0), color: "#1E3A8A" },
     { label: "Haijalipwa",   value: String(unpaidCount),             color: "#EF4444" },
     { label: "Kizuizini",    value: String(arrestsCount),            color: "#1E3A8A" },
     { label: "Patroli Leo",  value: String(todayPatrols || PATROL_STATS[0].value), color: "#10B981" },
@@ -231,11 +231,11 @@ export function HomeScreen() {
             <h3 className="text-[16px] font-bold text-police">Matukio ya Karibuni</h3>
             <button onClick={() => navigate("history")} className="text-[13px] font-medium text-[#2196F3]">Angalia Zote</button>
           </div>
-          {.length === 0 ? (
+          {true ? (
             <p className="py-4 text-center text-[13px] text-police-muted">Hakuna matukio ya kuonyesha.</p>
           ) : (
             <div className="space-y-2.5">
-              {.slice(0, 3).map((o) => (
+              {[].slice(0, 3).map((o) => (
                 <button key={o.id} onClick={() => { setSelectedOffense(o.id); navigate("offense-detail"); }} className="flex w-full items-center gap-3 rounded-xl border border-police-soft p-2.5 text-left active:scale-[0.99]">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: `${o.iconColor}18` }}>
                     <PoliceIcon name={o.icon} size={20} className="" style={{ color: o.iconColor }} />

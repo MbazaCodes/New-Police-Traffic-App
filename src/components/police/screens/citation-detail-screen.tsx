@@ -7,7 +7,7 @@ import { toast } from "@/hooks/use-toast";
 
 export function CitationDetailScreen() {
   const { goBack, selectedCitationId } = usePoliceStore();
-  const citation =.find((c) => c.id === selectedCitationId);
+  const citation = ([] as {id:string;[key:string]:unknown}[]).find((c) => c.id === selectedCitationId);
 
   if (!citation) {
     return (

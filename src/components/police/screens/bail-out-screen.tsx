@@ -76,7 +76,7 @@ export function BailOutScreen() {
   const receiptNo = useMemo(() => `BL-2026-${Math.floor(1000 + Math.random() * 9000)}`, []);
 
   // Held arrestees eligible for bail
-  const eligible = ( as ArrestRecord[]).filter((a) => a.status === "held");
+  const eligible = ([] as ArrestRecord[]).filter((a) => a.status === "held");
 
   const bailAmount = selectedArrest ? getBailAmount(selectedArrest.offense) : 0;
 
