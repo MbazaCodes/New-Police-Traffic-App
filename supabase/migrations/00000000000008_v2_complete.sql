@@ -345,3 +345,46 @@ CREATE TABLE IF NOT EXISTS alert_reads (
 
 ALTER TABLE alert_reads ENABLE ROW LEVEL SECURITY;
 
+
+-- ═══════════════════════════════════════════════════════════════
+-- OFFICER REQUESTS TABLE
+-- ═══════════════════════════════════════════════════════════════
+DO $$ BEGIN CREATE TYPE request_status AS ENUM ('pending','approved','rejected','reallocated'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE request_priority AS ENUM ('high','medium','low'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+CREATE TABLE IF NOT EXISTS officer_requests (
+  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  type          VARCHAR(50) NOT NULL,         -- Uhamisho|Zana|Likizo|Matibabu|Mafunzo|Nyingine
+  officer_id    UUID REFERENCES users(id),
+  officer_name  VARCHAR(255) NOT NULL,
+  officer_badge VARCHAR(50),
+  station       VARCHAR(255),
+  region        VARCHAR(100),
+  details       TEXT NOT NULL,
+  priority      request_priority NOT NULL DEFAULT 'medium',
+  status        request_status NOT NULL DEFAULT 'pending',
+  response      TEXT,
+  new_station   VARCHAR(255),
+  responded_by  VARCHAR(255),
+  responded_at  TIMESTAMPTZ,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_req_officer  ON officer_requests(officer_id);
+CREATE INDEX IF NOT EXISTS idx_req_status   ON officer_requests(status);
+CREATE INDEX IF NOT EXISTS idx_req_type     ON officer_requests(type);
+CREATE INDEX IF NOT EXISTS idx_req_created  ON officer_requests(created_at DESC);
+
+ALTER TABLE officer_requests ENABLE ROW LEVEL SECURITY;
+
+-- Officers see own requests; commanders see all in their scope
+DROP POLICY IF EXISTS req_select ON officer_requests;
+CREATE POLICY req_select ON officer_requests FOR SELECT TO authenticated USING (
+  officer_id = auth.uid() OR is_commander() OR current_user_role() = 'admin'
+);
+DROP POLICY IF EXISTS req_insert ON officer_requests;
+CREATE POLICY req_insert ON officer_requests FOR INSERT TO authenticated WITH CHECK (TRUE);
+DROP POLICY IF EXISTS req_update ON officer_requests;
+CREATE POLICY req_update ON officer_requests FOR UPDATE TO authenticated
+  USING (is_commander() OR current_user_role() = 'admin');

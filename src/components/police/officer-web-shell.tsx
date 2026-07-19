@@ -41,6 +41,7 @@ const AddVehicleScreen       = dynamic(() => import("./screens/add-vehicle-scree
 const AddCitizenScreen       = dynamic(() => import("./screens/add-citizen-screen").then(m=>({default:m.AddCitizenScreen})),           {ssr:false});
 const AccidentReportScreen   = dynamic(() => import("./screens/accident-report-screen").then(m=>({default:m.AccidentReportScreen})),   {ssr:false});
 const TrafficScreen          = dynamic(() => import("./screens/traffic-screen").then(m=>({default:m.TrafficScreen})),                 {ssr:false});
+const OfficerRequestScreen = dynamic(() => import("./screens/officer-request-screen").then(m=>({default:m.OfficerRequestScreen})), {ssr:false});
 const EditProfileScreen      = dynamic(() => import("./screens/edit-profile-screen").then(m=>({default:m.EditProfileScreen})),         {ssr:false});
 
 // ── Nav definitions ────────────────────────────────────────────────────────
@@ -73,6 +74,7 @@ function renderOfficerScreen(screen: ScreenId, isGeneral: boolean) {
     case "incident-detail":    return <IncidentDetailScreen />;
     case "offense-detail":     return <OffenseDetailScreen />;
     case "citation-detail":    return <CitationDetailScreen />;
+    case "officer-request":   return <OfficerRequestScreen />;
     case "edit-profile":       return <EditProfileScreen />;
     case "incident-view":      return <IncidentViewScreen />;
     case "add-vehicle":        return <AddVehicleScreen />;

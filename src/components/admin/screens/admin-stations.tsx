@@ -82,20 +82,28 @@ export function AdminStations() {
     setModalMode("view");
   };
 
-  const handleSubmit = (data: Omit<AdminStationRecord, "id" | "officersCount" | "postsCount" | "established">) => {
-    if (modalMode === "edit" && active) {
-      updateAdminStation(active.id, data);
-      toast({
-        title: "Kituo Kimesasishwa",
-        description: `Taarifa za ${data.name} zimehifadhiwa`,
-      });
-    } else {
-      addAdminStation(data);
-      toast({
-        title: "Kituo Kimeongezwa",
-        description: `${data.name} kimeongezwa kwenye orodha`,
-      });
-    }
+  const handleSubmit = async (data: Omit<AdminStationRecord, "id" | "officersCount" | "postsCount" | "established">) => {
+    try {
+      if (modalMode === "edit" && active) {
+        const res = await fetch(`/api/stations/${active.id}`, {
+          method: "PATCH", headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(data),
+        });
+        const json = await res.json();
+        if (!res.ok) { toast({ title: "Hitilafu", description: json.error, variant: "destructive" }); return; }
+        updateAdminStation(active.id, data); // sync local state
+        toast({ title: "Kituo Kimesasishwa ✓", description: `Taarifa za ${data.name} zimehifadhiwa` });
+      } else {
+        const res = await fetch("/api/stations", {
+          method: "POST", headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ ...data, address: data.address || "" }),
+        });
+        const json = await res.json();
+        if (!res.ok) { toast({ title: "Hitilafu", description: json.error, variant: "destructive" }); return; }
+        addAdminStation(data); // sync local state
+        toast({ title: "Kituo Kimeongezwa ✓", description: `${data.name} kimeongezwa kwenye mfumo` });
+      }
+    } catch { toast({ title: "Hitilafu ya mtandao", variant: "destructive" }); }
     setModalMode(null);
     setActive(null);
   };

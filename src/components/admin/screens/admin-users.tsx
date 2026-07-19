@@ -63,20 +63,18 @@ export function AdminUsers() {
     );
   });
 
-  const toggleSuspend = (u: AdminUserRecord) => {
+  const toggleSuspend = async (u: AdminUserRecord) => {
     const newStatus: "active" | "suspended" = u.status === "active" ? "suspended" : "active";
-    setAdminUserStatus(u.id, newStatus);
-    if (newStatus === "suspended") {
-      toast({
-        title: "Amebwa",
-        description: `${u.name} amesimwa kwa muda`,
+    try {
+      const res = await fetch(`/api/users/${u.id}`, {
+        method: "PATCH", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ status: newStatus }),
       });
-    } else {
-      toast({
-        title: "Amerejeshwa",
-        description: `${u.name} amerejeshwa kwenye mfumo`,
-      });
-    }
+      const json = await res.json();
+      if (!res.ok) { toast({ title: "Hitilafu", description: json.error, variant: "destructive" }); return; }
+      setAdminUserStatus(u.id, newStatus);
+      toast({ title: newStatus === "suspended" ? "Amebwa ✓" : "Amerejeshwa ✓", description: `${u.name} ${newStatus === "suspended" ? "amesimamishwa" : "amerejeshwa kwenye mfumo"}` });
+    } catch { toast({ title: "Hitilafu ya mtandao", variant: "destructive" }); }
   };
 
   return (

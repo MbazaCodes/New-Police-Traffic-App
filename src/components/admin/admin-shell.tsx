@@ -28,6 +28,7 @@ import { ROLE_USERS } from "@/lib/mock-engine";
 import { AdminDashboard } from "./screens/admin-dashboard";
 import { CommissionerDashboard } from "./screens/commissioner-dashboard";
 import { WaliokamatwaScreen } from "./screens/waliokamatwa-screen";
+import { AdminRequests } from "./screens/admin-requests";
 import { AdminOfficers } from "./screens/admin-officers";
 import { AdminIncidents } from "./screens/admin-incidents";
 import { AdminCitations } from "./screens/admin-citations";
@@ -52,6 +53,7 @@ const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashbo
   { id: "reports",           label: "Ripoti",           icon: BarChart3 },
   { id: "detained-citizens", label: "Wafungwa",         icon: Shield, badge: 3 },
   { id: "waliokamatwa",      label: "Waliokamatwa",     icon: Users, badge: 5 },
+  { id: "requests",         label: "Maombi ya Maafisa",icon: Users, badge: 4 },
   { id: "missing",           label: "Wanaotafutwa",     icon: AlertTriangle, badge: 7 },
   { id: "stations",          label: "Vituo",            icon: Building2 },
   { id: "posts",             label: "Posti",            icon: Network, badge: 1 },
@@ -68,6 +70,7 @@ const OFFICER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboar
   { id: "patrols",           label: "Patroli",          icon: Shield },
   { id: "detained-citizens", label: "Wafungwa",         icon: Shield },
   { id: "waliokamatwa",      label: "Waliokamatwa",     icon: Users },
+  { id: "requests",         label: "Maombi ya Maafisa",icon: Users, badge: 4 },
   { id: "missing",           label: "Wanaotafutwa",     icon: AlertTriangle, badge: 7 },
   { id: "alerts",            label: "Arifa",            icon: Bell, badge: 3 },
   { id: "reports",           label: "Ripoti",           icon: BarChart3 },
@@ -351,6 +354,8 @@ function renderAdminScreen(screen: AdminScreen) {
       return <AdminAssignments />;
     case "detained-citizens":
       return <DetainedCitizensScreen />;
+    case "requests":
+      return <AdminRequests />;
     case "waliokamatwa":
       return <WaliokamatwaScreen />;
     case "missing":
