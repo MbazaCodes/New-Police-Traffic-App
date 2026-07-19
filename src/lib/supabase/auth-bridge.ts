@@ -59,7 +59,8 @@ export async function findSupabaseUser(identifier: string): Promise<SupabaseUser
  */
 export function mapSupabaseRole(role: string): string {
   const map: Record<string, string> = {
-    "admin":                   "SYSTEM_ADMIN",
+    "super-admin":             "SUPER_ADMIN",
+    "admin":                   "SUPER_ADMIN",
     "national-commissioner":   "NATIONAL_COMMANDER",
     "regional-commissioner":   "REGIONAL_COMMANDER",
     "district-commissioner":   "DISTRICT_COMMANDER",
