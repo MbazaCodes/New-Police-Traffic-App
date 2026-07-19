@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Search, X, Users, Plus, Shield, AlertTriangle, ChevronRight, Mail, Phone } from "lucide-react";
 import { useApiData } from "@/hooks/use-api-data";
 import { toast } from "@/hooks/use-toast";
@@ -30,6 +31,7 @@ const STATUS_STYLES: Record<string,string> = {
 };
 
 export function AdminUsers() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selected, setSelected] = useState<UserRecord | null>(null);
@@ -48,7 +50,7 @@ export function AdminUsers() {
           <p className="text-[12px] text-police-muted">{users.length} watumiaji wote</p>
         </div>
         <button
-          onClick={() => toast({ title:"Ongeza Mtumiaji", description:"Tumia /api/users POST kuongeza mtumiaji mpya" })}
+          onClick={() => router.push("/admin/users/create")}
           className="flex items-center gap-2 rounded-xl bg-[#1E3A8A] px-4 py-2.5 text-[13px] font-bold text-white shadow-sm hover:bg-[#1a3278] active:scale-95 transition"
         >
           <Plus size={16} /> Ongeza Mtumiaji
