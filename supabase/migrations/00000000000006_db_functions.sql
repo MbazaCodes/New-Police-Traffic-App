@@ -207,7 +207,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE SEQUENCE IF NOT EXISTS citation_seq START 1;
+-- (Sequence citation_seq defined with IF NOT EXISTS in 0010_db_functions_v2.sql)
 DROP TRIGGER IF EXISTS tg_citation_number ON citations;
 CREATE TRIGGER tg_citation_number BEFORE INSERT ON citations FOR EACH ROW EXECUTE FUNCTION generate_citation_number();
 
@@ -220,7 +220,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE SEQUENCE IF NOT EXISTS incident_seq START 1;
+-- (Sequence incident_seq defined with IF NOT EXISTS in 0010_db_functions_v2.sql)
 DROP TRIGGER IF EXISTS tg_incident_number ON incidents;
 CREATE TRIGGER tg_incident_number BEFORE INSERT ON incidents FOR EACH ROW EXECUTE FUNCTION generate_incident_number();
 

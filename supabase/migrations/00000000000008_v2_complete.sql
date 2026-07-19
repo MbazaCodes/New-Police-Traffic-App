@@ -1,3 +1,6 @@
+-- NOTE: Tables already defined in 0005_complete_schema.sql are NOT redefined here.
+-- This file only extends columns and adds new tables.
+
 -- ============================================================
 -- TZ POLICE DIGITAL PLATFORM — v2 COMPLETE MIGRATION
 -- Migration: 00000000000008_v2_complete
@@ -112,88 +115,36 @@ ALTER TABLE citations ADD COLUMN IF NOT EXISTS station_id      UUID REFERENCES s
 -- ── OTP Codes ─────────────────────────────────────────────────
 -- Persists OTP codes across Vercel serverless instances
 -- (solves the in-memory Map() issue)
-CREATE TABLE IF NOT EXISTS otp_codes (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  identifier  VARCHAR(255) NOT NULL,  -- username, mobile, email
-  code        VARCHAR(6)   NOT NULL,
-  expires_at  TIMESTAMPTZ  NOT NULL,
-  consumed_at TIMESTAMPTZ,            -- NULL = not yet used
-  created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
-);
+-- (Defined in 0005_complete_schema.sql: otp_codes)
 
-CREATE INDEX IF NOT EXISTS idx_otp_identifier ON otp_codes(identifier, consumed_at);
-CREATE INDEX IF NOT EXISTS idx_otp_expires    ON otp_codes(expires_at);
+-- (Index defined in 0005: idx_otp_identifier)
+-- (Index defined in 0005: idx_otp_expires)
 
 -- Auto-clean expired codes (called by cleanup function below)
-ALTER TABLE otp_codes ENABLE ROW LEVEL SECURITY;
+-- (RLS already enabled in 0005: otp_codes)
 -- OTP table is only accessible via service role (edge functions)
 -- No anon/authenticated policies — edge functions use service_role key
 
 -- ── Licenses ──────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS licenses (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  citizen_id   UUID REFERENCES citizens(id),
-  license_no   VARCHAR(50) NOT NULL UNIQUE,
-  class        VARCHAR(10),
-  issued_at    DATE,
-  expires_at   DATE,
-  status       license_status NOT NULL DEFAULT 'valid',
-  created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- (Defined in 0005_complete_schema.sql: licenses)
 
 CREATE INDEX IF NOT EXISTS idx_licenses_no        ON licenses(license_no);
 CREATE INDEX IF NOT EXISTS idx_licenses_citizen   ON licenses(citizen_id);
 CREATE INDEX IF NOT EXISTS idx_licenses_status    ON licenses(status);
 
-ALTER TABLE licenses ENABLE ROW LEVEL SECURITY;
+-- (RLS already enabled in 0005: licenses)
 
 -- ── Devices ───────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS devices (
-  id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  serial_no        VARCHAR(100) NOT NULL UNIQUE,
-  imei             VARCHAR(20),
-  description      TEXT NOT NULL,
-  category         VARCHAR(50),   -- 'simu' | 'kompyuta' | 'tablet'
-  owner_citizen_id UUID REFERENCES citizens(id),
-  owner_name       VARCHAR(255),
-  owner_phone      VARCHAR(20),
-  status           device_status NOT NULL DEFAULT 'clean',
-  report_date      DATE,
-  created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- (Defined in 0005_complete_schema.sql: devices)
 
-CREATE INDEX IF NOT EXISTS idx_devices_serial  ON devices(serial_no);
-CREATE INDEX IF NOT EXISTS idx_devices_imei    ON devices(imei);
-CREATE INDEX IF NOT EXISTS idx_devices_status  ON devices(status);
+-- (Index defined in 0005: idx_devices_serial)
+-- (Index defined in 0005: idx_devices_imei)
+-- (Index defined in 0005: idx_devices_status)
 
-ALTER TABLE devices ENABLE ROW LEVEL SECURITY;
+-- (RLS already enabled in 0005: devices)
 
 -- ── Arrests ───────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS arrests (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  arrest_number   VARCHAR(50) UNIQUE NOT NULL,
-  officer_id      UUID REFERENCES officers(id),
-  citizen_id      UUID REFERENCES citizens(id),
-  suspect_name    VARCHAR(255) NOT NULL,
-  suspect_nida    VARCHAR(20),
-  suspect_phone   VARCHAR(20),
-  offense         TEXT NOT NULL,
-  location        VARCHAR(255),
-  arrest_date     DATE NOT NULL DEFAULT CURRENT_DATE,
-  arrest_time     TIME NOT NULL DEFAULT CURRENT_TIME,
-  status          arrest_status NOT NULL DEFAULT 'held',
-  cell            VARCHAR(50),
-  station_id      UUID REFERENCES stations(id),
-  detained_date   DATE,
-  detained_time   TIME,
-  court_date      DATE,
-  lawyer          VARCHAR(255),
-  next_of_kin     VARCHAR(255),
-  medical_status  VARCHAR(100) DEFAULT 'Nzuri',
-  notes           TEXT,
-  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- (Defined in 0005_complete_schema.sql: arrests)
 
 CREATE INDEX IF NOT EXISTS idx_arrests_officer   ON arrests(officer_id);
 CREATE INDEX IF NOT EXISTS idx_arrests_station   ON arrests(station_id);
@@ -201,7 +152,7 @@ CREATE INDEX IF NOT EXISTS idx_arrests_status    ON arrests(status);
 CREATE INDEX IF NOT EXISTS idx_arrests_date      ON arrests(arrest_date);
 CREATE INDEX IF NOT EXISTS idx_arrests_nida      ON arrests(suspect_nida);
 
-ALTER TABLE arrests ENABLE ROW LEVEL SECURITY;
+-- (RLS already enabled in 0005: arrests)
 
 -- ── Warnings ──────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS warnings (
@@ -228,80 +179,30 @@ CREATE INDEX IF NOT EXISTS idx_warnings_nida    ON warnings(citizen_nida);
 ALTER TABLE warnings ENABLE ROW LEVEL SECURITY;
 
 -- ── Criminal Records ──────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS criminal_records (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  citizen_id  UUID NOT NULL REFERENCES citizens(id),
-  case_no     VARCHAR(50) NOT NULL,
-  type        VARCHAR(100) NOT NULL,
-  description TEXT,
-  date        DATE NOT NULL,
-  station     VARCHAR(255),
-  outcome     VARCHAR(100),  -- 'Convicted' | 'Acquitted' | 'Pending'
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- (Defined in 0005_complete_schema.sql: criminal_records)
 
 CREATE INDEX IF NOT EXISTS idx_criminal_citizen ON criminal_records(citizen_id);
 CREATE INDEX IF NOT EXISTS idx_criminal_date    ON criminal_records(date);
 
-ALTER TABLE criminal_records ENABLE ROW LEVEL SECURITY;
+-- (RLS already enabled in 0005: criminal_records)
 
 -- ── Wanted Persons ────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS wanted (
-  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  citizen_id    UUID REFERENCES citizens(id),
-  suspect_name  VARCHAR(255) NOT NULL,
-  suspect_nida  VARCHAR(20),
-  crime         TEXT NOT NULL,
-  issued_date   DATE NOT NULL DEFAULT CURRENT_DATE,
-  issued_by     UUID REFERENCES users(id),
-  station_id    UUID REFERENCES stations(id),
-  risk_level    VARCHAR(10) DEFAULT 'high' CHECK (risk_level IN ('high','medium','low')),
-  reward_amount VARCHAR(50),
-  active        BOOLEAN NOT NULL DEFAULT TRUE,
-  found_at      TIMESTAMPTZ,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- (Defined in 0005_complete_schema.sql: wanted)
 
 CREATE INDEX IF NOT EXISTS idx_wanted_active   ON wanted(active);
 CREATE INDEX IF NOT EXISTS idx_wanted_citizen  ON wanted(citizen_id);
 CREATE INDEX IF NOT EXISTS idx_wanted_nida     ON wanted(suspect_nida);
 
-ALTER TABLE wanted ENABLE ROW LEVEL SECURITY;
+-- (RLS already enabled in 0005: wanted)
 
 -- ── Missing Records ───────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS missing_records (
-  id                 UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  case_no            VARCHAR(50) NOT NULL UNIQUE,
-  type               missing_type NOT NULL,    -- person | car | device
-  title              VARCHAR(255) NOT NULL,
-  identifier         VARCHAR(255),             -- NIDA / Plate / Serial
-  details            TEXT,
-  photo_url          TEXT,
-  last_seen          VARCHAR(100),
-  last_seen_location VARCHAR(255),
-  reported_by        VARCHAR(255),
-  reported_date      DATE,
-  station_id         UUID REFERENCES stations(id),
-  status             missing_status NOT NULL DEFAULT 'active',
-  reward_amount      VARCHAR(50),
-  age                INT,                      -- for person type
-  gender             VARCHAR(10),              -- Mme | Mke
-  guardian_name      VARCHAR(255),
-  guardian_phone     VARCHAR(20),
-  contact_phone      VARCHAR(20),
-  risk_level         VARCHAR(10) CHECK (risk_level IN ('high','medium','low')),
-  crime              TEXT,                     -- for wanted persons
-  issued_date        DATE,
-  assigned_officer_id UUID REFERENCES officers(id),
-  found_at           TIMESTAMPTZ,
-  created_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- (Defined in 0005_complete_schema.sql: missing_records)
 
-CREATE INDEX IF NOT EXISTS idx_missing_status ON missing_records(status);
-CREATE INDEX IF NOT EXISTS idx_missing_type   ON missing_records(type);
-CREATE INDEX IF NOT EXISTS idx_missing_caseno ON missing_records(case_no);
+-- (Index defined in 0005: idx_missing_status)
+-- (Index defined in 0005: idx_missing_type)
+-- (Index defined in 0005: idx_missing_caseno)
 
-ALTER TABLE missing_records ENABLE ROW LEVEL SECURITY;
+-- (RLS already enabled in 0005: missing_records)
 
 -- ── Patrol Track Points ───────────────────────────────────────
 -- GPS breadcrumb trail for each patrol — used by track-patrol edge function
