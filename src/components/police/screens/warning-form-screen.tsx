@@ -33,10 +33,23 @@ export function WarningFormScreen() {
   const dateStr = now.toLocaleDateString("sw-TZ");
   const timeStr = now.toLocaleTimeString("sw-TZ", { hour: "2-digit", minute: "2-digit" });
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.recipientName || !form.offense) {
       toast({ title: "Kosa", description: "Jaza jina na kosa.", variant: "destructive" }); return;
     }
+    try {
+      await fetch("/api/warnings", {
+        method: "POST", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          citizenName:  form.recipientName,
+          citizenNida:  form.nida || undefined,
+          citizenPhone: form.phone || undefined,
+          offense:      form.offense,
+          location:     form.location || undefined,
+          notes:        form.notes || undefined,
+        }),
+      });
+    } catch { /* offline — continue */ }
     setSubmitted(true);
     setWarningPrefill(null);
     toast({ title: "Onyo Limetolewa ✓", description: `Onyo kwa ${form.recipientName} limesajiliwa.` });

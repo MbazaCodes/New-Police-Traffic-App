@@ -37,10 +37,28 @@ export function ArrestFormScreen() {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.suspectName || !form.offense || !form.arrestLocation) {
       toast({ title: "Kosa", description: "Jaza sehemu zote zinazohitajika (*)", variant: "destructive" }); return;
     }
+    // Save to DB via API
+    try {
+      await fetch("/api/arrests", {
+        method: "POST", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          suspectName:  form.suspectName,
+          suspectNida:  form.suspectNida || undefined,
+          suspectPhone: form.suspectPhone || undefined,
+          offense:      form.offense,
+          location:     form.arrestLocation,
+          cell:         form.cell || undefined,
+          nextOfKin:    form.nextOfKin || undefined,
+          lawyer:       form.lawyer || undefined,
+          notes:        form.notes || undefined,
+          photosCount:  photos.length,
+        }),
+      });
+    } catch { /* offline — form still submitted locally */ }
     setSubmitted(true);
     setArrestPrefill(null);
     toast({ title: "Fomu Imewasilishwa ✓", description: `Ripoti ya kukamatwa kwa ${form.suspectName} imewasilishwa kwa Kamishna.` });

@@ -57,10 +57,11 @@ export function PatrolScreen() {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!area) { toast({ title: "Kosa", description: "Taja eneo la patroli.", variant: "destructive" }); return; }
     const now = new Date();
     const typeLabels = { gari: "Gari", miguu: "Miguu", baiskeli: "Baiskeli" };
+    // Save to Zustand (local session)
     addPatrolRecord({
       id: `PT-${Date.now()}`,
       date: now.toLocaleDateString("sw-TZ"),
@@ -70,6 +71,16 @@ export function PatrolScreen() {
       events,
       photos: photos.length,
     });
+    // Save to DB via API
+    try {
+      await fetch("/api/patrols", {
+        method: "POST", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          area, type: patrolType, durationSecs: patrolElapsed,
+          events, photosCount: photos.length,
+        }),
+      });
+    } catch { /* offline — local record saved */ }
     setSubmitted(true);
     setShowForm(false);
     toast({ title: "Ripoti Imehifadhiwa ✓", description: `Patroli ya ${formatTime(patrolElapsed)} (${typeLabels[patrolType]}) imerekodiwa.` });

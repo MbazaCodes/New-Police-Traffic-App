@@ -62,14 +62,27 @@ export function CitationScreen() {
     notes: notes || undefined,
   });
 
-  const handleSave = () => {
+  const handleSave = async () => {
     addCitation(buildPayload());
-    toast({ title: "Imehifadhiwa", description: "Rasimu ya Citation imehifadhiwa." });
+    try {
+      await fetch("/api/citations", {
+        method: "POST", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ ...buildPayload(), status: "draft" }),
+      });
+    } catch { /* offline — local only */ }
+    toast({ title: "Imehifadhiwa ✓", description: "Rasimu ya Citation imehifadhiwa." });
   };
-  const handleSubmit = () => {
-    addCitation(buildPayload());
+  const handleSubmit = async () => {
+    const payload = buildPayload();
+    addCitation(payload);
+    try {
+      await fetch("/api/citations", {
+        method: "POST", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ ...payload, status: "unpaid" }),
+      });
+    } catch { /* offline — local only */ }
     toast({
-      title: "Citation Imetolewa",
+      title: "Citation Imetolewa ✓",
       description: "Citation imewasilishwa na imetumwa kwa dereva.",
     });
     setTimeout(() => goBack(), 800);
