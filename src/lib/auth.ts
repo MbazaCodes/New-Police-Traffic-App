@@ -171,6 +171,14 @@ export const authOptions: NextAuthOptions = {
 };
 
 import { getServerSession as getNextAuthServerSession } from "next-auth";
+import { headers } from "next/headers";
 export async function getServerSession() {
-  return getNextAuthServerSession(authOptions);
+  return getNextAuthServerSession({
+    ...authOptions,
+    // Next.js App Router requires headers to be passed so NextAuth
+    // can read the session cookie from the incoming request.
+    // Without this, session is always null in Route Handlers.
+    // @ts-ignore — next-auth v4 accepts this undocumented but necessary arg
+    req: { headers: Object.fromEntries((await headers()).entries()) },
+  });
 }
