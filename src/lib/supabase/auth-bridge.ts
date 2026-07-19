@@ -31,56 +31,39 @@ export interface SupabaseUser {
  */
 export async function findSupabaseUser(identifier: string): Promise<SupabaseUser | null> {
   if (!isSupabaseEnabled()) return null;
-
   const admin = getSupabaseAdmin();
   if (!admin) return null;
 
   const raw = identifier.trim();
-
-  // ── Normalize phone number to multiple formats ─────────────
-  // Accept: 0712345678 / 712345678 / +255712345678 / 255712345678
-  const phoneNormalized: string[] = [];
-  const digitsOnly = raw.replace(/\D/g, "");
-  if (digitsOnly.length >= 9) {
-    const core = digitsOnly.startsWith("255")
-      ? digitsOnly.slice(3)        // 255712... → 712...
-      : digitsOnly.startsWith("0")
-      ? digitsOnly.slice(1)        // 0712... → 712...
-      : digitsOnly;                // 712... already
-    phoneNormalized.push(
-      `0${core}`,                  // 0712345678
-      `+255${core}`,               // +255712345678
-      `255${core}`,                // 255712345678
-      core,                        // 712345678
-    );
-  }
-
   const clean = raw.toLowerCase();
 
-  // ── Try exact badge_no / username / email first ────────────
-  // Use separate .eq() calls to avoid PostgREST .or() escaping issues with @ symbol
-  const searches = [
-    admin.from("users").select("*, station:stations(id, name, region)").ilike("badge_no", clean).eq("status", "active").limit(1).maybeSingle(),
-    admin.from("users").select("*, station:stations(id, name, region)").ilike("username", clean).eq("status", "active").limit(1).maybeSingle(),
-    admin.from("users").select("*, station:stations(id, name, region)").ilike("email", clean).eq("status", "active").limit(1).maybeSingle(),
-  ];
-
-  for (const query of searches) {
-    const { data } = await query;
+  // Try each field individually — avoids PostgREST .or() escaping issues with @ in email
+  const cols: Array<"badge_no" | "username" | "email"> = ["badge_no", "username", "email"];
+  for (const col of cols) {
+    const { data } = await admin
+      .from("users")
+      .select("*, station:stations(id, name, region)")
+      .ilike(col, clean)
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
     if (data) return data as SupabaseUser;
   }
 
-  // ── Try phone number in all normalized formats ─────────────
-  if (phoneNormalized.length > 0) {
-    for (const ph of phoneNormalized) {
-      const { data: byPhone } = await admin
+  // Phone number lookup with TZ normalization
+  const digitsOnly = raw.replace(/\D/g, "");
+  if (digitsOnly.length >= 9) {
+    const core = digitsOnly.startsWith("255") ? digitsOnly.slice(3)
+      : digitsOnly.startsWith("0") ? digitsOnly.slice(1) : digitsOnly;
+    for (const ph of [`0${core}`, `+255${core}`, `255${core}`, core]) {
+      const { data } = await admin
         .from("users")
         .select("*, station:stations(id, name, region)")
         .eq("phone", ph)
         .eq("status", "active")
         .limit(1)
         .maybeSingle();
-      if (byPhone) return byPhone as SupabaseUser;
+      if (data) return data as SupabaseUser;
     }
   }
 
