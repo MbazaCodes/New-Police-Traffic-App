@@ -206,8 +206,10 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--tpf-border-2); border-radius: 99px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--tpf-text-4); }
-  scrollbar-width: thin;
-  scrollbar-color: var(--tpf-border-2) transparent;
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--tpf-border-2) transparent;
+  }
 }
 
 /* ── POLICE APP UTILITIES ────────────────────────────────────── */
