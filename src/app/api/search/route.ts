@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
+import { errMsg } from "@/lib/api-error";
 
 export async function GET(req: NextRequest) {
   try {
@@ -53,7 +54,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ found: false, query: q, type });
   } catch (err) {
     return NextResponse.json(
-      { error: "Search failed", detail: String(err) },
+      { error: "Search failed", detail: errMsg(err) },
       { status: 500 },
     );
   }

@@ -7,6 +7,7 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
+import { errMsg } from "@/lib/api-error";
 
 export async function GET(request: Request) {
   try {
@@ -73,7 +74,7 @@ export async function GET(request: Request) {
     );
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to search citizen", detail: String(err) },
+      { error: "Failed to search citizen", detail: errMsg(err) },
       { status: 500 },
     );
   }

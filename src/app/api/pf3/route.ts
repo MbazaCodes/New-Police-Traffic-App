@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
+import { errMsg } from "@/lib/api-error";
 
 interface Pf3Form {
   referenceNo: string;
@@ -54,7 +55,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ data: result, total: result.length }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to list PF3 forms", detail: String(err) },
+      { error: "Failed to list PF3 forms", detail: errMsg(err) },
       { status: 500 },
     );
   }
@@ -109,7 +110,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ data: newForm }, { status: 201 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to create PF3 form", detail: String(err) },
+      { error: "Failed to create PF3 form", detail: errMsg(err) },
       { status: 500 },
     );
   }

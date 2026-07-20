@@ -4,6 +4,7 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
+import { errMsg } from "@/lib/api-error";
 
 export async function GET(
   _request: Request,
@@ -21,7 +22,7 @@ export async function GET(
     if (error || !data) return NextResponse.json({ error: "Tukio halipatikani" }, { status: 404 });
     return NextResponse.json({ data });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }
 
@@ -43,6 +44,6 @@ export async function PATCH(
     await logAction(session, "incident_updated", "incidents", id, body);
     return NextResponse.json({ data });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }

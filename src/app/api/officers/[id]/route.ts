@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
+import { errMsg } from "@/lib/api-error";
 
 const officersStore: {id:string;name:string;rank:string;status:string;badgeNo:string}[] = [];
 
@@ -29,7 +30,7 @@ export async function GET(
     return NextResponse.json({ data: officer }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to fetch officer", detail: String(err) },
+      { error: "Failed to fetch officer", detail: errMsg(err) },
       { status: 500 },
     );
   }
@@ -68,7 +69,7 @@ export async function PATCH(
     return NextResponse.json({ data: updated }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to update officer", detail: String(err) },
+      { error: "Failed to update officer", detail: errMsg(err) },
       { status: 500 },
     );
   }
@@ -104,7 +105,7 @@ export async function DELETE(
     return NextResponse.json({ data: { id, deleted: true } }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to delete officer", detail: String(err) },
+      { error: "Failed to delete officer", detail: errMsg(err) },
       { status: 500 },
     );
   }

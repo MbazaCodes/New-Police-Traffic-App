@@ -7,6 +7,7 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
+import { errMsg } from "@/lib/api-error";
 
 // ── No fallback mock data — requires Supabase ──────────────────────────
 
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
     // Supabase required — return empty when not available
     return NextResponse.json({ ok: true, data: [], total: 0 });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }
 
@@ -113,6 +114,6 @@ export async function POST(request: Request) {
     // Supabase required for fine creation
     return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }

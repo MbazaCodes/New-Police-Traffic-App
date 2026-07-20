@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
+import { errMsg } from "@/lib/api-error";
 
 const patrolsStore: {id:string;officer:string;area:string;status:string;start:string}[] = [];
 
@@ -41,7 +42,7 @@ export async function PATCH(
     return NextResponse.json({ data: updated }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to update patrol", detail: String(err) },
+      { error: "Failed to update patrol", detail: errMsg(err) },
       { status: 500 },
     );
   }

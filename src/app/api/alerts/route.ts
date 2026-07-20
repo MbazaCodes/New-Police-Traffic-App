@@ -8,6 +8,7 @@ import { getServerSession } from "@/lib/auth";
 import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { annotateRecordScope, getScopeContext } from "@/lib/scope";
+import { errMsg } from "@/lib/api-error";
 
 const alertsStore: {id:string;title:string;message:string;priority:string;category:string;isRead:boolean;createdAt:string}[] = [];
 const alertHistoryStore: {id:string;title:string;audience:string;priority:string;sentBy:string;date:string;time:string;recipients:number}[] = [];
@@ -69,7 +70,7 @@ export async function GET(request: Request) {
     );
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to list alerts", detail: String(err) },
+      { error: "Failed to list alerts", detail: errMsg(err) },
       { status: 500 },
     );
   }
@@ -141,7 +142,7 @@ export async function POST(request: Request) {
     );
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to send alert", detail: String(err) },
+      { error: "Failed to send alert", detail: errMsg(err) },
       { status: 500 },
     );
   }

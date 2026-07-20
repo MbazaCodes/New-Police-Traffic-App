@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { isSupabaseEnabled, getSupabaseAdmin, getSupabaseAdminAny } from "@/lib/supabase/client";
+import { errMsg } from "@/lib/api-error";
 
 type ClerkAlert = {
   title: string;
@@ -179,7 +180,7 @@ export async function GET() {
     );
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to load clerk overview", detail: String(err) },
+      { error: "Failed to load clerk overview", detail: errMsg(err) },
       { status: 500 },
     );
   }

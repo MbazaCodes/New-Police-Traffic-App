@@ -6,6 +6,7 @@ import { getServerSession } from "@/lib/auth";
 import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { annotateRecordScope, getScopeContext } from "@/lib/scope";
 import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
+import { errMsg } from "@/lib/api-error";
 
 export async function GET() {
   try {
@@ -121,7 +122,7 @@ export async function GET() {
     return NextResponse.json({ data: summary }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to build reports summary", detail: String(err) },
+      { error: "Failed to build reports summary", detail: errMsg(err) },
       { status: 500 },
     );
   }

@@ -7,6 +7,7 @@ import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
+import { errMsg, uniqueViolationMsg } from "@/lib/api-error";
 
 export async function GET(request: Request) {
   try {
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ ok: true, data: [], total: 0 });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }
 
@@ -73,9 +74,14 @@ export async function POST(request: Request) {
           phone:      phone      || null,
           region:     region     || null,
           unit:       unit       || null,
-          id_number:  idNumber   || null,
+          // id_number is UNIQUE NOT NULL — fall back to badge number
+          id_number:  idNumber   || badgeNo,
         }).select().single();
-        if (error) throw error;
+        if (error) {
+          const dup = uniqueViolationMsg(error);
+          if (dup) return NextResponse.json({ error: dup }, { status: 409 });
+          throw error;
+        }
         await logAction(session, "user_created", "users", data.id, { name, role, badgeNo });
         return NextResponse.json({ ok: true, data }, { status: 201 });
       }
@@ -83,6 +89,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }

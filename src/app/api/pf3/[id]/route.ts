@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
+import { errMsg } from "@/lib/api-error";
 
 interface Pf3Form {
   referenceNo: string;
@@ -45,7 +46,7 @@ export async function GET(
     return NextResponse.json({ data: form }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to fetch PF3 form", detail: String(err) },
+      { error: "Failed to fetch PF3 form", detail: errMsg(err) },
       { status: 500 },
     );
   }
@@ -84,7 +85,7 @@ export async function PATCH(
     return NextResponse.json({ data: updated }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to update PF3 form", detail: String(err) },
+      { error: "Failed to update PF3 form", detail: errMsg(err) },
       { status: 500 },
     );
   }

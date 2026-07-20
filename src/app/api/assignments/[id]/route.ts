@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
+import { errMsg } from "@/lib/api-error";
 
 const assignmentsStore: {id:string;officerId:string;stationId:string;postId?:string;role:string;status:string}[] = [];
 
@@ -42,7 +43,7 @@ export async function PATCH(
     return NextResponse.json({ data: updated }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to update assignment", detail: String(err) },
+      { error: "Failed to update assignment", detail: errMsg(err) },
       { status: 500 },
     );
   }
@@ -78,7 +79,7 @@ export async function DELETE(
     return NextResponse.json({ data: { id, deleted: true } }, { status: 200 });
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to delete assignment", detail: String(err) },
+      { error: "Failed to delete assignment", detail: errMsg(err) },
       { status: 500 },
     );
   }

@@ -8,6 +8,7 @@ import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getSupabaseAdmin, getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 import { getScopeContext } from "@/lib/scope";
+import { errMsg } from "@/lib/api-error";
 
 export async function GET(request: Request) {
   try {
@@ -35,7 +36,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ ok: true, data: [], total: 0 });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }
 
@@ -79,6 +80,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }

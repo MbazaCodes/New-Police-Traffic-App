@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { listAuditLogs } from "@/lib/audit-log";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
+import { errMsg } from "@/lib/api-error";
 
 export async function GET(request: Request) {
   try {
@@ -29,7 +30,7 @@ export async function GET(request: Request) {
     );
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to list audit logs", detail: String(err) },
+      { error: "Failed to list audit logs", detail: errMsg(err) },
       { status: 500 },
     );
   }
