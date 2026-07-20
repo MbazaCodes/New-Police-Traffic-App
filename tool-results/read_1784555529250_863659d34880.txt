@@ -1,0 +1,521 @@
+     1→"use client";
+     2→
+     3→import { useState, useEffect } from "react";
+     4→import { Search, X, Shield, AlertTriangle, ChevronRight, Plus, Save, Loader2 } from "lucide-react";
+     5→import { useApiData } from "@/hooks/use-api-data";
+     6→import { authFetch } from "@/lib/client-auth";
+     7→import { toast } from "@/hooks/use-toast";
+     8→import { TZ_ZONE_NAMES, regionsForZone, districtsForRegion, TZ_POLICE_RANKS } from "@/lib/tz-locations";
+     9→
+    10→// ── Officer categories → system roles ────────────────────────────
+    11→// Selecting a category filters the system-role list. The role decides
+    12→// which panel/PWA the officer lands in at login:
+    13→//   officer-traffic  → /officer/traffic (Traffic Officer PWA)
+    14→//   officer-general  → /officer/general (General Police PWA)
+    15→//   post-officer     → /officer/post
+    16→//   cid roles        → /cid
+    17→//   commissioners    → /command/*
+    18→const OFFICER_CATEGORIES: { value: string; label: string; roles: { value: string; label: string }[] }[] = [
+    19→  {
+    20→    value: "trafiki", label: "Askari wa Usalama Barabarani (Trafiki)",
+    21→    roles: [{ value: "officer-traffic", label: "Traffic Officer — PWA ya Trafiki" }],
+    22→  },
+    23→  {
+    24→    value: "kawaida", label: "Polisi wa Kawaida (General Duty)",
+    25→    roles: [{ value: "officer-general", label: "General Officer — PWA ya Polisi" }],
+    26→  },
+    27→  {
+    28→    value: "posti", label: "Afisa wa Posti / Kituo cha Ukaguzi",
+    29→    roles: [{ value: "post-officer", label: "Post Officer" }],
+    30→  },
+    31→  {
+    32→    value: "upelelezi", label: "Upelelezi (CID)",
+    33→    roles: [
+    34→      { value: "cid-officer", label: "CID Officer" },
+    35→      { value: "investigator", label: "Investigator" },
+    36→    ],
+    37→  },
+    38→  {
+    39→    value: "kamandi", label: "Kamandi (Command)",
+    40→    roles: [
+    41→      { value: "station-commissioner",  label: "OCS — Kamanda wa Kituo" },
+    42→      { value: "district-commissioner", label: "OCD — Kamanda wa Wilaya" },
+    43→      { value: "regional-commissioner", label: "RPC — Kamanda wa Mkoa" },
+    44→      { value: "national-commissioner", label: "Kamanda wa Kitaifa" },
+    45→    ],
+    46→  },
+    47→];
+    48→
+    49→type Officer = {
+    50→  id: string; name: string; officer_number: string; rank: string; status: string;
+    51→  station?: { id: string; name: string; region: string } | null;
+    52→  user?: { email: string | null; phone: string | null; photo_url: string | null; unit: string | null; badge_no: string | null; role?: string | null } | null;
+    53→};
+    54→
+    55→const EDITABLE_ROLES = [
+    56→  ["officer-traffic", "Traffic Officer"], ["officer-general", "General Officer"], ["post-officer", "Post Officer"],
+    57→  ["cid-officer", "CID Officer"], ["investigator", "Investigator"], ["station-commissioner", "OCS — Kamanda wa Kituo"],
+    58→  ["district-commissioner", "OCD — Kamanda wa Wilaya"], ["regional-commissioner", "RPC — Kamanda wa Mkoa"],
+    59→  ["national-commissioner", "Kamanda wa Kitaifa"],
+    60→] as const;
+    61→
+    62→type StationOption = { id: string; name: string; region?: string | null; district?: string | null };
+    63→
+    64→const STATUS_STYLES: Record<string, string> = {
+    65→  active:    "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30",
+    66→  break:     "bg-[#FF9800]/15 text-[#FF9800] border border-[#FF9800]/30",
+    67→  "off-duty":"bg-gray-500/15 text-gray-500 border border-gray-500/30",
+    68→};
+    69→const STATUS_LABEL: Record<string, string> = { active:"Kazini", break:"Mapumziko", "off-duty":"Ametoka" };
+    70→const STATUS_FILTERS = [
+    71→  { id:"all", label:"Wote" }, { id:"active", label:"Kazini" },
+    72→  { id:"break", label:"Mapumziko" }, { id:"off-duty", label:"Ametoka" },
+    73→] as const;
+    74→
+    75→export function AdminOfficers() {
+    76→  const [query, setQuery] = useState("");
+    77→  const [statusFilter, setStatusFilter] = useState<string>("all");
+    78→  const [selected, setSelected] = useState<Officer | null>(null);
+    79→  const [showAddModal, setShowAddModal] = useState(false);
+    80→  const [saving, setSaving] = useState(false);
+    81→
+    82→  const { data: officers, loading, error, refetch } = useApiData<Officer>(
+    83→    "/api/officers",
+    84→    { ...(statusFilter !== "all" ? { status: statusFilter } : {}), ...(query ? { search: query } : {}) },
+    85→    [query, statusFilter]
+    86→  );
+    87→
+    88→  const activeCount = officers.filter((o) => o.status === "active").length;
+    89→
+    90→  async function updateRole(officer: Officer, role: string) {
+    91→    setSaving(true);
+    92→    const { error } = await authFetch(`/api/officers/${officer.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ role }) });
+    93→    setSaving(false);
+    94→    if (error) { toast({ title: "Imeshindikana kubadili role", description: error, variant: "destructive" }); return; }
+    95→    setSelected({ ...officer, user: officer.user ? { ...officer.user, role } : officer.user });
+    96→    toast({ title: "Role imebadilishwa" });
+    97→    refetch();
+    98→  }
+    99→
+   100→  return (
+   101→    <div className="space-y-4">
+   102→      {/* Header */}
+   103→      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+   104→        <div>
+   105→          <h1 className="text-[22px] font-black text-police">Maofisa</h1>
+   106→          <p className="text-[12px] text-police-muted">{officers.length} maofisa wote • {activeCount} kazini sasa</p>
+   107→        </div>
+   108→        <button
+   109→          onClick={() => setShowAddModal(true)}
+   110→          className="flex items-center gap-2 rounded-xl bg-[#2196F3] px-4 py-2.5 text-[13px] font-bold text-white shadow-sm hover:bg-[#1E88E5] active:scale-95 transition"
+   111→        >
+   112→          <Plus size={16} /> Ongeza Afisa
+   113→        </button>
+   114→      </div>
+   115→
+   116→      {/* Stats */}
+   117→      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+   118→        {[
+   119→          { label:"Wote",      value: officers.length,                                          color:"#2196F3" },
+   120→          { label:"Kazini",    value: officers.filter(o=>o.status==="active").length,           color:"#10B981" },
+   121→          { label:"Mapumziko", value: officers.filter(o=>o.status==="break").length,            color:"#FF9800" },
+   122→          { label:"Wametoka",  value: officers.filter(o=>o.status==="off-duty").length,         color:"#6B7280" },
+   123→        ].map((s) => (
+   124→          <div key={s.label} className="rounded-xl bg-police-card p-4 shadow-sm">
+   125→            <p className="text-[22px] font-black leading-none" style={{ color: s.color }}>{s.value}</p>
+   126→            <p className="mt-1 text-[11px] text-police-muted">{s.label}</p>
+   127→          </div>
+   128→        ))}
+   129→      </div>
+   130→
+   131→      {/* Filters */}
+   132→      <div className="rounded-xl bg-police-card p-3 shadow-sm">
+   133→        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+   134→          <div className="flex flex-1 items-center gap-2 rounded-lg bg-police-input px-3 py-2">
+   135→            <Search size={14} className="shrink-0 text-police-faint" />
+   136→            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Tafuta jina, badge, au kituo..."
+   137→              className="flex-1 bg-transparent text-[13px] text-police placeholder-police-faint focus:outline-none" />
+   138→            {query && <button onClick={() => setQuery("")} className="text-police-faint"><X size={14} /></button>}
+   139→          </div>
+   140→        </div>
+   141→        <div className="mt-2.5 flex flex-wrap gap-1.5">
+   142→          {STATUS_FILTERS.map((f) => (
+   143→            <button key={f.id} onClick={() => setStatusFilter(f.id)}
+   144→              className={`rounded-lg px-3 py-1.5 text-[12px] font-medium transition ${statusFilter===f.id ? "bg-[#2196F3] text-white" : "bg-police-input text-police-muted hover:text-police"}`}>
+   145→              {f.label}
+   146→            </button>
+   147→          ))}
+   148→        </div>
+   149→      </div>
+   150→
+   151→      {/* Table */}
+   152→      <div className="rounded-xl bg-police-card shadow-sm">
+   153→        {loading && (
+   154→          <div className="flex items-center justify-center py-16 gap-3">
+   155→            <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#2196F3] border-t-transparent" />
+   156→            <span className="text-[13px] text-police-muted">Inapakia maofisa...</span>
+   157→          </div>
+   158→        )}
+   159→        {!loading && error && (
+   160→          <div className="flex flex-col items-center py-12 text-center">
+   161→            <AlertTriangle size={32} className="text-[#EF4444]" />
+   162→            <p className="mt-2 text-[13px] font-semibold text-[#EF4444]">{error}</p>
+   163→            <button onClick={refetch} className="mt-3 rounded-xl bg-[#2196F3] px-4 py-2 text-[12px] text-white">Jaribu Tena</button>
+   164→          </div>
+   165→        )}
+   166→        {!loading && !error && officers.length === 0 && (
+   167→          <div className="flex flex-col items-center py-16 text-center px-6">
+   168→            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2196F3]/10">
+   169→              <Shield size={32} className="text-[#2196F3] opacity-60" />
+   170→            </div>
+   171→            <p className="mt-4 text-[15px] font-bold text-police">Hakuna Maofisa Bado</p>
+   172→            <p className="mt-1 text-[12px] text-police-muted max-w-xs">Mfumo umeanza upya. Bonyeza &quot;Ongeza Afisa&quot; kuanza kuingiza maofisa.</p>
+   173→          </div>
+   174→        )}
+   175→        {!loading && !error && officers.length > 0 && (
+   176→          <div className="overflow-x-auto">
+   177→            <table className="w-full min-w-[700px] text-left text-[12px]">
+   178→              <thead>
+   179→                <tr className="border-b border-police-soft bg-police-muted/30 text-[10px] uppercase text-police-faint">
+   180→                  <th className="px-4 py-3 font-semibold">Jina / Cheo</th>
+   181→                  <th className="px-4 py-3 font-semibold">Badge No</th>
+   182→                  <th className="px-4 py-3 font-semibold hidden md:table-cell">Kitengo</th>
+   183→                  <th className="px-4 py-3 font-semibold hidden sm:table-cell">Kituo</th>
+   184→                  <th className="px-4 py-3 font-semibold">Hadhi</th>
+   185→                  <th className="px-4 py-3 font-semibold hidden lg:table-cell">Simu</th>
+   186→                  <th className="px-4 py-3 text-right font-semibold">Hatua</th>
+   187→                </tr>
+   188→              </thead>
+   189→              <tbody>
+   190→                {officers.map((o) => (
+   191→                  <tr key={o.id} onClick={() => setSelected(o)}
+   192→                    className="cursor-pointer border-b border-police-soft transition hover:bg-police-muted/30 last:border-0">
+   193→                    <td className="px-4 py-3">
+   194→                      <div className="flex items-center gap-2.5">
+   195→                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2196F3]/15 text-[11px] font-bold text-[#2196F3]">
+   196→                          {o.name.split(" ").slice(0,2).map((n)=>n[0]).join("")}
+   197→                        </div>
+   198→                        <div>
+   199→                          <p className="font-semibold text-police">{o.name}</p>
+   200→                          <p className="text-[10px] text-police-faint">{o.rank}</p>
+   201→                        </div>
+   202→                      </div>
+   203→                    </td>
+   204→                    <td className="px-4 py-3 font-mono text-[11px] text-police-muted">{o.officer_number}</td>
+   205→                    <td className="px-4 py-3 text-police-muted hidden md:table-cell">{o.user?.unit ?? "—"}</td>
+   206→                    <td className="px-4 py-3 text-police-muted hidden sm:table-cell">{o.station?.name ?? "—"}</td>
+   207→                    <td className="px-4 py-3">
+   208→                      <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${STATUS_STYLES[o.status] ?? ""}`}>
+   209→                        {STATUS_LABEL[o.status] ?? o.status}
+   210→                      </span>
+   211→                    </td>
+   212→                    <td className="px-4 py-3 text-police-muted hidden lg:table-cell">{o.user?.phone ?? "—"}</td>
+   213→                    <td className="px-4 py-3 text-right">
+   214→                      <button onClick={(e)=>{e.stopPropagation();setSelected(o)}}
+   215→                        className="flex items-center gap-1 rounded-lg bg-[#2196F3]/10 px-2.5 py-1.5 text-[11px] font-semibold text-[#2196F3] hover:bg-[#2196F3]/20 transition">
+   216→                        Angalia <ChevronRight size={12} />
+   217→                      </button>
+   218→                    </td>
+   219→                  </tr>
+   220→                ))}
+   221→              </tbody>
+   222→            </table>
+   223→          </div>
+   224→        )}
+   225→      </div>
+   226→
+   227→      {/* Officer detail panel */}
+   228→      {selected && (
+   229→        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center" onClick={() => setSelected(null)}>
+   230→          <div className="relative w-full max-w-md rounded-2xl bg-police-card p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+   231→            <button onClick={() => setSelected(null)} className="absolute right-4 top-4 text-police-muted hover:text-police">
+   232→              <X size={18} />
+   233→            </button>
+   234→            <div className="flex items-center gap-3 mb-4">
+   235→              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2196F3]/15 text-[16px] font-bold text-[#2196F3]">
+   236→                {selected.name.split(" ").slice(0,2).map((n)=>n[0]).join("")}
+   237→              </div>
+   238→              <div>
+   239→                <p className="text-[16px] font-bold text-police">{selected.name}</p>
+   240→                <p className="text-[12px] text-police-muted">{selected.rank} • {selected.officer_number}</p>
+   241→              </div>
+   242→            </div>
+   243→            <div className="space-y-2 text-[13px]">
+   244→              <div className="flex justify-between"><span className="text-police-muted">Kituo</span><span className="text-police font-medium">{selected.station?.name ?? "—"}</span></div>
+   245→              <div className="flex justify-between"><span className="text-police-muted">Kitengo</span><span className="text-police font-medium">{selected.user?.unit ?? "—"}</span></div>
+   246→              <div className="flex items-center justify-between gap-3"><span className="text-police-muted">Role ya mfumo</span>
+   247→                <select value={selected.user?.role ?? "officer-general"} disabled={saving} onChange={(e) => updateRole(selected, e.target.value)} className="max-w-[210px] rounded-lg border border-police-soft bg-police px-2 py-1 text-[12px] text-police focus:border-[#2196F3] focus:outline-none">
+   248→                  {EDITABLE_ROLES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+   249→                </select>
+   250→              </div>
+   251→              <div className="flex justify-between"><span className="text-police-muted">Simu</span><span className="text-police font-medium">{selected.user?.phone ?? "—"}</span></div>
+   252→              <div className="flex justify-between"><span className="text-police-muted">Barua Pepe</span><span className="text-police font-medium">{selected.user?.email ?? "—"}</span></div>
+   253→              <div className="flex justify-between"><span className="text-police-muted">Hadhi</span>
+   254→                <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${STATUS_STYLES[selected.status] ?? ""}`}>
+   255→                  {STATUS_LABEL[selected.status] ?? selected.status}
+   256→                </span>
+   257→              </div>
+   258→            </div>
+   259→          </div>
+   260→        </div>
+   261→      )}
+   262→
+   263→      {/* ── Add Officer Modal ─────────────────────────────── */}
+   264→      {showAddModal && (
+   265→        <AddOfficerModal
+   266→          onClose={() => setShowAddModal(false)}
+   267→          onSaved={() => { setShowAddModal(false); refetch(); }}
+   268→        />
+   269→      )}
+   270→    </div>
+   271→  );
+   272→}
+   273→
+   274→// ── Add Officer Modal Component ──────────────────────────────────────
+   275→
+   276→function AddOfficerModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
+   277→  const [saving, setSaving] = useState(false);
+   278→  const [formError, setFormError] = useState<string | null>(null);
+   279→  const [stations, setStations] = useState<StationOption[]>([]);
+   280→
+   281→  const [name, setName] = useState("");
+   282→  const [rank, setRank] = useState("Constable");
+   283→  const [category, setCategory] = useState("trafiki");
+   284→  const [officerRole, setOfficerRole] = useState("officer-traffic");
+   285→  const [badgeNo, setBadgeNo] = useState("");
+   286→  const [phone, setPhone] = useState("");
+   287→  const [email, setEmail] = useState("");
+   288→
+   289→  // Cascading posting selection: Zone -> Region -> District -> Station
+   290→  const [zone, setZone]         = useState("");
+   291→  const [region, setRegion]     = useState("");
+   292→  const [district, setDistrict] = useState("");
+   293→  const [stationId, setStationId] = useState("");
+   294→
+   295→  // Load stations on mount (keep region/district for cascading filter)
+   296→  useEffect(() => {
+   297→    fetch("/api/stations")
+   298→      .then((r) => r.json())
+   299→      .then((json) => {
+   300→        if (json.data) {
+   301→          setStations(json.data.map((s: { id: string; name: string; region?: string; district?: string }) =>
+   302→            ({ id: s.id, name: s.name, region: s.region ?? null, district: s.district ?? null })));
+   303→        }
+   304→      })
+   305→      .catch(() => {});
+   306→  }, []);
+   307→
+   308→  // Options derived from the cascade
+   309→  const regionOptions   = zone ? regionsForZone(zone) : [];
+   310→  const districtOptions = region ? districtsForRegion(region) : [];
+   311→
+   312→  // Stations filtered by selected region/district; fall back to full list if no match
+   313→  const stationMatches = stations.filter((s) => {
+   314→    if (district && s.district && s.district !== district) return false;
+   315→    if (region && s.region && s.region !== region) return false;
+   316→    return true;
+   317→  });
+   318→  const stationOptions = region && stationMatches.length > 0 ? stationMatches : stations;
+   319→
+   320→  // Cascade resets — changing a parent clears its children
+   321→  function onZoneChange(v: string)     { setZone(v); setRegion(""); setDistrict(""); setStationId(""); }
+   322→  function onRegionChange(v: string)   { setRegion(v); setDistrict(""); setStationId(""); }
+   323→  function onDistrictChange(v: string) { setDistrict(v); setStationId(""); }
+   324→
+   325→  async function handleSubmit() {
+   326→    setFormError(null);
+   327→
+   328→    if (!name.trim()) { setFormError("Jina la afisa linahitajika"); return; }
+   329→    if (!badgeNo.trim()) { setFormError("Namba ya badge inahitajika"); return; }
+   330→    if (!zone) { setFormError("Tafadhali chagua kanda"); return; }
+   331→    if (!region) { setFormError("Tafadhali chagua mkoa"); return; }
+   332→    if (!stationId) { setFormError("Tafadhali chagua kituo"); return; }
+   333→
+   334→    setSaving(true);
+   335→    const { error } = await authFetch("/api/officers", {
+   336→      method: "POST",
+   337→      headers: { "Content-Type": "application/json" },
+   338→      body: JSON.stringify({
+   339→        name: name.trim(),
+   340→        rank,
+   341→        badgeNo: badgeNo.trim(),
+   342→        phone: phone.trim() || undefined,
+   343→        email: email.trim() || undefined,
+   344→        stationId,
+   345→        region,
+   346→        unit: district || undefined,
+   347→        role: officerRole,
+   348→      }),
+   349→    });
+   350→    setSaving(false);
+   351→
+   352→    if (error) {
+   353→      setFormError(error);
+   354→      return;
+   355→    }
+   356→
+   357→    toast({ title: "Afisa ameongezwa", description: `${name.trim()} ameongezwa kwenye mfumo` });
+   358→    onSaved();
+   359→  }
+   360→
+   361→  const fields: { label: string; value: string; onChange: (v: string) => void; placeholder: string; type?: string; required?: boolean }[] = [
+   362→    { label: "Jina *", value: name, onChange: setName, placeholder: "Mfano: John Mwenda", required: true },
+   363→    { label: "Namba ya Badge *", value: badgeNo, onChange: setBadgeNo, placeholder: "Mfano: TPF-1234", required: true },
+   364→    { label: "Simu", value: phone, onChange: setPhone, placeholder: "Mfano: +255 700 000 000", type: "tel" },
+   365→    { label: "Barua Pepe", value: email, onChange: setEmail, placeholder: "Mfano: afisa@police.go.tz", type: "email" },
+   366→  ];
+   367→
+   368→  const selectCls = "w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police focus:outline-none focus:border-[#2196F3] disabled:opacity-50 disabled:cursor-not-allowed";
+   369→
+   370→  return (
+   371→    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center" onClick={onClose}>
+   372→      <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-2xl bg-police-card p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+   373→        <button onClick={onClose} className="absolute right-4 top-4 text-police-muted hover:text-police">
+   374→          <X size={18} />
+   375→        </button>
+   376→
+   377→        <div className="flex items-center gap-3 mb-5">
+   378→          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2196F3]/15 text-[#2196F3]">
+   379→            <Shield size={18} />
+   380→          </div>
+   381→          <div>
+   382→            <p className="text-[15px] font-bold text-police">Ongeza Afisa Mpya</p>
+   383→            <p className="text-[11px] text-police-faint">Jaza taarifa za afisa mpya</p>
+   384→          </div>
+   385→        </div>
+   386→
+   387→        {formError && (
+   388→          <div className="mb-4 rounded-lg bg-[#EF4444]/10 border border-[#EF4444]/30 px-3 py-2.5 text-[12px] text-[#EF4444]">
+   389→            {formError}
+   390→          </div>
+   391→        )}
+   392→
+   393→        <div className="space-y-3">
+   394→          {fields.map(({ label, value, onChange, placeholder, type }) => (
+   395→            <div key={label}>
+   396→              <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">{label}</label>
+   397→              <input
+   398→                type={type ?? "text"}
+   399→                value={value}
+   400→                onChange={(e) => onChange(e.target.value)}
+   401→                placeholder={placeholder}
+   402→                className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police placeholder-police-faint focus:outline-none focus:border-[#2196F3]"
+   403→              />
+   404→            </div>
+   405→          ))}
+   406→
+   407→          {/* Rank dropdown */}
+   408→          <div>
+   409→            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Nafasi / Cheo</label>
+   410→            <select value={rank} onChange={(e) => setRank(e.target.value)} className={selectCls}>
+   411→              {TZ_POLICE_RANKS.map((r) => (
+   412→                <option key={r} value={r}>{r}</option>
+   413→              ))}
+   414→            </select>
+   415→          </div>
+   416→
+   417→          {/* Category → System Role: decides which panel/PWA opens at login */}
+   418→          <div>
+   419→            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kundi / Category *</label>
+   420→            <select
+   421→              value={category}
+   422→              onChange={(e) => {
+   423→                const cat = e.target.value;
+   424→                setCategory(cat);
+   425→                // Category triggers role: auto-select the first role of the category
+   426→                const roles = OFFICER_CATEGORIES.find((x) => x.value === cat)?.roles ?? [];
+   427→                setOfficerRole(roles[0]?.value ?? "officer-general");
+   428→              }}
+   429→              className={selectCls}
+   430→            >
+   431→              {OFFICER_CATEGORIES.map((cat) => (
+   432→                <option key={cat.value} value={cat.value}>{cat.label}</option>
+   433→              ))}
+   434→            </select>
+   435→          </div>
+   436→
+   437→          <div>
+   438→            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Aina ya Nafasi (System Role) *</label>
+   439→            <select value={officerRole} onChange={(e) => setOfficerRole(e.target.value)} className={selectCls}>
+   440→              {(OFFICER_CATEGORIES.find((x) => x.value === category)?.roles ?? []).map((r) => (
+   441→                <option key={r.value} value={r.value}>{r.label}</option>
+   442→              ))}
+   443→            </select>
+   444→            <p className="mt-1 text-[10px] text-police-faint">
+   445→              Nafasi hii ndiyo inaamua paneli/PWA atakayofunguliwa afisa akiingia
+   446→            </p>
+   447→          </div>
+   448→
+   449→          {/* ── Posting: Zone → Region → District → Station (cascading) ── */}
+   450→          <div className="pt-2 border-t border-police-soft">
+   451→            <p className="text-[11px] font-black text-police-muted uppercase tracking-wide">Kituo cha Kazi</p>
+   452→            <p className="text-[10px] text-police-faint">Chagua Kanda kwanza — Mkoa, Wilaya na Kituo vitafunguka hatua kwa hatua</p>
+   453→          </div>
+   454→
+   455→          <div>
+   456→            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kanda / Zone *</label>
+   457→            <select value={zone} onChange={(e) => onZoneChange(e.target.value)} className={selectCls}>
+   458→              <option value="">— Chagua Kanda —</option>
+   459→              {TZ_ZONE_NAMES.map((z) => (
+   460→                <option key={z} value={z}>{z}</option>
+   461→              ))}
+   462→            </select>
+   463→          </div>
+   464→
+   465→          <div>
+   466→            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Mkoa / Region *</label>
+   467→            <select value={region} onChange={(e) => onRegionChange(e.target.value)} disabled={!zone} className={selectCls}>
+   468→              <option value="">{zone ? "— Chagua Mkoa —" : "Chagua Kanda kwanza"}</option>
+   469→              {regionOptions.map((r) => (
+   470→                <option key={r} value={r}>{r}</option>
+   471→              ))}
+   472→            </select>
+   473→          </div>
+   474→
+   475→          <div>
+   476→            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Wilaya / District</label>
+   477→            <select value={district} onChange={(e) => onDistrictChange(e.target.value)} disabled={!region} className={selectCls}>
+   478→              <option value="">{region ? "— Chagua Wilaya —" : "Chagua Mkoa kwanza"}</option>
+   479→              {districtOptions.map((d) => (
+   480→                <option key={d} value={d}>{d}</option>
+   481→              ))}
+   482→            </select>
+   483→          </div>
+   484→
+   485→          <div>
+   486→            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kituo / Station *</label>
+   487→            <select value={stationId} onChange={(e) => setStationId(e.target.value)} disabled={!region} className={selectCls}>
+   488→              <option value="">{region ? "— Chagua Kituo —" : "Chagua Mkoa kwanza"}</option>
+   489→              {stationOptions.map((s) => (
+   490→                <option key={s.id} value={s.id}>
+   491→                  {s.name}{s.region ? ` (${s.region})` : ""}
+   492→                </option>
+   493→              ))}
+   494→            </select>
+   495→            {region && stationMatches.length === 0 && stations.length > 0 && (
+   496→              <p className="mt-1 text-[10px] text-[#FF9800]">Hakuna kituo kilichosajiliwa kwenye mkoa huu — vituo vyote vinaonyeshwa</p>
+   497→            )}
+   498→          </div>
+   499→        </div>
+   500→
+   501→        <div className="mt-5 grid grid-cols-2 gap-2">
+   502→          <button
+   503→            onClick={onClose}
+   504→            disabled={saving}
+   505→            className="rounded-xl bg-police-input py-2.5 text-[13px] font-semibold text-police-navy hover:bg-police-muted transition disabled:opacity-60"
+   506→          >
+   507→            Ghairi
+   508→          </button>
+   509→          <button
+   510→            onClick={handleSubmit}
+   511→            disabled={saving}
+   512→            className="flex items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-2.5 text-[13px] font-bold text-white hover:bg-[#1E88E5] transition active:scale-95 disabled:opacity-60"
+   513→          >
+   514→            {saving ? <><Loader2 size={14} className="animate-spin" /> Inahifadhi...</> : <><Save size={14} /> Hifadhi</>}
+   515→          </button>
+   516→        </div>
+   517→      </div>
+   518→    </div>
+   519→  );
+   520→}
+   521→
