@@ -1,0 +1,905 @@
+     1→-- ============================================================
+     2→-- TZ POLICE DIGITAL PLATFORM — DB FUNCTIONS v2
+     3→-- Migration: 00000000000010_db_functions_v2
+     4→-- All PostgreSQL functions the app calls via .rpc()
+     5→-- Covers: auth, search, citations, incidents, arrests,
+     6→--         patrols, dashboard, OTP, missing, wanted, devices
+     7→-- ============================================================
+     8→
+     9→-- ═══════════════════════════════════════════════════════════════
+    10→-- 1. OTP FUNCTIONS
+    11→-- ═══════════════════════════════════════════════════════════════
+    12→
+    13→-- Upsert OTP code (called by send-otp edge function)
+    14→CREATE OR REPLACE FUNCTION upsert_otp_code(
+    15→  p_identifier  TEXT,
+    16→  p_code        TEXT,
+    17→  p_expires_at  TIMESTAMPTZ
+    18→)
+    19→RETURNS VOID
+    20→LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+    21→BEGIN
+    22→  -- Invalidate any existing codes for this identifier
+    23→  UPDATE otp_codes
+    24→  SET consumed_at = NOW()
+    25→  WHERE identifier = p_identifier AND consumed_at IS NULL;
+    26→
+    27→  -- Insert the new code
+    28→  INSERT INTO otp_codes (identifier, code, expires_at)
+    29→  VALUES (p_identifier, p_code, p_expires_at);
+    30→END;
+    31→$$;
+    32→
+    33→-- Verify OTP (called by verify-otp edge function and /api/auth/verify-otp)
+    34→CREATE OR REPLACE FUNCTION verify_otp_code(
+    35→  p_identifier TEXT,
+    36→  p_code       TEXT
+    37→)
+    38→RETURNS TABLE (
+    39→  ok        BOOLEAN,
+    40→  message   TEXT,
+    41→  user_id   UUID,
+    42→  user_role TEXT
+    43→)
+    44→LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+    45→DECLARE
+    46→  v_otp  otp_codes;
+    47→  v_user users;
+    48→BEGIN
+    49→  -- Find the most recent unused, unexpired code
+    50→  SELECT * INTO v_otp
+    51→  FROM otp_codes
+    52→  WHERE identifier   = p_identifier
+    53→    AND consumed_at  IS NULL
+    54→    AND expires_at   > NOW()
+    55→  ORDER BY created_at DESC
+    56→  LIMIT 1;
+    57→
+    58→  IF NOT FOUND THEN
+    59→    -- Demo/bypass mode: any 6-digit code is valid
+    60→    IF p_code ~ '^\d{6}$' THEN
+    61→      SELECT * INTO v_user
+    62→      FROM users
+    63→      WHERE username = p_identifier
+    64→         OR phone    = p_identifier
+    65→         OR email    = p_identifier
+    66→         OR badge_no = p_identifier
+    67→      LIMIT 1;
+    68→
+    69→      RETURN QUERY SELECT
+    70→        TRUE,
+    71→        'demo_bypass',
+    72→        v_user.id,
+    73→        v_user.role::TEXT;
+    74→      RETURN;
+    75→    END IF;
+    76→
+    77→    RETURN QUERY SELECT FALSE, 'no_active_otp', NULL::UUID, NULL::TEXT;
+    78→    RETURN;
+    79→  END IF;
+    80→
+    81→  -- Check code matches
+    82→  IF v_otp.code <> p_code THEN
+    83→    RETURN QUERY SELECT FALSE, 'invalid_code', NULL::UUID, NULL::TEXT;
+    84→    RETURN;
+    85→  END IF;
+    86→
+    87→  -- Mark consumed
+    88→  UPDATE otp_codes SET consumed_at = NOW() WHERE id = v_otp.id;
+    89→
+    90→  -- Resolve user
+    91→  SELECT * INTO v_user
+    92→  FROM users
+    93→  WHERE username = p_identifier
+    94→     OR phone    = p_identifier
+    95→     OR email    = p_identifier
+    96→     OR badge_no = p_identifier
+    97→  LIMIT 1;
+    98→
+    99→  RETURN QUERY SELECT
+   100→    TRUE,
+   101→    'ok',
+   102→    v_user.id,
+   103→    v_user.role::TEXT;
+   104→END;
+   105→$$;
+   106→
+   107→-- Cleanup expired OTP codes (call this from a cron job or periodic trigger)
+   108→CREATE OR REPLACE FUNCTION cleanup_expired_otps()
+   109→RETURNS INT
+   110→LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+   111→DECLARE
+   112→  deleted_count INT;
+   113→BEGIN
+   114→  DELETE FROM otp_codes
+   115→  WHERE expires_at < NOW() - INTERVAL '1 hour';
+   116→  GET DIAGNOSTICS deleted_count = ROW_COUNT;
+   117→  RETURN deleted_count;
+   118→END;
+   119→$$;
+   120→
+   121→-- ═══════════════════════════════════════════════════════════════
+   122→-- 2. AUTHENTICATION HELPERS
+   123→-- ═══════════════════════════════════════════════════════════════
+   124→
+   125→-- Resolve user by any identifier (username, phone, email, badge_no)
+   126→CREATE OR REPLACE FUNCTION resolve_user(p_identifier TEXT)
+   127→RETURNS TABLE (
+   128→  id          UUID,
+   129→  name        TEXT,
+   130→  short_name  TEXT,
+   131→  rank        TEXT,
+   132→  rank_short  TEXT,
+   133→  role        TEXT,
+   134→  badge_no    TEXT,
+   135→  username    TEXT,
+   136→  phone       TEXT,
+   137→  email       TEXT,
+   138→  station_id  UUID,
+   139→  region      TEXT,
+   140→  unit        TEXT,
+   141→  photo_url   TEXT,
+   142→  status      TEXT
+   143→)
+   144→LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+   145→DECLARE
+   146→  v_clean TEXT := TRIM(p_identifier);
+   147→BEGIN
+   148→  RETURN QUERY
+   149→  SELECT
+   150→    u.id, u.name, u.short_name, u.rank, u.rank_short,
+   151→    u.role::TEXT, u.badge_no, u.username, u.phone, u.email,
+   152→    u.station_id, u.region, u.unit, u.photo_url, u.status::TEXT
+   153→  FROM users u
+   154→  WHERE u.username = v_clean
+   155→     OR REPLACE(u.phone, ' ', '') = REPLACE(v_clean, ' ', '')
+   156→     OR u.email    = LOWER(v_clean)
+   157→     OR u.badge_no = UPPER(v_clean)
+   158→  LIMIT 1;
+   159→END;
+   160→$$;
+   161→
+   162→-- ═══════════════════════════════════════════════════════════════
+   163→-- 3. SEARCH FUNCTIONS
+   164→-- ═══════════════════════════════════════════════════════════════
+   165→
+   166→-- Universal citizen search (called by /api/search/citizen)
+   167→CREATE OR REPLACE FUNCTION search_citizen(
+   168→  p_query TEXT,
+   169→  p_type  TEXT DEFAULT 'name'  -- 'name' | 'nida' | 'mobile' | 'license'
+   170→)
+   171→RETURNS JSONB
+   172→LANGUAGE plpgsql SECURITY DEFINER STABLE SET search_path = public AS $$
+   173→DECLARE
+   174→  v_citizen       citizens;
+   175→  v_license       licenses;
+   176→  v_vehicles      JSONB;
+   177→  v_licenses      JSONB;
+   178→  v_criminal      JSONB;
+   179→  v_wanted        BOOLEAN;
+   180→  v_risk_level    TEXT;
+   181→BEGIN
+   182→  -- Find citizen
+   183→  IF p_type = 'license' THEN
+   184→    SELECT c.* INTO v_citizen
+   185→    FROM citizens c
+   186→    JOIN licenses l ON l.citizen_id = c.id
+   187→    WHERE UPPER(REPLACE(l.license_no, ' ', '')) = UPPER(REPLACE(p_query, ' ', ''))
+   188→    LIMIT 1;
+   189→  ELSIF p_type = 'nida' THEN
+   190→    SELECT * INTO v_citizen FROM citizens
+   191→    WHERE nida = TRIM(p_query) LIMIT 1;
+   192→  ELSIF p_type = 'mobile' THEN
+   193→    SELECT * INTO v_citizen FROM citizens
+   194→    WHERE REPLACE(mobile, ' ', '') = REPLACE(TRIM(p_query), ' ', '') LIMIT 1;
+   195→  ELSE
+   196→    -- Fuzzy name search using pg_trgm
+   197→    SELECT * INTO v_citizen FROM citizens
+   198→    WHERE name ILIKE '%' || TRIM(p_query) || '%'
+   199→       OR (first_name || ' ' || last_name) ILIKE '%' || TRIM(p_query) || '%'
+   200→    ORDER BY similarity(name, p_query) DESC
+   201→    LIMIT 1;
+   202→  END IF;
+   203→
+   204→  IF NOT FOUND THEN
+   205→    RETURN jsonb_build_object('found', false);
+   206→  END IF;
+   207→
+   208→  -- Collect related data
+   209→  SELECT jsonb_agg(jsonb_build_object(
+   210→    'plate', v.plate, 'model', v.model, 'color', v.color,
+   211→    'year', v.year, 'outstanding_fines', v.outstanding_fines
+   212→  )) INTO v_vehicles
+   213→  FROM vehicles v WHERE v.owner_citizen_id = v_citizen.id;
+   214→
+   215→  SELECT jsonb_agg(jsonb_build_object(
+   216→    'license_no', l.license_no, 'class', l.class,
+   217→    'expires_at', l.expires_at, 'status', l.status
+   218→  )) INTO v_licenses
+   219→  FROM licenses l WHERE l.citizen_id = v_citizen.id;
+   220→
+   221→  SELECT jsonb_agg(jsonb_build_object(
+   222→    'case_no', cr.case_no, 'type', cr.type,
+   223→    'date', cr.date, 'outcome', cr.outcome
+   224→  ) ORDER BY cr.date DESC) INTO v_criminal
+   225→  FROM criminal_records cr WHERE cr.citizen_id = v_citizen.id;
+   226→
+   227→  SELECT EXISTS(
+   228→    SELECT 1 FROM wanted w WHERE w.citizen_id = v_citizen.id AND w.active = TRUE
+   229→  ) INTO v_wanted;
+   230→
+   231→  -- Risk level based on score
+   232→  v_risk_level := CASE
+   233→    WHEN v_citizen.risk_score > 70 THEN 'high'
+   234→    WHEN v_citizen.risk_score > 40 THEN 'medium'
+   235→    ELSE 'low'
+   236→  END;
+   237→
+   238→  RETURN jsonb_build_object(
+   239→    'found',            true,
+   240→    'citizen',          to_jsonb(v_citizen),
+   241→    'vehicles',         COALESCE(v_vehicles, '[]'::jsonb),
+   242→    'licenses',         COALESCE(v_licenses, '[]'::jsonb),
+   243→    'criminal_records', COALESCE(v_criminal, '[]'::jsonb),
+   244→    'wanted',           v_wanted,
+   245→    'risk_level',       v_risk_level
+   246→  );
+   247→END;
+   248→$$;
+   249→
+   250→-- Vehicle search with owner + violation history
+   251→CREATE OR REPLACE FUNCTION search_vehicle(p_plate TEXT)
+   252→RETURNS JSONB
+   253→LANGUAGE plpgsql SECURITY DEFINER STABLE SET search_path = public AS $$
+   254→DECLARE
+   255→  v_vehicle   vehicles;
+   256→  v_owner     JSONB;
+   257→  v_citations JSONB;
+   258→  v_inspections JSONB;
+   259→  v_wanted    BOOLEAN;
+   260→BEGIN
+   261→  SELECT * INTO v_vehicle
+   262→  FROM vehicles
+   263→  WHERE UPPER(REPLACE(plate, ' ', '')) = UPPER(REPLACE(TRIM(p_plate), ' ', ''))
+   264→  LIMIT 1;
+   265→
+   266→  IF NOT FOUND THEN
+   267→    RETURN jsonb_build_object('found', false);
+   268→  END IF;
+   269→
+   270→  -- Owner
+   271→  SELECT to_jsonb(c.*) INTO v_owner
+   272→  FROM citizens c WHERE c.id = v_vehicle.owner_citizen_id;
+   273→
+   274→  -- Citations history
+   275→  SELECT jsonb_agg(jsonb_build_object(
+   276→    'id', ct.id, 'citation_number', ct.citation_number,
+   277→    'offense', ct.offense, 'amount', ct.amount,
+   278→    'date', ct.date, 'status', ct.status
+   279→  ) ORDER BY ct.date DESC) INTO v_citations
+   280→  FROM citations ct WHERE ct.plate = v_vehicle.plate;
+   281→
+   282→  -- Inspections
+   283→  SELECT jsonb_agg(jsonb_build_object(
+   284→    'id', vi.id, 'result', vi.result,
+   285→    'inspection_date', vi.inspection_date
+   286→  ) ORDER BY vi.inspection_date DESC) INTO v_inspections
+   287→  FROM vehicle_inspections vi WHERE vi.plate = v_vehicle.plate;
+   288→
+   289→  -- Is it reported stolen/missing?
+   290→  SELECT EXISTS(
+   291→    SELECT 1 FROM missing_records mr
+   292→    WHERE mr.identifier ILIKE '%' || v_vehicle.plate || '%'
+   293→      AND mr.status = 'active' AND mr.type = 'car'
+   294→  ) INTO v_wanted;
+   295→
+   296→  RETURN jsonb_build_object(
+   297→    'found',       true,
+   298→    'vehicle',     to_jsonb(v_vehicle),
+   299→    'owner',       COALESCE(v_owner, 'null'::jsonb),
+   300→    'citations',   COALESCE(v_citations, '[]'::jsonb),
+   301→    'inspections', COALESCE(v_inspections, '[]'::jsonb),
+   302→    'missing',     v_wanted
+   303→  );
+   304→END;
+   305→$$;
+   306→
+   307→-- Device search by serial or IMEI
+   308→CREATE OR REPLACE FUNCTION search_device(p_query TEXT)
+   309→RETURNS JSONB
+   310→LANGUAGE plpgsql SECURITY DEFINER STABLE SET search_path = public AS $$
+   311→DECLARE
+   312→  v_device devices;
+   313→  v_owner  JSONB;
+   314→BEGIN
+   315→  SELECT * INTO v_device
+   316→  FROM devices
+   317→  WHERE serial_no ILIKE '%' || TRIM(p_query) || '%'
+   318→     OR imei = TRIM(p_query)
+   319→  LIMIT 1;
+   320→
+   321→  IF NOT FOUND THEN
+   322→    RETURN jsonb_build_object('found', false);
+   323→  END IF;
+   324→
+   325→  SELECT to_jsonb(c.*) INTO v_owner
+   326→  FROM citizens c WHERE c.id = v_device.owner_citizen_id;
+   327→
+   328→  RETURN jsonb_build_object(
+   329→    'found',  true,
+   330→    'device', to_jsonb(v_device),
+   331→    'owner',  COALESCE(v_owner, 'null'::jsonb)
+   332→  );
+   333→END;
+   334→$$;
+   335→
+   336→-- ═══════════════════════════════════════════════════════════════
+   337→-- 4. DASHBOARD STATS
+   338→-- ═══════════════════════════════════════════════════════════════
+   339→
+   340→CREATE OR REPLACE FUNCTION get_dashboard_stats(
+   341→  p_role        TEXT,
+   342→  p_region      TEXT DEFAULT NULL,
+   343→  p_station_id  UUID DEFAULT NULL
+   344→)
+   345→RETURNS JSONB
+   346→LANGUAGE plpgsql SECURITY DEFINER STABLE SET search_path = public AS $$
+   347→DECLARE
+   348→  v_officers_total  INT := 0;
+   349→  v_officers_active INT := 0;
+   350→  v_citations_today INT := 0;
+   351→  v_incidents_today INT := 0;
+   352→  v_arrests_total   INT := 0;
+   353→  v_warnings_total  INT := 0;
+   354→  v_missing_active  INT := 0;
+   355→  v_detained_total  INT := 0;
+   356→  v_patrols_active  INT := 0;
+   357→  v_traffic_total   INT := 0;
+   358→  v_general_total   INT := 0;
+   359→  v_stations_total  INT := 0;
+   360→  v_today           DATE := CURRENT_DATE;
+   361→BEGIN
+   362→  -- Scope by level
+   363→  IF p_station_id IS NOT NULL THEN
+   364→    SELECT COUNT(*)       INTO v_officers_total FROM officers  WHERE station_id = p_station_id;
+   365→    SELECT COUNT(*)       INTO v_officers_active FROM officers WHERE station_id = p_station_id AND status = 'active';
+   366→    SELECT COUNT(*)       INTO v_citations_today FROM citations WHERE station_id = p_station_id AND date = v_today;
+   367→    SELECT COUNT(*)       INTO v_arrests_total   FROM arrests   WHERE station_id = p_station_id;
+   368→    SELECT COUNT(*)       INTO v_detained_total  FROM arrests   WHERE station_id = p_station_id AND status = 'held';
+   369→    SELECT COUNT(*)       INTO v_traffic_total   FROM citations WHERE station_id = p_station_id AND citation_type = 'traffic';
+   370→    SELECT COUNT(*)       INTO v_patrols_active  FROM patrols   WHERE officer_id IN (SELECT id FROM officers WHERE station_id = p_station_id) AND status = 'active';
+   371→    v_stations_total := 1;
+   372→
+   373→  ELSIF p_region IS NOT NULL THEN
+   374→    SELECT COUNT(*)       INTO v_officers_total FROM officers o JOIN stations s ON s.id = o.station_id WHERE s.region = p_region;
+   375→    SELECT COUNT(*)       INTO v_officers_active FROM officers o JOIN stations s ON s.id = o.station_id WHERE s.region = p_region AND o.status = 'active';
+   376→    SELECT COUNT(*)       INTO v_citations_today FROM citations c JOIN stations s ON s.id = c.station_id WHERE s.region = p_region AND c.date = v_today;
+   377→    SELECT COUNT(*)       INTO v_arrests_total   FROM arrests   a JOIN stations s ON s.id = a.station_id WHERE s.region = p_region;
+   378→    SELECT COUNT(*)       INTO v_detained_total  FROM arrests   a JOIN stations s ON s.id = a.station_id WHERE s.region = p_region AND a.status = 'held';
+   379→    SELECT COUNT(*)       INTO v_traffic_total   FROM citations c JOIN stations s ON s.id = c.station_id WHERE s.region = p_region AND c.citation_type = 'traffic';
+   380→    SELECT COUNT(*)       INTO v_stations_total  FROM stations WHERE region = p_region;
+   381→
+   382→  ELSE -- national
+   383→    SELECT COUNT(*) INTO v_officers_total FROM officers;
+   384→    SELECT COUNT(*) INTO v_officers_active FROM officers WHERE status = 'active';
+   385→    SELECT COUNT(*) INTO v_citations_today FROM citations WHERE date = v_today;
+   386→    SELECT COUNT(*) INTO v_incidents_today FROM incidents WHERE date = v_today;
+   387→    SELECT COUNT(*) INTO v_arrests_total   FROM arrests;
+   388→    SELECT COUNT(*) INTO v_warnings_total  FROM warnings;
+   389→    SELECT COUNT(*) INTO v_detained_total  FROM arrests WHERE status = 'held';
+   390→    SELECT COUNT(*) INTO v_traffic_total   FROM citations WHERE citation_type = 'traffic';
+   391→    SELECT COUNT(*) INTO v_general_total   FROM incidents;
+   392→    SELECT COUNT(*) INTO v_patrols_active  FROM patrols WHERE status = 'active';
+   393→    SELECT COUNT(*) INTO v_stations_total  FROM stations WHERE status = 'active';
+   394→  END IF;
+   395→
+   396→  SELECT COUNT(*) INTO v_missing_active FROM missing_records WHERE status = 'active';
+   397→
+   398→  RETURN jsonb_build_object(
+   399→    'officers_total',    v_officers_total,
+   400→    'officers_active',   v_officers_active,
+   401→    'citations_today',   v_citations_today,
+   402→    'incidents_today',   v_incidents_today,
+   403→    'arrests_total',     v_arrests_total,
+   404→    'warnings_total',    v_warnings_total,
+   405→    'missing_active',    v_missing_active,
+   406→    'detained_total',    v_detained_total,
+   407→    'patrols_active',    v_patrols_active,
+   408→    'traffic_total',     v_traffic_total,
+   409→    'general_total',     v_general_total,
+   410→    'stations_total',    v_stations_total,
+   411→    'generated_at',      NOW()
+   412→  );
+   413→END;
+   414→$$;
+   415→
+   416→-- ═══════════════════════════════════════════════════════════════
+   417→-- 5. CITATION FUNCTIONS
+   418→-- ═══════════════════════════════════════════════════════════════
+   419→
+   420→-- Auto-number citations
+   421→CREATE SEQUENCE IF NOT EXISTS citation_seq START 1001;
+   422→
+   423→CREATE OR REPLACE FUNCTION auto_citation_number()
+   424→RETURNS TRIGGER LANGUAGE plpgsql AS $$
+   425→BEGIN
+   426→  IF NEW.citation_number IS NULL OR NEW.citation_number = '' THEN
+   427→    NEW.citation_number := 'CT-' || TO_CHAR(NOW(), 'YYYY') || '-' ||
+   428→                           LPAD(nextval('citation_seq')::TEXT, 4, '0');
+   429→  END IF;
+   430→  RETURN NEW;
+   431→END;
+   432→$$;
+   433→
+   434→DROP TRIGGER IF EXISTS tg_citation_number ON citations;
+   435→CREATE TRIGGER tg_citation_number
+   436→  BEFORE INSERT ON citations
+   437→  FOR EACH ROW EXECUTE FUNCTION auto_citation_number();
+   438→
+   439→-- Update vehicle outstanding_fines when citation inserted/updated
+   440→CREATE OR REPLACE FUNCTION sync_vehicle_fines()
+   441→RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+   442→BEGIN
+   443→  UPDATE vehicles
+   444→  SET outstanding_fines = (
+   445→    SELECT COALESCE(SUM(amount), 0)
+   446→    FROM citations
+   447→    WHERE plate = NEW.plate AND status = 'unpaid'
+   448→  )
+   449→  WHERE UPPER(REPLACE(plate, ' ', '')) = UPPER(REPLACE(NEW.plate, ' ', ''));
+   450→  RETURN NEW;
+   451→END;
+   452→$$;
+   453→
+   454→DROP TRIGGER IF EXISTS tg_sync_vehicle_fines ON citations;
+   455→CREATE TRIGGER tg_sync_vehicle_fines
+   456→  AFTER INSERT OR UPDATE ON citations
+   457→  FOR EACH ROW EXECUTE FUNCTION sync_vehicle_fines();
+   458→
+   459→-- Get citations summary by type for a given scope
+   460→CREATE OR REPLACE FUNCTION get_citations_summary(
+   461→  p_station_id UUID DEFAULT NULL,
+   462→  p_region     TEXT DEFAULT NULL,
+   463→  p_date_from  DATE DEFAULT CURRENT_DATE - INTERVAL '30 days',
+   464→  p_date_to    DATE DEFAULT CURRENT_DATE
+   465→)
+   466→RETURNS JSONB
+   467→LANGUAGE plpgsql SECURITY DEFINER STABLE SET search_path = public AS $$
+   468→DECLARE
+   469→  v_total   INT; v_paid INT; v_unpaid INT; v_total_fines BIGINT;
+   470→BEGIN
+   471→  IF p_station_id IS NOT NULL THEN
+   472→    SELECT COUNT(*), COUNT(*) FILTER (WHERE status='paid'),
+   473→           COUNT(*) FILTER (WHERE status='unpaid'), COALESCE(SUM(amount),0)
+   474→    INTO v_total, v_paid, v_unpaid, v_total_fines
+   475→    FROM citations WHERE station_id = p_station_id
+   476→      AND date BETWEEN p_date_from AND p_date_to;
+   477→  ELSIF p_region IS NOT NULL THEN
+   478→    SELECT COUNT(*), COUNT(*) FILTER (WHERE c.status='paid'),
+   479→           COUNT(*) FILTER (WHERE c.status='unpaid'), COALESCE(SUM(c.amount),0)
+   480→    INTO v_total, v_paid, v_unpaid, v_total_fines
+   481→    FROM citations c JOIN stations s ON s.id = c.station_id
+   482→    WHERE s.region = p_region AND c.date BETWEEN p_date_from AND p_date_to;
+   483→  ELSE
+   484→    SELECT COUNT(*), COUNT(*) FILTER (WHERE status='paid'),
+   485→           COUNT(*) FILTER (WHERE status='unpaid'), COALESCE(SUM(amount),0)
+   486→    INTO v_total, v_paid, v_unpaid, v_total_fines
+   487→    FROM citations WHERE date BETWEEN p_date_from AND p_date_to;
+   488→  END IF;
+   489→  RETURN jsonb_build_object(
+   490→    'total', v_total, 'paid', v_paid, 'unpaid', v_unpaid,
+   491→    'total_fines', v_total_fines, 'date_from', p_date_from, 'date_to', p_date_to
+   492→  );
+   493→END;
+   494→$$;
+   495→
+   496→-- ═══════════════════════════════════════════════════════════════
+   497→-- 6. PATROL FUNCTIONS
+   498→-- ═══════════════════════════════════════════════════════════════
+   499→
+   500→CREATE SEQUENCE IF NOT EXISTS patrol_seq START 1001;
+   501→
+   502→CREATE OR REPLACE FUNCTION auto_patrol_number()
+   503→RETURNS TRIGGER LANGUAGE plpgsql AS $$
+   504→BEGIN
+   505→  IF NEW.patrol_number IS NULL OR NEW.patrol_number = '' THEN
+   506→    NEW.patrol_number := 'PT-' || TO_CHAR(NOW(), 'YYYY') || '-' ||
+   507→                         LPAD(nextval('patrol_seq')::TEXT, 4, '0');
+   508→  END IF;
+   509→  RETURN NEW;
+   510→END;
+   511→$$;
+   512→
+   513→DROP TRIGGER IF EXISTS tg_patrol_number ON patrols;
+   514→CREATE TRIGGER tg_patrol_number
+   515→  BEFORE INSERT ON patrols
+   516→  FOR EACH ROW EXECUTE FUNCTION auto_patrol_number();
+   517→
+   518→-- End a patrol and compute duration
+   519→CREATE OR REPLACE FUNCTION end_patrol(
+   520→  p_patrol_id  UUID,
+   521→  p_distance   NUMERIC DEFAULT NULL,
+   522→  p_notes      TEXT    DEFAULT NULL,
+   523→  p_events     TEXT    DEFAULT NULL
+   524→)
+   525→RETURNS JSONB
+   526→LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+   527→DECLARE
+   528→  v_patrol patrols;
+   529→BEGIN
+   530→  SELECT * INTO v_patrol FROM patrols WHERE id = p_patrol_id;
+   531→  IF NOT FOUND THEN
+   532→    RETURN jsonb_build_object('ok', false, 'error', 'Patrol not found');
+   533→  END IF;
+   534→  IF v_patrol.status <> 'active' THEN
+   535→    RETURN jsonb_build_object('ok', false, 'error', 'Patrol is not active');
+   536→  END IF;
+   537→
+   538→  UPDATE patrols SET
+   539→    end_time    = NOW(),
+   540→    status      = 'completed',
+   541→    distance_km = COALESCE(p_distance, distance_km),
+   542→    notes       = COALESCE(p_notes, notes),
+   543→    events      = COALESCE(p_events, events),
+   544→    progress    = 100
+   545→  WHERE id = p_patrol_id;
+   546→
+   547→  -- Update officer patrols count
+   548→  UPDATE officers SET patrols_count = patrols_count + 1
+   549→  WHERE id = v_patrol.officer_id;
+   550→
+   551→  RETURN jsonb_build_object('ok', true, 'patrol_id', p_patrol_id, 'completed_at', NOW());
+   552→END;
+   553→$$;
+   554→
+   555→-- ═══════════════════════════════════════════════════════════════
+   556→-- 7. ARREST / DETENTION FUNCTIONS
+   557→-- ═══════════════════════════════════════════════════════════════
+   558→
+   559→CREATE SEQUENCE IF NOT EXISTS arrest_seq START 1001;
+   560→
+   561→CREATE OR REPLACE FUNCTION auto_arrest_number()
+   562→RETURNS TRIGGER LANGUAGE plpgsql AS $$
+   563→BEGIN
+   564→  IF NEW.arrest_number IS NULL OR NEW.arrest_number = '' THEN
+   565→    NEW.arrest_number := 'AR-' || TO_CHAR(NOW(), 'YYYY') || '-' ||
+   566→                         LPAD(nextval('arrest_seq')::TEXT, 4, '0');
+   567→  END IF;
+   568→  RETURN NEW;
+   569→END;
+   570→$$;
+   571→
+   572→DROP TRIGGER IF EXISTS tg_arrest_number ON arrests;
+   573→CREATE TRIGGER tg_arrest_number
+   574→  BEFORE INSERT ON arrests
+   575→  FOR EACH ROW EXECUTE FUNCTION auto_arrest_number();
+   576→
+   577→-- Release an arrested person
+   578→CREATE OR REPLACE FUNCTION release_detainee(
+   579→  p_arrest_id UUID,
+   580→  p_reason    TEXT DEFAULT 'Released by officer'
+   581→)
+   582→RETURNS JSONB
+   583→LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+   584→BEGIN
+   585→  UPDATE arrests
+   586→  SET status = 'released', notes = COALESCE(notes || E'\n', '') || p_reason
+   587→  WHERE id = p_arrest_id AND status = 'held';
+   588→
+   589→  IF NOT FOUND THEN
+   590→    RETURN jsonb_build_object('ok', false, 'error', 'Arrest not found or not in held status');
+   591→  END IF;
+   592→  RETURN jsonb_build_object('ok', true, 'released_at', NOW());
+   593→END;
+   594→$$;
+   595→
+   596→-- ═══════════════════════════════════════════════════════════════
+   597→-- 8. MISSING / WANTED FUNCTIONS
+   598→-- ═══════════════════════════════════════════════════════════════
+   599→
+   600→CREATE SEQUENCE IF NOT EXISTS missing_seq START 1001;
+   601→
+   602→CREATE OR REPLACE FUNCTION auto_missing_case_no()
+   603→RETURNS TRIGGER LANGUAGE plpgsql AS $$
+   604→BEGIN
+   605→  IF NEW.case_no IS NULL OR NEW.case_no = '' THEN
+   606→    NEW.case_no := CASE
+   607→      WHEN NEW.type = 'person' THEN 'MP-'
+   608→      WHEN NEW.type = 'car'    THEN 'MV-'
+   609→      ELSE                          'MD-'
+   610→    END || TO_CHAR(NOW(), 'YYYY') || '-' ||
+   611→    LPAD(nextval('missing_seq')::TEXT, 4, '0');
+   612→  END IF;
+   613→  RETURN NEW;
+   614→END;
+   615→$$;
+   616→
+   617→DROP TRIGGER IF EXISTS tg_missing_case_no ON missing_records;
+   618→CREATE TRIGGER tg_missing_case_no
+   619→  BEFORE INSERT ON missing_records
+   620→  FOR EACH ROW EXECUTE FUNCTION auto_missing_case_no();
+   621→
+   622→-- Mark a missing record as found
+   623→CREATE OR REPLACE FUNCTION mark_found(
+   624→  p_case_no TEXT,
+   625→  p_notes   TEXT DEFAULT NULL
+   626→)
+   627→RETURNS JSONB
+   628→LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+   629→BEGIN
+   630→  UPDATE missing_records
+   631→  SET status = 'found', found_at = NOW(),
+   632→      details = COALESCE(details || E'\n', '') || COALESCE(p_notes, 'Marked as found')
+   633→  WHERE case_no = p_case_no AND status = 'active';
+   634→
+   635→  IF NOT FOUND THEN
+   636→    RETURN jsonb_build_object('ok', false, 'error', 'Record not found or already closed');
+   637→  END IF;
+   638→  RETURN jsonb_build_object('ok', true, 'found_at', NOW());
+   639→END;
+   640→$$;
+   641→
+   642→-- ═══════════════════════════════════════════════════════════════
+   643→-- 9. ALERT FUNCTIONS
+   644→-- ═══════════════════════════════════════════════════════════════
+   645→
+   646→-- Send broadcast alert to all officers (called by send-broadcast edge function)
+   647→CREATE OR REPLACE FUNCTION send_broadcast_alert(
+   648→  p_title      TEXT,
+   649→  p_message    TEXT,
+   650→  p_priority   TEXT DEFAULT 'normal',
+   651→  p_audience   TEXT DEFAULT 'all',
+   652→  p_sent_by    UUID DEFAULT NULL
+   653→)
+   654→RETURNS JSONB
+   655→LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+   656→DECLARE
+   657→  v_alert_id UUID;
+   658→BEGIN
+   659→  INSERT INTO alerts (title, message, priority, audience, sent_by, category)
+   660→  VALUES (
+   661→    p_title, p_message,
+   662→    p_priority::alert_priority,
+   663→    p_audience,
+   664→    p_sent_by,
+   665→    'all'
+   666→  )
+   667→  RETURNING id INTO v_alert_id;
+   668→
+   669→  RETURN jsonb_build_object('ok', true, 'alert_id', v_alert_id, 'sent_at', NOW());
+   670→END;
+   671→$$;
+   672→
+   673→-- Get unread alert count for a user
+   674→CREATE OR REPLACE FUNCTION get_unread_alert_count(p_user_id UUID)
+   675→RETURNS INT
+   676→LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public AS $$
+   677→  SELECT COUNT(*)::INT
+   678→  FROM alerts a
+   679→  WHERE NOT EXISTS (
+   680→    SELECT 1 FROM alert_reads ar
+   681→    WHERE ar.alert_id = a.id AND ar.user_id = p_user_id
+   682→  )
+   683→  AND a.created_at > NOW() - INTERVAL '7 days';
+   684→$$;
+   685→
+   686→-- ═══════════════════════════════════════════════════════════════
+   687→-- 10. INCIDENT FUNCTIONS
+   688→-- ═══════════════════════════════════════════════════════════════
+   689→
+   690→CREATE SEQUENCE IF NOT EXISTS incident_seq START 1001;
+   691→
+   692→CREATE OR REPLACE FUNCTION auto_incident_number()
+   693→RETURNS TRIGGER LANGUAGE plpgsql AS $$
+   694→BEGIN
+   695→  IF NEW.incident_number IS NULL OR NEW.incident_number = '' THEN
+   696→    NEW.incident_number := 'INC-' || TO_CHAR(NOW(), 'YYYY') || '-' ||
+   697→                           LPAD(nextval('incident_seq')::TEXT, 4, '0');
+   698→  END IF;
+   699→  RETURN NEW;
+   700→END;
+   701→$$;
+   702→
+   703→DROP TRIGGER IF EXISTS tg_incident_number ON incidents;
+   704→CREATE TRIGGER tg_incident_number
+   705→  BEFORE INSERT ON incidents
+   706→  FOR EACH ROW EXECUTE FUNCTION auto_incident_number();
+   707→
+   708→-- ═══════════════════════════════════════════════════════════════
+   709→-- 11. PF3 FUNCTIONS
+   710→-- ═══════════════════════════════════════════════════════════════
+   711→
+   712→CREATE SEQUENCE IF NOT EXISTS pf3_seq START 1001;
+   713→
+   714→CREATE OR REPLACE FUNCTION auto_pf3_reference()
+   715→RETURNS TRIGGER LANGUAGE plpgsql AS $$
+   716→BEGIN
+   717→  IF NEW.reference_number IS NULL OR NEW.reference_number = '' THEN
+   718→    NEW.reference_number := 'PF3-' || TO_CHAR(NOW(), 'YYYY') || '-' ||
+   719→                            LPAD(nextval('pf3_seq')::TEXT, 4, '0');
+   720→  END IF;
+   721→  RETURN NEW;
+   722→END;
+   723→$$;
+   724→
+   725→DROP TRIGGER IF EXISTS tg_pf3_reference ON pf3_forms;
+   726→CREATE TRIGGER tg_pf3_reference
+   727→  BEFORE INSERT ON pf3_forms
+   728→  FOR EACH ROW EXECUTE FUNCTION auto_pf3_reference();
+   729→
+   730→-- ═══════════════════════════════════════════════════════════════
+   731→-- 12. REPORTING FUNCTIONS
+   732→-- ═══════════════════════════════════════════════════════════════
+   733→
+   734→-- Officer performance summary
+   735→CREATE OR REPLACE FUNCTION get_officer_performance(
+   736→  p_officer_id UUID,
+   737→  p_date_from  DATE DEFAULT CURRENT_DATE - INTERVAL '30 days',
+   738→  p_date_to    DATE DEFAULT CURRENT_DATE
+   739→)
+   740→RETURNS JSONB
+   741→LANGUAGE plpgsql SECURITY DEFINER STABLE SET search_path = public AS $$
+   742→DECLARE
+   743→  v_citations   INT; v_incidents INT; v_patrols INT; v_arrests INT; v_warnings INT;
+   744→  v_patrol_km   NUMERIC; v_patrol_hrs NUMERIC;
+   745→BEGIN
+   746→  SELECT COUNT(*) INTO v_citations FROM citations
+   747→  WHERE officer_id = p_officer_id AND date BETWEEN p_date_from AND p_date_to;
+   748→
+   749→  SELECT COUNT(*) INTO v_incidents FROM incidents
+   750→  WHERE assigned_officer_id = p_officer_id AND date BETWEEN p_date_from AND p_date_to;
+   751→
+   752→  SELECT COUNT(*), COALESCE(SUM(distance_km),0),
+   753→         COALESCE(SUM(EXTRACT(EPOCH FROM (COALESCE(end_time, NOW()) - start_time))/3600),0)
+   754→  INTO v_patrols, v_patrol_km, v_patrol_hrs
+   755→  FROM patrols
+   756→  WHERE officer_id = p_officer_id AND start_time::DATE BETWEEN p_date_from AND p_date_to;
+   757→
+   758→  SELECT COUNT(*) INTO v_arrests FROM arrests
+   759→  WHERE officer_id = p_officer_id AND arrest_date BETWEEN p_date_from AND p_date_to;
+   760→
+   761→  SELECT COUNT(*) INTO v_warnings FROM warnings
+   762→  WHERE officer_id = p_officer_id AND warning_date BETWEEN p_date_from AND p_date_to;
+   763→
+   764→  RETURN jsonb_build_object(
+   765→    'officer_id',   p_officer_id,
+   766→    'citations',    v_citations,
+   767→    'incidents',    v_incidents,
+   768→    'patrols',      v_patrols,
+   769→    'patrol_km',    ROUND(v_patrol_km, 1),
+   770→    'patrol_hours', ROUND(v_patrol_hrs, 1),
+   771→    'arrests',      v_arrests,
+   772→    'warnings',     v_warnings,
+   773→    'date_from',    p_date_from,
+   774→    'date_to',      p_date_to
+   775→  );
+   776→END;
+   777→$$;
+   778→
+   779→-- Weekly trend data (used by commissioner dashboard charts)
+   780→CREATE OR REPLACE FUNCTION get_weekly_trend(
+   781→  p_region     TEXT DEFAULT NULL,
+   782→  p_station_id UUID DEFAULT NULL
+   783→)
+   784→RETURNS JSONB
+   785→LANGUAGE plpgsql SECURITY DEFINER STABLE SET search_path = public AS $$
+   786→DECLARE
+   787→  v_result JSONB := '[]'::JSONB;
+   788→  v_day    DATE;
+   789→  v_cits   INT; v_incs INT; v_arr INT;
+   790→BEGIN
+   791→  FOR i IN 0..6 LOOP
+   792→    v_day := CURRENT_DATE - i;
+   793→
+   794→    IF p_station_id IS NOT NULL THEN
+   795→      SELECT COUNT(*) INTO v_cits FROM citations WHERE date = v_day AND station_id = p_station_id;
+   796→      SELECT COUNT(*) INTO v_incs FROM incidents WHERE date = v_day AND station_id IN (SELECT id FROM stations WHERE id = p_station_id);
+   797→      SELECT COUNT(*) INTO v_arr  FROM arrests   WHERE arrest_date = v_day AND station_id = p_station_id;
+   798→    ELSIF p_region IS NOT NULL THEN
+   799→      SELECT COUNT(*) INTO v_cits FROM citations c JOIN stations s ON s.id = c.station_id WHERE c.date = v_day AND s.region = p_region;
+   800→      SELECT COUNT(*) INTO v_incs FROM incidents i JOIN stations s ON s.id = i.station_id WHERE i.date = v_day AND s.region = p_region;
+   801→      SELECT COUNT(*) INTO v_arr  FROM arrests a   JOIN stations s ON s.id = a.station_id WHERE a.arrest_date = v_day AND s.region = p_region;
+   802→    ELSE
+   803→      SELECT COUNT(*) INTO v_cits FROM citations WHERE date = v_day;
+   804→      SELECT COUNT(*) INTO v_incs FROM incidents WHERE date = v_day;
+   805→      SELECT COUNT(*) INTO v_arr  FROM arrests   WHERE arrest_date = v_day;
+   806→    END IF;
+   807→
+   808→    v_result := v_result || jsonb_build_object(
+   809→      'day', TO_CHAR(v_day, 'Dy'),
+   810→      'date', v_day,
+   811→      'citations', v_cits,
+   812→      'incidents', v_incs,
+   813→      'arrests', v_arr
+   814→    );
+   815→  END LOOP;
+   816→
+   817→  RETURN v_result;
+   818→END;
+   819→$$;
+   820→
+   821→-- ═══════════════════════════════════════════════════════════════
+   822→-- 13. DASHBOARD CACHE REFRESH
+   823→-- ═══════════════════════════════════════════════════════════════
+   824→
+   825→-- Refresh the dashboard stats cache for all scopes
+   826→-- Call this via pg_cron: SELECT cron.schedule('refresh-dashboard', '*/5 * * * *', 'SELECT refresh_dashboard_cache()');
+   827→CREATE OR REPLACE FUNCTION refresh_dashboard_cache()
+   828→RETURNS VOID
+   829→LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+   830→DECLARE
+   831→  v_region TEXT;
+   832→  v_stats  JSONB;
+   833→BEGIN
+   834→  -- National
+   835→  v_stats := get_dashboard_stats('national');
+   836→  INSERT INTO dashboard_cache (scope, scope_value, stats, refreshed_at)
+   837→  VALUES ('national', 'TZ', v_stats, NOW())
+   838→  ON CONFLICT (scope, scope_value) DO UPDATE SET stats = EXCLUDED.stats, refreshed_at = NOW();
+   839→
+   840→  -- Per region
+   841→  FOR v_region IN SELECT DISTINCT region FROM stations LOOP
+   842→    v_stats := get_dashboard_stats('regional', v_region);
+   843→    INSERT INTO dashboard_cache (scope, scope_value, stats, refreshed_at)
+   844→    VALUES ('regional', v_region, v_stats, NOW())
+   845→    ON CONFLICT (scope, scope_value) DO UPDATE SET stats = EXCLUDED.stats, refreshed_at = NOW();
+   846→  END LOOP;
+   847→END;
+   848→$$;
+   849→
+   850→-- ═══════════════════════════════════════════════════════════════
+   851→-- 14. UTILITY TRIGGERS
+   852→-- ═══════════════════════════════════════════════════════════════
+   853→
+   854→-- Auto-update updated_at for new tables
+   855→CREATE OR REPLACE FUNCTION update_updated_at()
+   856→RETURNS TRIGGER LANGUAGE plpgsql AS $$
+   857→BEGIN NEW.updated_at = NOW(); RETURN NEW; END;
+   858→$$;
+   859→
+   860→DROP TRIGGER IF EXISTS update_arrests_updated_at ON arrests;
+   861→CREATE TRIGGER update_arrests_updated_at
+   862→  BEFORE UPDATE ON arrests FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+   863→
+   864→-- Add arrests/warnings counts to citizen risk_score
+   865→CREATE OR REPLACE FUNCTION update_citizen_risk()
+   866→RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+   867→DECLARE
+   868→  v_arrest_count INT; v_criminal_count INT;
+   869→BEGIN
+   870→  IF NEW.citizen_id IS NULL THEN RETURN NEW; END IF;
+   871→
+   872→  SELECT COUNT(*) INTO v_arrest_count  FROM arrests         WHERE citizen_id = NEW.citizen_id;
+   873→  SELECT COUNT(*) INTO v_criminal_count FROM criminal_records WHERE citizen_id = NEW.citizen_id;
+   874→
+   875→  UPDATE citizens SET
+   876→    risk_score        = LEAST(100, (v_arrest_count * 15) + (v_criminal_count * 20)),
+   877→    has_criminal_record = (v_criminal_count > 0),
+   878→    cases_count       = v_arrest_count
+   879→  WHERE id = NEW.citizen_id;
+   880→
+   881→  RETURN NEW;
+   882→END;
+   883→$$;
+   884→
+   885→DROP TRIGGER IF EXISTS tg_update_risk_on_arrest ON arrests;
+   886→CREATE TRIGGER tg_update_risk_on_arrest
+   887→  AFTER INSERT ON arrests
+   888→  FOR EACH ROW EXECUTE FUNCTION update_citizen_risk();
+   889→
+   890→DROP TRIGGER IF EXISTS tg_update_risk_on_criminal ON criminal_records;
+   891→CREATE TRIGGER tg_update_risk_on_criminal
+   892→  AFTER INSERT ON criminal_records
+   893→  FOR EACH ROW EXECUTE FUNCTION update_citizen_risk();
+   894→
+   895→-- Audit logging for key tables (extends migration 0003)
+   896→DROP TRIGGER IF EXISTS audit_arrests    ON arrests;
+   897→CREATE TRIGGER audit_arrests    AFTER INSERT OR UPDATE OR DELETE ON arrests    FOR EACH ROW EXECUTE FUNCTION create_audit_log();
+   898→DROP TRIGGER IF EXISTS audit_missing    ON missing_records;
+   899→CREATE TRIGGER audit_missing    AFTER INSERT OR UPDATE OR DELETE ON missing_records FOR EACH ROW EXECUTE FUNCTION create_audit_log();
+   900→DROP TRIGGER IF EXISTS audit_wanted     ON wanted;
+   901→CREATE TRIGGER audit_wanted     AFTER INSERT OR UPDATE OR DELETE ON wanted     FOR EACH ROW EXECUTE FUNCTION create_audit_log();
+   902→DROP TRIGGER IF EXISTS audit_warnings   ON warnings;
+   903→CREATE TRIGGER audit_warnings   AFTER INSERT OR UPDATE OR DELETE ON warnings   FOR EACH ROW EXECUTE FUNCTION create_audit_log();
+   904→
+   905→
