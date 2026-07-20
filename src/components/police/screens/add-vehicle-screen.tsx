@@ -69,7 +69,7 @@ export function AddVehicleScreen() {
   const [form, setForm] = useState({
     plate: searchQuery?.toUpperCase() ?? "",
     model: "", type: "Saloon", color: "Nyeupe", year: new Date().getFullYear().toString(),
-    ownerName: "", ownerNida: "", ownerPhone: "", ownerLicense: "",
+    ownerName: "", ownerNida: "", ownerTin: "", ownerPhone: "", ownerLicense: "",
     insuranceCompany: "Jubilee Insurance", insurancePolicy: "", insuranceExpiry: "",
     inspectionExpiry: "", registrationExpiry: "",
     notes: "",
@@ -93,6 +93,28 @@ export function AddVehicleScreen() {
     setForm((f) => ({ ...f, [field]: formatNida(e.target.value) }));
   };
 
+  // TIN formatting helper (Tanzania TRA format: XXX-XXX-XXX)
+  const formatTin = (input: string): string => {
+    const digits = input.replace(/\D/g, "");
+    const truncated = digits.slice(0, 9);
+    const parts = [
+      truncated.slice(0, 3), truncated.slice(3, 6), truncated.slice(6, 9),
+    ];
+    return parts.filter(Boolean).join("-");
+  };
+
+  const handleTinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm((f) => ({ ...f, ownerTin: formatTin(e.target.value) }));
+  };
+
+  // Validate TIN
+  const validateTin = (v: string): { valid: boolean; error?: string } => {
+    if (!v?.trim()) return { valid: true }; // Optional field
+    const digits = v.replace(/\D/g, "");
+    if (digits.length !== 9) return { valid: false, error: `TIN lazima iwe nambari 9 (una ${digits.length})` };
+    return { valid: true };
+  };
+
   // Validate NIDA
   const validateNida = (v: string): { valid: boolean; error?: string } => {
     if (!v?.trim()) return { valid: true }; // Optional field
@@ -109,6 +131,9 @@ export function AddVehicleScreen() {
     
     const nidaR = validateNida(form.ownerNida);
     if (!nidaR.valid) e.ownerNida = nidaR.error;
+    
+    const tinR = validateTin(form.ownerTin);
+    if (!tinR.valid) e.ownerTin = tinR.error;
     
     if (form.ownerPhone) { const r = validateMobile(form.ownerPhone); if (!r.valid) e.ownerPhone = r.error; }
     if (form.ownerLicense) { const r = validateLicense(form.ownerLicense); if (!r.valid) e.ownerLicense = r.error; }
@@ -135,6 +160,7 @@ export function AddVehicleScreen() {
         year: form.year,
         ownerName: form.ownerName || "Haijajulikana",
         ownerNida: form.ownerNida.replace(/\D/g, ""), // Clean digits only
+        ownerTin: form.ownerTin.replace(/\D/g, ""), // TIN - clean digits only
         ownerPhone: form.ownerPhone,
         ownerLicense: form.ownerLicense?.toUpperCase(),
         station: OFFICER.station,
@@ -222,7 +248,7 @@ export function AddVehicleScreen() {
               setSaved(false); 
               setForm({ 
                 plate: "", model: "", type: "Saloon", color: "Nyeupe", year: new Date().getFullYear().toString(), 
-                ownerName: "", ownerNida: "", ownerPhone: "", ownerLicense: "", 
+                ownerName: "", ownerNida: "", ownerTin: "", ownerPhone: "", ownerLicense: "", 
                 insuranceCompany: "Jubilee Insurance", insurancePolicy: "", insuranceExpiry: "", 
                 inspectionExpiry: "", registrationExpiry: "", notes: "" 
               }); 
@@ -396,6 +422,38 @@ export function AddVehicleScreen() {
             {!errors.ownerNida && form.ownerNida && form.ownerNida.replace(/\D/g, "").length > 0 && form.ownerNida.replace(/\D/g, "").length < 20 && (
               <p className="mt-0.5 text-[9px] text-[#FF9800]">
                 Nambari ya NIDA: {form.ownerNida.replace(/\D/g, "").length}/20 tarakimu
+              </p>
+            )}
+          </div>
+          
+          {/* OWNER TIN - TAX IDENTIFICATION NUMBER */}
+          <div>
+            <label className="mb-1 block text-[12px] font-medium text-police-muted">
+              TIN (Nambari ya Ushuru) <span className="text-[8px] text-police-faint font-normal">- TRA</span>
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                inputMode="numeric"
+                value={form.ownerTin}
+                onChange={handleTinChange}
+                placeholder="XXX-XXX-XXX"
+                className={`w-full rounded-xl border bg-police-input px-3 h-10 text-[13px] font-mono tracking-wider text-police placeholder:text-police-faint focus:outline-none ${
+                  errors.ownerTin 
+                    ? "border-[#EF4444]" 
+                    : form.ownerTin.replace(/\D/g, "").length === 9 && form.ownerTin.length > 0
+                    ? "border-[#10B981]"
+                    : "border-police focus:border-[#1E3A8A]"
+                }`}
+              />
+              {form.ownerTin.replace(/\D/g, "").length === 9 && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#10B981] text-sm">✓</span>
+              )}
+            </div>
+            {errors.ownerTin && <p className="mt-1 text-[10px] text-[#EF4444]">{errors.ownerTin}</p>}
+            {!errors.ownerTin && form.ownerTin && form.ownerTin.replace(/\D/g, "").length > 0 && form.ownerTin.replace(/\D/g, "").length < 9 && (
+              <p className="mt-0.5 text-[9px] text-[#FF9800]">
+                Nambari ya TIN: {form.ownerTin.replace(/\D/g, "").length}/9 tarakimu
               </p>
             )}
           </div>
