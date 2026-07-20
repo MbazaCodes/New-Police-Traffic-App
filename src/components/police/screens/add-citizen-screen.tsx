@@ -7,6 +7,7 @@ import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
 import { validateName, validateNida, validateMobile, saveNewCitizen, newCitizenRecords } from "@/lib/police-helpers";
 import { toast } from "@/hooks/use-toast";
+import { TZ_ALL_REGIONS, districtsForRegion } from "@/lib/tz-locations";
 
 const OCCUPATIONS = ["Mfanyabiashara", "Mwalimu", "Dereva", "Mhudumu wa Afya", "Mwanafunzi", "Fundi", "Mkulima", "Mfanyakazi wa Serikali", "Mwandishi", "Daktari", "Mkandarasi", "Nyingine"];
 
@@ -24,7 +25,7 @@ export function AddCitizenScreen() {
 
   const [form, setForm] = useState({
     name: prefillName, nida: prefillNida, mobile: prefillMobile,
-    gender: "Mme", dob: "", address: "", occupation: "Mfanyabiashara", notes: "",
+    gender: "Mme", dob: "", region: "", district: "", ward: "", address: "", occupation: "Mfanyabiashara", notes: "",
   });
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -36,7 +37,8 @@ export function AddCitizenScreen() {
     if (!nameR.valid) e.name = nameR.error;
     if (form.nida) { const r = validateNida(form.nida); if (!r.valid) e.nida = r.error; }
     if (form.mobile) { const r = validateMobile(form.mobile); if (!r.valid) e.mobile = r.error; }
-    if (!form.address.trim()) e.address = "Jaza makazi ya raia";
+    if (!form.region) e.region = "Chagua mkoa wa makazi";
+    if (!form.ward.trim() && !form.address.trim()) e.address = "Jaza kata/mtaa au anwani";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -49,7 +51,8 @@ export function AddCitizenScreen() {
       mobile: form.mobile.trim(),
       gender: form.gender,
       dob: form.dob,
-      address: form.address.trim(),
+      address: [form.address.trim(), form.ward.trim() && `Kata ${form.ward.trim()}`, form.district, form.region]
+        .filter(Boolean).join(", "),
       occupation: form.occupation,
       station: OFFICER.station,
       addedBy: OFFICER.shortName,
@@ -82,7 +85,7 @@ export function AddCitizenScreen() {
             <Row label="Jumla ya Raia Waliooongezwa" value={String(newCitizenRecords.length)} />
           </div>
           <div className="mt-4 w-full space-y-2">
-            <button onClick={() => { setSaved(false); setForm({ name: "", nida: "", mobile: "", gender: "Mme", dob: "", address: "", occupation: "Mfanyabiashara", notes: "" }); setErrors({}); }} className="w-full rounded-xl border border-police py-3 text-[14px] font-semibold text-police">Sajili Raia Mwingine</button>
+            <button onClick={() => { setSaved(false); setForm({ name: "", nida: "", mobile: "", gender: "Mme", dob: "", region: "", district: "", ward: "", address: "", occupation: "Mfanyabiashara", notes: "" }); setErrors({}); }} className="w-full rounded-xl border border-police py-3 text-[14px] font-semibold text-police">Sajili Raia Mwingine</button>
             <button onClick={() => goBack()} className="w-full rounded-xl bg-[#1E3A8A] py-3 text-[14px] font-bold text-white">Rudi Nyuma</button>
           </div>
         </div>
@@ -122,7 +125,29 @@ export function AddCitizenScreen() {
             </div>
             <FI label="Tarehe ya Kuzaliwa" value={form.dob} onChange={set("dob")} placeholder="01 Jan 1990" />
           </div>
-          <FI label="Makazi" required value={form.address} onChange={set("address")} placeholder="Mtaa, Kata, Wilaya, Mkoa" error={errors.address} />
+          {/* Makazi: Mkoa (dropdown) -> Wilaya (dropdown) -> Kata/Mtaa (manual) */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="mb-1 block text-[12px] font-medium text-police-muted">Mkoa <span className="text-[#EF4444]">*</span></label>
+              <select value={form.region}
+                onChange={(e) => setForm((f) => ({ ...f, region: e.target.value, district: "" }))}
+                className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police focus:outline-none">
+                <option value="">— Chagua —</option>
+                {TZ_ALL_REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+              </select>
+              {errors.region && <p className="mt-0.5 text-[10px] text-[#EF4444]">{errors.region}</p>}
+            </div>
+            <div>
+              <label className="mb-1 block text-[12px] font-medium text-police-muted">Wilaya</label>
+              <select value={form.district} onChange={set("district")} disabled={!form.region}
+                className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police focus:outline-none disabled:opacity-50">
+                <option value="">{form.region ? "— Chagua —" : "Mkoa kwanza"}</option>
+                {districtsForRegion(form.region).map((d) => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
+          </div>
+          <FI label="Kata / Mtaa" value={form.ward} onChange={set("ward")} placeholder="e.g. Mwenge, Sam Nujoma" error={errors.address} />
+          <FI label="Anwani ya Ziada" value={form.address} onChange={set("address")} placeholder="Nyumba na. / maelezo zaidi" />
           <div>
             <label className="mb-1 block text-[12px] font-medium text-police-muted">Kazi / Shughuli</label>
             <select value={form.occupation} onChange={set("occupation")} className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police focus:outline-none">

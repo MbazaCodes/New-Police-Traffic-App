@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const body = await request.json().catch(() => ({}));
-    const { name, region, district, address, phone, status } = body;
+    const { name, region, district, ward, address, phone, status } = body;
     if (!name || !region) {
       return NextResponse.json({ error: "Jina na mkoa vinahitajika" }, { status: 400 });
     }
@@ -55,11 +55,20 @@ export async function POST(request: Request) {
     if (isSupabaseEnabled()) {
       const admin = getSupabaseAdminAny();
       if (admin) {
-        const { data, error } = await admin.from("stations").insert({
+        const insertRow: Record<string, unknown> = {
           name, region, district: district || null,
           address: address || null, phone: phone || null,
           status: status || "active",
-        }).select().single();
+        };
+        if (ward) insertRow.ward = ward; // column added in migration 022
+        let { data, error } = await admin.from("stations").insert(insertRow).select().single();
+        // Graceful fallback if migration 022 not yet applied: retry without ward,
+        // folding it into address so the information is never lost.
+        if (error && ward && /ward/i.test(error.message ?? "")) {
+          delete insertRow.ward;
+          insertRow.address = [`Kata ${ward}`, address].filter(Boolean).join(", ");
+          ({ data, error } = await admin.from("stations").insert(insertRow).select().single());
+        }
         if (error) throw error;
         await logAction(session, "station_created", "stations", data.id, { name, region });
         return NextResponse.json({ ok: true, data }, { status: 201 });

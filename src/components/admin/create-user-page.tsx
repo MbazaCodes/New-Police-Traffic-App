@@ -10,15 +10,9 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { useApiData } from "@/hooks/use-api-data";
 
-// ── Tanzania regions ──────────────────────────────────────────
-const TZ_REGIONS = [
-  "Dar es Salaam","Mwanza","Arusha","Dodoma","Mbeya","Morogoro",
-  "Tanga","Zanzibar Mjini Magharibi","Zanzibar Kaskazini Unguja",
-  "Zanzibar Kusini Unguja","Zanzibar Kaskazini Pemba","Zanzibar Kusini Pemba",
-  "Kilimanjaro","Kagera","Mara","Geita","Simiyu","Shinyanga","Tabora",
-  "Singida","Katavi","Rukwa","Ruvuma","Iringa","Njombe","Songwe",
-  "Lindi","Mtwara","Pwani","Makao Makuu",
-].sort();
+// ── Tanzania regions (shared lib) ─────────────────────────────
+import { TZ_ALL_REGIONS, districtsForRegion } from "@/lib/tz-locations";
+const TZ_REGIONS = TZ_ALL_REGIONS;
 
 // ── Police ranks ──────────────────────────────────────────────
 const POLICE_RANKS = [
@@ -38,6 +32,15 @@ const POLICE_RANKS = [
 ];
 
 // ── Roles ─────────────────────────────────────────────────────
+// ── Role categories: selecting a category filters the role list ──
+const ROLE_CATEGORIES: { value: string; label: string; roles: string[] }[] = [
+  { value: "officers",  label: "Maafisa / Officers",            roles: ["officer-traffic","officer-general","post-officer"] },
+  { value: "command",   label: "Kamandi / Command",             roles: ["station-commissioner","district-commissioner","regional-commissioner","national-commissioner","commander"] },
+  { value: "cid",       label: "Upelelezi / Investigation",     roles: ["cid-officer","investigator"] },
+  { value: "admin",     label: "Utawala / Administration",      roles: ["super-admin","admin"] },
+  { value: "support",   label: "Wengine / Support",             roles: ["viewer"] },
+];
+
 const USER_ROLES = [
   { value: "super-admin",            label: "Super Admin" },
   { value: "admin",                  label: "System Admin / Msimamizi" },
@@ -122,7 +125,9 @@ export function CreateUserPage({ basePath }: { basePath: "/admin" | "/command" }
   const [badgeSeq,   setBadgeSeq]   = useState("001");
   const [rank,       setRank]       = useState("");
   const [rankShort,  setRankShort]  = useState("");
+  const [category,   setCategory]   = useState("officers");
   const [role,       setRole]       = useState("officer-general");
+  const [district,   setDistrict]   = useState("");
   const [unit,       setUnit]       = useState("");
   const [stationId,  setStationId]  = useState("");
   const [region,     setRegion]     = useState("");
@@ -188,7 +193,7 @@ export function CreateUserPage({ basePath }: { basePath: "/admin" | "/command" }
           rank:      rank           || null,
           rankShort: rankShort      || null,
           role,
-          unit:      unit.trim()    || null,
+          unit:      unit.trim() || district || null,
           stationId: stationId      || null,
           region:    region         || null,
           status,
@@ -357,12 +362,30 @@ export function CreateUserPage({ basePath }: { basePath: "/admin" | "/command" }
             </Field>
           </div>
 
+          <Field label="Kundi / Category" required hint="Chagua kundi kwanza — Nafasi zitachujwa">
+            <Select icon={<Shield size={14} />}
+              value={category}
+              onChange={(e) => {
+                const cat = e.target.value;
+                setCategory(cat);
+                // Category triggers role: reset role to the first role in the new category
+                const catRoles = ROLE_CATEGORIES.find((x) => x.value === cat)?.roles ?? [];
+                setRole(catRoles[0] ?? "");
+              }}>
+              {ROLE_CATEGORIES.map((cat) => (
+                <option key={cat.value} value={cat.value}>{cat.label}</option>
+              ))}
+            </Select>
+          </Field>
+
           <Field label="Nafasi / Role" required>
             <Select icon={<BadgeCheck size={14} />}
               value={role} onChange={(e) => setRole(e.target.value)}>
-              {USER_ROLES.map((r) => (
-                <option key={r.value} value={r.value}>{r.label}</option>
-              ))}
+              {USER_ROLES
+                .filter((r) => (ROLE_CATEGORIES.find((x) => x.value === category)?.roles ?? []).includes(r.value))
+                .map((r) => (
+                  <option key={r.value} value={r.value}>{r.label}</option>
+                ))}
             </Select>
             {errors.role && <p className="text-[10px] text-[#EF4444]">{errors.role}</p>}
           </Field>
@@ -404,10 +427,21 @@ export function CreateUserPage({ basePath }: { basePath: "/admin" | "/command" }
 
           <Field label="Mkoa / Region">
             <Select icon={<MapPin size={14} />}
-              value={region} onChange={(e) => setRegion(e.target.value)}>
+              value={region} onChange={(e) => { setRegion(e.target.value); setDistrict(""); }}>
               <option value="">Chagua mkoa...</option>
               {TZ_REGIONS.map((r) => (
                 <option key={r} value={r}>{r}</option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field label="Wilaya / District">
+            <Select icon={<MapPin size={14} />}
+              value={district} onChange={(e) => setDistrict(e.target.value)}
+              disabled={!region}>
+              <option value="">{region ? "Chagua wilaya..." : "Chagua mkoa kwanza"}</option>
+              {districtsForRegion(region).map((d) => (
+                <option key={d} value={d}>{d}</option>
               ))}
             </Select>
           </Field>

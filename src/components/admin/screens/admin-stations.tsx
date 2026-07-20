@@ -5,6 +5,7 @@ import { Search, X, Building2, Plus, AlertTriangle, MapPin, Phone, ChevronRight 
 import { useApiData } from "@/hooks/use-api-data";
 import { authFetch } from "@/lib/client-auth";
 import { toast } from "@/hooks/use-toast";
+import { TZ_ZONES, TZ_ZONE_NAMES, districtsForRegion } from "@/lib/tz-locations";
 
 type Station = {
   id: string; name: string; region: string; district: string | null;
@@ -24,7 +25,7 @@ export function AdminStations() {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Station | null>(null);
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ name:"", region:"", district:"", address:"", phone:"" });
+  const [form, setForm] = useState({ name:"", region:"", district:"", ward:"", address:"", phone:"" });
   const [saving, setSaving] = useState(false);
 
   const { data: stations, loading, error, refetch } = useApiData<Station>(
@@ -39,13 +40,13 @@ export function AdminStations() {
     const { error } = await authFetch("/api/stations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: form.name, region: form.region, district: form.district, address: form.address, phone: form.phone }),
+      body: JSON.stringify({ name: form.name, region: form.region, district: form.district, ward: form.ward, address: form.address, phone: form.phone }),
     });
     if (error) {
       toast({ title:"Hitilafu", description: error, variant:"destructive" });
     } else {
       toast({ title:"Kituo kimeongezwa", description: form.name });
-      setForm({ name:"", region:"", district:"", address:"", phone:"" });
+      setForm({ name:"", region:"", district:"", ward:"", address:"", phone:"" });
       setShowAdd(false);
       refetch();
     }
@@ -135,27 +136,81 @@ export function AdminStations() {
       {/* Add Station Modal */}
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center" onClick={() => setShowAdd(false)}>
-          <div className="relative w-full max-w-md rounded-2xl bg-police-card p-5 shadow-2xl" onClick={(e)=>e.stopPropagation()}>
+          <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-2xl bg-police-card p-5 shadow-2xl" onClick={(e)=>e.stopPropagation()}>
             <button onClick={() => setShowAdd(false)} className="absolute right-4 top-4 text-police-muted"><X size={18} /></button>
             <h2 className="text-[16px] font-bold text-police mb-4">Ongeza Kituo Kipya</h2>
             <div className="space-y-3">
-              {[
-                { label:"Jina la Kituo *", key:"name", placeholder:"e.g. Kituo cha Polisi Kinondoni" },
-                { label:"Mkoa *",          key:"region", placeholder:"e.g. Dar es Salaam" },
-                { label:"Wilaya",          key:"district", placeholder:"e.g. Kinondoni" },
-                { label:"Anwani",          key:"address", placeholder:"e.g. Barabara ya Kawawa" },
-                { label:"Simu",            key:"phone", placeholder:"e.g. +255 22 276 0000" },
-              ].map(({label, key, placeholder}) => (
-                <div key={key}>
-                  <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">{label}</label>
-                  <input
-                    value={form[key as keyof typeof form]}
-                    onChange={(e) => setForm(f => ({...f, [key]: e.target.value}))}
-                    placeholder={placeholder}
-                    className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police placeholder-police-faint focus:outline-none focus:border-[#1E3A8A]"
-                  />
-                </div>
-              ))}
+              <div>
+                <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Jina la Kituo *</label>
+                <input
+                  value={form.name}
+                  onChange={(e) => setForm(f => ({...f, name: e.target.value}))}
+                  placeholder="e.g. Kituo cha Polisi Kinondoni"
+                  className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police placeholder-police-faint focus:outline-none focus:border-[#1E3A8A]"
+                />
+              </div>
+
+              {/* Region dropdown — grouped by zone, changing it resets district */}
+              <div>
+                <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Mkoa / Region *</label>
+                <select
+                  value={form.region}
+                  onChange={(e) => setForm(f => ({...f, region: e.target.value, district: ""}))}
+                  className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police focus:outline-none focus:border-[#1E3A8A]"
+                >
+                  <option value="">— Chagua Mkoa —</option>
+                  {TZ_ZONE_NAMES.map((z) => (
+                    <optgroup key={z} label={z}>
+                      {TZ_ZONES[z].map((r) => <option key={r} value={r}>{r}</option>)}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
+
+              {/* District dropdown — triggered by region */}
+              <div>
+                <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Wilaya / District</label>
+                <select
+                  value={form.district}
+                  onChange={(e) => setForm(f => ({...f, district: e.target.value}))}
+                  disabled={!form.region}
+                  className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police focus:outline-none focus:border-[#1E3A8A] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">{form.region ? "— Chagua Wilaya —" : "Chagua Mkoa kwanza"}</option>
+                  {districtsForRegion(form.region).map((d) => <option key={d} value={d}>{d}</option>)}
+                </select>
+              </div>
+
+              {/* Ward / Street — manual input */}
+              <div>
+                <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kata / Mtaa (Ward/Street)</label>
+                <input
+                  value={form.ward}
+                  onChange={(e) => setForm(f => ({...f, ward: e.target.value}))}
+                  placeholder="e.g. Mwenge, Sam Nujoma"
+                  className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police placeholder-police-faint focus:outline-none focus:border-[#1E3A8A]"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Anwani</label>
+                <input
+                  value={form.address}
+                  onChange={(e) => setForm(f => ({...f, address: e.target.value}))}
+                  placeholder="e.g. Barabara ya Kawawa"
+                  className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police placeholder-police-faint focus:outline-none focus:border-[#1E3A8A]"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Simu</label>
+                <input
+                  value={form.phone}
+                  onChange={(e) => setForm(f => ({...f, phone: e.target.value}))}
+                  placeholder="e.g. +255 22 276 0000"
+                  className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police placeholder-police-faint focus:outline-none focus:border-[#1E3A8A]"
+                />
+              </div>
             </div>
             <button onClick={handleAddStation} disabled={saving}
               className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-[14px] font-bold text-white transition active:scale-95 disabled:opacity-60"

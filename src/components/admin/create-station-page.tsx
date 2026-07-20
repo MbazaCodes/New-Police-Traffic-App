@@ -11,14 +11,8 @@ import { toast } from "@/hooks/use-toast";
 import { useApiData } from "@/hooks/use-api-data";
 
 // ── Tanzania regions ──────────────────────────────────────────
-const TZ_REGIONS = [
-  "Dar es Salaam","Mwanza","Arusha","Dodoma","Mbeya","Morogoro",
-  "Tanga","Zanzibar Mjini Magharibi","Zanzibar Kaskazini Unguja",
-  "Zanzibar Kusini Unguja","Zanzibar Kaskazini Pemba","Zanzibar Kusini Pemba",
-  "Kilimanjaro","Kagera","Mara","Geita","Simiyu","Shinyanga","Tabora",
-  "Singida","Katavi","Rukwa","Ruvuma","Iringa","Njombe","Songwe",
-  "Lindi","Mtwara","Pwani","Makao Makuu",
-].sort();
+import { TZ_ALL_REGIONS, districtsForRegion } from "@/lib/tz-locations";
+const TZ_REGIONS = TZ_ALL_REGIONS;
 
 // ── Station types ─────────────────────────────────────────────
 const STATION_TYPES = [
@@ -275,7 +269,7 @@ export function CreateStationPage({ basePath }: { basePath: "/admin" | "/command
           </h2>
 
           <Field label="Mkoa / Region *" required>
-            <Select icon={<MapPin size={14} />} value={region} onChange={(e) => setRegion(e.target.value)}>
+            <Select icon={<MapPin size={14} />} value={region} onChange={(e) => { setRegion(e.target.value); setDistrict(""); }}>
               <option value="">Chagua mkoa...</option>
               {TZ_REGIONS.map((r) => (
                 <option key={r} value={r}>{r}</option>
@@ -286,9 +280,14 @@ export function CreateStationPage({ basePath }: { basePath: "/admin" | "/command
 
           <div className="grid grid-cols-2 gap-3">
             <Field label="Wilaya / District">
-              <Input icon={<MapPin size={14} />}
+              <Select icon={<MapPin size={14} />}
                 value={district} onChange={(e) => setDistrict(e.target.value)}
-                placeholder="e.g. Kinondoni" />
+                disabled={!region}>
+                <option value="">{region ? "Chagua wilaya..." : "Chagua mkoa kwanza"}</option>
+                {districtsForRegion(region).map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </Select>
             </Field>
             <Field label="Kata / Ward">
               <Input icon={<MapPin size={14} />}
