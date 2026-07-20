@@ -1,0 +1,576 @@
+     1→     1→// @ts-nocheck
+     2→     2→"use client";
+     3→     3→
+     4→     4→import { useState, useEffect } from "react";
+     5→     5→import { ArrowLeft, Car, CheckCircle, AlertCircle, Loader2, WifiOff, CloudUpload, RefreshCw } from "lucide-react";
+     6→     6→import { usePoliceStore } from "@/store/police-store";
+     7→     7→import { useOfficer } from "@/hooks/use-officer";
+     8→     8→import { validatePlate, validateMobile, validateLicense, newVehicleRecords } from "@/lib/police-helpers";
+     9→     9→import { toast } from "@/hooks/use-toast";
+    10→    10→import { DatePicker } from "@/components/police/ui/date-picker";
+    11→    11→import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
+    12→    12→
+    13→    13→const VEHICLE_TYPES = ["Saloon", "SUV", "Pick Up", "Minibus", "Lori", "Bajaji", "Pikipiki", "Basila"];
+    14→    14→const INSURANCE_COS = ["Jubilee Insurance", "GA Insurance", "Strategies Insurance", "Alliance Insurance", "Heritage Insurance", "UAP Insurance", "ICEA Lion", "Madison Insurance"];
+    15→    15→const COLORS = ["Nyeupe", "Nyeusi", "Fedha", "Nyekundu", "Bluu", "Kijani", "Kahawia", "Dhahabu", "Njano", "Pinki"];
+    16→    16→
+    17→    17→// Common vehicle makes/models in Tanzania
+    18→    18→const VEHICLE_MAKES_MODELS = [
+    19→    19→  // Toyota
+    20→    20→  "Toyota Corolla", "Toyota Land Cruiser", "Toyota Hiace", "Toyota Mark II",
+    21→    21→  "Toyota Premio", "Toyota RAV4", "Toyota Hilux", "Toyota Fielder", "Toyota Noah", "Toyota Alphard",
+    22→    22→  // Suzuki
+    23→    23→  "Suzuki Maruti", "Suzuki Swift", "Suzuki Alto", "Suzuki Every",
+    24→    24→  // Honda
+    25→    25→  "Honda Fit", "Honda CR-V", "Honda Accord", "Honda Civic",
+    26→    26→  // Nissan
+    27→    27→  "Nissan Sunny", "Nissan Note", "Nissan X-Trail", "Nissan Navara", "Nissan Caravan",
+    28→    28→  // Mitsubishi
+    29→    29→  "Mitsubishi Lancer", "Mitsubishi Canter", "Mitsubishi Pajero", "Mitsubishi Fuso",
+    30→    30→  // Others
+    31→    31→  "Isuzu Elf", "Isuzu NQR", "Mazda BT-50", "Subaru Forester", "Subaru Impreza",
+    32→    32→  "Foton", "Daihatsu Hijet", "Hino", "Volvo FH", "Scania", "Mercedes Actros",
+    33→    33→  // Bajaji/Pikipiki
+    34→    34→  "TVS Apache", "Bajaj Boxer", "Honda Motorcycle", "Yamaha Motorcycle", "Piaggio",
+    35→    35→];
+    36→    36→
+    37→    37→export function AddVehicleScreen() {
+    38→    38→  const OFFICER = useOfficer();
+    39→    39→  const { goBack, searchQuery } = usePoliceStore();
+    40→    40→  const [saved, setSaved] = useState(false);
+    41→    41→  const [savedRecord, setSavedRecord] = useState<any>(null);
+    42→    42→  const [errors, setErrors] = useState<Record<string, string>>({});
+    43→    43→  const [isSaving, setIsSaving] = useState(false);
+    44→    44→  
+    45→    45→  // Offline sync state
+    46→    46→  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    47→    47→    pending: 0,
+    48→    48→    lastSynced: null,
+    49→    49→    isOnline: true,
+    50→    50→    isSyncing: false,
+    51→    51→  });
+    52→    52→  const [isOfflineMode, setIsOfflineMode] = useState(false);
+    53→    53→
+    54→    54→  // State for Make/Model dropdown
+    55→    55→  const [makeModelOpen, setMakeModelOpen] = useState(false);
+    56→    56→  const [makeModelSearch, setMakeModelSearch] = useState("");
+    57→    57→  const [isOtherModel, setIsOtherModel] = useState(false);
+    58→    58→
+    59→    59→  // Initialize auto-sync on mount
+    60→    60→  useEffect(() => {
+    61→    61→    initAutoSync();
+    62→    62→    const unsubscribe = subscribeToSyncStatus((status) => {
+    63→    63→      setSyncStatus(status);
+    64→    64→      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    65→    65→    });
+    66→    66→    return unsubscribe;
+    67→    67→  }, []);
+    68→    68→
+    69→    69→  const [form, setForm] = useState({
+    70→    70→    plate: searchQuery?.toUpperCase() ?? "",
+    71→    71→    model: "", type: "Saloon", color: "Nyeupe", year: new Date().getFullYear().toString(),
+    72→    72→    ownerName: "", ownerNida: "", ownerPhone: "", ownerLicense: "",
+    73→    73→    insuranceCompany: "Jubilee Insurance", insurancePolicy: "", insuranceExpiry: "",
+    74→    74→    inspectionExpiry: "", registrationExpiry: "",
+    75→    75→    notes: "",
+    76→    76→  });
+    77→    77→
+    78→    78→  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    79→    79→    setForm((f) => ({ ...f, [k]: e.target.value }));
+    80→    80→
+    81→    81→  // NIDA formatting helper
+    82→    82→  const formatNida = (input: string): string => {
+    83→    83→    const digits = input.replace(/\D/g, "");
+    84→    84→    const truncated = digits.slice(0, 20);
+    85→    85→    const parts = [
+    86→    86→      truncated.slice(0, 4), truncated.slice(4, 8), truncated.slice(8, 12),
+    87→    87→      truncated.slice(12, 16), truncated.slice(16, 20),
+    88→    88→    ];
+    89→    89→    return parts.filter(Boolean).join("-");
+    90→    90→  };
+    91→    91→
+    92→    92→  const handleNidaChange = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    93→    93→    setForm((f) => ({ ...f, [field]: formatNida(e.target.value) }));
+    94→    94→  };
+    95→    95→
+    96→    96→  // Validate NIDA
+    97→    97→  const validateNida = (v: string): { valid: boolean; error?: string } => {
+    98→    98→    if (!v?.trim()) return { valid: true }; // Optional field
+    99→    99→    const digits = v.replace(/\D/g, "");
+   100→   100→    if (digits.length !== 20) return { valid: false, error: `NIDA lazima iwe nambari 20 (una ${digits.length})` };
+   101→   101→    return { valid: true };
+   102→   102→  };
+   103→   103→
+   104→   104→  const validate = () => {
+   105→   105→    const e: Record<string, string> = {};
+   106→   106→    const plateR = validatePlate(form.plate);
+   107→   107→    if (!plateR.valid) e.plate = plateR.error;
+   108→   108→    if (!form.model.trim()) e.model = "Chagua au ingiza mfano wa gari";
+   109→   109→    
+   110→   110→    const nidaR = validateNida(form.ownerNida);
+   111→   111→    if (!nidaR.valid) e.ownerNida = nidaR.error;
+   112→   112→    
+   113→   113→    if (form.ownerPhone) { const r = validateMobile(form.ownerPhone); if (!r.valid) e.ownerPhone = r.error; }
+   114→   114→    if (form.ownerLicense) { const r = validateLicense(form.ownerLicense); if (!r.valid) e.ownerLicense = r.error; }
+   115→   115→    setErrors(e);
+   116→   116→    return Object.keys(e).length === 0;
+   117→   117→  };
+   118→   118→
+   119→   119→  // ENHANCED: Save with offline sync support (IndexedDB queue)
+   120→   120→  const handleSave = async () => {
+   121→   121→    if (!validate()) { 
+   122→   122→      toast({ title: "Rekebisha makosa", description: "Jaza sehemu zote sahihi.", variant: "destructive" }); 
+   123→   123→      return; 
+   124→   124→    }
+   125→   125→
+   126→   126→    setIsSaving(true);
+   127→   127→
+   128→   128→    try {
+   129→   129→      // Prepare payload with officer metadata
+   130→   130→      const payload = {
+   131→   131→        plate: form.plate.toUpperCase(),
+   132→   132→        model: form.model,
+   133→   133→        type: form.type,
+   134→   134→        color: form.color,
+   135→   135→        year: form.year,
+   136→   136→        ownerName: form.ownerName || "Haijajulikana",
+   137→   137→        ownerNida: form.ownerNida.replace(/\D/g, ""), // Clean digits only
+   138→   138→        ownerPhone: form.ownerPhone,
+   139→   139→        ownerLicense: form.ownerLicense?.toUpperCase(),
+   140→   140→        station: OFFICER.station,
+   141→   141→        addedBy: OFFICER.shortName,
+   142→   142→        officerId: OFFICER.id,
+   143→   143→        insuranceCompany: form.insuranceCompany,
+   144→   144→        insurancePolicy: form.insurancePolicy,
+   145→   145→        insuranceExpiry: form.insuranceExpiry || null,
+   146→   146→        inspectionExpiry: form.inspectionExpiry || null,
+   147→   147→        registrationExpiry: form.registrationExpiry || null,
+   148→   148→        notes: form.notes,
+   149→   149→      };
+   150→   150→
+   151→   151→      // Use enhanced offline sync - tries API first, falls back to IndexedDB queue
+   152→   152→      const result = await saveWithOfflineSupport("/api/vehicles", payload, "POST");
+   153→   153→
+   154→   154→      const rec = { 
+   155→   155→        id: result.data?.id || `VEH-${Date.now()}`, 
+   156→   156→        plate: form.plate.toUpperCase(),
+   157→   157→        model: form.model,
+   158→   158→        ownerName: form.ownerName || "Haijajulikana",
+   159→   159→        addedBy: OFFICER.shortName,
+   160→   160→        station: OFFICER.station,
+   161→   161→        cached: result.fromCache, // Mark if saved locally
+   162→   162→      };
+   163→   163→      
+   164→   164→      newVehicleRecords.unshift({ id: rec.id, plate: rec.plate });
+   165→   165→      setSavedRecord(rec);
+   166→   166→      setSaved(true);
+   167→   167→      
+   168→   168→      if (result.fromCache) {
+   169→   169→        toast({ 
+   170→   170→          title: "Gari Limesajiliwa (Hifadhi ya Kawaida) 💾", 
+   171→   171→          description: "Data imehifadhiwa kawaida. Itasasishwa mara tu utakapoweka mtandao.",
+   172→   172→          variant: "default",
+   173→   173→          duration: 5000,
+   174→   174→        });
+   175→   175→      } else {
+   176→   176→        toast({ 
+   177→   177→          title: "Gari Limesajiliwa ✓", 
+   178→   178→          description: `${rec.plate} imehifadhiwa kwenye database. ID: ${rec.id}` 
+   179→   179→        });
+   180→   180→      }
+   181→   181→    } catch (error: any) {
+   182→   182→      console.error("Save vehicle error:", error);
+   183→   183→      
+   184→   184→      toast({ 
+   185→   185→        title: "Hitilafu katika Hifadhi ❌", 
+   186→   186→        description: error.message || "Imeshindikana kuhifadhi taarifa za gari. Tena.",
+   187→   187→        variant: "destructive"
+   188→   188→      });
+   189→   189→    } finally {
+   190→   190→      setIsSaving(false);
+   191→   191→    }
+   192→   192→  };
+   193→   193→
+   194→   194→  // Filter make/model options
+   195→   195→  const filteredMakes = VEHICLE_MAKES_MODELS.filter(option =>
+   196→   196→    option.toLowerCase().includes(makeModelSearch.toLowerCase())
+   197→   197→  );
+   198→   198→
+   199→   199→  if (saved && savedRecord) {
+   200→   200→    return (
+   201→   201→      <div className="min-h-full bg-police p-4">
+   202→   202→        <div className="flex flex-col items-center py-8">
+   203→   203→          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#10B981]/15">
+   204→   204→            <CheckCircle size={44} className="text-[#10B981]" />
+   205→   205→          </div>
+   206→   206→          <h2 className="mt-4 text-[20px] font-bold text-police">Gari Limesajiliwa</h2>
+   207→   207→          <p className="mt-1 text-center text-[13px] text-police-muted">Taarifa za gari zimehifadhiwa kwenye mfumo.</p>
+   208→   208→          <div className="mt-6 w-full rounded-2xl bg-police-card p-4 shadow-sm space-y-2.5">
+   209→   209→            <div className="inline-block rounded-lg border-2 border-[#1E3A8A] bg-yellow-50 px-4 py-1.5 text-[20px] font-extrabold tracking-widest text-police-navy">{savedRecord.plate}</div>
+   210→   210→            <Row label="ID ya Rekodi" value={savedRecord.id} bold />
+   211→   211→            <Row label="Mfano" value={savedRecord.model} />
+   212→   212→            <Row label="Mmiliki" value={savedRecord.ownerName} />
+   213→   213→            <Row label="Imehifadhiwa na" value={savedRecord.addedBy} />
+   214→   214→            <Row label="Kituo" value={savedRecord.station} />
+   215→   215→            <Row label="Jumla ya Magari Yaliyoongezwa Leo" value={String(newVehicleRecords.length)} />
+   216→   216→            {savedRecord.cached && (
+   217→   217→              <Row label="Hali" value="⏳ Inasubiri usasishaji" bold />
+   218→   218→            )}
+   219→   219→          </div>
+   220→   220→          <div className="mt-4 w-full space-y-2">
+   221→   221→            <button onClick={() => { 
+   222→   222→              setSaved(false); 
+   223→   223→              setForm({ 
+   224→   224→                plate: "", model: "", type: "Saloon", color: "Nyeupe", year: new Date().getFullYear().toString(), 
+   225→   225→                ownerName: "", ownerNida: "", ownerPhone: "", ownerLicense: "", 
+   226→   226→                insuranceCompany: "Jubilee Insurance", insurancePolicy: "", insuranceExpiry: "", 
+   227→   227→                inspectionExpiry: "", registrationExpiry: "", notes: "" 
+   228→   228→              }); 
+   229→   229→              setErrors({}); 
+   230→   230→              setIsOtherModel(false); 
+   231→   231→            }} className="w-full rounded-xl border border-police py-3 text-[14px] font-semibold text-police">Sajili Gari Jingine</button>
+   232→   232→            <button onClick={() => goBack()} className="w-full rounded-xl bg-[#1E3A8A] py-3 text-[14px] font-bold text-white">Rudi Nyuma</button>
+   233→   233→          </div>
+   234→   234→        </div>
+   235→   235→      </div>
+   236→   236→    );
+   237→   237→  }
+   238→   238→
+   239→   239→  return (
+   240→   240→    <div className="min-h-full bg-police">
+   241→   241→      <div className="bg-gradient-to-r from-[#1E3A8A] to-[#2196F3] px-4 py-4">
+   242→   242→        <button onClick={() => goBack()} className="mb-3 flex items-center gap-2 text-white/80">
+   243→   243→          <ArrowLeft size={18} /> <span className="text-[13px]">Rudi</span>
+   244→   244→        </button>
+   245→   245→        <div className="flex items-center gap-3">
+   246→   246→          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15"><Car size={20} className="text-white" /></div>
+   247→   247→          <div>
+   248→   248→            <h1 className="text-[18px] font-bold text-white">Sajili Gari Jipya</h1>
+   249→   249→            <p className="text-[11px] text-white/70">Gari hili halijasajiliwa mfumoni - ongeza sasa</p>
+   250→   250→          </div>
+   251→   251→        </div>
+   252→   252→      </div>
+   253→   253→
+   254→   254→      <div className="space-y-4 p-4 pb-8">
+   255→   255→        {/* Vehicle info */}
+   256→   256→        <Section title="Taarifa za Gari" color="#1E3A8A">
+   257→   257→          <FI label="Namba ya Gari (Plate)" required value={form.plate} onChange={set("plate")} placeholder="T 001 ABC" error={errors.plate} upper />
+   258→   258→          
+   259→   259→          {/* MAKE/MODEL - DROPDOWN WITH "OTHER" OPTION */}
+   260→   260→          <div className="relative">
+   261→   261→            <label className="mb-1 block text-[12px] font-medium text-police-muted">
+   262→   262→              Mfano (Make/Model) <span className="text-[#EF4444]">*</span>
+   263→   263→            </label>
+   264→   264→            
+   265→   265→            {isOtherModel ? (
+   266→   266→              /* Manual entry mode */
+   267→   267→              <div className="flex gap-2">
+   268→   268→                <input
+   269→   269→                  type="text"
+   270→   270→                  value={form.model}
+   271→   271→                  onChange={set("model")}
+   272→   272→                  placeholder="Ingiza make/model manual..."
+   273→   273→                  className={`flex-1 rounded-xl border bg-police-input px-3 h-10 text-[13px] text-police placeholder:text-police-faint focus:outline-none ${
+   274→   274→                    errors.model ? "border-[#EF4444]" : "border-[#FF9800] focus:border-[#FF9800]"
+   275→   275→                  }`}
+   276→   276→                  autoFocus
+   277→   277→                />
+   278→   278→                <button
+   279→   279→                  type="button"
+   280→   280→                  onClick={() => { setIsOtherModel(false); setMakeModelOpen(true); }}
+   281→   281→                  className="px-3 rounded-xl border border-[#2196F3] bg-[#2196F3]/10 text-[11px] font-semibold text-[#2196F3]"
+   282→   282→                >
+   283→   283→                  Orodha
+   284→   284→                </button>
+   285→   285→              </div>
+   286→   286→            ) : (
+   287→   287→              /* Dropdown mode */
+   288→   288→              <>
+   289→   289→                <button
+   290→   290→                  type="button"
+   291→   291→                  onClick={() => setMakeModelOpen(!makeModelOpen)}
+   292→   292→                  className={`relative flex w-full items-center gap-2 rounded-xl border bg-police-input px-3 h-10 ${
+   293→   293→                    errors.model ? "border-[#EF4444]" : form.model ? "border-[#10B981]" : "border-police focus:border-[#1E3A8A]"
+   294→   294→                  }`}
+   295→   295→                >
+   296→   296→                  <Car size={14} className={form.model ? "text-[#1E3A8A]" : "text-police-faint"} />
+   297→   297→                  <span className={`flex-1 text-left text-[13px] ${form.model ? "font-medium text-police" : "text-police-faint"}`}>
+   298→   298→                    {form.model || "Chagua Make/Model"}
+   299→   299→                  </span>
+   300→   300→                  <svg width="14" height="14" viewBox="0 0 12 12" className={`text-police-faint transition ${makeModelOpen ? "rotate-180" : ""}`}>
+   301→   301→                    <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+   302→   302→                  </svg>
+   303→   303→                </button>
+   304→   304→
+   305→   305→                {makeModelOpen && (
+   306→   306→                  <div className="absolute z-50 mt-1 w-full rounded-xl border border-police bg-police-card shadow-lg max-h-56 overflow-hidden">
+   307→   307→                    {/* Search */}
+   308→   308→                    <div className="p-2 border-b border-police-soft">
+   309→   309→                      <input
+   310→   310→                        type="text"
+   311→   311→                        value={makeModelSearch}
+   312→   312→                        onChange={(e) => setMakeModelSearch(e.target.value)}
+   313→   313→                        placeholder="Tafuta make/model..."
+   314→   314→                        className="w-full rounded-lg border border-police bg-police-input px-3 py-2 text-[12px] text-police placeholder:text-police-faint focus:outline-none"
+   315→   315→                        autoFocus
+   316→   316→                      />
+   317→   317→                    </div>
+   318→   318→
+   319→   319→                    {/* Options */}
+   320→   320→                    <div className="max-h-40 overflow-y-auto p-1">
+   321→   321→                      {filteredMakes.map((option) => (
+   322→   322→                        <button
+   323→   323→                          key={option}
+   324→   324→                          type="button"
+   325→   325→                          onClick={() => {
+   326→   326→                            setForm((f) => ({ ...f, model: option }));
+   327→   327→                            setMakeModelOpen(false);
+   328→   328→                            setMakeModelSearch("");
+   329→   329→                          }}
+   330→   330→                          className={`block w-full text-left px-3 py-2 rounded-lg text-[12px] transition ${
+   331→   331→                            form.model === option ? "bg-[#1E3A8A]/10 font-bold text-[#1E3A8A]" : "text-police hover:bg-police-muted"
+   332→   332→                          }`}
+   333→   333→                        >
+   334→   334→                          {option}
+   335→   335→                        </button>
+   336→   336→                      ))}
+   337→   337→                      
+   338→   338→                      {/* Other option */}
+   339→   339→                      <button
+   340→   340→                        type="button"
+   341→   341→                        onClick={() => { setIsOtherModel(true); setMakeModelOpen(false); }}
+   342→   342→                        className="block w-full text-left px-3 py-2 mt-1 rounded-lg text-[12px] font-semibold text-[#2196F3] border-t border-police-soft pt-2 hover:bg-[#2196F3]/5"
+   343→   343→                      >
+   344→   344→                        + Ingiza Mwingine (Manual)
+   345→   345→                      </button>
+   346→   346→
+   347→   347→                      {filteredMakes.length === 0 && (
+   348→   348→                        <p className="px-3 py-3 text-[11px] text-center text-police-faint">
+   349→   349→                          Hakuna matokeo. Chagua &quot;+ Ingiza Mwingine&quot;
+   350→   350→                        </p>
+   351→   351→                      )}
+   352→   352→                    </div>
+   353→   353→                  </div>
+   354→   354→                )}
+   355→   355→              </>
+   356→   356→            )}
+   357→   357→            {errors.model && !isOtherModel && <p className="mt-1 text-[10px] text-[#EF4444]">{errors.model}</p>}
+   358→   358→          </div>
+   359→   359→
+   360→   360→          <div className="grid grid-cols-2 gap-3">
+   361→   361→            <FS label="Aina" value={form.type} onChange={set("type")} options={VEHICLE_TYPES} />
+   362→   362→            <FS label="Rangi" value={form.color} onChange={set("color")} options={COLORS} />
+   363→   363→          </div>
+   364→   364→          
+   365→   365→          {/* Year - Number input with reasonable range */}
+   366→   366→          <FI label="Mwaka wa Usajili" value={form.year} onChange={set("year")} placeholder="2020" inputMode="numeric" />
+   367→   367→        </Section>
+   368→   368→
+   369→   369→        {/* Owner info */}
+   370→   370→        <Section title="Taarifa za Mmiliki" color="#1E3A8A">
+   371→   371→          <FI label="Jina la Mmiliki" value={form.ownerName} onChange={set("ownerName")} placeholder="Jina kamili" />
+   372→   372→          
+   373→   373→          {/* OWNER NIDA - FORMATTED */}
+   374→   374→          <div>
+   375→   375→            <label className="mb-1 block text-[12px] font-medium text-police-muted">NIDA ya Mmiliki</label>
+   376→   376→            <div className="relative">
+   377→   377→              <input
+   378→   378→                type="text"
+   379→   379→                inputMode="numeric"
+   380→   380→                value={form.ownerNida}
+   381→   381→                onChange={handleNidaChange("ownerNida")}
+   382→   382→                placeholder="0000-0000-0000-0000-00"
+   383→   383→                className={`w-full rounded-xl border bg-police-input px-3 h-10 text-[13px] font-mono tracking-wider text-police placeholder:text-police-faint focus:outline-none ${
+   384→   384→                  errors.ownerNida 
+   385→   385→                    ? "border-[#EF4444]" 
+   386→   386→                    : form.ownerNida.replace(/\D/g, "").length === 20 && form.ownerNida.length > 0
+   387→   387→                    ? "border-[#10B981]"
+   388→   388→                    : "border-police focus:border-[#1E3A8A]"
+   389→   389→                }`}
+   390→   390→              />
+   391→   391→              {form.ownerNida.replace(/\D/g, "").length === 20 && (
+   392→   392→                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#10B981] text-sm">✓</span>
+   393→   393→              )}
+   394→   394→            </div>
+   395→   395→            {errors.ownerNida && <p className="mt-1 text-[10px] text-[#EF4444]">{errors.ownerNida}</p>}
+   396→   396→            {!errors.ownerNida && form.ownerNida && form.ownerNida.replace(/\D/g, "").length > 0 && form.ownerNida.replace(/\D/g, "").length < 20 && (
+   397→   397→              <p className="mt-0.5 text-[9px] text-[#FF9800]">
+   398→   398→                Nambari ya NIDA: {form.ownerNida.replace(/\D/g, "").length}/20 tarakimu
+   399→   399→              </p>
+   400→   400→            )}
+   401→   401→          </div>
+   402→   402→          
+   403→   403→          <FI label="Simu ya Mmiliki" value={form.ownerPhone} onChange={set("ownerPhone")} placeholder="0712 345 678" error={errors.ownerPhone} inputMode="tel" />
+   404→   404→          <FI label="Namba ya Leseni" value={form.ownerLicense} onChange={set("ownerLicense")} placeholder="DL001001TZ" error={errors.ownerLicense} upper />
+   405→   405→        </Section>
+   406→   406→
+   407→   407→        {/* Insurance - WITH DATE PICKERS */}
+   408→   408→        <Section title="Bima na Usajili" color="#10B981">
+   409→   409→          <FS label="Kampuni ya Bima" value={form.insuranceCompany} onChange={set("insuranceCompany")} options={INSURANCE_COS} />
+   410→   410→          <FI label="Namba ya Polisi ya Bima" value={form.insurancePolicy} onChange={set("insurancePolicy")} placeholder="JUB-2026-00001" />
+   411→   411→          
+   412→   412→          <div className="grid grid-cols-2 gap-3">
+   413→   413→            {/* DATE PICKERS instead of text inputs */}
+   414→   414→            <DatePicker
+   415→   415→              label="Bima Inamalizika"
+   416→   416→              value={form.insuranceExpiry}
+   417→   417→              onChange={(val) => setForm((f) => ({ ...f, insuranceExpiry: val }))}
+   418→   418→              minDate={new Date().toISOString().split('T')[0]}
+   419→   419→            />
+   420→   420→            <DatePicker
+   421→   421→              label="Ukaguzi Unamalizika"
+   422→   422→              value={form.inspectionExpiry}
+   423→   423→              onChange={(val) => setForm((f) => ({ ...f, inspectionExpiry: val }))}
+   424→   424→              minDate={new Date().toISOString().split('T')[0]}
+   425→   425→            />
+   426→   426→          </div>
+   427→   427→          <DatePicker
+   428→   428→            label="Usajili Unamalizika"
+   429→   429→            value={form.registrationExpiry}
+   430→   430→            onChange={(val) => setForm((f) => ({ ...f, registrationExpiry: val }))}
+   431→   431→            minDate={new Date().toISOString().split('T')[0]}
+   432→   432→          />
+   433→   433→        </Section>
+   434→   434→
+   435→   435→        {/* Notes */}
+   436→   436→        <Section title="Maelezo ya Ziada" color="#FF9800">
+   437→   437→          <textarea rows={3} value={form.notes} onChange={set("notes")} placeholder="Maelezo mengine yoyote kuhusu gari hili..." className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
+   438→   438→        </Section>
+   439→   439→
+   440→   440→        {/* Sync Status Indicator - Shows when offline or pending items */}
+   441→   441→        {(isOfflineMode || syncStatus.pending > 0) && (
+   442→   442→          <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
+   443→   443→            syncStatus.isSyncing 
+   444→   444→              ? "border-[#2196F3]/30 bg-[#2196F3]/5" 
+   445→   445→              : syncStatus.isOnline 
+   446→   446→                ? "border-[#FF9800]/30 bg-[#FF9800]/5"
+   447→   447→                : "border-[#EF4444]/30 bg-[#EF4444]/5"
+   448→   448→          }`}>
+   449→   449→            {syncStatus.isSyncing ? (
+   450→   450→              <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" />
+   451→   451→            ) : syncStatus.isOnline ? (
+   452→   452→              <CloudUpload size={18} className="text-[#FF9800] shrink-0" />
+   453→   453→            ) : (
+   454→   454→              <WifiOff size={18} className="text-[#EF4444] shrink-0" />
+   455→   455→            )}
+   456→   456→            <div className="flex-1">
+   457→   457→              <p className={`text-[12px] font-bold ${
+   458→   458→                syncStatus.isSyncing ? "text-[#2196F3]" :
+   459→   459→                syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"
+   460→   460→              }`}>
+   461→   461→                {syncStatus.isSyncing ? "Inasasisha data..." :
+   462→   462→                 syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` :
+   463→   463→                 "Hakuna Mtandao — Hifadhi ya Kawaida"}
+   464→   464→              </p>
+   465→   465→              <p className="text-[10px] text-police-muted">
+   466→   466→                {!syncStatus.isOnline ? "Data itasasishwa mara tu utakapoweka mtandao." :
+   467→   467→                 syncStatus.pending > 0 ? "Bofya kusasisha sasa" : "Yote imesasishwa"}
+   468→   468→              </p>
+   469→   469→            </div>
+   470→   470→            {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+   471→   471→              <button
+   472→   472→                onClick={() => {
+   473→   473→                  import("@/lib/offline-sync").then(({ processSyncQueue }) => {
+   474→   474→                    processSyncQueue().then(({ success, failed }) => {
+   475→   475→                      toast({
+   476→   476→                        title: "Matokeo ya Usasishaji",
+   477→   477→                        description: `Mafanikio: ${success}, Mashindwa: ${failed}`,
+   478→   478→                      });
+   479→   479→                    });
+   480→   480→                  });
+   481→   481→                }}
+   482→   482→                className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold active:scale-95 transition-transform"
+   483→   483→              >
+   484→   484→                Sasa Sasisha
+   485→   485→              </button>
+   486→   486→            )}
+   487→   487→          </div>
+   488→   488→        )}
+   489→   489→
+   490→   490→        <div className="rounded-2xl border border-[#1E3A8A]/20 bg-[#1E3A8A]/5 p-4">
+   491→   491→          <p className="text-[12px] font-medium text-police-muted">Afisa Anayesajili</p>
+   492→   492→          <p className="mt-1 text-[15px] font-bold text-[#1E3A8A]">{OFFICER.shortName}</p>
+   493→   493→          <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
+   494→   494→          {syncStatus.lastSynced && (
+   495→   495→            <p className="mt-1 text-[9px] text-police-faint">
+   496→   496→              Iliyopita iliyosasilishwa: {new Date(syncStatus.lastSynced).toLocaleString("sw-TZ")}
+   497→   497→            </p>
+   498→   498→          )}
+   499→   499→        </div>
+   500→   500→
+   501→   501→        <button 
+   502→   502→          onClick={handleSave} 
+   503→   503→          disabled={isSaving}
+   504→   504→          className={`w-full rounded-xl py-3.5 text-[15px] font-bold text-white shadow-md active:scale-[0.98] flex items-center justify-center gap-2 ${
+   505→   505→            isSaving ? "bg-gray-400 cursor-not-allowed" : "bg-[#1E3A8A]"
+   506→   506→          }`}
+   507→   507→        >
+   508→   508→          {isSaving ? (
+   509→   509→            <>
+   510→   510→              <Loader2 size={16} className="animate-spin" /> Inahifadhi...
+   511→   511→            </>
+   512→   512→          ) : (
+   513→   513→            <>
+   514→   514→              <Car size={16} /> Hifadhi Taarifa za Gari
+   515→   515→            </>
+   516→   516→          )}
+   517→   517→        </button>
+   518→   518→      </div>
+   519→   519→    </div>
+   520→   520→  );
+   521→   521→}
+   522→   522→
+   523→   523→function Section({ title, color, children }: { title: string; color: string; children: React.ReactNode }) {
+   524→   524→  return (
+   525→   525→    <div className="tpf-card p-4">
+   526→   526→      <h3 className="mb-3 text-[14px] font-bold text-police" style={{ borderLeft: `3px solid ${color}`, paddingLeft: "8px" }}>{title}</h3>
+   527→   527→      <div className="space-y-3">{children}</div>
+   528→   528→    </div>
+   529→   529→  );
+   530→   530→}
+   531→   531→
+   532→   532→function FI({ label, required, value, onChange, placeholder, error, upper, inputMode }: { 
+   533→   533→  label: string; 
+   534→   534→  required?: boolean; 
+   535→   535→  value: string; 
+   536→   536→  onChange: React.ChangeEventHandler<HTMLInputElement>; 
+   537→   537→  placeholder?: string; 
+   538→   538→  error?: string; 
+   539→   539→  upper?: boolean;
+   540→   540→  inputMode?: string;
+   541→   541→}) {
+   542→   542→  return (
+   543→   543→    <div>
+   544→   544→      <label className="mb-1 block text-[12px] font-medium text-police-muted">{label}{required && <span className="ml-0.5 text-[#EF4444]">*</span>}</label>
+   545→   545→      <input 
+   546→   546→        value={value} 
+   547→   547→        onChange={onChange} 
+   548→   548→        placeholder={placeholder} 
+   549→   549→        inputMode={inputMode as any}
+   550→   550→        className={`w-full rounded-xl border bg-police-input px-3 h-10 text-[13px] text-police placeholder:text-police-faint focus:outline-none ${error ? "border-[#EF4444]" : "border-police focus:border-[#1E3A8A]"} ${upper ? "uppercase" : ""}`} 
+   551→   551→      />
+   552→   552→      {error && <div className="mt-1 flex items-center gap-1"><AlertCircle size={11} className="text-[#EF4444]" /><p className="text-[10px] text-[#EF4444]">{error}</p></div>}
+   553→   553→    </div>
+   554→   554→  );
+   555→   555→}
+   556→   556→
+   557→   557→function FS({ label, value, onChange, options }: { label: string; value: string; onChange: React.ChangeEventHandler<HTMLSelectElement>; options: string[] }) {
+   558→   558→  return (
+   559→   559→    <div>
+   560→   560→      <label className="mb-1 block text-[12px] font-medium text-police-muted">{label}</label>
+   561→   561→      <select value={value} onChange={onChange} className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police focus:outline-none">
+   562→   562→        {options.map((o) => <option key={o}>{o}</option>)}
+   563→   563→      </select>
+   564→   564→    </div>
+   565→   565→  );
+   566→   566→}
+   567→   567→
+   568→   568→function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
+   569→   569→  return (
+   570→   570→    <div className="flex justify-between py-1 border-b border-police-soft last:border-0">
+   571→   571→      <span className="text-[12px] text-police-muted">{label}</span>
+   572→   572→      <span className={`text-[12px] ${bold ? "font-bold text-[#10B981]" : "font-medium text-police"}`}>{value}</span>
+   573→   573→    </div>
+   574→   574→  );
+   575→   575→}
+   576→   576→
