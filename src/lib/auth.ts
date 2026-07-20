@@ -87,7 +87,7 @@ export function verifyOtp(identifier: string, code: string): boolean {
 export function resolveDashboardRoute(role: Role): string {
   const map: Record<Role, string> = {
     SUPER_ADMIN:         "/admin/dashboard",
-    SYSTEM_ADMIN:        "/admin/dashboard",
+    SYSTEM_ADMIN:        "/system/dashboard",
     COMMANDER:           "/command/national/dashboard",
     NATIONAL_COMMANDER:  "/command/national/dashboard",
     REGIONAL_COMMANDER:  "/command/regional/dashboard",

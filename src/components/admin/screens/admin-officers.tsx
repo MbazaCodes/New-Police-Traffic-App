@@ -7,6 +7,45 @@ import { authFetch } from "@/lib/client-auth";
 import { toast } from "@/hooks/use-toast";
 import { TZ_ZONE_NAMES, regionsForZone, districtsForRegion, TZ_POLICE_RANKS } from "@/lib/tz-locations";
 
+// ── Officer categories → system roles ────────────────────────────
+// Selecting a category filters the system-role list. The role decides
+// which panel/PWA the officer lands in at login:
+//   officer-traffic  → /officer/traffic (Traffic Officer PWA)
+//   officer-general  → /officer/general (General Police PWA)
+//   post-officer     → /officer/post
+//   cid roles        → /cid
+//   commissioners    → /command/*
+const OFFICER_CATEGORIES: { value: string; label: string; roles: { value: string; label: string }[] }[] = [
+  {
+    value: "trafiki", label: "Askari wa Usalama Barabarani (Trafiki)",
+    roles: [{ value: "officer-traffic", label: "Traffic Officer — PWA ya Trafiki" }],
+  },
+  {
+    value: "kawaida", label: "Polisi wa Kawaida (General Duty)",
+    roles: [{ value: "officer-general", label: "General Officer — PWA ya Polisi" }],
+  },
+  {
+    value: "posti", label: "Afisa wa Posti / Kituo cha Ukaguzi",
+    roles: [{ value: "post-officer", label: "Post Officer" }],
+  },
+  {
+    value: "upelelezi", label: "Upelelezi (CID)",
+    roles: [
+      { value: "cid-officer", label: "CID Officer" },
+      { value: "investigator", label: "Investigator" },
+    ],
+  },
+  {
+    value: "kamandi", label: "Kamandi (Command)",
+    roles: [
+      { value: "station-commissioner",  label: "OCS — Kamanda wa Kituo" },
+      { value: "district-commissioner", label: "OCD — Kamanda wa Wilaya" },
+      { value: "regional-commissioner", label: "RPC — Kamanda wa Mkoa" },
+      { value: "national-commissioner", label: "Kamanda wa Kitaifa" },
+    ],
+  },
+];
+
 type Officer = {
   id: string; name: string; officer_number: string; rank: string; status: string;
   station?: { id: string; name: string; region: string } | null;
@@ -219,6 +258,8 @@ function AddOfficerModal({ onClose, onSaved }: { onClose: () => void; onSaved: (
 
   const [name, setName] = useState("");
   const [rank, setRank] = useState("Constable");
+  const [category, setCategory] = useState("trafiki");
+  const [officerRole, setOfficerRole] = useState("officer-traffic");
   const [badgeNo, setBadgeNo] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -281,6 +322,7 @@ function AddOfficerModal({ onClose, onSaved }: { onClose: () => void; onSaved: (
         stationId,
         region,
         unit: district || undefined,
+        role: officerRole,
       }),
     });
     setSaving(false);
@@ -348,6 +390,38 @@ function AddOfficerModal({ onClose, onSaved }: { onClose: () => void; onSaved: (
                 <option key={r} value={r}>{r}</option>
               ))}
             </select>
+          </div>
+
+          {/* Category → System Role: decides which panel/PWA opens at login */}
+          <div>
+            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kundi / Category *</label>
+            <select
+              value={category}
+              onChange={(e) => {
+                const cat = e.target.value;
+                setCategory(cat);
+                // Category triggers role: auto-select the first role of the category
+                const roles = OFFICER_CATEGORIES.find((x) => x.value === cat)?.roles ?? [];
+                setOfficerRole(roles[0]?.value ?? "officer-general");
+              }}
+              className={selectCls}
+            >
+              {OFFICER_CATEGORIES.map((cat) => (
+                <option key={cat.value} value={cat.value}>{cat.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Aina ya Nafasi (System Role) *</label>
+            <select value={officerRole} onChange={(e) => setOfficerRole(e.target.value)} className={selectCls}>
+              {(OFFICER_CATEGORIES.find((x) => x.value === category)?.roles ?? []).map((r) => (
+                <option key={r.value} value={r.value}>{r.label}</option>
+              ))}
+            </select>
+            <p className="mt-1 text-[10px] text-police-faint">
+              Nafasi hii ndiyo inaamua paneli/PWA atakayofunguliwa afisa akiingia
+            </p>
           </div>
 
           {/* ── Posting: Zone → Region → District → Station (cascading) ── */}
