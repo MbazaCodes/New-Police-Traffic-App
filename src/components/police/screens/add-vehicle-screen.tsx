@@ -1,13 +1,14 @@
 // @ts-nocheck
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, Car, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Car, CheckCircle, AlertCircle, Loader2, WifiOff, CloudUpload, RefreshCw } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
 import { validatePlate, validateMobile, validateLicense, newVehicleRecords } from "@/lib/police-helpers";
 import { toast } from "@/hooks/use-toast";
 import { DatePicker } from "@/components/police/ui/date-picker";
+import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
 
 const VEHICLE_TYPES = ["Saloon", "SUV", "Pick Up", "Minibus", "Lori", "Bajaji", "Pikipiki", "Basila"];
 const INSURANCE_COS = ["Jubilee Insurance", "GA Insurance", "Strategies Insurance", "Alliance Insurance", "Heritage Insurance", "UAP Insurance", "ICEA Lion", "Madison Insurance"];
@@ -41,10 +42,29 @@ export function AddVehicleScreen() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
   
+  // Offline sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    pending: 0,
+    lastSynced: null,
+    isOnline: true,
+    isSyncing: false,
+  });
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+
   // State for Make/Model dropdown
   const [makeModelOpen, setMakeModelOpen] = useState(false);
   const [makeModelSearch, setMakeModelSearch] = useState("");
   const [isOtherModel, setIsOtherModel] = useState(false);
+
+  // Initialize auto-sync on mount
+  useEffect(() => {
+    initAutoSync();
+    const unsubscribe = subscribeToSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    });
+    return unsubscribe;
+  }, []);
 
   const [form, setForm] = useState({
     plate: searchQuery?.toUpperCase() ?? "",
@@ -96,7 +116,7 @@ export function AddVehicleScreen() {
     return Object.keys(e).length === 0;
   };
 
-  // NEW: Save to API (fixes silent data loss)
+  // ENHANCED: Save with offline sync support (IndexedDB queue)
   const handleSave = async () => {
     if (!validate()) { 
       toast({ title: "Rekebisha makosa", description: "Jaza sehemu zote sahihi.", variant: "destructive" }); 
@@ -106,38 +126,31 @@ export function AddVehicleScreen() {
     setIsSaving(true);
 
     try {
-      // Call the real API endpoint
-      const response = await fetch("/api/vehicles", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          plate: form.plate.toUpperCase(),
-          model: form.model,
-          type: form.type,
-          color: form.color,
-          year: form.year,
-          ownerName: form.ownerName,
-          ownerNida: form.ownerNida.replace(/\D/g, ""), // Clean digits for API
-          ownerPhone: form.ownerPhone,
-          ownerLicense: form.ownerLicense,
-          station: OFFICER.station,
-          addedBy: OFFICER.shortName,
-          insuranceCompany: form.insuranceCompany,
-          insurancePolicy: form.insurancePolicy,
-          insuranceExpiry: form.insuranceExpiry || null,
-          inspectionExpiry: form.inspectionExpiry || null,
-          registrationExpiry: form.registrationExpiry || null,
-          notes: form.notes,
-        }),
-      });
+      // Prepare payload with officer metadata
+      const payload = {
+        plate: form.plate.toUpperCase(),
+        model: form.model,
+        type: form.type,
+        color: form.color,
+        year: form.year,
+        ownerName: form.ownerName || "Haijajulikana",
+        ownerNida: form.ownerNida.replace(/\D/g, ""), // Clean digits only
+        ownerPhone: form.ownerPhone,
+        ownerLicense: form.ownerLicense?.toUpperCase(),
+        station: OFFICER.station,
+        addedBy: OFFICER.shortName,
+        officerId: OFFICER.id,
+        insuranceCompany: form.insuranceCompany,
+        insurancePolicy: form.insurancePolicy,
+        insuranceExpiry: form.insuranceExpiry || null,
+        inspectionExpiry: form.inspectionExpiry || null,
+        registrationExpiry: form.registrationExpiry || null,
+        notes: form.notes,
+      };
 
-      const result = await response.json();
+      // Use enhanced offline sync - tries API first, falls back to IndexedDB queue
+      const result = await saveWithOfflineSupport("/api/vehicles", payload, "POST");
 
-      if (!response.ok) {
-        throw new Error(result.error || "Imeshindikana kuhifadhi");
-      }
-
-      // Success
       const rec = { 
         id: result.data?.id || `VEH-${Date.now()}`, 
         plate: form.plate.toUpperCase(),
@@ -145,36 +158,33 @@ export function AddVehicleScreen() {
         ownerName: form.ownerName || "Haijajulikana",
         addedBy: OFFICER.shortName,
         station: OFFICER.station,
+        cached: result.fromCache, // Mark if saved locally
       };
       
       newVehicleRecords.unshift({ id: rec.id, plate: rec.plate });
       setSavedRecord(rec);
       setSaved(true);
       
-      toast({ 
-        title: "Gari Limesajiliwa ✓", 
-        description: `${rec.plate} imehifadhiwa kwenye database. ID: ${rec.id}` 
-      });
+      if (result.fromCache) {
+        toast({ 
+          title: "Gari Limesajiliwa (Hifadhi ya Kawaida) 💾", 
+          description: "Data imehifadhiwa kawaida. Itasasishwa mara tu utakapoweka mtandao.",
+          variant: "default",
+          duration: 5000,
+        });
+      } else {
+        toast({ 
+          title: "Gari Limesajiliwa ✓", 
+          description: `${rec.plate} imehifadhiwa kwenye database. ID: ${rec.id}` 
+        });
+      }
     } catch (error: any) {
       console.error("Save vehicle error:", error);
       
-      // Fallback: Save locally only (offline mode)
-      const rec = { 
-        id: `VEH-${Date.now()}`, 
-        plate: form.plate.toUpperCase(),
-        model: form.model,
-        ownerName: form.ownerName || "Haijajulikana",
-        addedBy: OFFICER.shortName,
-        station: OFFICER.station,
-      };
-      
-      newVehicleRecords.unshift({ id: rec.id, plate: rec.plate });
-      setSavedRecord(rec);
-      setSaved(true);
-      
       toast({ 
-        title: "Gari Limesajiliwa (Local) ⚠️", 
-        description: "Data imehifadhiwa kawaida pekee. Itakamilika mtandao unapowezekwa.",
+        title: "Hitilafu katika Hifadhi ❌", 
+        description: error.message || "Imeshindikana kuhifadhi taarifa za gari. Tena.",
+        variant: "destructive"
       });
     } finally {
       setIsSaving(false);
@@ -203,6 +213,9 @@ export function AddVehicleScreen() {
             <Row label="Imehifadhiwa na" value={savedRecord.addedBy} />
             <Row label="Kituo" value={savedRecord.station} />
             <Row label="Jumla ya Magari Yaliyoongezwa Leo" value={String(newVehicleRecords.length)} />
+            {savedRecord.cached && (
+              <Row label="Hali" value="⏳ Inasubiri usasishaji" bold />
+            )}
           </div>
           <div className="mt-4 w-full space-y-2">
             <button onClick={() => { 
@@ -243,7 +256,7 @@ export function AddVehicleScreen() {
         <Section title="Taarifa za Gari" color="#1E3A8A">
           <FI label="Namba ya Gari (Plate)" required value={form.plate} onChange={set("plate")} placeholder="T 001 ABC" error={errors.plate} upper />
           
-          {/* MAKE/MODEL - NOW A DROPDOWN WITH "OTHER" OPTION */}
+          {/* MAKE/MODEL - DROPDOWN WITH "OTHER" OPTION */}
           <div className="relative">
             <label className="mb-1 block text-[12px] font-medium text-police-muted">
               Mfano (Make/Model) <span className="text-[#EF4444]">*</span>
@@ -360,16 +373,25 @@ export function AddVehicleScreen() {
           {/* OWNER NIDA - FORMATTED */}
           <div>
             <label className="mb-1 block text-[12px] font-medium text-police-muted">NIDA ya Mmiliki</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              value={form.ownerNida}
-              onChange={handleNidaChange("ownerNida")}
-              placeholder="0000-0000-0000-0000-00"
-              className={`w-full rounded-xl border bg-police-input px-3 h-10 text-[13px] font-mono tracking-wider text-police placeholder:text-police-faint focus:outline-none ${
-                errors.ownerNida ? "border-[#EF4444]" : "border-police focus:border-[#1E3A8A]"
-              }`}
-            />
+            <div className="relative">
+              <input
+                type="text"
+                inputMode="numeric"
+                value={form.ownerNida}
+                onChange={handleNidaChange("ownerNida")}
+                placeholder="0000-0000-0000-0000-00"
+                className={`w-full rounded-xl border bg-police-input px-3 h-10 text-[13px] font-mono tracking-wider text-police placeholder:text-police-faint focus:outline-none ${
+                  errors.ownerNida 
+                    ? "border-[#EF4444]" 
+                    : form.ownerNida.replace(/\D/g, "").length === 20 && form.ownerNida.length > 0
+                    ? "border-[#10B981]"
+                    : "border-police focus:border-[#1E3A8A]"
+                }`}
+              />
+              {form.ownerNida.replace(/\D/g, "").length === 20 && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#10B981] text-sm">✓</span>
+              )}
+            </div>
             {errors.ownerNida && <p className="mt-1 text-[10px] text-[#EF4444]">{errors.ownerNida}</p>}
             {!errors.ownerNida && form.ownerNida && form.ownerNida.replace(/\D/g, "").length > 0 && form.ownerNida.replace(/\D/g, "").length < 20 && (
               <p className="mt-0.5 text-[9px] text-[#FF9800]">
@@ -415,10 +437,65 @@ export function AddVehicleScreen() {
           <textarea rows={3} value={form.notes} onChange={set("notes")} placeholder="Maelezo mengine yoyote kuhusu gari hili..." className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
         </Section>
 
+        {/* Sync Status Indicator - Shows when offline or pending items */}
+        {(isOfflineMode || syncStatus.pending > 0) && (
+          <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
+            syncStatus.isSyncing 
+              ? "border-[#2196F3]/30 bg-[#2196F3]/5" 
+              : syncStatus.isOnline 
+                ? "border-[#FF9800]/30 bg-[#FF9800]/5"
+                : "border-[#EF4444]/30 bg-[#EF4444]/5"
+          }`}>
+            {syncStatus.isSyncing ? (
+              <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" />
+            ) : syncStatus.isOnline ? (
+              <CloudUpload size={18} className="text-[#FF9800] shrink-0" />
+            ) : (
+              <WifiOff size={18} className="text-[#EF4444] shrink-0" />
+            )}
+            <div className="flex-1">
+              <p className={`text-[12px] font-bold ${
+                syncStatus.isSyncing ? "text-[#2196F3]" :
+                syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"
+              }`}>
+                {syncStatus.isSyncing ? "Inasasisha data..." :
+                 syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` :
+                 "Hakuna Mtandao — Hifadhi ya Kawaida"}
+              </p>
+              <p className="text-[10px] text-police-muted">
+                {!syncStatus.isOnline ? "Data itasasishwa mara tu utakapoweka mtandao." :
+                 syncStatus.pending > 0 ? "Bofya kusasisha sasa" : "Yote imesasishwa"}
+              </p>
+            </div>
+            {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+              <button
+                onClick={() => {
+                  import("@/lib/offline-sync").then(({ processSyncQueue }) => {
+                    processSyncQueue().then(({ success, failed }) => {
+                      toast({
+                        title: "Matokeo ya Usasishaji",
+                        description: `Mafanikio: ${success}, Mashindwa: ${failed}`,
+                      });
+                    });
+                  });
+                }}
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold active:scale-95 transition-transform"
+              >
+                Sasa Sasisha
+              </button>
+            )}
+          </div>
+        )}
+
         <div className="rounded-2xl border border-[#1E3A8A]/20 bg-[#1E3A8A]/5 p-4">
           <p className="text-[12px] font-medium text-police-muted">Afisa Anayesajili</p>
           <p className="mt-1 text-[15px] font-bold text-[#1E3A8A]">{OFFICER.shortName}</p>
           <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
+          {syncStatus.lastSynced && (
+            <p className="mt-1 text-[9px] text-police-faint">
+              Iliyopita iliyosasilishwa: {new Date(syncStatus.lastSynced).toLocaleString("sw-TZ")}
+            </p>
+          )}
         </div>
 
         <button 
