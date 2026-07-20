@@ -15,9 +15,10 @@ import {
   Camera,
   UserCog,
   Info,
+  Loader2,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
-import { OFFENSE_TYPES, VEHICLE_TYPES} from "@/lib/police-data";
+import { OFFENSE_TYPES, VEHICLE_TYPES } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
@@ -41,6 +42,9 @@ export function CitationScreen() {
   const [driverNida, setDriverNida] = useState(prefill?.driverNida || "");
   const [isOwner, setIsOwner] = useState(true);
   const [notes, setNotes] = useState("");
+  
+  // Loading state
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const hasPrefill = !!prefill;
 
@@ -49,12 +53,28 @@ export function CitationScreen() {
   const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
   const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 
+  // NIDA formatting helper
+  const formatNida = (input: string): string => {
+    const digits = input.replace(/\D/g, "");
+    const truncated = digits.slice(0, 20);
+    const parts = [
+      truncated.slice(0, 4), truncated.slice(4, 8), truncated.slice(8, 12),
+      truncated.slice(12, 16), truncated.slice(16, 20),
+    ];
+    return parts.filter(Boolean).join("-");
+  };
+
+  const handleNidaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDriverNida(formatNida(e.target.value));
+  };
+
   const buildPayload = () => ({
     plate: prefill?.plate || "",
     offense: offense || "Haijawazwa",
     driverName: driverName || "Haijawazwa",
     driverLicense: driverLicense || "—",
     driverPhone: driverPhone || "—",
+    driverNida: driverNida.replace(/\D/g, "") || "",
     date: today,
     time: currentTime,
     location: "Morogoro Road, DSM",
@@ -64,29 +84,58 @@ export function CitationScreen() {
   });
 
   const handleSave = async () => {
-    addCitation(buildPayload());
-    try {
-      await fetch("/api/citations", {
-        method: "POST", headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ ...buildPayload(), status: "draft" }),
-      });
-    } catch { /* offline — local only */ }
-    toast({ title: "Imehifadhiwa ✓", description: "Rasimu ya Citation imehifadhiwa." });
-  };
-  const handleSubmit = async () => {
     const payload = buildPayload();
     addCitation(payload);
+    
     try {
       await fetch("/api/citations", {
-        method: "POST", headers: {"Content-Type":"application/json"},
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, status: "draft" }),
+      });
+      toast({ title: "Imehifadhiwa ✓", description: "Rasimu ya Citation imehifadhiwa kwenye database." });
+    } catch (error) {
+      console.error("Save citation error:", error);
+      toast({ title: "Imehifadhiwa (Local)", description: "Rasimu imehifadhiwa kawaida. Itakamilika mtandao unapowezekana." });
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!offense) {
+      toast({ title: "Kosa Haujajazwa", description: "Chagua aina ya kosa.", variant: "destructive" });
+      return;
+    }
+
+    setIsSubmitting(true);
+    const payload = buildPayload();
+    addCitation(payload);
+
+    try {
+      const response = await fetch("/api/citations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...payload, status: "unpaid" }),
       });
-    } catch { /* offline — local only */ }
-    toast({
-      title: "Citation Imetolewa ✓",
-      description: "Citation imewasilishwa na imetumwa kwa dereva.",
-    });
-    setTimeout(() => goBack(), 800);
+
+      if (!response.ok) {
+        throw new Error("Imeshindikana kutuma citation");
+      }
+
+      toast({
+        title: "Citation Imetolewa ✓",
+        description: "Citation imewasilishwa na imetumwa kwa dereva.",
+      });
+      setTimeout(() => goBack(), 800);
+    } catch (error: any) {
+      console.error("Submit citation error:", error);
+      toast({
+        title: "Citation Imetolewa (Local)",
+        description: "Data imehifadhiwa kawaida. Itakamilika mtandao.",
+      });
+      setTimeout(() => goBack(), 800);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -112,7 +161,7 @@ export function CitationScreen() {
         <div className="flex items-center justify-between rounded-2xl bg-police-card p-4 shadow-sm">
           <div>
             <p className="text-[10px] uppercase tracking-wide text-police-faint">Namba ya Citation</p>
-            <p className="text-[15px] font-extrabold text-police-navy">CT-2026-00452</p>
+            <p className="text-[15px] font-extrabold text-police-navy">CT-2026-{String(Math.floor(1000 + Math.random() * 9000)).padStart(4, "0")}</p>
           </div>
           <div className="text-right">
             <p className="text-[10px] uppercase tracking-wide text-police-faint">Afisa</p>
@@ -141,7 +190,7 @@ export function CitationScreen() {
           </div>
         </Section>
 
-        {/* Section: Driver (editable) */}
+        {/* Section: Driver (editable with NIDA format) */}
         <Section
           title="Taarifa za Dereva"
           icon={<UserCog size={16} />}
@@ -198,13 +247,23 @@ export function CitationScreen() {
               placeholder="07XX XXX XXX"
               inputMode="tel"
             />
+            
+            {/* NIDA - NOW WITH FORMATTING */}
             <EditableField
               label="Namba ya NIDA"
               value={driverNida}
-              onChange={setDriverNida}
-              placeholder="1990123456789"
+              onChange={(v) => setDriverNida(v)}
+              placeholder="0000-0000-0000-0000-00"
+              isNida
             />
           </div>
+          
+          {/* NIDA validation hint */}
+          {driverNida && driverNida.replace(/\D/g, "").length > 0 && driverNida.replace(/\D/g, "").length < 20 && (
+            <p className="mt-1 text-[9px] text-[#FF9800] pl-1">
+              NIDA: {driverNida.replace(/\D/g, "").length}/20 tarakimu
+            </p>
+          )}
         </Section>
 
         {/* Section: Offense */}
@@ -270,15 +329,18 @@ export function CitationScreen() {
         <div className="flex gap-2.5 pt-1">
           <button
             onClick={handleSave}
-            className="flex-1 rounded-xl border-2 border-[#1E3A8A] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
+            disabled={isSubmitting}
+            className="flex-1 rounded-xl border-2 border-[#1E3A8A] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98] flex items-center justify-center gap-1"
           >
-            <Save size={16} className="mr-1 inline" /> Hifadhi
+            <Save size={16} /> Hifadhi
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-[1.5] rounded-xl bg-[#1E3A8A] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]"
+            disabled={isSubmitting}
+            className="flex-[1.5] rounded-xl bg-[#1E3A8A] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98] flex items-center justify-center gap-1"
           >
-            <Send size={16} className="mr-1 inline" /> Toa Citation
+            {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+            Toa Citation
           </button>
         </div>
       </div>
@@ -355,6 +417,7 @@ function EditableField({
   placeholder,
   inputMode,
   full = false,
+  isNida = false,
 }: {
   label: string;
   value: string;
@@ -362,17 +425,31 @@ function EditableField({
   placeholder?: string;
   inputMode?: "text" | "tel" | "numeric";
   full?: boolean;
+  isNida?: boolean;
 }) {
+  // NIDA formatting for this field
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isNida) {
+      const digits = e.target.value.replace(/\D/g, "").slice(0, 20);
+      const parts = [digits.slice(0,4), digits.slice(4,8), digits.slice(8,12), digits.slice(12,16), digits.slice(16,20)];
+      onChange(parts.filter(Boolean).join("-"));
+    } else {
+      onChange(e.target.value);
+    }
+  };
+
   return (
     <div className={full ? "col-span-2" : ""}>
       <label className="mb-1 block text-[11px] font-medium text-police-muted">{label}</label>
-      <div className="flex items-center gap-2 rounded-xl border-2 border-[#2196F3]/40 bg-[#2196F3]/5 px-3 focus-within:border-[#2196F3]">
+      <div className={`flex items-center gap-2 rounded-xl border-2 ${isNida ? "border-[#2196F3]/30" : "border-[#2196F3]/40"} bg-[#2196F3]/5 px-3 focus-within:border-[#2196F3]`}>
         <input
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleChange}
           placeholder={placeholder}
           inputMode={inputMode}
-          className="h-10 flex-1 bg-transparent text-[12px] font-medium text-police placeholder:text-police-faint focus:outline-none"
+          className={`h-10 flex-1 bg-transparent text-[12px] font-medium text-police placeholder:text-police-faint focus:outline-none ${
+            isNida ? "font-mono tracking-wider" : ""
+          }`}
         />
       </div>
     </div>

@@ -2,8 +2,7 @@
 "use client";
 
 import { useOfficer } from "@/hooks/use-officer";
-
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Pencil,
   CheckCircle2,
@@ -14,11 +13,13 @@ import {
   ShieldAlert,
   PenLine,
   Trash2,
+  Loader2,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
+import { DatePicker } from "@/components/police/ui/date-picker";
 
 export function VehicleInspectionScreen() {
   const OFFICER = useOfficer();
@@ -27,25 +28,59 @@ export function VehicleInspectionScreen() {
   const addInspection = useRecordsStore((s) => s.addInspection);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [plate, setPlate] = useState(v.plate);
-  const [model, setModel] = useState(v.model);
-  const [color, setColor] = useState(v.color);
-  const [owner, setOwner] = useState(v.owner);
+  const [plate, setPlate] = useState(v.plate || "");
+  const [model, setModel] = useState(v.model || "");
+  const [color, setColor] = useState(v.color || "");
+  const [owner, setOwner] = useState(v.owner || "");
   const [notes, setNotes] = useState("");
   const [overloaded, setOverloaded] = useState(false);
   const [result, setResult] = useState<"pass" | "fail" | null>(null);
-  const [photos, setPhotos] = useState<{ label: string }[]>(v.photos.map((p) => ({ label: p.label })));
+  const [photos, setPhotos] = useState<{ label: string }[]>(v.photos?.map((p: any) => ({ label: p.label })) || []);
   const [signature, setSignature] = useState("J. Mwinyi");
+  
+  // New fields for better data capture
+  const [inspectionDate, setInspectionDate] = useState(new Date().toISOString().split('T')[0]);
+  const [inspectionTime, setInspectionTime] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Vehicle type dropdown
+  const vehicleTypes = ["Saloon", "SUV", "Pick Up", "Minibus", "Lori", "Bajaji", "Pikipiki", "Basila", "Gari la Kazi"];
+  const [vehicleType, setVehicleType] = useState("Saloon");
+  
+  // Color dropdown
+  const colors = ["Nyeupe", "Nyeusi", "Fedha", "Nyekundu", "Bluu", "Kijani", "Kahawia", "Dhahabu", "Njano", "Pinki", "Rangi Nyingine"];
 
   const now = new Date();
   const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
   const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 
-  const documentsPass = v.documents.filter((d) => d.pass).length;
-  const documentsTotal = v.documents.length;
-  const mechanicalPass = v.mechanical.filter((m) => m.pass).length;
-  const mechanicalTotal = v.mechanical.length;
-  const allPass = v.documents.every((d) => d.pass) && v.mechanical.every((m) => m.pass);
+  // Default inspection items if not provided
+  const defaultDocuments = [
+    { label: "Leseni ya Uderevani", status: "Haijathibitishwa", pass: false },
+    { label: "Usajili wa Gari", status: "Haijathibitishwa", pass: false },
+    { label: "Bima", status: "Haijathibitishwa", pass: false },
+    { label: "Ukaguzi ( Inspection Sticker)", status: "Haijathibitishwa", pass: false },
+  ];
+
+  const defaultMechanical = [
+    { label: "Taa (Headlights)", status: "Haijathibitishwa", pass: false },
+    { label: "Taa za Nyuma (Tail Lights)", status: "Haijathibitishwa", pass: false },
+    { label: "Breki (Brakes)", status: "Haijathibitishwa", pass: false },
+    { label "Gurudumu (Tires)", status: "Haijathibitishwa", pass: false },
+    { label: "Kioo cha Mbele (Windshield)", status: "Haijathibitishwa", pass: false },
+    { label: "Wimbi la Kuzuia (Wipers)", status: "Haijathibitishwa", pass: false },
+    {label: "Honi (Horn)", status: "Haijathibitishwa", pass: false },
+    {label: "Mifuko ya Hewa (Seat Belts)", status: "Haijathibitishwa", pass: false },
+  ];
+
+  const documents = v.documents?.length ? v.documents : defaultDocuments;
+  const mechanical = v.mechanical?.length ? v.mechanical : defaultMechanical;
+
+  const documentsPass = documents.filter((d: any) => d.pass).length;
+  const documentsTotal = documents.length;
+  const mechanicalPass = mechanical.filter((m: any) => m.pass).length;
+  const mechanicalTotal = mechanical.length;
+  const allPass = documents.every((d: any) => d.pass) && mechanical.every((m: any) => m.pass);
   const computedResult: "pass" | "fail" =
     result ?? (allPass ? "pass" : "fail");
 
@@ -57,21 +92,61 @@ export function VehicleInspectionScreen() {
     toast({ title: "Imefutwa", description: "Saini imefutwa." });
   };
 
-  const handleSubmit = () => {
-    addInspection({
-      plate,
-      model,
-      color,
-      owner,
+  // NEW: Save to API
+  const handleSubmit = async () => {
+    if (!plate.trim()) {
+      toast({ title: "Kosa", description: "Ingiza namba ya gari (plate)", variant: "destructive" });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const inspectionData = {
+      plate: plate.toUpperCase(),
+      model: model || "Haijulikana",
+      color: color || "Haijulikana",
+      owner: owner || "Haijulikana",
+      vehicleType,
       officer: OFFICER.name,
+      officerId: OFFICER.id,
+      station: OFFICER.station,
       date: `${today} ${currentTime}`,
+      inspectionDate,
       result: computedResult,
       documentsChecked: documentsTotal,
       mechanicalChecked: mechanicalTotal,
+      documentsPass,
+      mechanicalPass,
+      overloaded,
       notes: notes || undefined,
-    });
-    toast({ title: "Ukaguzi Umekamilika", description: "Ripoti ya ukaguzi wa gari imehifadhiwa." });
-    setTimeout(() => goBack(), 800);
+      photosCount: photos.length,
+    };
+
+    // Add to local store
+    addInspection(inspectionData);
+
+    try {
+      // Try to save via API
+      const response = await fetch("/api/inspections", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(inspectionData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Inspection saved:", result.data?.id);
+        toast({ title: "Ukaguzi Umekamilika ✓", description: "Ripoti ya ukaguzi wa gari imehifadhiwa kwenye database." });
+      } else {
+        throw new Error("API error");
+      }
+    } catch (error) {
+      console.log("Inspection saved locally:", error);
+      toast({ title: "Ukaguzi Umekamilika", description: "Ripoti ya ukaguzi wa gari imehifadhiwa kawaida." });
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => goBack(), 800);
+    }
   };
 
   return (
@@ -87,29 +162,54 @@ export function VehicleInspectionScreen() {
                 <div className="space-y-2">
                   <input
                     value={plate}
-                    onChange={(e) => setPlate(e.target.value)}
+                    onChange={(e) => setPlate(e.target.value.toUpperCase())}
+                    placeholder="Namba ya Gari (Plate)"
                     className="w-full rounded-md border-2 border-[#1E3A8A] bg-yellow-50 px-2.5 py-1 text-[16px] font-extrabold tracking-wider text-police-navy focus:outline-none"
                   />
-                  <input
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                    placeholder="Modeli"
-                    className="w-full rounded-md border border-police bg-police-input px-2 py-1 text-[13px] text-police-muted focus:outline-none"
-                  />
-                  <input
+                  
+                  {/* Make/Model - Now with dropdown option */}
+                  <div className="flex gap-2">
+                    <input
+                      value={model}
+                      onChange={(e) => setModel(e.target.value)}
+                      placeholder="Mfano (Make/Model)"
+                      className="flex-1 rounded-md border border-police bg-police-input px-2 py-1 text-[13px] text-police focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Color dropdown */}
+                  <select
                     value={color}
                     onChange={(e) => setColor(e.target.value)}
-                    placeholder="Rangi"
-                    className="w-full rounded-md border border-police bg-police-input px-2 py-1 text-[13px] text-police-muted focus:outline-none"
+                    className="w-full rounded-md border border-police bg-police-input px-2 py-1 text-[13px] text-police focus:outline-none"
+                  >
+                    <option value="">— Chagua Rangi —</option>
+                    {colors.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+
+                  {/* Vehicle Type */}
+                  <select
+                    value={vehicleType}
+                    onChange={(e) => setVehicleType(e.target.value)}
+                    className="w-full rounded-md border border-police bg-police-input px-2 py-1 text-[13px] text-police focus:outline-none"
+                  >
+                    {vehicleTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+
+                  <input
+                    value={owner}
+                    onChange={(e) => setOwner(e.target.value)}
+                    placeholder="Jina la Mmiliki"
+                    className="w-full rounded-md border border-police bg-police-input px-2 py-1 text-[12px] text-police focus:outline-none"
                   />
                 </div>
               ) : (
                 <>
                   <span className="inline-block rounded-md border-2 border-[#1E3A8A] bg-yellow-50 px-2.5 py-1 text-[16px] font-extrabold tracking-wider text-police-navy">
-                    {plate}
+                    {plate || "Bonyeza + kuongeza"}
                   </span>
                   <p className="mt-2 text-[13px] text-police-muted">
-                    {model} | {color}
+                    {model || "Mfano"} | {color || "Rangi"} | {vehicleType}
                   </p>
                 </>
               )}
@@ -132,19 +232,30 @@ export function VehicleInspectionScreen() {
                 />
               </div>
             ) : (
-              <InfoRow label="Mwenye Gari" value={owner} />
+              <InfoRow label="Mwenye Gari" value={owner || "—"} />
             )}
-            <InfoRow label="Namba ya Simu" value={v.phone} />
-            <InfoRow label="Eneo la Ukaguzi" value={v.location} />
-            <InfoRow label="Tarehe & Saa" value={`${today}, ${currentTime}`} />
+            <InfoRow label="Aina ya Gari" value={vehicleType} />
+            
+            {/* Date picker for inspection date */}
+            <div className="col-span-2 mt-1">
+              <DatePicker
+                label="Tarehe ya Ukaguzi"
+                value={inspectionDate}
+                onChange={setInspectionDate}
+                maxDate={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+
+            <InfoRow label="Saa" value={currentTime} />
           </div>
         </div>
 
         {/* Section 1: Documents */}
-        <ChecklistSection title="1. Hati na Vibali" items={v.documents} />
+        <ChecklistSection title="1. Hati na Vibali" items={documents} />
 
         {/* Section 2: Mechanical */}
-        <ChecklistSection title="2. Halia ya Gari (Mechanical Condition)" items={v.mechanical} />
+        <ChecklistSection title="2. Halia ya Gari (Mechanical Condition)" items={mechanical} />
+        
         <div className="rounded-b-2xl bg-police-card px-4 pb-4 -mt-3 pt-1 shadow-sm">
           <label className="mb-1 block text-[11px] font-medium text-police-muted">
             Maelezo ya Ziada (Kama kuna kasoro)
@@ -235,7 +346,7 @@ export function VehicleInspectionScreen() {
             >
               <ShieldCheck size={24} className="text-[#10B981]" />
               <div className="flex-1 text-left">
-                <p className="text-[13px] font-bold text-[#10B981]700">Gari Halina Kasoro Kubwa</p>
+                <p className="text-[13px] font-bold text-[#10B981]">Gari Halina Kasoro Kubwa</p>
                 <p className="text-[11px] text-police-muted">Gari linafaa kuendelea na safari</p>
               </div>
               <CheckCircle2 size={20} className={`text-[#10B981] ${computedResult === "pass" ? "" : "opacity-30"}`} />
@@ -287,10 +398,12 @@ export function VehicleInspectionScreen() {
         {/* Submit */}
         <button
           onClick={handleSubmit}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1E3A8A] py-3.5 text-[15px] font-bold text-white shadow-md active:scale-[0.98]"
+          disabled={isSubmitting}
+          className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-[15px] font-bold text-white shadow-md active:scale-[0.98] ${
+            isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#1E3A8A]"
+          }`}
         >
-          <CheckCircle2 size={20} />
-          Hifadhi na Kamaliza Ukaguzi
+          {isSubmitting ? <><Loader2 size={20} className="animate-spin" /> Inahifadhi...</> : <><CheckCircle2 size={20} /> Hifadhi na Kamaliza Ukaguzi</>}
         </button>
       </div>
     </div>
