@@ -5,6 +5,7 @@ import { Search, X, Shield, AlertTriangle, ChevronRight, Plus, Save, Loader2 } f
 import { useApiData } from "@/hooks/use-api-data";
 import { authFetch } from "@/lib/client-auth";
 import { toast } from "@/hooks/use-toast";
+import { TZ_ZONE_NAMES, regionsForZone, districtsForRegion, TZ_POLICE_RANKS } from "@/lib/tz-locations";
 
 type Officer = {
   id: string; name: string; officer_number: string; rank: string; status: string;
@@ -12,7 +13,7 @@ type Officer = {
   user?: { email: string | null; phone: string | null; photo_url: string | null; unit: string | null; badge_no: string | null } | null;
 };
 
-type StationOption = { id: string; name: string };
+type StationOption = { id: string; name: string; region?: string | null; district?: string | null };
 
 const STATUS_STYLES: Record<string, string> = {
   active:    "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30",
@@ -221,23 +222,50 @@ function AddOfficerModal({ onClose, onSaved }: { onClose: () => void; onSaved: (
   const [badgeNo, setBadgeNo] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+
+  // Cascading posting selection: Zone -> Region -> District -> Station
+  const [zone, setZone]         = useState("");
+  const [region, setRegion]     = useState("");
+  const [district, setDistrict] = useState("");
   const [stationId, setStationId] = useState("");
 
-  // Load stations on mount
+  // Load stations on mount (keep region/district for cascading filter)
   useEffect(() => {
     fetch("/api/stations")
       .then((r) => r.json())
       .then((json) => {
-        if (json.data) setStations(json.data.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
+        if (json.data) {
+          setStations(json.data.map((s: { id: string; name: string; region?: string; district?: string }) =>
+            ({ id: s.id, name: s.name, region: s.region ?? null, district: s.district ?? null })));
+        }
       })
       .catch(() => {});
   }, []);
+
+  // Options derived from the cascade
+  const regionOptions   = zone ? regionsForZone(zone) : [];
+  const districtOptions = region ? districtsForRegion(region) : [];
+
+  // Stations filtered by selected region/district; fall back to full list if no match
+  const stationMatches = stations.filter((s) => {
+    if (district && s.district && s.district !== district) return false;
+    if (region && s.region && s.region !== region) return false;
+    return true;
+  });
+  const stationOptions = region && stationMatches.length > 0 ? stationMatches : stations;
+
+  // Cascade resets — changing a parent clears its children
+  function onZoneChange(v: string)     { setZone(v); setRegion(""); setDistrict(""); setStationId(""); }
+  function onRegionChange(v: string)   { setRegion(v); setDistrict(""); setStationId(""); }
+  function onDistrictChange(v: string) { setDistrict(v); setStationId(""); }
 
   async function handleSubmit() {
     setFormError(null);
 
     if (!name.trim()) { setFormError("Jina la afisa linahitajika"); return; }
     if (!badgeNo.trim()) { setFormError("Namba ya badge inahitajika"); return; }
+    if (!zone) { setFormError("Tafadhali chagua kanda"); return; }
+    if (!region) { setFormError("Tafadhali chagua mkoa"); return; }
     if (!stationId) { setFormError("Tafadhali chagua kituo"); return; }
 
     setSaving(true);
@@ -251,6 +279,8 @@ function AddOfficerModal({ onClose, onSaved }: { onClose: () => void; onSaved: (
         phone: phone.trim() || undefined,
         email: email.trim() || undefined,
         stationId,
+        region,
+        unit: district || undefined,
       }),
     });
     setSaving(false);
@@ -266,15 +296,16 @@ function AddOfficerModal({ onClose, onSaved }: { onClose: () => void; onSaved: (
 
   const fields: { label: string; value: string; onChange: (v: string) => void; placeholder: string; type?: string; required?: boolean }[] = [
     { label: "Jina *", value: name, onChange: setName, placeholder: "Mfano: John Mwenda", required: true },
-    { label: "Nafasi / Cheo", value: rank, onChange: setRank, placeholder: "Mfano: Constable" },
     { label: "Namba ya Badge *", value: badgeNo, onChange: setBadgeNo, placeholder: "Mfano: TPF-1234", required: true },
     { label: "Simu", value: phone, onChange: setPhone, placeholder: "Mfano: +255 700 000 000", type: "tel" },
     { label: "Barua Pepe", value: email, onChange: setEmail, placeholder: "Mfano: afisa@police.go.tz", type: "email" },
   ];
 
+  const selectCls = "w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police focus:outline-none focus:border-[#2196F3] disabled:opacity-50 disabled:cursor-not-allowed";
+
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center" onClick={onClose}>
-      <div className="relative w-full max-w-md rounded-2xl bg-police-card p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-2xl bg-police-card p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="absolute right-4 top-4 text-police-muted hover:text-police">
           <X size={18} />
         </button>
@@ -309,18 +340,65 @@ function AddOfficerModal({ onClose, onSaved }: { onClose: () => void; onSaved: (
             </div>
           ))}
 
+          {/* Rank dropdown */}
           <div>
-            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kituo *</label>
-            <select
-              value={stationId}
-              onChange={(e) => setStationId(e.target.value)}
-              className="w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police focus:outline-none focus:border-[#2196F3]"
-            >
-              <option value="">— Chagua Kituo —</option>
-              {stations.map((s) => (
-                <option key={s.id} value={s.id}>{s.name}</option>
+            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Nafasi / Cheo</label>
+            <select value={rank} onChange={(e) => setRank(e.target.value)} className={selectCls}>
+              {TZ_POLICE_RANKS.map((r) => (
+                <option key={r} value={r}>{r}</option>
               ))}
             </select>
+          </div>
+
+          {/* ── Posting: Zone → Region → District → Station (cascading) ── */}
+          <div className="pt-2 border-t border-police-soft">
+            <p className="text-[11px] font-black text-police-muted uppercase tracking-wide">Kituo cha Kazi</p>
+            <p className="text-[10px] text-police-faint">Chagua Kanda kwanza — Mkoa, Wilaya na Kituo vitafunguka hatua kwa hatua</p>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kanda / Zone *</label>
+            <select value={zone} onChange={(e) => onZoneChange(e.target.value)} className={selectCls}>
+              <option value="">— Chagua Kanda —</option>
+              {TZ_ZONE_NAMES.map((z) => (
+                <option key={z} value={z}>{z}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Mkoa / Region *</label>
+            <select value={region} onChange={(e) => onRegionChange(e.target.value)} disabled={!zone} className={selectCls}>
+              <option value="">{zone ? "— Chagua Mkoa —" : "Chagua Kanda kwanza"}</option>
+              {regionOptions.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Wilaya / District</label>
+            <select value={district} onChange={(e) => onDistrictChange(e.target.value)} disabled={!region} className={selectCls}>
+              <option value="">{region ? "— Chagua Wilaya —" : "Chagua Mkoa kwanza"}</option>
+              {districtOptions.map((d) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kituo / Station *</label>
+            <select value={stationId} onChange={(e) => setStationId(e.target.value)} disabled={!region} className={selectCls}>
+              <option value="">{region ? "— Chagua Kituo —" : "Chagua Mkoa kwanza"}</option>
+              {stationOptions.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}{s.region ? ` (${s.region})` : ""}
+                </option>
+              ))}
+            </select>
+            {region && stationMatches.length === 0 && stations.length > 0 && (
+              <p className="mt-1 text-[10px] text-[#FF9800]">Hakuna kituo kilichosajiliwa kwenye mkoa huu — vituo vyote vinaonyeshwa</p>
+            )}
           </div>
         </div>
 
