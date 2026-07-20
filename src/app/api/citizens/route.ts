@@ -59,6 +59,10 @@ export async function POST(request: Request) {
           status:     "Mtu wa Kawaida",
           first_name: body.name.split(" ")[0] || null,
           last_name:  body.name.split(" ").slice(-1)[0] || null,
+          region:     body.region || null,
+          district:   body.district || null,
+          ward:       body.ward || null,
+          street:     body.street || null,
         }).select().single();
         if (error) return NextResponse.json({ error: error.message }, { status: 400 });
         await logAction(session, "CREATE", "citizens", data.id, { name: body.name });

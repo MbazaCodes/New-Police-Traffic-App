@@ -56,12 +56,17 @@ export async function POST(request: Request) {
           year:              body.year || new Date().getFullYear().toString(),
           owner_name:        body.ownerName,
           owner_nida:        body.ownerNida?.trim().toUpperCase(),
+          owner_tin:         body.ownerTin?.trim() || null,
           owner_phone:       body.ownerPhone,
+          owner_license:     body.ownerLicense?.toUpperCase() || null,
           insurance_company: body.insuranceCompany || null,
           insurance_policy:  body.insurancePolicy || null,
           insurance_expires: body.insuranceExpiry || null,
           insurance_valid:   !!body.insuranceExpiry && new Date(body.insuranceExpiry) > new Date(),
+          inspection_expires: body.inspectionExpiry || null,
+          registration_expires: body.registrationExpiry || null,
           outstanding_fines: 0,
+          notes:             body.notes || null,
         }).select().single();
         if (error) return NextResponse.json({ error: error.message }, { status: 400 });
         await logAction(session, "CREATE", "vehicles", data.id, { plate: body.plate });

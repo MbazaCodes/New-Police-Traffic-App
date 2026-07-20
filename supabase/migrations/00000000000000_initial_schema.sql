@@ -162,12 +162,18 @@ CREATE TABLE IF NOT EXISTS vehicles (
   color              VARCHAR(50),
   owner_name         VARCHAR(255),
   owner_nida         VARCHAR(20),
+  owner_tin          VARCHAR(20),
   owner_phone        VARCHAR(20),
+  owner_license      VARCHAR(50),
   insurance_company  VARCHAR(255),
   insurance_policy   VARCHAR(100),
   insurance_expires  DATE,
   insurance_valid    BOOLEAN DEFAULT TRUE,
+  inspection_expires DATE,
+  registration_expires DATE,
+  outstanding_fines  DECIMAL(10,2) DEFAULT 0,
   accident_involved  BOOLEAN DEFAULT FALSE,
+  notes              TEXT,
   created_at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -188,11 +194,17 @@ CREATE TABLE IF NOT EXISTS drivers (
 CREATE TABLE IF NOT EXISTS citizens (
   id                 UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name               VARCHAR(255) NOT NULL,
+  first_name         VARCHAR(100),
+  last_name          VARCHAR(100),
   nida               VARCHAR(20) UNIQUE,
   mobile             VARCHAR(20),
   gender             VARCHAR(20),
   dob                DATE,
   address            TEXT,
+  region             VARCHAR(100),
+  district           VARCHAR(100),
+  ward               VARCHAR(100),
+  street             VARCHAR(100),
   occupation         VARCHAR(255),
   status             VARCHAR(50) DEFAULT 'Mtu wa Kawaida',
   has_criminal_record BOOLEAN DEFAULT FALSE,
@@ -366,9 +378,12 @@ CREATE INDEX IF NOT EXISTS idx_alerts_created    ON alerts(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_citizens_nida     ON citizens(nida);
 CREATE INDEX IF NOT EXISTS idx_citizens_mobile   ON citizens(mobile);
 CREATE INDEX IF NOT EXISTS idx_citizens_name     ON citizens(name);
+CREATE INDEX IF NOT EXISTS idx_citizens_first_name ON citizens(first_name);
 
 CREATE INDEX IF NOT EXISTS idx_vehicles_plate    ON vehicles(plate);
 CREATE INDEX IF NOT EXISTS idx_vehicles_owner    ON vehicles(owner_name);
+CREATE INDEX IF NOT EXISTS idx_vehicles_owner_tin ON vehicles(owner_tin);
+CREATE INDEX IF NOT EXISTS idx_vehicles_inspection_expires ON vehicles(inspection_expires);
 
 CREATE INDEX IF NOT EXISTS idx_audit_logs_user   ON audit_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_resource ON audit_logs(resource);
