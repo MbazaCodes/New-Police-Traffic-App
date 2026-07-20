@@ -66,7 +66,7 @@ export function VehicleInspectionScreen() {
     { label: "Taa (Headlights)", status: "Haijathibitishwa", pass: false },
     { label: "Taa za Nyuma (Tail Lights)", status: "Haijathibitishwa", pass: false },
     { label: "Breki (Brakes)", status: "Haijathibitishwa", pass: false },
-    { label "Gurudumu (Tires)", status: "Haijathibitishwa", pass: false },
+    { label: "Gurudumu (Tires)", status: "Haijathibitishwa", pass: false },
     { label: "Kioo cha Mbele (Windshield)", status: "Haijathibitishwa", pass: false },
     { label: "Wimbi la Kuzuia (Wipers)", status: "Haijathibitishwa", pass: false },
     {label: "Honi (Horn)", status: "Haijathibitishwa", pass: false },
