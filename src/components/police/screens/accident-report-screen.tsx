@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Calendar,
   Clock,
@@ -20,12 +20,16 @@ import {
   FileSpreadsheet,
   Loader2,
   UserPlus,
+  WifiOff,
+  CloudUpload,
+  RefreshCw,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 import { DatePicker } from "@/components/police/ui/date-picker";
+import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
 
 interface VehicleRow {
   plate: string;
@@ -69,6 +73,25 @@ export function AccidentReportScreen() {
   const [description, setDescription] = useState("");
   const [hasInjuries, setHasInjuries] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Offline sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    pending: 0,
+    lastSynced: null,
+    isOnline: true,
+    isSyncing: false,
+  });
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+
+  // Initialize auto-sync on mount
+  useEffect(() => {
+    initAutoSync();
+    const unsubscribe = subscribeToSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    });
+    return unsubscribe;
+  }, []);
 
   const [vehicles, setVehicles] = useState<VehicleRow[]>([]);
   const [people, setPeople] = useState<PersonRow[]>([]);
@@ -146,11 +169,7 @@ export function AccidentReportScreen() {
     addAccident(payload);
     
     try {
-      await fetch("/api/incidents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, status: "draft" }),
-      });
+      await saveWithOfflineSupport("/api/incidents", { ...payload, status: "draft" }, "POST");
       toast({ title: "Imehifadhiwa", description: "Rasimu ya ripoti ya ajali imehifadhiwa kwenye database." });
     } catch {
       toast({ title: "Imehifadhiwa", description: "Rasimu ya ripoti ya ajali imehifadhiwa kawaida." });
@@ -170,14 +189,14 @@ export function AccidentReportScreen() {
     const id = addAccident(payload);
 
     try {
-      await fetch("/api/incidents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, status: "reported" }),
-      });
+      const result = await saveWithOfflineSupport("/api/incidents", { ...payload, status: "reported" }, "POST");
       
       submitAccident(id);
-      toast({ title: "Imetumwa ✓", description: "Ripoti ya ajali imewasilishwa kikamilifu." });
+      if (result.fromCache) {
+        toast({ title: "Imehifadhiwa (Offline)", description: "Ripoti ya ajali imehifadhiwa kawaida." });
+      } else {
+        toast({ title: "Imetumwa ✓", description: "Ripoti ya ajali imewasilishwa kikamilifu." });
+      }
     } catch {
       submitAccident(id);
       toast({ title: "Imetumwa", description: "Ripoti ya ajali imewasilishwa (local)." });
@@ -471,6 +490,34 @@ export function AccidentReportScreen() {
             <ChevronRight size={16} className="text-police-faint" />
           </button>
         </Section>
+
+        {/* Sync Status Indicator */}
+        {(isOfflineMode || syncStatus.pending > 0) && (
+          <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
+            syncStatus.isSyncing ? "border-[#2196F3]/30 bg-[#2196F3]/5" : 
+            syncStatus.isOnline ? "border-[#FF9800]/30 bg-[#FF9800]/5" : "border-[#EF4444]/30 bg-[#EF4444]/5"
+          }`}>
+            {syncStatus.isSyncing ? <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" /> :
+             syncStatus.isOnline ? <CloudUpload size={18} className="text-[#FF9800] shrink-0" /> :
+             <WifiOff size={18} className="text-[#EF4444] shrink-0" />}
+            <div className="flex-1">
+              <p className={`text-[12px] font-bold ${syncStatus.isSyncing ? "text-[#2196F3]" : syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"}`}>
+                {syncStatus.isSyncing ? "Inasasisha data..." : syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` : "Hakuna Mtandao — Hifadhi ya Kawaida"}
+              </p>
+            </div>
+            {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+              <button onClick={() => { import("@/lib/offline-sync").then(({ processSyncQueue }) => processSyncQueue().then(({ success, failed }) => toast({ title: "Matokeo ya Usasishaji", description: `Mafanikio: ${success}, Mashindwa: ${failed}` }))); }} 
+              className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold">Sasa Sasisha</button>
+            )}
+          </div>
+        )}
+
+        {/* Officer Info Card */}
+        <div className="rounded-2xl border border-[#1E3A8A]/20 bg-[#1E3A8A]/5 p-4">
+          <p className="text-[12px] font-medium text-police-muted">Afisa</p>
+          <p className="mt-1 text-[15px] font-bold text-[#1E3A8A]">Anayesimamia</p>
+          <p className="text-[11px] text-police-muted">Kituo cha Polisi</p>
+        </div>
 
         {/* Submit Buttons */}
         <div className="flex gap-2.5 pt-1">

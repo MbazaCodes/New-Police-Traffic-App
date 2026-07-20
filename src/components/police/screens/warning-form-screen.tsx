@@ -3,11 +3,12 @@
 
 import { useOfficer } from "@/hooks/use-officer";
 
-import { useState, useRef } from "react";
-import { ArrowLeft, Camera, X, CheckCircle, AlertTriangle } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ArrowLeft, Camera, X, CheckCircle, AlertTriangle, WifiOff, CloudUpload, RefreshCw } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import {} from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
+import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
 
 const WARNING_OFFENSES = [
   "Kasi kidogo zaidi ya kiwango", "Tabia mbaya barabarani", "Kuvuka mstari mdogo",
@@ -26,6 +27,25 @@ export function WarningFormScreen() {
     warningType: "traffic", location: "", notes: "", acknowledged: false,
   });
 
+  // Offline sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    pending: 0,
+    lastSynced: null,
+    isOnline: true,
+    isSyncing: false,
+  });
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+
+  // Initialize auto-sync on mount
+  useEffect(() => {
+    initAutoSync();
+    const unsubscribe = subscribeToSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    });
+    return unsubscribe;
+  }, []);
+
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -39,21 +59,25 @@ export function WarningFormScreen() {
       toast({ title: "Kosa", description: "Jaza jina na kosa.", variant: "destructive" }); return;
     }
     try {
-      await fetch("/api/warnings", {
-        method: "POST", headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-          citizenName:  form.recipientName,
-          citizenNida:  form.nida || undefined,
-          citizenPhone: form.phone || undefined,
-          offense:      form.offense,
-          location:     form.location || undefined,
-          notes:        form.notes || undefined,
-        }),
-      });
+      const payload = {
+        citizenName:  form.recipientName,
+        citizenNida:  form.nida || undefined,
+        citizenPhone: form.phone || undefined,
+        offense:      form.offense,
+        location:     form.location || undefined,
+        notes:        form.notes || undefined,
+      };
+      
+      const result = await saveWithOfflineSupport("/api/warnings", payload, "POST");
+      
+      if (result.fromCache) {
+        toast({ title: "Onyo Imehifadhiwa (Offline) ⚠️", description: `Onyo kwa ${form.recipientName} imehifadhiwa kawaida.` });
+      } else {
+        toast({ title: "Onyo Limetolewa ✓", description: `Onyo kwa ${form.recipientName} limesajiliwa.` });
+      }
     } catch { /* offline — continue */ }
     setSubmitted(true);
     setWarningPrefill(null);
-    toast({ title: "Onyo Limetolewa ✓", description: `Onyo kwa ${form.recipientName} limesajiliwa.` });
   };
 
   const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,10 +185,31 @@ export function WarningFormScreen() {
         </div>
 
         <div className="rounded-2xl border border-[#FF9800]/20 bg-[#FF9800]/5 p-4">
-          <p className="text-[12px] font-medium text-police-muted">Ofisa Aliyetoa Onyo</p>
+          <p className="text-[12px] font-medium text-police-muted">Afisa</p>
           <p className="mt-1 text-[15px] font-bold text-[#FF9800]">{OFFICER.shortName}</p>
           <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
         </div>
+
+        {/* Sync Status Indicator */}
+        {(isOfflineMode || syncStatus.pending > 0) && (
+          <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
+            syncStatus.isSyncing ? "border-[#2196F3]/30 bg-[#2196F3]/5" : 
+            syncStatus.isOnline ? "border-[#FF9800]/30 bg-[#FF9800]/5" : "border-[#EF4444]/30 bg-[#EF4444]/5"
+          }`}>
+            {syncStatus.isSyncing ? <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" /> :
+             syncStatus.isOnline ? <CloudUpload size={18} className="text-[#FF9800] shrink-0" /> :
+             <WifiOff size={18} className="text-[#EF4444] shrink-0" />}
+            <div className="flex-1">
+              <p className={`text-[12px] font-bold ${syncStatus.isSyncing ? "text-[#2196F3]" : syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"}`}>
+                {syncStatus.isSyncing ? "Inasasisha data..." : syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` : "Hakuna Mtandao — Hifadhi ya Kawaida"}
+              </p>
+            </div>
+            {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+              <button onClick={() => { import("@/lib/offline-sync").then(({ processSyncQueue }) => processSyncQueue().then(({ success, failed }) => toast({ title: "Matokeo ya Usasishaji", description: `Mafanikio: ${success}, Mashindwa: ${failed}` }))); }} 
+              className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold">Sasa Sasisha</button>
+            )}
+          </div>
+        )}
 
         <button onClick={handleSubmit} className="w-full rounded-xl bg-[#FF9800] py-3.5 text-[15px] font-bold text-white shadow-md shadow-[#FF9800]/30 active:scale-[0.98]">
           Hifadhi Onyo

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, Search, X, Plus, CheckCircle, Clock, Package, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Search, X, Plus, CheckCircle, Clock, Package, Loader2, WifiOff, CloudUpload, RefreshCw } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { toast } from "@/hooks/use-toast";
 import { useOfficer } from "@/hooks/use-officer";
 import { DatePicker } from "@/components/police/ui/date-picker";
+import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
 
 const STATUS_MAP = {
   found: { label: "Imepatikana", color: "#10B981" },
@@ -62,6 +63,25 @@ export function LostPropertyScreen() {
   const [submitted, setSubmitted] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Offline sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    pending: 0,
+    lastSynced: null,
+    isOnline: true,
+    isSyncing: false,
+  });
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+
+  // Initialize auto-sync on mount
+  useEffect(() => {
+    initAutoSync();
+    const unsubscribe = subscribeToSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    });
+    return unsubscribe;
+  }, []);
+
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
   // NIDA formatting
@@ -92,31 +112,27 @@ export function LostPropertyScreen() {
     setIsSaving(true);
     
     try {
-      // Try to save via API if available
-      const response = await fetch("/api/properties", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ownerName: form.ownerName,
-          ownerPhone: form.ownerPhone,
-          ownerNida: form.ownerNida.replace(/\D/g, ""),
-          category: form.category,
-          description: form.description,
-          serialNo: form.serialNo,
-          deviceNo: form.deviceNo,
-          station: form.station,
-          reportedBy: OFFICER?.shortName || "Officer",
-          notes: form.notes,
-        }),
-      });
+      // Try to save via API with offline support
+      const payload = {
+        ownerName: form.ownerName,
+        ownerPhone: form.ownerPhone,
+        ownerNida: form.ownerNida.replace(/\D/g, ""),
+        category: form.category,
+        description: form.description,
+        serialNo: form.serialNo,
+        deviceNo: form.deviceNo,
+        station: form.station,
+        reportedBy: OFFICER?.shortName || "Officer",
+        notes: form.notes,
+      };
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Property saved:", result);
-        toast({ title: "Mali Imesajiliwa ✓", description: `Ripoti ya mali iliyopotea imesajiliwa kwenye database.` });
+      const result = await saveWithOfflineSupport("/api/properties", payload, "POST");
+      console.log("Property saved:", result);
+      
+      if (result.fromCache) {
+        toast({ title: "Mali Imehifadhiwa (Offline) ⚠️", description: `Ripoti ya mali iliyopotea imehifadhiwa kawaida.` });
       } else {
-        // API might not exist yet - save locally
-        throw new Error("API not available");
+        toast({ title: "Mali Imesajiliwa ✓", description: `Ripoti ya mali iliyopotea imesajiliwa kwenye database.` });
       }
     } catch (error) {
       // Fallback: Save locally and show success
@@ -368,6 +384,34 @@ export function LostPropertyScreen() {
             <div>
               <label className="mb-1 block text-[12px] font-medium text-police-muted">Maelezo ya Ziada</label>
               <textarea rows={3} value={form.notes} onChange={set("notes")} placeholder="Maelezo mengine..." className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
+            </div>
+
+            {/* Sync Status Indicator */}
+            {(isOfflineMode || syncStatus.pending > 0) && (
+              <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
+                syncStatus.isSyncing ? "border-[#2196F3]/30 bg-[#2196F3]/5" : 
+                syncStatus.isOnline ? "border-[#FF9800]/30 bg-[#FF9800]/5" : "border-[#EF4444]/30 bg-[#EF4444]/5"
+              }`}>
+                {syncStatus.isSyncing ? <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" /> :
+                 syncStatus.isOnline ? <CloudUpload size={18} className="text-[#FF9800] shrink-0" /> :
+                 <WifiOff size={18} className="text-[#EF4444] shrink-0" />}
+                <div className="flex-1">
+                  <p className={`text-[12px] font-bold ${syncStatus.isSyncing ? "text-[#2196F3]" : syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"}`}>
+                    {syncStatus.isSyncing ? "Inasasisha data..." : syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` : "Hakuna Mtandao — Hifadhi ya Kawaida"}
+                  </p>
+                </div>
+                {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+                  <button onClick={() => { import("@/lib/offline-sync").then(({ processSyncQueue }) => processSyncQueue().then(({ success, failed }) => toast({ title: "Matokeo ya Usasishaji", description: `Mafanikio: ${success}, Mashindwa: ${failed}` }))); }} 
+                  className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold">Sasa Sasisha</button>
+                )}
+              </div>
+            )}
+
+            {/* Officer Info Card */}
+            <div className="rounded-2xl border border-[#1E3A8A]/20 bg-[#1E3A8A]/5 p-4">
+              <p className="text-[12px] font-medium text-police-muted">Afisa</p>
+              <p className="mt-1 text-[15px] font-bold text-[#1E3A8A]">{OFFICER?.shortName || "Officer"}</p>
+              <p className="text-[11px] text-police-muted">{OFFICER?.id || "—"} • {OFFICER?.station || "Kituo Kikuu DSM"}</p>
             </div>
 
             <button 

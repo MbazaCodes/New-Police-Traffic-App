@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   ArrowLeft, Search, CreditCard, CheckCircle2, AlertTriangle,
   Clock, Phone, User, FileText, Wallet, Receipt, TrendingUp,
+  WifiOff, CloudUpload, RefreshCw,
 } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
 import { toast } from "@/hooks/use-toast";
+import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
 
 // ── Penalty escalation: +5% per 7-day window of overdue ──────────────────
 function calcPenalty(baseAmountStr: string, dueDateStr: string): {
@@ -84,6 +86,25 @@ export function FinePaymentScreen() {
   const [ref, setRef] = useState("");
   const [processing, setProcessing] = useState(false);
 
+  // Offline sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    pending: 0,
+    lastSynced: null,
+    isOnline: true,
+    isSyncing: false,
+  });
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+
+  // Initialize auto-sync on mount
+  useEffect(() => {
+    initAutoSync();
+    const unsubscribe = subscribeToSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    });
+    return unsubscribe;
+  }, []);
+
   const receiptNo = useMemo(() => `FP-2026-${Math.floor(1000 + Math.random() * 9000)}`, []);
 
   // ── Search existing unpaid citations ──────────────────────────────────
@@ -150,21 +171,15 @@ export function FinePaymentScreen() {
       try {
         if (fine.id) {
           // Existing citation — mark as paid
-          await fetch("/api/fines", {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "pay", fineId: fine.id, paymentMethod: payMethod, paymentRef: `${payMethod.toUpperCase()}-${Date.now()}` }),
-          });
+          await saveWithOfflineSupport("/api/fines", { action: "pay", fineId: fine.id, paymentMethod: payMethod, paymentRef: `${payMethod.toUpperCase()}-${Date.now()}` }, "POST");
         } else {
           // New fine — create + pay in one step
-          await fetch("/api/fines", {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "create",
-              driverName: fine.driverName, driverPhone: fine.driverPhone,
-              plate: fine.plate, offense: fine.offense,
-              baseAmount: pen.base, dueDate: fine.dueDate,
-            }),
-          });
+          await saveWithOfflineSupport("/api/fines", {
+            action: "create",
+            driverName: fine.driverName, driverPhone: fine.driverPhone,
+            plate: fine.plate, offense: fine.offense,
+            baseAmount: pen.base, dueDate: fine.dueDate,
+          }, "POST");
         }
       } catch { /* offline — show success anyway */ }
     };
@@ -297,6 +312,34 @@ export function FinePaymentScreen() {
               />
             </div>
           )}
+
+          {/* Sync Status Indicator */}
+          {(isOfflineMode || syncStatus.pending > 0) && (
+            <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
+              syncStatus.isSyncing ? "border-[#2196F3]/30 bg-[#2196F3]/5" : 
+              syncStatus.isOnline ? "border-[#FF9800]/30 bg-[#FF9800]/5" : "border-[#EF4444]/30 bg-[#EF4444]/5"
+            }`}>
+              {syncStatus.isSyncing ? <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" /> :
+               syncStatus.isOnline ? <CloudUpload size={18} className="text-[#FF9800] shrink-0" /> :
+               <WifiOff size={18} className="text-[#EF4444] shrink-0" />}
+              <div className="flex-1">
+                <p className={`text-[12px] font-bold ${syncStatus.isSyncing ? "text-[#2196F3]" : syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"}`}>
+                  {syncStatus.isSyncing ? "Inasasisha data..." : syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` : "Hakuna Mtandao — Hifadhi ya Kawaida"}
+                </p>
+              </div>
+              {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+                <button onClick={() => { import("@/lib/offline-sync").then(({ processSyncQueue }) => processSyncQueue().then(({ success, failed }) => toast({ title: "Matokeo ya Usasishaji", description: `Mafanikio: ${success}, Mashindwa: ${failed}` }))); }} 
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold">Sasa Sasisha</button>
+              )}
+            </div>
+          )}
+
+          {/* Officer Info Card */}
+          <div className="rounded-2xl border border-[#10B981]/20 bg-[#10B981]/5 p-4">
+            <p className="text-[12px] font-medium text-police-muted">Afisa</p>
+            <p className="mt-1 text-[15px] font-bold text-[#10B981]">{OFFICER.shortName}</p>
+            <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
+          </div>
 
           <button
             onClick={handlePay}

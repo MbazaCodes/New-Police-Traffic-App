@@ -1,12 +1,13 @@
 // @ts-nocheck
 "use client";
 
-import { useState, useRef } from "react";
-import { ArrowLeft, Camera, X, CheckCircle, User, MapPin, Clock, FileText, AlertTriangle, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ArrowLeft, Camera, X, CheckCircle, User, MapPin, Clock, FileText, AlertTriangle, Loader2, WifiOff, CloudUpload, RefreshCw } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
 import { toast } from "@/hooks/use-toast";
 import { DatePicker } from "@/components/police/ui/date-picker";
+import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
 
 const OFFENSE_CATEGORIES = [
   "Wizi wa Silaha", "Wizi wa Kawaida", "Uendeshaji Gari kwa Ulevi", "Udanganyifu",
@@ -22,6 +23,25 @@ export function ArrestFormScreen() {
   const [photos, setPhotos] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Offline sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    pending: 0,
+    lastSynced: null,
+    isOnline: true,
+    isSyncing: false,
+  });
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+
+  // Initialize auto-sync on mount
+  useEffect(() => {
+    initAutoSync();
+    const unsubscribe = subscribeToSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    });
+    return unsubscribe;
+  }, []);
 
   const [form, setForm] = useState({
     suspectName: arrestPrefill?.suspectName ?? "", 
@@ -74,48 +94,46 @@ export function ArrestFormScreen() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/arrests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          suspectName: form.suspectName,
-          suspectNida: form.nida.replace(/\D/g, "") || undefined,
-          suspectPhone: form.phone || undefined,
-          suspectDob: form.dob || undefined,
-          suspectGender: form.gender,
-          suspectAddress: form.address || undefined,
-          suspectOccupation: form.occupation || undefined,
-          offense: form.offense,
-          offenseDetails: form.offenseDetails || undefined,
-          location: form.arrestLocation,
-          cell: form.cell || undefined,
-          courtDate: form.courtDate || undefined,
-          nextOfKin: form.nextOfKin || undefined,
-          nextOfKinPhone: form.nextOfKinPhone || undefined,
-          medicalStatus: form.medicalStatus,
-          notes: form.notes || undefined,
-          photosCount: photos.length,
-          officerId: OFFICER.id,
-          officerName: OFFICER.name,
-          station: OFFICER.station,
-        }),
-      });
+      const payload = {
+        suspectName: form.suspectName,
+        suspectNida: form.nida.replace(/\D/g, "") || undefined,
+        suspectPhone: form.phone || undefined,
+        suspectDob: form.dob || undefined,
+        suspectGender: form.gender,
+        suspectAddress: form.address || undefined,
+        suspectOccupation: form.occupation || undefined,
+        offense: form.offense,
+        offenseDetails: form.offenseDetails || undefined,
+        location: form.arrestLocation,
+        cell: form.cell || undefined,
+        courtDate: form.courtDate || undefined,
+        nextOfKin: form.nextOfKin || undefined,
+        nextOfKinPhone: form.nextOfKinPhone || undefined,
+        medicalStatus: form.medicalStatus,
+        notes: form.notes || undefined,
+        photosCount: photos.length,
+        officerId: OFFICER.id,
+        officerName: OFFICER.name,
+        station: OFFICER.station,
+      };
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Imeshindikana kuhifadhi ripoti");
-      }
-
-      const result = await response.json();
+      const result = await saveWithOfflineSupport("/api/arrests", payload, "POST");
       console.log("Arrest saved:", result);
       
       setArrestPrefill(null);
       setSubmitted(true);
       
-      toast({ 
-        title: "Fomu Imewasilishwa ✓", 
-        description: `Ripoti ya kukamatwa kwa ${form.suspectName} imewasilishwa kwa Kamishna.` 
-      });
+      if (result.fromCache) {
+        toast({ 
+          title: "Fomu Imehifadhiwa (Offline) ⚠️", 
+          description: `Ripoti imehifadhiwa kawaida. Itakamilisha mtandao unapowezekana.` 
+        });
+      } else {
+        toast({ 
+          title: "Fomu Imewasilishwa ✓", 
+          description: `Ripoti ya kukamatwa kwa ${form.suspectName} imewasilishwa kwa Kamishna.` 
+        });
+      }
     } catch (error: any) {
       console.error("Submit arrest error:", error);
       
@@ -302,10 +320,31 @@ export function ArrestFormScreen() {
 
         {/* Signing officer */}
         <div className="rounded-2xl border border-[#1E3A8A]/20 bg-[#1E3A8A]/5 p-4">
-          <p className="text-[12px] font-medium text-police-muted">Ofisa Aliyeandika Ripoti</p>
+          <p className="text-[12px] font-medium text-police-muted">Afisa</p>
           <p className="mt-1 text-[15px] font-bold text-[#1E3A8A]">{OFFICER.shortName}</p>
           <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
         </div>
+
+        {/* Sync Status Indicator */}
+        {(isOfflineMode || syncStatus.pending > 0) && (
+          <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
+            syncStatus.isSyncing ? "border-[#2196F3]/30 bg-[#2196F3]/5" : 
+            syncStatus.isOnline ? "border-[#FF9800]/30 bg-[#FF9800]/5" : "border-[#EF4444]/30 bg-[#EF4444]/5"
+          }`}>
+            {syncStatus.isSyncing ? <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" /> :
+             syncStatus.isOnline ? <CloudUpload size={18} className="text-[#FF9800] shrink-0" /> :
+             <WifiOff size={18} className="text-[#EF4444] shrink-0" />}
+            <div className="flex-1">
+              <p className={`text-[12px] font-bold ${syncStatus.isSyncing ? "text-[#2196F3]" : syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"}`}>
+                {syncStatus.isSyncing ? "Inasasisha data..." : syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` : "Hakuna Mtandao — Hifadhi ya Kawaida"}
+              </p>
+            </div>
+            {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+              <button onClick={() => { import("@/lib/offline-sync").then(({ processSyncQueue }) => processSyncQueue().then(({ success, failed }) => toast({ title: "Matokeo ya Usasishaji", description: `Mafanikio: ${success}, Mashindwa: ${failed}` }))); }} 
+              className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold">Sasa Sasisha</button>
+            )}
+          </div>
+        )}
 
         <button 
           onClick={handleSubmit} 

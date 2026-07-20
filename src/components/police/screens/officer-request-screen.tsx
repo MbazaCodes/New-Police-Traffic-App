@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, Send, CheckCircle2, Clock, XCircle, ArrowRightLeft } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Send, CheckCircle2, Clock, XCircle, ArrowRightLeft, WifiOff, CloudUpload, RefreshCw } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
 import { useToast } from "@/hooks/use-toast";
+import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
 
 const REQUEST_TYPES = [
   "Uhamisho",
@@ -36,20 +37,45 @@ export function OfficerRequestScreen() {
   const [history, setHistory]       = useState<{id:string;type:string;status:string;details:string;createdAt:string;response?:string}[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
+  // Offline sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    pending: 0,
+    lastSynced: null,
+    isOnline: true,
+    isSyncing: false,
+  });
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+
+  // Initialize auto-sync on mount
+  useEffect(() => {
+    initAutoSync();
+    const unsubscribe = subscribeToSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    });
+    return unsubscribe;
+  }, []);
+
   async function handleSubmit() {
     if (!details.trim()) { toast({ title: "Andika maelezo ya ombi", variant: "destructive" }); return; }
     setSubmitting(true);
     try {
-      const res = await fetch("/api/requests", {
-        method: "POST", headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ type, details, priority }),
-      });
-      const json = await res.json();
-      if (!res.ok) { toast({ title: "Hitilafu", description: json.error, variant: "destructive" }); return; }
-      toast({ title: "Ombi Limetumwa ✓", description: `Ombi la ${type} limetumwa kwa kamanda` });
-      setSubmitted(true);
+      const payload = { type, details, priority };
+      const result = await saveWithOfflineSupport("/api/requests", payload, "POST");
+      
+      if (result.fromCache) {
+        toast({ title: "Ombi Imehifadhiwa (Offline) ⚠️", description: `Ombi la ${type} limehifadhiwa kawaida.` });
+        setSubmitted(true);
+      } else if (result.data && !result.data.ok) {
+        toast({ title: "Hitilafu", description: result.data.error || "Hitilafu ilitokea", variant: "destructive" }); return;
+      } else {
+        toast({ title: "Ombi Limetumwa ✓", description: `Ombi la ${type} limetumwa kwa kamanda` });
+        setSubmitted(true);
+      }
     } catch {
-      toast({ title: "Hitilafu ya mtandao", description: "Ombi halikutumwa. Jaribu tena.", variant: "destructive" });
+      // Save offline and show success
+      toast({ title: "Ombi Imehifadhiwa (Offline) ⚠️", description: `Ombi la ${type} limehifadhiwa kawaida. Itatumwa mtandao unapowezekana.` });
+      setSubmitted(true);
     } finally { setSubmitting(false); }
   }
 
@@ -144,6 +170,27 @@ export function OfficerRequestScreen() {
                 ))}
               </div>
             </div>
+
+            {/* Sync Status Indicator */}
+            {(isOfflineMode || syncStatus.pending > 0) && (
+              <div className={`rounded-xl border p-3 flex items-center gap-3 ${
+                syncStatus.isSyncing ? "border-[#2196F3]/30 bg-[#2196F3]/10" : 
+                syncStatus.isOnline ? "border-[#FF9800]/30 bg-[#FF9800]/10" : "border-[#EF4444]/30 bg-[#EF4444]/10"
+              }`}>
+                {syncStatus.isSyncing ? <RefreshCw size={16} className="text-[#2196F3] animate-spin shrink-0" /> :
+                 syncStatus.isOnline ? <CloudUpload size={16} className="text-[#FF9800] shrink-0" /> :
+                 <WifiOff size={16} className="text-[#EF4444] shrink-0" />}
+                <div className="flex-1">
+                  <p className={`text-[11px] font-bold ${syncStatus.isSyncing ? "text-[#2196F3]" : syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"}`}>
+                    {syncStatus.isSyncing ? "Inasasisha data..." : syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` : "Hakuna Mtandao — Hifadhi ya Kawaida"}
+                  </p>
+                </div>
+                {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+                  <button onClick={() => { import("@/lib/offline-sync").then(({ processSyncQueue }) => processSyncQueue().then(({ success, failed }) => toast({ title: "Matokeo ya Usasishaji", description: `Mafanikio: ${success}, Mashindwa: ${failed}` }))); }} 
+                  className="shrink-0 px-3 py-1.5 rounded-lg bg-[#2196F3] text-white text-[10px] font-semibold">Sasa Sasisha</button>
+                )}
+              </div>
+            )}
 
             <button onClick={handleSubmit} disabled={submitting}
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2196F3] py-3.5 text-[14px] font-bold text-white disabled:opacity-50">
