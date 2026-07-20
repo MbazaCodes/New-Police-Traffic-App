@@ -203,29 +203,46 @@ export async function getServerSession(): Promise<Session | null> {
     cookies[part.slice(0, eq).trim()] = decodeURIComponent(part.slice(eq + 1).trim());
   }
 
-  // If NextAuth cookie not found, try fallback cookie names
+  // Determine which NextAuth cookie is present (HTTPS uses __Secure- prefix, HTTP does not)
   const NEXTAUTH_COOKIE_NAMES = [
     "__Secure-next-auth.session-token",
     "next-auth.session-token",
   ];
-  const hasNextAuthCookie = NEXTAUTH_COOKIE_NAMES.some((n) => cookies[n]);
+  const foundCookieName = NEXTAUTH_COOKIE_NAMES.find((n) => cookies[n]);
 
-  if (!hasNextAuthCookie) {
+  if (!foundCookieName) {
     const FALLBACK_NAMES = ["token", "accessToken", "authToken"];
     for (const fb of FALLBACK_NAMES) {
       if (cookies[fb]) {
-        // Inject into the standard NextAuth cookie slot so getToken picks it up
         cookies["next-auth.session-token"] = cookies[fb];
         break;
       }
     }
   }
 
+  const secret = process.env.NEXTAUTH_SECRET ?? "tz-police-secret-change-in-production";
+
+  // Try with the detected cookie name first; fall back to the other variant.
+  // This handles both HTTPS (Vercel uses __Secure- prefix) and HTTP (local dev) deployments.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const token = await getToken({
+  let token = await getToken({
     req: { headers: headerMap, cookies } as any,
-    secret: process.env.NEXTAUTH_SECRET ?? "tz-police-secret-change-in-production",
+    secret,
+    cookieName: foundCookieName ?? "next-auth.session-token",
   });
+
+  // If the first attempt failed, try the other cookie name variant as a fallback
+  if (!token?.id) {
+    const fallbackName = foundCookieName === "__Secure-next-auth.session-token"
+      ? "next-auth.session-token"
+      : "__Secure-next-auth.session-token";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    token = await getToken({
+      req: { headers: headerMap, cookies } as any,
+      secret,
+      cookieName: fallbackName,
+    });
+  }
 
   if (!token?.id) return null;
 
