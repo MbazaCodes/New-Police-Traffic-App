@@ -1,6 +1,7 @@
 "use client";
 
 import { useOfficer } from "@/hooks/use-officer";
+import { useState, useEffect } from "react";
 
 import {
   FileText,
@@ -20,12 +21,18 @@ import {
   CloudSun,
   Route,
   Sun,
+  Loader2,
+  WifiOff,
+  CloudUpload,
+  RefreshCw,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { PF3_FORM } from "@/lib/police-data";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
+import { DatePicker } from "@/components/police/ui/date-picker";
+import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
 
 export function Pf3Screen() {
   const OFFICER = useOfficer();
@@ -34,36 +41,182 @@ export function Pf3Screen() {
   const addPF3 = useRecordsStore((s) => s.addPF3);
   const submitPF3 = useRecordsStore((s) => s.submitPF3);
 
+  // Offline sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    pending: 0,
+    lastSynced: null,
+    isOnline: true,
+    isSyncing: false,
+  });
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+  
+  // Form state
+  const [accidentDate, setAccidentDate] = useState(new Date().toISOString().split('T')[0]);
+  const [location, setLocation] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [savedRecord, setSavedRecord] = useState<any>(null);
+
+  // Initialize auto-sync on mount
+  useEffect(() => {
+    initAutoSync();
+    const unsubscribe = subscribeToSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    });
+    return unsubscribe;
+  }, []);
+
   const now = new Date();
   const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
   const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 
+  // Generate PF3 reference number
+  const generateReferenceNo = () => {
+    const year = new Date().getFullYear();
+    const random = String(Math.floor(10000 + Math.random() * 90000)).padStart(5, "0");
+    return `PF3-${year}-${random}`;
+  };
+
   const buildPayload = () => ({
+    referenceNumber: generateReferenceNo(),
     region: f.region,
     district: f.district,
-    station: f.station,
+    station: OFFICER.station || f.station,
+    officerId: OFFICER.id,
+    officerName: OFFICER.name,
     accidentType: f.accidentType,
     severity: f.severity,
-    date: `${today} ${currentTime}`,
+    date: accidentDate || today,
+    time: currentTime,
+    location: location || "Haijajulikana",
+    weather: f.weather,
+    roadSurface: f.roadSurface,
+    lightCondition: f.lightCondition,
     vehicles: f.vehicles.length,
     casualties: f.casualties.length,
     witnesses: f.witnesses.length,
+    status: "draft",
   });
 
-  const handleSaveDraft = () => {
-    addPF3(buildPayload());
-    toast({ title: "Imehifadhiwa", description: "Rasimu ya Fomu PF3 imehifadhiwa." });
+  // ENHANCED: Save draft with offline sync
+  const handleSaveDraft = async () => {
+    setIsSubmitting(true);
+    const payload = buildPayload();
+    payload.status = "draft";
+
+    try {
+      const result = await saveWithOfflineSupport("/api/pf3", payload, "POST");
+      
+      addPF3(payload);
+      
+      const rec = {
+        id: result.data?.id || generateReferenceNo(),
+        referenceNumber: payload.referenceNumber,
+        date: payload.date,
+        cached: result.fromCache,
+      };
+
+      setSavedRecord(rec);
+      setSaved(true);
+
+      if (result.fromCache) {
+        toast({
+          title: "Rasimu Imehifadhiwa (Hifadhi ya Kawaida) 💾",
+          description: "Fomu PF3 imehifadhiwa kawaida. Itasasishawa mara tu utakapoweka mtandao.",
+          duration: 5000,
+        });
+      } else {
+        toast({ title: "Imehifadhiwa ✓", description: "Rasimu ya Fomu PF3 imehifadhiwa." });
+      }
+    } catch (error: any) {
+      console.error("Save PF3 error:", error);
+      // Fallback to local store only
+      addPF3(payload);
+      toast({ title: "Imehifadhiwa (Local)", description: "Rasimu imehifadhiwa kawaida." });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-  const handleSubmit = () => {
-    const id = addPF3(buildPayload());
-    submitPF3(id);
-    toast({ title: "Imetumwa kwa Kituo Kikuu", description: "Fomu PF3 imewasilishwa kikamilifu." });
-    setTimeout(() => goBack(), 800);
+
+  // ENHANCED: Submit with offline sync
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    const payload = buildPayload();
+    payload.status = "submitted";
+
+    try {
+      const result = await saveWithOfflineSupport("/api/pf3", payload, "POST");
+      
+      const id = addPF3(payload);
+      submitPF3(id);
+
+      if (result.fromCache) {
+        toast({
+          title: "Fomu PF3 Imewasilishwa (Hifadhi ya Kawaida) 📴",
+          description: "Fomu itakamilishwa mara tu utakapoweka mtandao.",
+          duration: 5000,
+        });
+      } else {
+        toast({ title: "Imetumwa kwa Kituo Kikuu ✓", description: "Fomu PF3 imewasilishwa kikamilifu." });
+      }
+      setTimeout(() => goBack(), 800);
+    } catch (error: any) {
+      console.error("Submit PF3 error:", error);
+      // Fallback
+      const id = addPF3(payload);
+      submitPF3(id);
+      toast({ title: "Fomu PF3 Imetumwa (Local)", description: "Data itakamilishwa mtandao." });
+      setTimeout(() => goBack(), 800);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
   const handleDownload = () =>
     toast({ title: "Inapakua", description: "Fomu PF3 inapakuliwa kama PDF." });
   const handlePrint = () =>
     toast({ title: "Inachapisha", description: "Fomu PF3 inatumwa kwa printer." });
+
+  // Saved state view
+  if (saved && savedRecord) {
+    return (
+      <div className="min-h-full bg-police p-4">
+        <div className="flex flex-col items-center py-8">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#1E3A8A]/15">
+            <FileText size={44} className="text-[#1E3A8A]" />
+          </div>
+          <h2 className="mt-4 text-[20px] font-bold text-police">Fomu PF3 Imehifadhiwa</h2>
+          <p className="mt-1 text-center text-[13px] text-police-muted">Ripoti ya ajali ya trafiki imehifadhiwa.</p>
+          
+          <div className="mt-6 w-full rounded-2xl bg-police-card p-4 shadow-sm space-y-2.5">
+            <div className="inline-block rounded-lg border-2 border-[#0A3D62] bg-blue-50 px-4 py-1.5 text-[16px] font-extrabold tracking-wider text-police-navy">
+              {savedRecord.referenceNumber}
+            </div>
+            <Row label="Namba ya Kumbukumbu" value={savedRecord.id} bold />
+            <Row label="Tarehe ya Ajali" value={savedRecord.date} />
+            <Row label="Aina ya Ajali" value={f.accidentType} />
+            <Row label="Mkuliko" value={f.severity} bold />
+            <Row label="Afisa" value={OFFICER.shortName} />
+            <Row label="Kituo" value={OFFICER.station} />
+            {savedRecord.cached && (
+              <Row label="Hali" value="⏳ Inasubiri usasishaji" bold />
+            )}
+          </div>
+          
+          <div className="mt-4 w-full space-y-2">
+            <button onClick={() => { 
+              setSaved(false); 
+              setSavedRecord(null);
+              setLocation("");
+              setAccidentDate(new Date().toISOString().split('T')[0]);
+            }} className="w-full rounded-xl border border-police py-3 text-[14px] font-semibold text-police">Fanya PF3 Mpya</button>
+            <button onClick={() => goBack()} className="w-full rounded-xl bg-[#1E3A8A] py-3 text-[14px] font-bold text-white">Rudi Nyuma</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full bg-police">
@@ -82,7 +235,7 @@ export function Pf3Screen() {
             </div>
             <div className="rounded-xl bg-police-card/15 px-3 py-2 text-right backdrop-blur">
               <p className="text-[9px] uppercase text-white/60">Namba ya Kumbukumbu</p>
-              <p className="text-[13px] font-bold">{f.referenceNo}</p>
+              <p className="text-[13px] font-bold">{generateReferenceNo()}</p>
             </div>
           </div>
         </div>
@@ -108,7 +261,7 @@ export function Pf3Screen() {
           <div className="grid grid-cols-2 gap-2.5">
             <Field label="Mkoa" value={f.region} />
             <Field label="Wilaya" value={f.district} />
-            <Field label="Kituo" value={f.station} />
+            <Field label="Kituo" value={OFFICER.station || f.station} />
             <Field label="Afisa Anayeripoti" value={OFFICER.name} />
           </div>
         </Section>
@@ -118,9 +271,31 @@ export function Pf3Screen() {
           <div className="grid grid-cols-2 gap-2.5">
             <Field label="Aina ya Ajali" value={f.accidentType} />
             <Field label="Mkuliko" value={f.severity} icon={<ShieldCheck size={14} />} />
-            <Field label="Tarehe" value="15 Mei 2026" icon={<Calendar size={14} />} />
-            <Field label="Saa" value="08:15 AM" icon={<Clock size={14} />} />
-            <Field label="Eneo" value="" icon={<MapPin size={14} />} full />
+            
+            {/* Date Picker for accident date */}
+            <div className="col-span-2 sm:col-span-1">
+              <DatePicker
+                label="Tarehe ya Ajali"
+                value={accidentDate}
+                onChange={setAccidentDate}
+                maxDate={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            
+            <Field label="Saa" value={currentTime} icon={<Clock size={14} />} />
+            
+            {/* Editable Location */}
+            <div className={""}>
+              <label className="mb-1 block text-[11px] font-medium text-police-muted">Eneo</label>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Andika eneo la ajali..."
+                className="flex h-10 w-full items-center gap-2 rounded-xl border border-police bg-police-input px-3 text-[12px] font-medium text-police placeholder:text-police-faint focus:border-[#1E3A8A] focus:outline-none"
+              />
+            </div>
+            
             <Field label="Mahali Halisi" value="" full />
           </div>
           <div className="grid grid-cols-3 gap-2 pt-1">
@@ -226,19 +401,83 @@ export function Pf3Screen() {
           </div>
         </Section>
 
+        {/* Sync Status Indicator - Shows when offline or pending items */}
+        {(isOfflineMode || syncStatus.pending > 0) && (
+          <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
+            syncStatus.isSyncing 
+              ? "border-[#2196F3]/30 bg-[#2196F3]/5" 
+              : syncStatus.isOnline 
+                ? "border-[#FF9800]/30 bg-[#FF9800]/5"
+                : "border-[#EF4444]/30 bg-[#EF4444]/5"
+          }`}>
+            {syncStatus.isSyncing ? (
+              <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" />
+            ) : syncStatus.isOnline ? (
+              <CloudUpload size={18} className="text-[#FF9800] shrink-0" />
+            ) : (
+              <WifiOff size={18} className="text-[#EF4444] shrink-0" />
+            )}
+            <div className="flex-1">
+              <p className={`text-[12px] font-bold ${
+                syncStatus.isSyncing ? "text-[#2196F3]" :
+                syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"
+              }`}>
+                {syncStatus.isSyncing ? "Inasasisha data..." :
+                 syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` :
+                 "Hakuna Mtandao — Hifadhi ya Kawaida"}
+              </p>
+              <p className="text-[10px] text-police-muted">
+                {!syncStatus.isOnline ? "Data itasasishwa mara tu utakapoweka mtandao." :
+                 syncStatus.pending > 0 ? "Bofya kusasisha sasa" : "Yote imesasishwa"}
+              </p>
+            </div>
+            {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+              <button
+                onClick={() => {
+                  import("@/lib/offline-sync").then(({ processSyncQueue }) => {
+                    processSyncQueue().then(({ success, failed }) => {
+                      toast({
+                        title: "Matokeo ya Usasishaji",
+                        description: `Mafanikio: ${success}, Mashindwa: ${failed}`,
+                      });
+                    });
+                  });
+                }}
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold active:scale-95 transition-transform"
+              >
+                Sasa Sasisha
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Officer Info Card */}
+        <div className="rounded-2xl border border-[#1E3A8A]/20 bg-[#1E3A8A]/5 p-4">
+          <p className="text-[12px] font-medium text-police-muted">Afisa Anayeripoti Ajali</p>
+          <p className="mt-1 text-[15px] font-bold text-[#1E3A8A]">{OFFICER.shortName}</p>
+          <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
+          {syncStatus.lastSynced && (
+            <p className="mt-1 text-[9px] text-police-faint">
+              Iliyopita iliyosasilishwa: {new Date(syncStatus.lastSynced).toLocaleString("sw-TZ")}
+            </p>
+          )}
+        </div>
+
         {/* Submit Buttons */}
         <div className="flex gap-2.5 pt-1">
           <button
             onClick={handleSaveDraft}
+            disabled={isSubmitting}
             className="flex-1 rounded-xl border-2 border-[#1E3A8A] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98]"
           >
-            <Save size={16} className="mr-1 inline" /> Hifadhi Rasimu
+            {isSubmitting ? <Loader2 size={16} className="mr-1 inline animate-spin" /> : <Save size={16} className="mr-1 inline" />} Hifadhi Rasimu
           </button>
           <button
             onClick={handleSubmit}
+            disabled={isSubmitting}
             className="flex-[1.5] rounded-xl bg-[#1E3A8A] py-3 text-[13px] font-bold text-white shadow-md active:scale-[0.98]"
           >
-            <Send size={16} className="mr-1 inline" /> Wasilisha PF3
+            {isSubmitting ? <Loader2 size={16} className="mr-1 inline animate-spin" /> : <Send size={16} className="mr-1 inline" />} Wasilisha PF3
           </button>
         </div>
       </div>
@@ -316,6 +555,15 @@ function ConditionChip({
       <span className="text-police-faint">{icon}</span>
       <span className="mt-1 text-[9px] text-police-faint">{label}</span>
       <span className="text-[11px] font-bold text-police">{value}</span>
+    </div>
+  );
+}
+
+function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
+  return (
+    <div className="flex justify-between py-1 border-b border-police-soft last:border-0">
+      <span className="text-[12px] text-police-muted">{label}</span>
+      <span className={`text-[12px] ${bold ? "font-bold text-[#10B981]" : "font-medium text-police"}`}>{value}</span>
     </div>
   );
 }
