@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const body = await request.json().catch(() => ({}));
-    const { name, stationId, location, type, status } = body;
+    const { name, stationId, location, type, status, shift } = body;
     if (!name || !stationId) {
       return NextResponse.json({ error: "Jina na kituo vinahitajika" }, { status: 400 });
     }
@@ -60,6 +60,7 @@ export async function POST(request: Request) {
           location: location || null,
           type: type || "Traffic",
           status: status || "active",
+          shift: shift || "24/7",
         }).select().single();
         if (error) throw error;
         await logAction(session, "post_created", "posts", data.id, { name, stationId });

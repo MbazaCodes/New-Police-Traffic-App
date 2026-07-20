@@ -1,37 +1,36 @@
-// Post detail API — get, patch, delete
-// GET    /api/posts/[id]  -> fetch single post
-// PATCH  /api/posts/[id]  -> update post
-// DELETE /api/posts/[id]  -> delete post
+// Posts [id] API — Supabase-backed (was in-memory mock)
+// GET    /api/posts/:id  -> single post
+// PATCH  /api/posts/:id  -> update post
+// DELETE /api/posts/:id  -> delete post
 
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-
-const postsStore: {id:string;name:string;stationId:string;type:string;status:string}[] = [];
+import { getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession();
     const check = requirePermission(session, "posts", "view");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
+    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const { id } = await params;
-    const post = postsStore.find((p) => p.id === id);
-    if (!post) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    if (isSupabaseEnabled()) {
+      const admin = getSupabaseAdminAny();
+      if (admin) {
+        const { data, error } = await admin.from("posts")
+          .select("*, station:stations(id, name, region)").eq("id", id).single();
+        if (error) return NextResponse.json({ error: "Posti haipatikani" }, { status: 404 });
+        return NextResponse.json({ ok: true, data });
+      }
     }
-    return NextResponse.json({ data: post }, { status: 200 });
+    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to fetch post", detail: String(err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }
 
@@ -42,70 +41,58 @@ export async function PATCH(
   try {
     const session = await getServerSession();
     const check = requirePermission(session, "posts", "update");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
+    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const { id } = await params;
-    const idx = postsStore.findIndex((p) => p.id === id);
-    if (idx === -1) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
-    }
-
     const body = await request.json().catch(() => ({}));
-    const updated = { ...postsStore[idx], ...body, id: postsStore[idx].id };
-    postsStore[idx] = updated;
+    const { name, stationId, location, type, status, shift } = body;
 
-    logAction(
-      session!.user.id,
-      "update",
-      "posts",
-      id,
-      { changes: body },
-      session!.user.name,
-    );
+    const patch: Record<string, unknown> = {};
+    if (name !== undefined) patch.name = name;
+    if (stationId !== undefined) patch.station_id = stationId;
+    if (location !== undefined) patch.location = location;
+    if (type !== undefined) patch.type = type;
+    if (status !== undefined) patch.status = status;
+    if (shift !== undefined) patch.shift = shift;
+    patch.updated_at = new Date().toISOString();
 
-    return NextResponse.json({ data: updated }, { status: 200 });
+    if (isSupabaseEnabled()) {
+      const admin = getSupabaseAdminAny();
+      if (admin) {
+        const { data, error } = await admin.from("posts")
+          .update(patch).eq("id", id).select().single();
+        if (error) throw error;
+        await logAction(session, "post_updated", "posts", id, { changes: patch });
+        return NextResponse.json({ ok: true, data });
+      }
+    }
+    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to update post", detail: String(err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession();
     const check = requirePermission(session, "posts", "delete");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
+    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const { id } = await params;
-    const idx = postsStore.findIndex((p) => p.id === id);
-    if (idx === -1) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    if (isSupabaseEnabled()) {
+      const admin = getSupabaseAdminAny();
+      if (admin) {
+        const { error } = await admin.from("posts").delete().eq("id", id);
+        if (error) throw error;
+        await logAction(session, "post_deleted", "posts", id, {});
+        return NextResponse.json({ ok: true });
+      }
     }
-    const [removed] = postsStore.splice(idx, 1);
-
-    logAction(
-      session!.user.id,
-      "delete",
-      "posts",
-      id,
-      { post: removed },
-      session!.user.name,
-    );
-
-    return NextResponse.json({ data: { id, deleted: true } }, { status: 200 });
+    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to delete post", detail: String(err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }

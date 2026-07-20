@@ -1,25 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
-import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
+import { authFetch } from "@/lib/client-auth";
 
 export function CreatePostPage({ basePath }: { basePath: "/admin" | "/command" }) {
   const router = useRouter();
-  const stations = useRecordsStore((s) => s.adminStations);
-  const addAdminPost = useRecordsStore((s) => s.addAdminPost);
+
+  // Stations from live API (was: empty Zustand store, dropdown never populated)
+  const [stations, setStations] = useState<{ id: string; name: string }[]>([]);
+  useEffect(() => {
+    fetch("/api/stations")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.data) setStations(json.data.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
+      })
+      .catch(() => {});
+  }, []);
 
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
-  const [stationId, setStationId] = useState(stations[0]?.id ?? "");
+  const [stationId, setStationId] = useState("");
   const [type, setType] = useState<"Traffic" | "Patrol">("Traffic");
   const [shift, setShift] = useState("24/7");
   const [saving, setSaving] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name.trim() || !location.trim() || !stationId) {
       toast({
         title: "Tafadhali jaza taarifa zote",
@@ -29,14 +38,25 @@ export function CreatePostPage({ basePath }: { basePath: "/admin" | "/command" }
     }
     setSaving(true);
     const stationName = stations.find((s) => s.id === stationId)?.name ?? stationId;
-    addAdminPost({
-      name: name.trim(),
-      stationId,
-      stationName,
-      location: location.trim(),
-      type,
-      shift: shift.trim(),
+
+    const { error } = await authFetch("/api/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name.trim(),
+        stationId,
+        location: location.trim(),
+        type,
+        shift: shift.trim(),
+      }),
     });
+
+    if (error) {
+      toast({ title: "Hitilafu", description: error, variant: "destructive" });
+      setSaving(false);
+      return;
+    }
+
     toast({
       title: "Posti Imeongezwa",
       description: `${name.trim()} imehifadhiwa kwenye ${stationName}`,

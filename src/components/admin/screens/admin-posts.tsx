@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   X,
@@ -17,7 +17,9 @@ import {
   Save,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useRecordsStore, type AdminPostRecord } from "@/store/records-store";
+import { useApiData } from "@/hooks/use-api-data";
+import { authFetch } from "@/lib/client-auth";
+import { type AdminPostRecord } from "@/store/records-store";
 
 const STATUS_STYLES: Record<string, string> = {
   active: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
@@ -42,11 +44,38 @@ const FILTER_TABS = [
 
 type ModalMode = "create" | "edit" | "view";
 
+type ApiPostRow = {
+  id: string; name: string; station_id: string; location: string | null;
+  type: "Traffic" | "Patrol"; status: string; shift: string | null;
+  station?: { id: string; name: string; region: string } | null;
+};
+
 export function AdminPosts() {
-  const posts = useRecordsStore((s) => s.adminPosts);
-  const stations = useRecordsStore((s) => s.adminStations);
-  const addAdminPost = useRecordsStore((s) => s.addAdminPost);
-  const updateAdminPost = useRecordsStore((s) => s.updateAdminPost);
+  // Live data from /api/posts (was: client-side Zustand store that never
+  // touched the database — stations never loaded, posts never saved)
+  const { data: apiPosts, refetch } = useApiData<ApiPostRow>("/api/posts");
+  const posts: AdminPostRecord[] = apiPosts.map((p) => ({
+    id: p.id,
+    name: p.name,
+    stationId: p.station_id,
+    stationName: p.station?.name ?? "—",
+    location: p.location ?? "",
+    type: p.type,
+    shift: p.shift ?? "24/7",
+    officersCount: 0,
+    status: (p.status as AdminPostRecord["status"]) ?? "active",
+  }));
+
+  // Stations for the Kituo dropdown — fetched from the live API
+  const [stations, setStations] = useState<{ id: string; name: string }[]>([]);
+  useEffect(() => {
+    fetch("/api/stations")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.data) setStations(json.data.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
+      })
+      .catch(() => {});
+  }, []);
 
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<string>("all");
@@ -83,20 +112,39 @@ export function AdminPosts() {
     setModalMode("view");
   };
 
-  const handleSubmit = (data: Omit<AdminPostRecord, "id" | "officersCount" | "status">) => {
+  const handleSubmit = async (data: Omit<AdminPostRecord, "id" | "officersCount" | "status">) => {
+    const payload = {
+      name: data.name,
+      stationId: data.stationId,
+      location: data.location,
+      type: data.type,
+      shift: data.shift,
+    };
+
     if (modalMode === "edit" && active) {
-      updateAdminPost(active.id, data);
+      const { error } = await authFetch(`/api/posts/${active.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (error) { toast({ title: "Hitilafu", description: error, variant: "destructive" }); return; }
       toast({
         title: "Posti Imesasishwa",
         description: `Taarifa za ${data.name} zimehifadhiwa`,
       });
     } else {
-      addAdminPost(data);
+      const { error } = await authFetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (error) { toast({ title: "Hitilafu", description: error, variant: "destructive" }); return; }
       toast({
         title: "Posti Imeongezwa",
-        description: `${data.name} imeongezwa kwenye orodha`,
+        description: `${data.name} imeongezwa kwenye mfumo`,
       });
     }
+    refetch();
     setModalMode(null);
     setActive(null);
   };
