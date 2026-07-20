@@ -42,7 +42,21 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  // CRITICAL: secret must use the SAME fallback as authOptions in lib/auth.ts.
+  // Previously this passed possibly-undefined NEXTAUTH_SECRET while the cookie
+  // was signed with the fallback — decode failed silently → every navigation
+  // bounced back to the dashboard as "no session".
+  const secret = process.env.NEXTAUTH_SECRET || "tz-police-secret-change-in-production";
+
+  // Try the secure cookie name first (Vercel/HTTPS), then the plain one (local/HTTP).
+  let token = await getToken({ req: request, secret, cookieName: "__Secure-next-auth.session-token" });
+  if (!token?.id) {
+    token = await getToken({ req: request, secret, cookieName: "next-auth.session-token" });
+  }
+  if (!token?.id) {
+    // Final fallback: NextAuth default auto-detection
+    token = await getToken({ req: request, secret });
+  }
   const role = token?.role as Role | undefined;
 
   // Root path acts as auth-aware entrypoint.
