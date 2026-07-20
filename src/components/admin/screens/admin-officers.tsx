@@ -49,8 +49,15 @@ const OFFICER_CATEGORIES: { value: string; label: string; roles: { value: string
 type Officer = {
   id: string; name: string; officer_number: string; rank: string; status: string;
   station?: { id: string; name: string; region: string } | null;
-  user?: { email: string | null; phone: string | null; photo_url: string | null; unit: string | null; badge_no: string | null } | null;
+  user?: { email: string | null; phone: string | null; photo_url: string | null; unit: string | null; badge_no: string | null; role?: string | null } | null;
 };
+
+const EDITABLE_ROLES = [
+  ["officer-traffic", "Traffic Officer"], ["officer-general", "General Officer"], ["post-officer", "Post Officer"],
+  ["cid-officer", "CID Officer"], ["investigator", "Investigator"], ["station-commissioner", "OCS — Kamanda wa Kituo"],
+  ["district-commissioner", "OCD — Kamanda wa Wilaya"], ["regional-commissioner", "RPC — Kamanda wa Mkoa"],
+  ["national-commissioner", "Kamanda wa Kitaifa"],
+] as const;
 
 type StationOption = { id: string; name: string; region?: string | null; district?: string | null };
 
@@ -79,6 +86,16 @@ export function AdminOfficers() {
   );
 
   const activeCount = officers.filter((o) => o.status === "active").length;
+
+  async function updateRole(officer: Officer, role: string) {
+    setSaving(true);
+    const { error } = await authFetch(`/api/officers/${officer.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ role }) });
+    setSaving(false);
+    if (error) { toast({ title: "Imeshindikana kubadili role", description: error, variant: "destructive" }); return; }
+    setSelected({ ...officer, user: officer.user ? { ...officer.user, role } : officer.user });
+    toast({ title: "Role imebadilishwa" });
+    refetch();
+  }
 
   return (
     <div className="space-y-4">
@@ -226,6 +243,11 @@ export function AdminOfficers() {
             <div className="space-y-2 text-[13px]">
               <div className="flex justify-between"><span className="text-police-muted">Kituo</span><span className="text-police font-medium">{selected.station?.name ?? "—"}</span></div>
               <div className="flex justify-between"><span className="text-police-muted">Kitengo</span><span className="text-police font-medium">{selected.user?.unit ?? "—"}</span></div>
+              <div className="flex items-center justify-between gap-3"><span className="text-police-muted">Role ya mfumo</span>
+                <select value={selected.user?.role ?? "officer-general"} disabled={saving} onChange={(e) => updateRole(selected, e.target.value)} className="max-w-[210px] rounded-lg border border-police-soft bg-police px-2 py-1 text-[12px] text-police focus:border-[#2196F3] focus:outline-none">
+                  {EDITABLE_ROLES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </div>
               <div className="flex justify-between"><span className="text-police-muted">Simu</span><span className="text-police font-medium">{selected.user?.phone ?? "—"}</span></div>
               <div className="flex justify-between"><span className="text-police-muted">Barua Pepe</span><span className="text-police font-medium">{selected.user?.email ?? "—"}</span></div>
               <div className="flex justify-between"><span className="text-police-muted">Hadhi</span>

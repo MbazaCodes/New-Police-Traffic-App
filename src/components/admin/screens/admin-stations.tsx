@@ -6,6 +6,7 @@ import { useApiData } from "@/hooks/use-api-data";
 import { authFetch } from "@/lib/client-auth";
 import { toast } from "@/hooks/use-toast";
 import { TZ_ZONES, TZ_ZONE_NAMES, districtsForRegion } from "@/lib/tz-locations";
+import { OfficerAssignmentModal } from "@/components/admin/officer-assignment-modal";
 
 type Station = {
   id: string; name: string; region: string; district: string | null;
@@ -27,6 +28,7 @@ export function AdminStations() {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ name:"", region:"", district:"", ward:"", address:"", phone:"" });
   const [saving, setSaving] = useState(false);
+  const [assigning, setAssigning] = useState(false);
 
   const { data: stations, loading, error, refetch } = useApiData<Station>(
     "/api/stations", query ? { search: query } : {}, [query]
@@ -242,8 +244,15 @@ export function AdminStations() {
                 </div>
               ))}
             </div>
+            <button onClick={() => setAssigning(true)} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-2.5 text-[13px] font-bold text-white">
+              <Plus size={16} /> Ongeza Staff / Mgawie Afisa
+            </button>
           </div>
         </div>
+      )}
+      {selected && assigning && (
+        <OfficerAssignmentModal stationId={selected.id} stationName={selected.name}
+          onClose={() => setAssigning(false)} onSaved={() => { setAssigning(false); refetch(); }} />
       )}
     </div>
   );

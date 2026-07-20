@@ -20,6 +20,7 @@ import { toast } from "@/hooks/use-toast";
 import { useApiData } from "@/hooks/use-api-data";
 import { authFetch } from "@/lib/client-auth";
 import { type AdminPostRecord } from "@/store/records-store";
+import { OfficerAssignmentModal } from "@/components/admin/officer-assignment-modal";
 
 const STATUS_STYLES: Record<string, string> = {
   active: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
@@ -49,11 +50,13 @@ type ApiPostRow = {
   type: "Traffic" | "Patrol"; status: string; shift: string | null;
   station?: { id: string; name: string; region: string } | null;
 };
+type ApiOfficerRow = { id: string; post_id?: string | null };
 
 export function AdminPosts() {
   // Live data from /api/posts (was: client-side Zustand store that never
   // touched the database — stations never loaded, posts never saved)
   const { data: apiPosts, refetch } = useApiData<ApiPostRow>("/api/posts");
+  const { data: officers, refetch: refetchOfficers } = useApiData<ApiOfficerRow>("/api/officers");
   const posts: AdminPostRecord[] = apiPosts.map((p) => ({
     id: p.id,
     name: p.name,
@@ -62,7 +65,7 @@ export function AdminPosts() {
     location: p.location ?? "",
     type: p.type,
     shift: p.shift ?? "24/7",
-    officersCount: 0,
+    officersCount: officers.filter((officer) => officer.post_id === p.id).length,
     status: (p.status as AdminPostRecord["status"]) ?? "active",
   }));
 
@@ -81,6 +84,7 @@ export function AdminPosts() {
   const [filter, setFilter] = useState<string>("all");
   const [modalMode, setModalMode] = useState<ModalMode | null>(null);
   const [active, setActive] = useState<AdminPostRecord | null>(null);
+  const [assigningPost, setAssigningPost] = useState<AdminPostRecord | null>(null);
 
   const filtered = posts.filter((p) => {
     if (filter !== "all" && p.status !== filter) return false;
@@ -340,10 +344,7 @@ export function AdminPosts() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          toast({
-                            title: "Fomu ya mgao",
-                            description: `Inafungua fomu ya kumgawia afisa kwenye ${p.name}`,
-                          });
+                          setAssigningPost(p);
                         }}
                         className="inline-flex items-center gap-1 rounded-lg bg-[#2196F3]/15 px-2 py-1.5 text-[11px] font-semibold text-[#2196F3] hover:bg-[#2196F3]/25"
                         title="Mgawie Afisa"
@@ -375,6 +376,11 @@ export function AdminPosts() {
           }}
           onSubmit={handleSubmit}
         />
+      )}
+      {assigningPost && (
+        <OfficerAssignmentModal stationId={assigningPost.stationId} stationName={assigningPost.stationName}
+          postId={assigningPost.id} postName={assigningPost.name} onClose={() => setAssigningPost(null)}
+          onSaved={() => { setAssigningPost(null); refetch(); refetchOfficers(); }} />
       )}
     </div>
   );

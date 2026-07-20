@@ -24,7 +24,7 @@ export async function GET(request: Request) {
       const admin = getSupabaseAdminAny();
       if (admin) {
         let q = admin.from("officers").select(`
-          *, user:users(id, name, short_name, rank, rank_short, email, phone, photo_url, badge_no, status, region, unit),
+          *, user:users(id, name, short_name, rank, rank_short, role, email, phone, photo_url, badge_no, status, region, unit),
           station:stations(id, name, region)
         `).order("created_at", { ascending: false });
 

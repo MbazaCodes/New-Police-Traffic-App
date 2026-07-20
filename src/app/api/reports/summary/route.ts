@@ -33,8 +33,10 @@ export async function GET() {
     if (isSupabaseEnabled()) {
       const admin = getSupabaseAdminAny();
       if (admin) {
-        // Get officers count
-        const { count: officerCount } = await admin.from("users").select("*", { count: "exact", head: true }).eq("status", "active");
+        // Count active operational officers only; admin and command accounts are
+        // active users but must not appear under "Maofisa Kazini".
+        const { count: officerCount } = await admin.from("users").select("*", { count: "exact", head: true })
+          .eq("status", "active").in("role", ["officer-traffic", "officer-general", "post-officer"]);
         totalOfficers = officerCount ?? 0;
 
         // Get incidents stats

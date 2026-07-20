@@ -45,6 +45,8 @@ export function AdminDashboard() {
       setLoading(false);
     }
     load();
+    const refreshTimer = window.setInterval(load, 15_000);
+    return () => window.clearInterval(refreshTimer);
   }, []);
 
   const kpis = [
@@ -62,7 +64,7 @@ export function AdminDashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-[24px] font-black text-police">Dashboard</h1>
-        <p className="text-[12px] text-police-muted mt-0.5">Muhtasari wa mfumo — data ya moja kwa moja kutoka Supabase</p>
+        <p className="text-[12px] text-police-muted mt-0.5">Muhtasari wa mfumo — husasishwa kila sekunde 15</p>
       </div>
 
       {loading ? (
