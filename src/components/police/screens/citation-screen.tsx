@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FileText,
   Car,
@@ -16,6 +16,9 @@ import {
   UserCog,
   Info,
   Loader2,
+  WifiOff,
+  CloudUpload,
+  RefreshCw,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { OFFENSE_TYPES, VEHICLE_TYPES } from "@/lib/police-data";
@@ -23,12 +26,42 @@ import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 import { useOfficer } from "@/hooks/use-officer";
+import { DatePicker } from "@/components/police/ui/date-picker";
+import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
+
+// Fine amounts by offense type (TZS)
+const OFFENSE_FINES: Record<string, string> = {
+  "Kupita kwa Taa Nyekundu": "TZS 50,000",
+  "Kupita kwa Taa ya Zuia": "TZS 30,000",
+  "Kudhibiti Gari Chini ya Uathirika wa Kileo": "TZS 50,000",
+  "Kupita kwa Mstari wa Kuzuia": "TZS 40,000",
+  "Kupita kwa Kasi Zaidi ya Iliyoidhinishwa": "TZS 100,000",
+  "Kuendesha Gari bila Leseni": "TZS 150,000",
+  "Gari lisilo na Bima": "TZS 200,000",
+  "Usajili wa Gari Umeisha Muda": "TZS 80,000",
+  "Ukaguzi wa Gari Umeisha Muda": "TZS 60,000",
+  "Kutotumia Helmet/Mkanda": "TZS 30,000",
+  "Matumizi ya Simu Wakati wa Kuendesha": "TZS 50,000",
+  "Kuendesha Gari akiwa amelewa": "TZS 500,000",
+  "Gari lenye Uharibifu wa Vifaa vya Usalama": "TZS 70,000",
+  "Kupakia Zaidi ya Uwezo": "TZS 100,000",
+  "Kutoa Njia kwa Magari ya Dharura": "TZS 80,000",
+};
 
 export function CitationScreen() {
   const OFFICER = useOfficer();
   const prefill = usePoliceStore((s) => s.citationPrefill);
   const goBack = usePoliceStore((s) => s.goBack);
   const addCitation = useRecordsStore((s) => s.addCitation);
+
+  // Offline sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    pending: 0,
+    lastSynced: null,
+    isOnline: true,
+    isSyncing: false,
+  });
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
 
   const [offense, setOffense] = useState("");
   const [vehicleType, setVehicleType] = useState(prefill?.vehicleType || "");
@@ -43,8 +76,24 @@ export function CitationScreen() {
   const [isOwner, setIsOwner] = useState(true);
   const [notes, setNotes] = useState("");
   
+  // Date/Location fields (editable)
+  const [citationDate, setCitationDate] = useState(new Date().toISOString().split('T')[0]);
+  const [location, setLocation] = useState("");
+  
   // Loading state
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [savedRecord, setSavedRecord] = useState<any>(null);
+
+  // Initialize auto-sync on mount
+  useEffect(() => {
+    initAutoSync();
+    const unsubscribe = subscribeToSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    });
+    return unsubscribe;
+  }, []);
 
   const hasPrefill = !!prefill;
 
@@ -52,6 +101,19 @@ export function CitationScreen() {
   const now = new Date();
   const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
   const currentTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+  // Get fine amount based on offense type
+  const getFineAmount = () => {
+    if (!offense) return "TZS 50,000"; // Default
+    return OFFENSE_FINES[offense] || "TZS 50,000";
+  };
+
+  // Generate citation number
+  const generateCitationNumber = () => {
+    const year = new Date().getFullYear();
+    const random = String(Math.floor(1000 + Math.random() * 9000)).padStart(4, "0");
+    return `CT-${year}-${random}`;
+  };
 
   // NIDA formatting helper
   const formatNida = (input: string): string => {
@@ -69,37 +131,74 @@ export function CitationScreen() {
   };
 
   const buildPayload = () => ({
+    citationNumber: generateCitationNumber(),
     plate: prefill?.plate || "",
+    model: prefill?.model || "",
     offense: offense || "Haijawazwa",
     driverName: driverName || "Haijawazwa",
     driverLicense: driverLicense || "—",
     driverPhone: driverPhone || "—",
     driverNida: driverNida.replace(/\D/g, "") || "",
-    date: today,
+    date: citationDate || today,
     time: currentTime,
-    location: "Morogoro Road, DSM",
-    amount: "TZS 50,000",
-    officer: OFFICER.name,
+    location: location || "Haijajulikana",
+    amount: getFineAmount(),
+    officerId: OFFICER.id,
+    officerName: OFFICER.name,
+    station: OFFICER.station,
     notes: notes || undefined,
+    status: "unpaid",
   });
 
+  // ENHANCED: Save with offline sync support
   const handleSave = async () => {
+    if (!offense) {
+      toast({ title: "Kosa Haujajazwa", description: "Chagua aina ya kosa.", variant: "destructive" });
+      return;
+    }
+
+    setIsSubmitting(true);
     const payload = buildPayload();
+    payload.status = "draft";
     addCitation(payload);
-    
+
     try {
-      await fetch("/api/citations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, status: "draft" }),
-      });
-      toast({ title: "Imehifadhiwa ✓", description: "Rasimu ya Citation imehifadhiwa kwenye database." });
-    } catch (error) {
+      const result = await saveWithOfflineSupport("/api/citations", payload, "POST");
+      
+      const rec = {
+        id: result.data?.id || generateCitationNumber(),
+        citationNumber: payload.citationNumber,
+        plate: payload.plate,
+        offense: payload.offense,
+        amount: payload.amount,
+        cached: result.fromCache,
+      };
+      
+      setSavedRecord(rec);
+      setSaved(true);
+      
+      if (result.fromCache) {
+        toast({ 
+          title: "Rasimu Imehifadhiwa (Hifadhi ya Kawaida) 💾", 
+          description: "Data imehifadhiwa kawaida. Itasasishwa mara tu utakapoweka mtandao.",
+          duration: 5000,
+        });
+      } else {
+        toast({ title: "Imehifadhiwa ✓", description: "Rasimu ya Citation imehifadhiwa." });
+      }
+    } catch (error: any) {
       console.error("Save citation error:", error);
-      toast({ title: "Imehifadhiwa (Local)", description: "Rasimu imehifadhiwa kawaida. Itakamilika mtandao unapowezekana." });
+      toast({ 
+        title: "Hitilafu katika Hifadhi ❌", 
+        description: error.message || "Imeshindikana kuhifadhi taarifa za citation.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  // ENHANCED: Submit with offline sync support
   const handleSubmit = async () => {
     if (!offense) {
       toast({ title: "Kosa Haujajazwa", description: "Chagua aina ya kosa.", variant: "destructive" });
@@ -108,23 +207,24 @@ export function CitationScreen() {
 
     setIsSubmitting(true);
     const payload = buildPayload();
+    payload.status = "unpaid";
     addCitation(payload);
 
     try {
-      const response = await fetch("/api/citations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, status: "unpaid" }),
-      });
+      const result = await saveWithOfflineSupport("/api/citations", payload, "POST");
 
-      if (!response.ok) {
-        throw new Error("Imeshindikana kutuma citation");
+      if (result.fromCache) {
+        toast({
+          title: "Citation Imetolewa (Hifadhi ya Kawaida) 📴",
+          description: "Citation itakamilishwa mara tu utakapoweka mtandao.",
+          duration: 5000,
+        });
+      } else {
+        toast({
+          title: "Citation Imetolewa ✓",
+          description: "Citation imewasilishwa na imetumwa kwa dereva.",
+        });
       }
-
-      toast({
-        title: "Citation Imetolewa ✓",
-        description: "Citation imewasilishwa na imetumwa kwa dereva.",
-      });
       setTimeout(() => goBack(), 800);
     } catch (error: any) {
       console.error("Submit citation error:", error);
@@ -137,6 +237,47 @@ export function CitationScreen() {
       setIsSubmitting(false);
     }
   };
+
+  // Saved state view
+  if (saved && savedRecord) {
+    return (
+      <div className="min-h-full bg-police p-4">
+        <div className="flex flex-col items-center py-8">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#10B981]/15">
+            <FileText size={44} className="text-[#10B981]" />
+          </div>
+          <h2 className="mt-4 text-[20px] font-bold text-police">Citation Imehifadhiwa</h2>
+          <p className="mt-1 text-center text-[13px] text-police-muted">Taarifa za citation zimehifadhiwa kwenye mfumo.</p>
+          
+          <div className="mt-6 w-full rounded-2xl bg-police-card p-4 shadow-sm space-y-2.5">
+            <div className="inline-block rounded-lg border-2 border-[#1E3A8A] bg-yellow-50 px-4 py-1.5 text-[18px] font-extrabold tracking-widest text-police-navy">
+              {savedRecord.citationNumber}
+            </div>
+            <Row label="Namba ya Gari" value={savedRecord.plate} bold />
+            <Row label="Aina ya Kosa" value={savedRecord.offense} />
+            <Row label="Faini" value={savedRecord.amount} bold />
+            <Row label="Afisa" value={OFFICER.shortName} />
+            <Row label="Kituo" value={OFFICER.station} />
+            {savedRecord.cached && (
+              <Row label="Hali" value="⏳ Inasubiri usasishaji" bold />
+            )}
+          </div>
+          
+          <div className="mt-4 w-full space-y-2">
+            <button onClick={() => { 
+              setSaved(false); 
+              setSavedRecord(null);
+              setOffense(""); 
+              setNotes("");
+              setLocation("");
+              setCitationDate(new Date().toISOString().split('T')[0]);
+            }} className="w-full rounded-xl border border-police py-3 text-[14px] font-semibold text-police">Toa Citation Nyingine</button>
+            <button onClick={() => goBack()} className="w-full rounded-xl bg-[#1E3A8A] py-3 text-[14px] font-bold text-white">Rudi Nyuma</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full bg-police">
@@ -161,7 +302,7 @@ export function CitationScreen() {
         <div className="flex items-center justify-between rounded-2xl bg-police-card p-4 shadow-sm">
           <div>
             <p className="text-[10px] uppercase tracking-wide text-police-faint">Namba ya Citation</p>
-            <p className="text-[15px] font-extrabold text-police-navy">CT-2026-{String(Math.floor(1000 + Math.random() * 9000)).padStart(4, "0")}</p>
+            <p className="text-[15px] font-extrabold text-police-navy">{generateCitationNumber()}</p>
           </div>
           <div className="text-right">
             <p className="text-[10px] uppercase tracking-wide text-police-faint">Afisa</p>
@@ -248,7 +389,7 @@ export function CitationScreen() {
               inputMode="tel"
             />
             
-            {/* NIDA - NOW WITH FORMATTING */}
+            {/* NIDA - WITH FORMATTING */}
             <EditableField
               label="Namba ya NIDA"
               value={driverNida}
@@ -262,6 +403,12 @@ export function CitationScreen() {
           {driverNida && driverNida.replace(/\D/g, "").length > 0 && driverNida.replace(/\D/g, "").length < 20 && (
             <p className="mt-1 text-[9px] text-[#FF9800] pl-1">
               NIDA: {driverNida.replace(/\D/g, "").length}/20 tarakimu
+            </p>
+          )}
+          {/* NIDA valid checkmark */}
+          {driverNida && driverNida.replace(/\D/g, "").length === 20 && (
+            <p className="mt-1 text-[9px] text-[#10B981] pl-1 flex items-center gap-1">
+              ✓ NIDA Sahihi
             </p>
           )}
         </Section>
@@ -281,11 +428,28 @@ export function CitationScreen() {
             }}
             full
           />
+          
+          {/* Date Picker instead of read-only text */}
+          <DatePicker
+            label="Tarehe ya Kosa"
+            value={citationDate}
+            onChange={(val) => setCitationDate(val)}
+            maxDate={new Date().toISOString().split('T')[0]}
+          />
+          
           <div className="grid grid-cols-2 gap-2.5">
-            <FormField label="Tarehe" value={today} icon={<Calendar size={14} />} readOnly />
             <FormField label="Saa" value={currentTime} icon={<Clock size={14} />} readOnly />
-            <FormField label="Eneo" value="Morogoro Road, DSM" icon={<MapPin size={14} />} readOnly full />
+            
+            {/* Editable Location */}
+            <EditableField
+              label="Eneo"
+              value={location}
+              onChange={setLocation}
+              placeholder="Andika eneo..."
+              full={false}
+            />
           </div>
+          
           <div>
             <label className="mb-1 block text-[11px] font-medium text-police-muted">
               Maelezo ya Ziada
@@ -300,10 +464,15 @@ export function CitationScreen() {
           </div>
         </Section>
 
-        {/* Section: Fine */}
+        {/* Section: Fine - Dynamic based on offense */}
         <Section title="Faini na Malipo" icon={<Wallet size={16} />}>
           <div className="grid grid-cols-2 gap-2.5">
-            <FormField label="Kiasi cha Faini" value="TZS 50,000" icon={<Wallet size={14} />} readOnly />
+            <FormField 
+              label="Kiasi cha Faini" 
+              value={getFineAmount()} 
+              icon={<Wallet size={14} />} 
+              readOnly 
+            />
             <div>
               <label className="mb-1 block text-[11px] font-medium text-police-muted">Hali ya Malipo</label>
               <div className="flex items-center gap-2 rounded-xl border border-police bg-police-input px-3">
@@ -314,6 +483,15 @@ export function CitationScreen() {
               </div>
             </div>
           </div>
+          
+          {/* Show selected offense details */}
+          {offense && (
+            <div className="rounded-lg bg-[#FFF7ED] border border-[#FF9800]/20 p-2.5">
+              <p className="text-[11px] text-[#92400E]">
+                <strong>Kosa:</strong> {offense} → <strong>Faini:</strong> {getFineAmount()}
+              </p>
+            </div>
+          )}
         </Section>
 
         {/* Evidence */}
@@ -325,6 +503,68 @@ export function CitationScreen() {
           </button>
         </Section>
 
+        {/* Sync Status Indicator - Shows when offline or pending items */}
+        {(isOfflineMode || syncStatus.pending > 0) && (
+          <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
+            syncStatus.isSyncing 
+              ? "border-[#2196F3]/30 bg-[#2196F3]/5" 
+              : syncStatus.isOnline 
+                ? "border-[#FF9800]/30 bg-[#FF9800]/5"
+                : "border-[#EF4444]/30 bg-[#EF4444]/5"
+          }`}>
+            {syncStatus.isSyncing ? (
+              <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" />
+            ) : syncStatus.isOnline ? (
+              <CloudUpload size={18} className="text-[#FF9800] shrink-0" />
+            ) : (
+              <WifiOff size={18} className="text-[#EF4444] shrink-0" />
+            )}
+            <div className="flex-1">
+              <p className={`text-[12px] font-bold ${
+                syncStatus.isSyncing ? "text-[#2196F3]" :
+                syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"
+              }`}>
+                {syncStatus.isSyncing ? "Inasasisha data..." :
+                 syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` :
+                 "Hakuna Mtandao — Hifadhi ya Kawaida"}
+              </p>
+              <p className="text-[10px] text-police-muted">
+                {!syncStatus.isOnline ? "Data itasasishwa mara tu utakapoweka mtandao." :
+                 syncStatus.pending > 0 ? "Bofya kusasisha sasa" : "Yote imesasishwa"}
+              </p>
+            </div>
+            {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+              <button
+                onClick={() => {
+                  import("@/lib/offline-sync").then(({ processSyncQueue }) => {
+                    processSyncQueue().then(({ success, failed }) => {
+                      toast({
+                        title: "Matokeo ya Usasishaji",
+                        description: `Mafanikio: ${success}, Mashindwa: ${failed}`,
+                      });
+                    });
+                  });
+                }}
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold active:scale-95 transition-transform"
+              >
+                Sasa Sasisha
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Officer Info Card */}
+        <div className="rounded-2xl border border-[#1E3A8A]/20 bg-[#1E3A8A]/5 p-4">
+          <p className="text-[12px] font-medium text-police-muted">Afisa Anayetoa Citation</p>
+          <p className="mt-1 text-[15px] font-bold text-[#1E3A8A]">{OFFICER.shortName}</p>
+          <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
+          {syncStatus.lastSynced && (
+            <p className="mt-1 text-[9px] text-police-faint">
+              Iliyopita iliyosasilishwa: {new Date(syncStatus.lastSynced).toLocaleString("sw-TZ")}
+            </p>
+          )}
+        </div>
+
         {/* Submit Buttons */}
         <div className="flex gap-2.5 pt-1">
           <button
@@ -332,7 +572,7 @@ export function CitationScreen() {
             disabled={isSubmitting}
             className="flex-1 rounded-xl border-2 border-[#1E3A8A] bg-police-card py-3 text-[13px] font-bold text-police-navy active:scale-[0.98] flex items-center justify-center gap-1"
           >
-            <Save size={16} /> Hifadhi
+            <Save size={16} /> Hifadhi Rasimu
           </button>
           <button
             onClick={handleSubmit}
@@ -500,6 +740,15 @@ function Dropdown({
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
+  return (
+    <div className="flex justify-between py-1 border-b border-police-soft last:border-0">
+      <span className="text-[12px] text-police-muted">{label}</span>
+      <span className={`text-[12px] ${bold ? "font-bold text-[#10B981]" : "font-medium text-police"}`}>{value}</span>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 "use client";
 
 import { useOfficer } from "@/hooks/use-officer";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Pencil,
   CheckCircle2,
@@ -14,18 +14,51 @@ import {
   PenLine,
   Trash2,
   Loader2,
+  WifiOff,
+  CloudUpload,
+  RefreshCw,
 } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { usePoliceStore } from "@/store/police-store";
 import { useRecordsStore } from "@/store/records-store";
 import { toast } from "@/hooks/use-toast";
 import { DatePicker } from "@/components/police/ui/date-picker";
+import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
+
+// Common vehicle makes/models in Tanzania
+const VEHICLE_MAKES_MODELS = [
+  // Toyota
+  "Toyota Corolla", "Toyota Land Cruiser", "Toyota Hiace", "Toyota Mark II",
+  "Toyota Premio", "Toyota RAV4", "Toyota Hilux", "Toyota Fielder", "Toyota Noah", "Toyota Alphard",
+  // Suzuki
+  "Suzuki Maruti", "Suzuki Swift", "Suzuki Alto", "Suzuki Every",
+  // Honda
+  "Honda Fit", "Honda CR-V", "Honda Accord", "Honda Civic",
+  // Nissan
+  "Nissan Sunny", "Nissan Note", "Nissan X-Trail", "Nissan Navara", "Nissan Caravan",
+  // Mitsubishi
+  "Mitsubishi Lancer", "Mitsubishi Canter", "Mitsubishi Pajero", "Mitsubishi Fuso",
+  // Others
+  "Isuzu Elf", "Isuzu NQR", "Mazda BT-50", "Subaru Forester", "Subaru Impreza",
+  "Foton", "Daihatsu Hijet", "Hino", "Volvo FH", "Scania", "Mercedes Actros",
+  // Bajaji/Pikipiki
+  "TVS Apache", "Bajaj Boxer", "Honda Motorcycle", "Yamaha Motorcycle", "Piaggio",
+];
 
 export function VehicleInspectionScreen() {
   const OFFICER = useOfficer();
   const v = {} as Record<string,unknown>;
   const goBack = usePoliceStore((s) => s.goBack);
   const addInspection = useRecordsStore((s) => s.addInspection);
+
+  // Offline sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    pending: 0,
+    lastSynced: null,
+    isOnline: true,
+    isSyncing: false,
+  });
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [plate, setPlate] = useState(v.plate || "");
@@ -41,7 +74,10 @@ export function VehicleInspectionScreen() {
   // New fields for better data capture
   const [inspectionDate, setInspectionDate] = useState(new Date().toISOString().split('T')[0]);
   const [inspectionTime, setInspectionTime] = useState("");
+  const [location, setLocation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [savedRecord, setSavedRecord] = useState<any>(null);
 
   // Vehicle type dropdown
   const vehicleTypes = ["Saloon", "SUV", "Pick Up", "Minibus", "Lori", "Bajaji", "Pikipiki", "Basila", "Gari la Kazi"];
@@ -49,6 +85,21 @@ export function VehicleInspectionScreen() {
   
   // Color dropdown
   const colors = ["Nyeupe", "Nyeusi", "Fedha", "Nyekundu", "Bluu", "Kijani", "Kahawia", "Dhahabu", "Njano", "Pinki", "Rangi Nyingine"];
+
+  // Make/Model dropdown state
+  const [makeModelOpen, setMakeModelOpen] = useState(false);
+  const [makeModelSearch, setMakeModelSearch] = useState("");
+  const [isOtherModel, setIsOtherModel] = useState(false);
+
+  // Initialize auto-sync on mount
+  useEffect(() => {
+    initAutoSync();
+    const unsubscribe = subscribeToSyncStatus((status) => {
+      setSyncStatus(status);
+      setIsOfflineMode(!status.isOnline || status.pending > 0);
+    });
+    return unsubscribe;
+  }, []);
 
   const now = new Date();
   const today = now.toLocaleDateString("sw-TZ", { day: "numeric", month: "long", year: "numeric" });
@@ -84,6 +135,11 @@ export function VehicleInspectionScreen() {
   const computedResult: "pass" | "fail" =
     result ?? (allPass ? "pass" : "fail");
 
+  // Filter make/model options
+  const filteredMakes = VEHICLE_MAKES_MODELS.filter(option =>
+    option.toLowerCase().includes(makeModelSearch.toLowerCase())
+  );
+
   const addPhoto = () =>
     setPhotos((prev) => [...prev, { label: `Picha ${prev.length + 1}` }]);
 
@@ -92,7 +148,7 @@ export function VehicleInspectionScreen() {
     toast({ title: "Imefutwa", description: "Saini imefutwa." });
   };
 
-  // NEW: Save to API
+  // ENHANCED: Save to API with offline sync support
   const handleSubmit = async () => {
     if (!plate.trim()) {
       toast({ title: "Kosa", description: "Ingiza namba ya gari (plate)", variant: "destructive" });
@@ -107,11 +163,12 @@ export function VehicleInspectionScreen() {
       color: color || "Haijulikana",
       owner: owner || "Haijulikana",
       vehicleType,
-      officer: OFFICER.name,
       officerId: OFFICER.id,
+      officerName: OFFICER.name,
       station: OFFICER.station,
       date: `${today} ${currentTime}`,
       inspectionDate,
+      location: location || "Haijulikana",
       result: computedResult,
       documentsChecked: documentsTotal,
       mechanicalChecked: mechanicalTotal,
@@ -120,34 +177,92 @@ export function VehicleInspectionScreen() {
       overloaded,
       notes: notes || undefined,
       photosCount: photos.length,
+      signature: signature || undefined,
     };
 
     // Add to local store
     addInspection(inspectionData);
 
     try {
-      // Try to save via API
-      const response = await fetch("/api/inspections", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(inspectionData),
-      });
+      // Use enhanced offline sync - tries API first, falls back to IndexedDB queue
+      const result = await saveWithOfflineSupport("/api/inspections", inspectionData, "POST");
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Inspection saved:", result.data?.id);
-        toast({ title: "Ukaguzi Umekamilika ✓", description: "Ripoti ya ukaguzi wa gari imehifadhiwa kwenye database." });
+      const rec = {
+        id: result.data?.id || `INS-${Date.now()}`,
+        plate: plate.toUpperCase(),
+        result: computedResult,
+        date: today,
+        cached: result.fromCache,
+      };
+
+      setSavedRecord(rec);
+      setSaved(true);
+
+      if (result.fromCache) {
+        toast({
+          title: "Ukaguzi Umekamilika (Hifadhi ya Kawaida) 💾",
+          description: "Ripoti ya ukaguzi wa gari imehifadhiwa kawaida. Itasasishawa mara tu utakapoweka mtandao.",
+          duration: 5000,
+        });
       } else {
-        throw new Error("API error");
+        toast({ title: "Ukaguzi Umekamilika ✓", description: "Ripoti ya ukaguzi wa gari imehifadhiwa kwenye database." });
       }
-    } catch (error) {
-      console.log("Inspection saved locally:", error);
-      toast({ title: "Ukaguzi Umekamilika", description: "Ripoti ya ukaguzi wa gari imehifadhiwa kawaida." });
+    } catch (error: any) {
+      console.error("Save inspection error:", error);
+      toast({
+        title: "Hitilafu katika Hifadhi ❌",
+        description: error.message || "Imeshindikana kuhifadhi taarifa za ukaguzi.",
+        variant: "destructive"
+      });
     } finally {
       setIsSubmitting(false);
-      setTimeout(() => goBack(), 800);
     }
   };
+
+  // Saved state view
+  if (saved && savedRecord) {
+    return (
+      <div className="min-h-full bg-police p-4">
+        <div className="flex flex-col items-center py-8">
+          <div className={`flex h-20 w-20 items-center justify-center rounded-full ${savedRecord.result === 'pass' ? 'bg-[#10B981]/15' : 'bg-[#EF4444]/15'}`}>
+            {savedRecord.result === 'pass' ? (
+              <ShieldCheck size={44} className="text-[#10B981]" />
+            ) : (
+              <ShieldAlert size={44} className="text-[#EF4444]" />
+            )}
+          </div>
+          <h2 className="mt-4 text-[20px] font-bold text-police">Ukaguzi Umekamilika</h2>
+          <p className="mt-1 text-center text-[13px] text-police-muted">Ripoti ya ukaguzi wa gari imehifadhiwa.</p>
+          
+          <div className="mt-6 w-full rounded-2xl bg-police-card p-4 shadow-sm space-y-2.5">
+            <div className="inline-block rounded-lg border-2 border-[#1E3A8A] bg-yellow-50 px-4 py-1.5 text-[18px] font-extrabold tracking-widest text-police-navy">
+              {savedRecord.plate}
+            </div>
+            <Row label="ID ya Ukaguzi" value={savedRecord.id} bold />
+            <Row label="Matokeo" value={savedRecord.result === 'pass' ? '✓ HALI SAHIHI' : '✗ LINA KASORO'} bold />
+            <Row label="Tarehe" value={savedRecord.date} />
+            <Row label="Afisa" value={OFFICER.shortName} />
+            <Row label="Kituo" value={OFFICER.station} />
+            {savedRecord.cached && (
+              <Row label="Hali" value="⏳ Inasubiri usasishaji" bold />
+            )}
+          </div>
+          
+          <div className="mt-4 w-full space-y-2">
+            <button onClick={() => { 
+              setSaved(false); 
+              setSavedRecord(null);
+              setResult(null);
+              setNotes("");
+              setLocation("");
+              setInspectionDate(new Date().toISOString().split('T')[0]);
+            }} className="w-full rounded-xl border border-police py-3 text-[14px] font-semibold text-police">Fanya Ukaguzi Mwingine</button>
+            <button onClick={() => goBack()} className="w-full rounded-xl bg-[#1E3A8A] py-3 text-[14px] font-bold text-white">Rudi Nyuma</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full bg-police">
@@ -167,14 +282,93 @@ export function VehicleInspectionScreen() {
                     className="w-full rounded-md border-2 border-[#1E3A8A] bg-yellow-50 px-2.5 py-1 text-[16px] font-extrabold tracking-wider text-police-navy focus:outline-none"
                   />
                   
-                  {/* Make/Model - Now with dropdown option */}
-                  <div className="flex gap-2">
-                    <input
-                      value={model}
-                      onChange={(e) => setModel(e.target.value)}
-                      placeholder="Mfano (Make/Model)"
-                      className="flex-1 rounded-md border border-police bg-police-input px-2 py-1 text-[13px] text-police focus:outline-none"
-                    />
+                  {/* Make/Model - WITH DROPDOWN AND "OTHER" OPTION */}
+                  <div className="relative">
+                    {isOtherModel ? (
+                      /* Manual entry mode */
+                      <div className="flex gap-2">
+                        <input
+                          value={model}
+                          onChange={(e) => setModel(e.target.value)}
+                          placeholder="Ingiza make/model manual..."
+                          className="flex-1 rounded-md border border-[#FF9800] bg-police-input px-2 py-1 text-[13px] text-police focus:outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => { setIsOtherModel(false); setMakeModelOpen(true); }}
+                          className="px-2 rounded-md border border-[#2196F3] bg-[#2196F3]/10 text-[11px] font-semibold text-[#2196F3]"
+                        >
+                          Orodha
+                        </button>
+                      </div>
+                    ) : (
+                      /* Dropdown mode */
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => setMakeModelOpen(!makeModelOpen)}
+                          className="flex w-full items-center gap-2 rounded-md border border-police bg-police-input px-2 py-1 text-left"
+                        >
+                          <span className={`flex-1 text-[13px] ${model ? "font-medium text-police" : "text-police-faint"}`}>
+                            {model || "Chagua Make/Model"}
+                          </span>
+                          <svg width="12" height="12" viewBox="0 0 12 12" className={`text-police-faint transition ${makeModelOpen ? "rotate-180" : ""}`}>
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+
+                        {makeModelOpen && (
+                          <div className="absolute z-50 mt-1 w-full rounded-md border border-police bg-police-card shadow-lg max-h-48 overflow-hidden">
+                            {/* Search */}
+                            <div className="p-2 border-b border-police-soft">
+                              <input
+                                type="text"
+                                value={makeModelSearch}
+                                onChange={(e) => setMakeModelSearch(e.target.value)}
+                                placeholder="Tafuta make/model..."
+                                className="w-full rounded-md border border-police bg-police-input px-2 py-1.5 text-[11px] text-police focus:outline-none"
+                                autoFocus
+                              />
+                            </div>
+
+                            {/* Options */}
+                            <div className="max-h-32 overflow-y-auto p-1">
+                              {filteredMakes.map((option) => (
+                                <button
+                                  key={option}
+                                  type="button"
+                                  onClick={() => {
+                                    setModel(option);
+                                    setMakeModelOpen(false);
+                                    setMakeModelSearch("");
+                                  }}
+                                  className={`block w-full text-left px-2 py-1.5 rounded text-[11px] transition ${
+                                    model === option ? "bg-[#1E3A8A]/10 font-bold text-[#1E3A8A]" : "text-police hover:bg-police-muted"
+                                  }`}
+                                >
+                                  {option}
+                                </button>
+                              ))}
+                              
+                              {/* Other option */}
+                              <button
+                                type="button"
+                                onClick={() => { setIsOtherModel(true); setMakeModelOpen(false); }}
+                                className="block w-full text-left px-2 py-1.5 mt-1 rounded text-[11px] font-semibold text-[#2196F3] border-t border-police-soft pt-1 hover:bg-[#2196F3]/5"
+                              >
+                                + Ingiza Mwingine (Manual)
+                              </button>
+
+                              {filteredMakes.length === 0 && (
+                                <p className="px-2 py-2 text-[10px] text-center text-police-faint">
+                                  Hakuna matokeo. Chagua &quot;+ Ingiza Mwingine&quot;
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
 
                   {/* Color dropdown */}
@@ -230,9 +424,21 @@ export function VehicleInspectionScreen() {
                   onChange={(e) => setOwner(e.target.value)}
                   className="w-full rounded-md border border-police bg-police-input px-2 py-1 text-[12px] text-police focus:outline-none"
                 />
+                
+                {/* Location field */}
+                <label className="mb-1 mt-2 block text-[10px] text-police-faint">Eneo la Ukaguzi</label>
+                <input
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Andika eneo..."
+                  className="w-full rounded-md border border-police bg-police-input px-2 py-1 text-[12px] text-police focus:outline-none"
+                />
               </div>
             ) : (
-              <InfoRow label="Mwenye Gari" value={owner || "—"} />
+              <>
+                <InfoRow label="Mwenye Gari" value={owner || "—"} />
+                <InfoRow label="Eneo" value={location || "—"} />
+              </>
             )}
             <InfoRow label="Aina ya Gari" value={vehicleType} />
             
@@ -395,6 +601,68 @@ export function VehicleInspectionScreen() {
           </div>
         </div>
 
+        {/* Sync Status Indicator - Shows when offline or pending items */}
+        {(isOfflineMode || syncStatus.pending > 0) && (
+          <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
+            syncStatus.isSyncing 
+              ? "border-[#2196F3]/30 bg-[#2196F3]/5" 
+              : syncStatus.isOnline 
+                ? "border-[#FF9800]/30 bg-[#FF9800]/5"
+                : "border-[#EF4444]/30 bg-[#EF4444]/5"
+          }`}>
+            {syncStatus.isSyncing ? (
+              <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" />
+            ) : syncStatus.isOnline ? (
+              <CloudUpload size={18} className="text-[#FF9800] shrink-0" />
+            ) : (
+              <WifiOff size={18} className="text-[#EF4444] shrink-0" />
+            )}
+            <div className="flex-1">
+              <p className={`text-[12px] font-bold ${
+                syncStatus.isSyncing ? "text-[#2196F3]" :
+                syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"
+              }`}>
+                {syncStatus.isSyncing ? "Inasasisha data..." :
+                 syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` :
+                 "Hakuna Mtandao — Hifadhi ya Kawaida"}
+              </p>
+              <p className="text-[10px] text-police-muted">
+                {!syncStatus.isOnline ? "Data itasasishwa mara tu utakapoweka mtandao." :
+                 syncStatus.pending > 0 ? "Bofya kusasisha sasa" : "Yote imesasishwa"}
+              </p>
+            </div>
+            {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
+              <button
+                onClick={() => {
+                  import("@/lib/offline-sync").then(({ processSyncQueue }) => {
+                    processSyncQueue().then(({ success, failed }) => {
+                      toast({
+                        title: "Matokeo ya Usasishaji",
+                        description: `Mafanikio: ${success}, Mashindwa: ${failed}`,
+                      });
+                    });
+                  });
+                }}
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold active:scale-95 transition-transform"
+              >
+                Sasa Sasisha
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Officer Info Card */}
+        <div className="rounded-2xl border border-[#1E3A8A]/20 bg-[#1E3A8A]/5 p-4">
+          <p className="text-[12px] font-medium text-police-muted">Afisa Anayefanya Ukaguzi</p>
+          <p className="mt-1 text-[15px] font-bold text-[#1E3A8A]">{OFFICER.shortName}</p>
+          <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
+          {syncStatus.lastSynced && (
+            <p className="mt-1 text-[9px] text-police-faint">
+              Iliyopita iliyosasilishwa: {new Date(syncStatus.lastSynced).toLocaleString("sw-TZ")}
+            </p>
+          )}
+        </div>
+
         {/* Submit */}
         <button
           onClick={handleSubmit}
@@ -463,6 +731,15 @@ function LoadField({ label, value }: { label: string; value: string }) {
           <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
+    </div>
+  );
+}
+
+function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
+  return (
+    <div className="flex justify-between py-1 border-b border-police-soft last:border-0">
+      <span className="text-[12px] text-police-muted">{label}</span>
+      <span className={`text-[12px] ${bold ? "font-bold text-[#10B981]" : "font-medium text-police"}`}>{value}</span>
     </div>
   );
 }
