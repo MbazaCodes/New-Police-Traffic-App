@@ -67,6 +67,7 @@ export const TRAFFIC_QUICK_ACTIONS = [
   { label: "Dhamana",         icon: "shield",          color: "#8B5CF6", screen: "bail-out"               as ScreenId },
   { label: "Ripoti Ajali",    icon: "alert-triangle",  color: "#F97316", screen: "accident-report"        as ScreenId },
   { label: "Historia",        icon: "clock",           color: "#2196F3", screen: "history"                as ScreenId },
+  { label: "Mali Iliyopotea", icon: "package",         color: "#10B981", screen: "lost-property"           as ScreenId },
 ];
 
 // ── Patrol stats (zeros until loaded from Supabase) ─────────────────────
