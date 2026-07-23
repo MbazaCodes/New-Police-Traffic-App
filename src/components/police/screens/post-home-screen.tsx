@@ -1,35 +1,71 @@
 "use client";
-// Post Officer Home Screen
-// Post Officers man checkpoints/posts — they check vehicles, verify documents,
-// issue citations (traffic), conduct searches, and log checkpoint activity.
-// They share Traffic screens (citation, vehicle inspection, PF3) but have
-// their own home dashboard focused on checkpoint operations.
+// Post Officer / Station Home Screen
+// A posti (checkpoint/station post) serves ALL citizens — traffic + general duties.
+// This screen exposes the FULL combined set of services:
+//   Traffic: citation, vehicle inspection, PF3, driver points, accident report
+//   General: incident report, arrest, bail, lost property, add citizen/vehicle, warning
+//   Shared:  citizen search, vehicle search, patrol, alerts, history
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { Bell, Search, X, Car, ClipboardList, ShieldCheck, AlertTriangle,
-         FileText, Eye, CheckCircle, ChevronRight, AlertCircle } from "lucide-react";
+import {
+  Bell, Search, X, Car, FileText, AlertTriangle, Shield, ShieldCheck,
+  UserX, Package, Users, ChevronRight, AlertCircle, ClipboardList,
+  MapPin, Fingerprint, CheckCircle, ScanLine,
+} from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
 import { useOfficer } from "@/hooks/use-officer";
-import { getSuggestions, validateSerial, validateNida, validateMobile, validateName } from "@/lib/police-helpers";
+import { getSuggestions, validateName } from "@/lib/police-helpers";
+import type { ScreenId } from "@/lib/police-data";
 
-// Post-specific quick actions (checkpoint focus)
-const POST_QUICK_ACTIONS = [
-  { label: "Kagua Gari",        icon: Car,           color: "#2196F3", screen: "vehicle-inspection", desc: "Angalia hali ya gari" },
-  { label: "Toa Citation",      icon: FileText,      color: "#EF4444", screen: "citation",           desc: "Toa faini ya trafiki" },
-  { label: "PF3 / Ajali",       icon: AlertTriangle, color: "#FF9800", screen: "pf3",                desc: "Ripoti ajali barabarani" },
-  { label: "Toa Onyo",          icon: AlertCircle,   color: "#F57C00", screen: "warning-form",       desc: "Onyo la trafiki kwa dereva" },
-  { label: "Tafuta Gari/Raia",  icon: Search,        color: "#1E3A8A", screen: "search-results",     desc: "Angalia kumbukumbu" },
-  { label: "Angalia Ripoti",    icon: ClipboardList,  color: "#10B981", screen: "history",            desc: "Historia ya posti" },
+// ── All services available at a posti — grouped by category ──────────
+const SERVICE_SECTIONS = [
+  {
+    title: "🚗 Huduma za Trafiki",
+    color: "#FF9800",
+    services: [
+      { label: "Toa Citation",       icon: FileText,       color: "#EF4444", screen: "citation" as ScreenId,           desc: "Faini ya trafiki" },
+      { label: "Kagua Gari",         icon: Car,            color: "#2196F3", screen: "vehicle-inspection" as ScreenId,  desc: "Ukaguzi wa hali ya gari" },
+      { label: "PF3 / Ajali",        icon: AlertTriangle,  color: "#FF9800", screen: "pf3" as ScreenId,                desc: "Ripoti ajali barabarani" },
+      { label: "Pointi za Dereva",   icon: ShieldCheck,    color: "#8B5CF6", screen: "driver-points" as ScreenId,       desc: "Angalia/ondoa pointi" },
+      { label: "Ripoti Ajali",       icon: AlertCircle,    color: "#EF4444", screen: "accident-report" as ScreenId,     desc: "Fomu ya ajali" },
+      { label: "Toa Onyo",           icon: AlertCircle,    color: "#F57C00", screen: "warning-form" as ScreenId,        desc: "Onyo la trafiki/posti" },
+    ],
+  },
+  {
+    title: "👮 Huduma za Polisi wa Kawaida",
+    color: "#1E3A8A",
+    services: [
+      { label: "Ripoti Tukio",       icon: ClipboardList,  color: "#2196F3", screen: "incident-detail" as ScreenId,    desc: "Tukio jipya la polisi" },
+      { label: "Kamata Mtuhumiwa",   icon: UserX,          color: "#EF4444", screen: "arrest-form" as ScreenId,         desc: "Fomu ya kukamatwa" },
+      { label: "Dhamana / Bail",     icon: Shield,         color: "#8B5CF6", screen: "bail-out" as ScreenId,            desc: "Omba dhamana" },
+      { label: "Mali Iliyopotea",    icon: Package,        color: "#10B981", screen: "lost-property" as ScreenId,       desc: "Ripoti mali iliyopotea" },
+      { label: "Sajili Raia",        icon: Users,          color: "#1E3A8A", screen: "add-citizen" as ScreenId,         desc: "Ongeza raia mpya" },
+      { label: "Sajili Gari",        icon: Car,            color: "#059669", screen: "add-vehicle" as ScreenId,          desc: "Ongeza gari jipya" },
+    ],
+  },
+  {
+    title: "💰 Malipo & Utafutaji",
+    color: "#10B981",
+    services: [
+      { label: "Lipa Faini",         icon: CheckCircle,    color: "#10B981", screen: "fine-payment" as ScreenId,        desc: "Lipa faini iliyotolewa" },
+      { label: "Tafuta Raia",        icon: Fingerprint,    color: "#1E3A8A", screen: "citizen-search-results" as ScreenId, desc: "Jina, NIDA au simu" },
+      { label: "Tafuta Gari",        icon: ScanLine,       color: "#2196F3", screen: "search-results" as ScreenId,      desc: "Namba ya gari / chassis" },
+      { label: "Historia",           icon: ClipboardList,  color: "#6B7280", screen: "history" as ScreenId,             desc: "Rekodi za posti" },
+    ],
+  },
 ];
 
-// Checkpoint status options
-const CHECKPOINT_STATUS = ["Wazi", "Msongamano Mdogo", "Msongamano Mkubwa", "Imefungwa Sehemu"] as const;
-
-type SearchTab = "vehicle" | "citizen";
+// Checkpoint status with colour
+const CHECKPOINT_STATUS = [
+  { label: "Wazi",              color: "#10B981" },
+  { label: "Msongamano Mdogo",  color: "#FF9800" },
+  { label: "Msongamano Mkubwa", color: "#EF4444" },
+  { label: "Imefungwa Sehemu",  color: "#6B7280" },
+] as const;
 
 export function PostHomeScreen() {
-  const { navigate, unreadAlertCount, patrolRecords } = usePoliceStore();
+  const { navigate, unreadAlertCount, patrolRecords, runSearch, setSearchEntity, setCitizenSearchType } = usePoliceStore();
   const OFFICER = useOfficer();
 
   const unread    = unreadAlertCount();
@@ -37,59 +73,42 @@ export function PostHomeScreen() {
   const timeStr   = new Date().toLocaleTimeString("sw-TZ", { hour: "2-digit", minute: "2-digit" });
   const todayPatrols = patrolRecords.filter((p) => p.date === todayStr).length;
 
-  const [checkpointStatus, setCheckpointStatus] = useState<(typeof CHECKPOINT_STATUS)[number]>("Wazi");
-  const [vehiclesChecked,   setVehiclesChecked]  = useState(0);
-  const [citationsIssued,   setCitationsIssued]  = useState(0);
+  const [statusIdx, setStatusIdx]         = useState(0);
+  const [vehiclesChecked, setVehiclesChecked] = useState(0);
+  const [activeSection, setActiveSection] = useState<number | null>(null);
 
-  // Quick search
-  const [tab,   setTab]   = useState<SearchTab>("vehicle");
-  const [value, setValue] = useState("");
-  const [error, setError] = useState("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [showSugg, setShowSugg] = useState(false);
+  // Quick search bar
+  const [searchValue, setSearchValue] = useState("");
+  const [searchSugg, setSearchSugg]   = useState<string[]>([]);
+  const [showSugg, setShowSugg]       = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { runSearch, setSearchEntity, setCitizenSearchType, searchTab, setSearchTab } = usePoliceStore();
 
   useEffect(() => {
-    setError("");
-    if (!value.trim()) { setSuggestions([]); return; }
-    const type = tab === "vehicle" ? "serial" : "name";
-    const s = getSuggestions(value, type as Parameters<typeof getSuggestions>[1]);
-    setSuggestions(s);
-    setShowSugg(s.length > 0);
-  }, [value, tab]);
+    if (!searchValue.trim()) { setSearchSugg([]); return; }
+    setSearchSugg(getSuggestions(searchValue, "name"));
+    setShowSugg(true);
+  }, [searchValue]);
 
   const handleSearch = () => {
-    if (!value.trim()) { setError("Jaza namba au jina"); return; }
+    if (!searchValue.trim()) return;
     setShowSugg(false);
-    if (tab === "vehicle") {
-      setSearchTab("plate");
-      runSearch(value);
-      navigate("search-results");
-    } else {
-      setSearchEntity("person");
-      setCitizenSearchType("name");
-      runSearch(value);
-      navigate("citizen-search-results");
-    }
+    setSearchEntity("person");
+    setCitizenSearchType("name");
+    runSearch(searchValue);
+    navigate("citizen-search-results");
   };
 
-  const statusColor: Record<(typeof CHECKPOINT_STATUS)[number], string> = {
-    "Wazi": "#10B981",
-    "Msongamano Mdogo": "#FF9800",
-    "Msongamano Mkubwa": "#EF4444",
-    "Imefungwa Sehemu": "#6B7280",
-  };
+  const status = CHECKPOINT_STATUS[statusIdx];
 
   return (
     <div className="min-h-full bg-police">
-      {/* Header — green tones for Post/Checkpoint */}
+      {/* Header — teal/green for checkpoint */}
       <div className="bg-gradient-to-br from-[#0d4f3c] to-[#1a7a5e] px-4 pb-16 pt-2">
         <div className="flex items-center justify-between pt-2">
           <div>
-            <p className="text-[13px] text-white/80">Posti ya Ukaguzi</p>
+            <p className="text-[11px] font-semibold text-white/60 uppercase tracking-wide">Afisa wa Posti</p>
             <p className="text-[17px] font-bold text-white">{OFFICER.shortName}</p>
-            <p className="text-[11px] text-white/70">{OFFICER.station} • {OFFICER.unit || "Posti"}</p>
+            <p className="text-[11px] text-white/70">{OFFICER.station}{OFFICER.unit ? ` • ${OFFICER.unit}` : ""}</p>
           </div>
           <div className="flex items-center gap-3">
             <button onClick={() => navigate("alerts")} className="relative">
@@ -107,128 +126,144 @@ export function PostHomeScreen() {
         </div>
       </div>
 
-      {/* Hero card */}
-      <div className="-mt-10 px-4">
+      {/* Status + stats card */}
+      <div className="-mt-10 px-4 space-y-3">
         <div className="rounded-2xl bg-police-card p-4 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[12px] font-semibold text-police-muted">Hali ya Posti Sasa</p>
-              <p className="mt-1 text-[18px] font-extrabold" style={{ color: statusColor[checkpointStatus] }}>
-                {checkpointStatus}
-              </p>
-              <p className="text-[11px] text-police-faint mt-0.5">{timeStr} • {todayStr}</p>
+              <p className="text-[11px] font-semibold text-police-muted uppercase tracking-wide">Hali ya Posti</p>
+              <p className="mt-1 text-[17px] font-extrabold" style={{ color: status.color }}>{status.label}</p>
+              <p className="text-[10px] text-police-faint">{timeStr} • {todayStr}</p>
             </div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-full" style={{ backgroundColor: `${statusColor[checkpointStatus]}20` }}>
-              <ShieldCheck size={28} style={{ color: statusColor[checkpointStatus] }} />
+            <div className="flex h-13 w-13 items-center justify-center rounded-full" style={{ backgroundColor: `${status.color}20` }}>
+              <MapPin size={26} style={{ color: status.color }} />
             </div>
           </div>
-
-          {/* Status selector */}
+          {/* Status toggle */}
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {CHECKPOINT_STATUS.map((s) => (
-              <button key={s} onClick={() => setCheckpointStatus(s)}
-                className={`rounded-full px-3 py-1 text-[10px] font-bold border transition ${
-                  checkpointStatus === s ? "text-white border-transparent" : "text-police-muted border-police-soft bg-transparent"
+            {CHECKPOINT_STATUS.map((s, i) => (
+              <button key={s.label} onClick={() => setStatusIdx(i)}
+                className={`rounded-full px-2.5 py-1 text-[10px] font-bold border transition ${
+                  statusIdx === i ? "text-white border-transparent" : "text-police-muted border-police-soft"
                 }`}
-                style={checkpointStatus === s ? { backgroundColor: statusColor[s], borderColor: statusColor[s] } : {}}>
-                {s}
+                style={statusIdx === i ? { backgroundColor: s.color } : {}}>
+                {s.label}
               </button>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Live stats */}
-      <div className="mt-4 grid grid-cols-3 gap-2 px-4">
-        {[
-          { label: "Magari Yakaguliwa Leo",   value: vehiclesChecked, color: "#2196F3", onClick: () => setVehiclesChecked(c => c + 1) },
-          { label: "Citations Zilitolewa",     value: citationsIssued, color: "#EF4444", onClick: () => navigate("history") },
-          { label: "Patroli / Zamu",           value: todayPatrols,    color: "#10B981", onClick: () => navigate("patrol") },
-        ].map((s) => (
-          <button key={s.label} onClick={s.onClick}
-            className="flex flex-col items-center rounded-xl bg-police-card p-3 shadow-sm active:scale-[0.97]">
-            <span className="text-[20px] font-bold" style={{ color: s.color }}>{s.value}</span>
-            <span className="mt-1 text-center text-[9px] leading-tight text-police-muted">{s.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Quick actions */}
-      <div className="mt-4 px-4">
-        <p className="mb-2 text-[12px] font-bold uppercase tracking-wide text-police-muted">Vitendo vya Haraka</p>
-        <div className="grid grid-cols-2 gap-3">
-          {POST_QUICK_ACTIONS.map((a) => (
-            <button key={a.screen} onClick={() => navigate(a.screen as Parameters<typeof navigate>[0])}
-              className="flex flex-col items-start rounded-2xl bg-police-card p-4 text-left shadow-sm active:scale-[0.98]">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full" style={{ backgroundColor: `${a.color}15` }}>
-                <a.icon size={22} style={{ color: a.color }} />
-              </div>
-              <div className="mt-2.5 flex w-full items-center justify-between">
-                <p className="text-[13px] font-bold text-police">{a.label}</p>
-                <ChevronRight size={14} className="text-police-faint" />
-              </div>
-              <p className="mt-0.5 text-[10px] leading-tight text-police-muted">{a.desc}</p>
+        {/* Quick stats */}
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { label: "Magari Leo",   value: vehiclesChecked, color: "#2196F3", onClick: () => setVehiclesChecked(c => c + 1) },
+            { label: "Patroli/Zamu", value: todayPatrols,    color: "#10B981", onClick: () => navigate("patrol") },
+            { label: "Arifa",        value: unread,          color: "#EF4444", onClick: () => navigate("alerts") },
+          ].map((s) => (
+            <button key={s.label} onClick={s.onClick}
+              className="flex flex-col items-center rounded-xl bg-police-card p-3 shadow-sm active:scale-[0.97]">
+              <span className="text-[20px] font-bold" style={{ color: s.color }}>{s.value}</span>
+              <span className="mt-0.5 text-center text-[9px] leading-tight text-police-muted">{s.label}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Quick vehicle / citizen search */}
-      <div className="mt-4 px-4 pb-6">
-        <div className="rounded-2xl bg-police-card p-4 shadow-sm">
-          <h3 className="flex items-center gap-2 text-[15px] font-bold text-police">
-            <Search size={16} className="text-[#0d4f3c]" /> Utafutaji wa Haraka
-          </h3>
-
-          <div className="mt-3 flex gap-2">
-            {[{ id: "vehicle" as const, label: "🚗 Gari" }, { id: "citizen" as const, label: "👤 Raia" }].map((t) => (
-              <button key={t.id} onClick={() => { setTab(t.id); setValue(""); setError(""); }}
-                className={`flex-1 rounded-xl py-2 text-[12px] font-semibold transition ${
-                  tab === t.id ? "bg-[#0d4f3c] text-white" : "bg-police-soft text-police-muted"
-                }`}>
-                {t.label}
-              </button>
-            ))}
+      {/* Universal quick search */}
+      <div className="mt-4 px-4">
+        <div className="relative">
+          <div className="flex items-center gap-2 rounded-2xl border border-police bg-police-card px-4 shadow-sm focus-within:border-[#0d4f3c]">
+            <Search size={16} className="shrink-0 text-police-faint" />
+            <input
+              ref={inputRef}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              onFocus={() => searchSugg.length > 0 && setShowSugg(true)}
+              onBlur={() => setTimeout(() => setShowSugg(false), 150)}
+              placeholder="Tafuta raia kwa jina, NIDA au simu..."
+              className="h-11 flex-1 bg-transparent text-[13px] text-police placeholder:text-police-faint focus:outline-none"
+            />
+            {searchValue
+              ? <button onClick={() => setSearchValue("")}><X size={14} className="text-police-faint" /></button>
+              : <button onClick={() => navigate("search-results")} className="text-[11px] font-semibold text-[#0d4f3c]">Gari</button>
+            }
           </div>
-
-          <p className="mt-2 text-[10px] text-police-faint">
-            {tab === "vehicle" ? "Namba ya Gari: T 001 ABC au IMEI ya kifaa" : "Jina, NIDA au namba ya simu ya raia"}
-          </p>
-
-          <div className="relative mt-2">
-            <div className={`flex items-center gap-2 rounded-xl border bg-police-input px-3 transition ${error ? "border-[#EF4444]" : "border-police focus-within:border-[#0d4f3c]"}`}>
-              <Search size={16} className={error ? "text-[#EF4444]" : "text-police-faint"} />
-              <input
-                ref={inputRef}
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                onFocus={() => suggestions.length > 0 && setShowSugg(true)}
-                onBlur={() => setTimeout(() => setShowSugg(false), 150)}
-                placeholder={tab === "vehicle" ? "T 001 ABC..." : "Jina la raia..."}
-                className="h-10 flex-1 bg-transparent text-[14px] text-police placeholder:text-police-faint focus:outline-none"
-              />
-              {value && <button onClick={() => { setValue(""); setError(""); setSuggestions([]); }}><X size={14} className="text-police-faint" /></button>}
+          {showSugg && searchSugg.length > 0 && (
+            <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-police bg-police-card shadow-lg">
+              {searchSugg.map((s) => (
+                <button key={s} onMouseDown={() => { setSearchValue(s); setShowSugg(false); handleSearch(); }}
+                  className="flex w-full items-center gap-2 px-3 py-2.5 text-left hover:bg-police-muted">
+                  <Search size={12} className="shrink-0 text-police-faint" />
+                  <span className="text-[13px] text-police">{s}</span>
+                </button>
+              ))}
             </div>
-            {error && <p className="mt-1 text-[11px] text-[#EF4444]">{error}</p>}
-            {showSugg && suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-police bg-police-card shadow-lg">
-                {suggestions.map((s) => (
-                  <button key={s} onMouseDown={() => { setValue(s); setShowSugg(false); }}
-                    className="flex w-full items-center gap-2 px-3 py-2.5 text-left hover:bg-police-muted">
-                    <Search size={12} className="shrink-0 text-police-faint" />
-                    <span className="text-[13px] text-police">{s}</span>
+          )}
+        </div>
+      </div>
+
+      {/* ALL services — accordion by category */}
+      <div className="mt-4 px-4 pb-6 space-y-3">
+        <p className="text-[12px] font-bold uppercase tracking-wide text-police-muted">
+          Huduma Zote za Posti
+        </p>
+
+        {SERVICE_SECTIONS.map((section, si) => (
+          <div key={si} className="overflow-hidden rounded-2xl bg-police-card shadow-sm">
+            {/* Section header — tap to expand/collapse */}
+            <button
+              className="flex w-full items-center justify-between px-4 py-3"
+              onClick={() => setActiveSection(activeSection === si ? null : si)}
+            >
+              <span className="text-[13px] font-bold text-police">{section.title}</span>
+              <ChevronRight
+                size={16}
+                className="text-police-faint transition-transform"
+                style={{ transform: activeSection === si ? "rotate(90deg)" : "rotate(0deg)" }}
+              />
+            </button>
+
+            {/* Services grid — expanded */}
+            {activeSection === si && (
+              <div className="grid grid-cols-2 gap-2 px-3 pb-3">
+                {section.services.map((s) => (
+                  <button
+                    key={s.screen}
+                    onClick={() => navigate(s.screen)}
+                    className="flex items-center gap-3 rounded-xl border border-police-soft p-3 text-left active:scale-[0.97]"
+                  >
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                      style={{ backgroundColor: `${s.color}15` }}>
+                      <s.icon size={18} style={{ color: s.color }} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-[12px] font-semibold text-police">{s.label}</p>
+                      <p className="truncate text-[10px] text-police-faint">{s.desc}</p>
+                    </div>
                   </button>
                 ))}
               </div>
             )}
-          </div>
 
-          <button onClick={handleSearch}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0d4f3c] py-3 text-[14px] font-bold text-white active:scale-[0.98]">
-            <Search size={16} /> Tafuta
-          </button>
-        </div>
+            {/* Collapsed preview — show first 3 icons */}
+            {activeSection !== si && (
+              <div className="flex items-center gap-2 px-4 pb-3">
+                {section.services.slice(0, 4).map((s) => (
+                  <button key={s.screen} onClick={() => navigate(s.screen)}
+                    className="flex h-9 w-9 items-center justify-center rounded-full"
+                    style={{ backgroundColor: `${s.color}15` }}
+                    title={s.label}>
+                    <s.icon size={16} style={{ color: s.color }} />
+                  </button>
+                ))}
+                {section.services.length > 4 && (
+                  <span className="text-[11px] text-police-faint">+{section.services.length - 4} zaidi</span>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

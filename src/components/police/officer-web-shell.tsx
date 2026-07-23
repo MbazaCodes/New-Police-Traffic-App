@@ -67,12 +67,12 @@ const GENERAL_NAV = [
 ];
 
 const POST_NAV = [
-  { screen: "home"    as ScreenId, label: "Posti",       icon: Home },
-  { screen: "traffic" as ScreenId, label: "Vitendo",     icon: Car },
-  { screen: "patrol"  as ScreenId, label: "Patroli",     icon: Shield },
-  { screen: "alerts"  as ScreenId, label: "Arifa",       icon: Bell },
-  { screen: "history" as ScreenId, label: "Historia",    icon: Clock },
-  { screen: "profile" as ScreenId, label: "Wasifu",      icon: User },
+  { screen: "home"    as ScreenId, label: "Nyumbani",   icon: Home },
+  { screen: "traffic" as ScreenId, label: "Citation",   icon: FileText },
+  { screen: "patrol"  as ScreenId, label: "Patroli",    icon: Shield },
+  { screen: "alerts"  as ScreenId, label: "Arifa",      icon: Bell },
+  { screen: "history" as ScreenId, label: "Historia",   icon: Clock },
+  { screen: "profile" as ScreenId, label: "Wasifu",     icon: User },
 ];
 
 // ── Screen renderer ────────────────────────────────────────────────────────
@@ -112,12 +112,17 @@ function renderOfficerScreen(screen: ScreenId, isGeneral: boolean, isPost: boole
       default:                        return <GeneralHomeScreen />;
     }
   }
-  // Post officer screens — checkpoint-focused home, shares traffic action screens
+  // Post officer screens
+  // PostHomeScreen has ALL services (traffic + general) in one accordion UI.
+  // The "traffic" nav tab goes directly to CitationScreen (most common action at posts).
+  // All other shared screens (arrest-form, warning-form, vehicle-inspection, etc.)
+  // are already handled in the shared switch above.
   if (isPost) {
     switch (screen) {
-      case "home":    return <PostHomeScreen />;
-      case "traffic": return <TrafficScreen />;   // fast actions: citation, inspection
-      default:        return <PostHomeScreen />;
+      case "home":                   return <PostHomeScreen />;
+      case "traffic":                return <CitationScreen />;   // most common post action
+      case "citizen-search-results": return <CitizenSearchResults />;
+      default:                       return <PostHomeScreen />;
     }
   }
   // Traffic officer screens
