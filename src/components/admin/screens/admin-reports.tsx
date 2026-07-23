@@ -47,8 +47,9 @@ export function AdminReports() {
   const [distribution,  setDistribution]  = useState({ traffic: EMPTY_PIE, general: EMPTY_PIE, combined: EMPTY_PIE });
   const [regionStats,   setRegionStats]   = useState<any[]>([]);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true); setError(null);
+  const fetchData = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
+    setError(null);
     try {
       const res  = await fetch(`/api/reports/summary?range=${range}&type=${reportType}`);
       const json = await res.json();
@@ -69,7 +70,12 @@ export function AdminReports() {
     }
   }, [range, reportType]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    fetchData();
+    // Real-time: refresh report stats every 15 seconds
+    const iv = setInterval(() => { void fetchData(true); }, 15000);
+    return () => clearInterval(iv);
+  }, [fetchData]);
 
   const pieData = reportType === "traffic" ? distribution.traffic : reportType === "general" ? distribution.general : distribution.combined;
 

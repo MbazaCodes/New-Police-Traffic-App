@@ -17,11 +17,9 @@ import {
 } from "lucide-react";
 import { getAdminEntityPath } from "@/lib/admin-navigation";
 import { toast } from "@/hooks/use-toast";
-import {
-  useRecordsStore,
-  type AdminAssignmentRecord,
-  type AdminUnassignedOfficer,
-} from "@/store/records-store";
+import { type AdminAssignmentRecord, type AdminUnassignedOfficer } from "@/store/records-store";
+import { useApiData } from "@/hooks/use-api-data";
+import { authFetch } from "@/lib/client-auth";
 
 const STATUS_STYLES: Record<string, string> = {
   active: "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/500/30",
@@ -41,68 +39,93 @@ type AssignTarget =
 export function AdminAssignments() {
   const pathname = usePathname();
   const router = useRouter();
-  const assignments = useRecordsStore((s) => s.adminAssignments);
-  const unassigned = useRecordsStore((s) => s.adminUnassigned);
-  const stations = useRecordsStore((s) => s.adminStations);
-  const posts = useRecordsStore((s) => s.adminPosts);
-  const addAdminAssignment = useRecordsStore((s) => s.addAdminAssignment);
-  const removeAdminAssignment = useRecordsStore((s) => s.removeAdminAssignment);
+  // Live data from Supabase (was: client-side Zustand store that never
+  // touched the database — assignments were lost on every refresh)
+  const { data: rawAssignments, refetch: refetchAssignments } = useApiData<{
+    id: string; officer_id: string; station_id: string; post_id: string | null;
+    role: string | null; status: string; assigned_date: string;
+    officer?: { id: string; name: string; officer_number: string; rank: string } | null;
+    station?: { id: string; name: string; region: string } | null;
+    post?: { id: string; name: string } | null;
+  }>("/api/assignments");
+
+  const { data: officersRaw, refetch: refetchOfficers } = useApiData<{
+    id: string; name: string; rank: string; officer_number: string; station_id: string | null;
+    station?: { id: string; name: string } | null;
+  }>("/api/officers?status=active");
+
+  const { data: stations } = useApiData<{ id: string; name: string; region: string }>("/api/stations");
+  const { data: posts }    = useApiData<{ id: string; name: string; station_id: string }>("/api/posts");
+
+  const refetch = () => { refetchAssignments(); refetchOfficers(); };
+
+  // Map to the shape the JSX expects
+  const assignments: AdminAssignmentRecord[] = rawAssignments.map((a) => ({
+    id: a.id,
+    officerId: a.officer_id,
+    officerName: a.officer?.name ?? "—",
+    officerRank: a.officer?.rank ?? "—",
+    stationId: a.station_id,
+    stationName: a.station?.name ?? "—",
+    postId: a.post_id ?? "",
+    postName: a.post?.name ?? "—",
+    role: a.role ?? "—",
+    assignedDate: a.assigned_date,
+    status: (a.status as AdminAssignmentRecord["status"]) ?? "active",
+  }));
+
+  // Officers with no current active assignment = unassigned
+  const assignedOfficerIds = new Set(rawAssignments.filter((a) => a.status === "active").map((a) => a.officer_id));
+  const unassigned: AdminUnassignedOfficer[] = officersRaw
+    .filter((o) => !assignedOfficerIds.has(o.id))
+    .map((o) => ({ id: o.id, name: o.name, rank: o.rank, badgeNo: o.officer_number }));
 
   const [target, setTarget] = useState<AssignTarget | null>(null);
 
-  const totalAssignments = assignments.length;
+  const totalAssignments  = assignments.length;
   const activeAssignments = assignments.filter((a) => a.status === "active").length;
-  const onLeave = assignments.filter((a) => a.status === "on-leave").length;
-  const unassignedCount = unassigned.length;
+  const onLeave           = assignments.filter((a) => a.status === "on-leave").length;
+  const unassignedCount   = unassigned.length;
 
-  const handleConfirm = (stationId: string, postId: string, role: string) => {
+  const handleConfirm = async (stationId: string, postId: string, role: string) => {
     if (!target) return;
-    const stationName = stations.find((s) => s.id === stationId)?.name ?? stationId;
-    const postName = posts.find((p) => p.id === postId)?.name ?? postId;
+    const stationName = stations.find((s: { id: string; name: string }) => s.id === stationId)?.name ?? stationId;
+    const postName    = posts.find((p: { id: string; name: string })    => p.id === postId)?.name    ?? postId;
+    const officerId   = target.kind === "new" ? target.officer.id : target.assignment.officerId;
+    const officerName = target.kind === "new" ? target.officer.name : target.assignment.officerName;
 
-    if (target.kind === "new") {
-      addAdminAssignment({
-        officerId: target.officer.id,
-        officerName: target.officer.name,
-        officerRank: target.officer.rank,
-        stationId,
-        stationName,
-        postId,
-        postName,
-        role,
-      });
-      toast({
-        title: "Mgao Umewekwa",
-        description: `${target.officer.name} amegawiwa kwenye ${stationName} - ${postName} kama ${role}`,
-      });
-    } else {
-      // Reassign: remove old, add new for the same officer
-      const a = target.assignment;
-      removeAdminAssignment(a.id);
-      addAdminAssignment({
-        officerId: a.officerId,
-        officerName: a.officerName,
-        officerRank: a.officerRank,
-        stationId,
-        stationName,
-        postId,
-        postName,
-        role,
-      });
-      toast({
-        title: "Mgao Umebadilishwa",
-        description: `${a.officerName} amehamishiwa kwenye ${stationName} - ${postName}`,
-      });
+    const { error } = await authFetch("/api/assignments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ officerId, stationId, postId: postId || null, role }),
+    });
+    if (error) {
+      toast({ title: "Hitilafu", description: error, variant: "destructive" });
+      return;
     }
+    toast({
+      title: target.kind === "new" ? "Mgao Umewekwa" : "Mgao Umebadilishwa",
+      description: `${officerName} amegawiwa kwenye ${stationName}${postName !== "—" ? ` — ${postName}` : ""}`,
+    });
     setTarget(null);
+    refetch();
   };
 
-  const handleRemove = (a: AdminAssignmentRecord) => {
-    removeAdminAssignment(a.id);
+  const handleRemove = async (a: AdminAssignmentRecord) => {
+    const { error } = await authFetch(`/api/assignments/${a.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "cancelled" }),
+    });
+    if (error) {
+      toast({ title: "Hitilafu", description: error, variant: "destructive" });
+      return;
+    }
     toast({
       title: "Mgao Umeondolewa",
-      description: `Mgao wa ${a.officerName} wa ${a.postName} umebatilishwa`,
+      description: `Mgao wa ${a.officerName} umebatilishwa`,
     });
+    refetch();
   };
 
   return (

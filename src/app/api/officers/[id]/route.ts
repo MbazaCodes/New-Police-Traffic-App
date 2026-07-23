@@ -1,51 +1,37 @@
-// Officer detail API — get, patch, delete
-// GET    /api/officers/[id]   -> fetch single officer
-// PATCH  /api/officers/[id]   -> update officer
-// DELETE /api/officers/[id]   -> delete officer
+// Officers [id] API — Supabase-backed (was in-memory mock)
+// PATCH supports role change (e.g. traffic → general): updates BOTH the
+// officers row and the linked users row so login role stays in sync.
 
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
-import { errMsg } from "@/lib/api-error";
 import { getSupabaseAdminAny, isSupabaseEnabled } from "@/lib/supabase/client";
-
-const officersStore: {id:string;name:string;rank:string;status:string;badgeNo:string}[] = [];
+import { errMsg, uniqueViolationMsg } from "@/lib/api-error";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession();
     const check = requirePermission(session, "officers", "view");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
+    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const { id } = await params;
     if (isSupabaseEnabled()) {
       const admin = getSupabaseAdminAny();
       if (admin) {
-        const { data, error } = await admin.from("officers").select(`
-          *, user:users(id, role, email, phone, unit, station_id),
-          station:stations(id, name, region), post:posts(id, name)
-        `).eq("id", id).single();
-        if (error) throw error;
-        return NextResponse.json({ data });
+        const { data, error } = await admin.from("officers")
+          .select("*, user:users(id, name, role, status, phone, email, region, unit, badge_no), station:stations(id, name, region), post:posts(id, name)")
+          .eq("id", id).single();
+        if (error) return NextResponse.json({ error: "Afisa hapatikani" }, { status: 404 });
+        return NextResponse.json({ ok: true, data });
       }
     }
-
-    const officer = officersStore.find((o) => o.id === id);
-    if (!officer) {
-      return NextResponse.json({ error: "Officer not found" }, { status: 404 });
-    }
-    return NextResponse.json({ data: officer }, { status: 200 });
+    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to fetch officer", detail: errMsg(err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }
 
@@ -56,124 +42,99 @@ export async function PATCH(
   try {
     const session = await getServerSession();
     const check = requirePermission(session, "officers", "update");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
+    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const { id } = await params;
     const body = await request.json().catch(() => ({}));
+    const { name, rank, role, stationId, postId, status, phone, email, unit } = body;
+
     if (isSupabaseEnabled()) {
       const admin = getSupabaseAdminAny();
       if (admin) {
-        const { data: current, error: currentErr } = await admin.from("officers")
-          .select("id, user_id, station_id, post_id, user:users(role)").eq("id", id).single();
-        if (currentErr || !current) return NextResponse.json({ error: "Officer not found" }, { status: 404 });
-
-        const stationId = body.stationId === undefined ? current.station_id : body.stationId;
-        const postId = body.postId === undefined ? current.post_id : body.postId || null;
-        if (!stationId) return NextResponse.json({ error: "Kituo kinahitajika" }, { status: 400 });
-        if (postId) {
-          const { data: post, error: postErr } = await admin.from("posts").select("id")
-            .eq("id", postId).eq("station_id", stationId).maybeSingle();
-          if (postErr) throw postErr;
-          if (!post) return NextResponse.json({ error: "Posti iliyochaguliwa haipo kwenye kituo hiki" }, { status: 400 });
+        // Fetch the officer to get the linked user_id
+        const { data: officer, error: findErr } = await admin.from("officers")
+          .select("id, user_id").eq("id", id).single();
+        if (findErr || !officer) {
+          return NextResponse.json({ error: "Afisa hapatikani" }, { status: 404 });
         }
 
-        const officerPatch: Record<string, unknown> = {};
-        if (body.stationId !== undefined) officerPatch.station_id = stationId;
-        if (body.postId !== undefined) officerPatch.post_id = postId;
-        if (body.status !== undefined) officerPatch.status = body.status;
-        if (Object.keys(officerPatch).length) {
-          const { error } = await admin.from("officers").update(officerPatch).eq("id", id);
-          if (error) throw error;
+        // 1. Update officers row
+        const offPatch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+        if (name !== undefined)      offPatch.name = name;
+        if (rank !== undefined)      offPatch.rank = rank;
+        if (stationId !== undefined) offPatch.station_id = stationId || null;
+        if (postId !== undefined)    offPatch.post_id = postId || null;
+        if (status !== undefined)    offPatch.status = status;
+        if (phone !== undefined)     offPatch.phone = phone || null;
+        if (unit !== undefined)      offPatch.unit = unit || null;
+
+        const { error: offErr } = await admin.from("officers").update(offPatch).eq("id", id);
+        if (offErr) {
+          const dup = uniqueViolationMsg(offErr);
+          if (dup) return NextResponse.json({ error: dup }, { status: 409 });
+          throw offErr;
         }
 
-        const userPatch: Record<string, unknown> = {};
-        if (body.role !== undefined) userPatch.role = body.role;
-        if (body.stationId !== undefined) userPatch.station_id = stationId;
-        if (Object.keys(userPatch).length) {
-          const { error } = await admin.from("users").update(userPatch).eq("id", current.user_id);
-          if (error) throw error;
+        // 2. Mirror to users row — CRITICAL for login: role/status/station
+        //    live on users; without this sync a role change would never
+        //    affect which panel/PWA the officer lands in.
+        const usrPatch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+        if (name !== undefined)      usrPatch.name = name;
+        if (rank !== undefined)      usrPatch.rank = rank;
+        if (role !== undefined)      usrPatch.role = role;
+        if (stationId !== undefined) usrPatch.station_id = stationId || null;
+        if (status !== undefined)    usrPatch.status = status === "active" ? "active" : status;
+        if (phone !== undefined)     usrPatch.phone = phone || null;
+        if (email !== undefined)     usrPatch.email = email || null;
+        if (unit !== undefined)      usrPatch.unit = unit || null;
+
+        const { error: usrErr } = await admin.from("users").update(usrPatch).eq("id", officer.user_id);
+        if (usrErr) {
+          const dup = uniqueViolationMsg(usrErr);
+          if (dup) return NextResponse.json({ error: dup }, { status: 409 });
+          throw usrErr;
         }
 
-        // Keep assignment history accurate while ensuring one current posting.
-        if (body.stationId !== undefined || body.postId !== undefined || body.role !== undefined) {
-          const { error: endError } = await admin.from("assignments").update({ status: "inactive" })
-            .eq("officer_id", id).eq("status", "active");
-          if (endError) throw endError;
-          const currentRole = Array.isArray(current.user) ? current.user[0]?.role : current.user?.role;
-          const { error: assignmentError } = await admin.from("assignments").insert({
-            officer_id: id, station_id: stationId, post_id: postId,
-            role: body.role ?? currentRole ?? "Officer", status: "active",
-          });
-          if (assignmentError) throw assignmentError;
-        }
-
-        const { data, error } = await admin.from("officers").select(`
-          *, user:users(id, role, email, phone, unit, station_id),
-          station:stations(id, name, region), post:posts(id, name)
-        `).eq("id", id).single();
-        if (error) throw error;
         await logAction(session, "officer_updated", "officers", id, { changes: body });
-        return NextResponse.json({ ok: true, data });
+
+        const { data: fresh } = await admin.from("officers")
+          .select("*, user:users(id, name, role, status), station:stations(id, name)")
+          .eq("id", id).single();
+        return NextResponse.json({ ok: true, data: fresh });
       }
     }
-
-    const idx = officersStore.findIndex((o) => o.id === id);
-    if (idx === -1) return NextResponse.json({ error: "Officer not found" }, { status: 404 });
-    const updated = { ...officersStore[idx], ...body, id: officersStore[idx].id };
-    officersStore[idx] = updated;
-
-    logAction(
-      session!.user.id,
-      "update",
-      "officers",
-      id,
-      { changes: body },
-      session!.user.name,
-    );
-
-    return NextResponse.json({ data: updated }, { status: 200 });
+    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to update officer", detail: errMsg(err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession();
     const check = requirePermission(session, "officers", "delete");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
+    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
     const { id } = await params;
-    const idx = officersStore.findIndex((o) => o.id === id);
-    if (idx === -1) {
-      return NextResponse.json({ error: "Officer not found" }, { status: 404 });
+    if (isSupabaseEnabled()) {
+      const admin = getSupabaseAdminAny();
+      if (admin) {
+        const { data: officer } = await admin.from("officers")
+          .select("id, user_id").eq("id", id).single();
+        if (!officer) return NextResponse.json({ error: "Afisa hapatikani" }, { status: 404 });
+
+        // Delete users row; officers row cascades (ON DELETE CASCADE)
+        const { error } = await admin.from("users").delete().eq("id", officer.user_id);
+        if (error) throw error;
+        await logAction(session, "officer_deleted", "officers", id, {});
+        return NextResponse.json({ ok: true });
+      }
     }
-    const [removed] = officersStore.splice(idx, 1);
-
-    logAction(
-      session!.user.id,
-      "delete",
-      "officers",
-      id,
-      { officer: removed },
-      session!.user.name,
-    );
-
-    return NextResponse.json({ data: { id, deleted: true } }, { status: 200 });
+    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
   } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to delete officer", detail: errMsg(err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
 }

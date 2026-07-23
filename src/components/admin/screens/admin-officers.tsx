@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, X, Shield, AlertTriangle, ChevronRight, Plus, Save, Loader2 } from "lucide-react";
+import { Search, X, Shield, AlertTriangle, ChevronRight, Plus, Save, Loader2 , Pencil } from "lucide-react";
 import { useApiData } from "@/hooks/use-api-data";
 import { authFetch } from "@/lib/client-auth";
 import { toast } from "@/hooks/use-toast";
@@ -52,13 +52,6 @@ type Officer = {
   user?: { email: string | null; phone: string | null; photo_url: string | null; unit: string | null; badge_no: string | null; role?: string | null } | null;
 };
 
-const EDITABLE_ROLES = [
-  ["officer-traffic", "Traffic Officer"], ["officer-general", "General Officer"], ["post-officer", "Post Officer"],
-  ["cid-officer", "CID Officer"], ["investigator", "Investigator"], ["station-commissioner", "OCS — Kamanda wa Kituo"],
-  ["district-commissioner", "OCD — Kamanda wa Wilaya"], ["regional-commissioner", "RPC — Kamanda wa Mkoa"],
-  ["national-commissioner", "Kamanda wa Kitaifa"],
-] as const;
-
 type StationOption = { id: string; name: string; region?: string | null; district?: string | null };
 
 const STATUS_STYLES: Record<string, string> = {
@@ -76,6 +69,7 @@ export function AdminOfficers() {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Officer | null>(null);
+  const [editing, setEditing] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -86,16 +80,6 @@ export function AdminOfficers() {
   );
 
   const activeCount = officers.filter((o) => o.status === "active").length;
-
-  async function updateRole(officer: Officer, role: string) {
-    setSaving(true);
-    const { error } = await authFetch(`/api/officers/${officer.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ role }) });
-    setSaving(false);
-    if (error) { toast({ title: "Imeshindikana kubadili role", description: error, variant: "destructive" }); return; }
-    setSelected({ ...officer, user: officer.user ? { ...officer.user, role } : officer.user });
-    toast({ title: "Role imebadilishwa" });
-    refetch();
-  }
 
   return (
     <div className="space-y-4">
@@ -226,9 +210,9 @@ export function AdminOfficers() {
 
       {/* Officer detail panel */}
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center" onClick={() => setSelected(null)}>
-          <div className="relative w-full max-w-md rounded-2xl bg-police-card p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setSelected(null)} className="absolute right-4 top-4 text-police-muted hover:text-police">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center" onClick={() => { setSelected(null); setEditing(false); }}>
+          <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-2xl bg-police-card p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => { setSelected(null); setEditing(false); }} className="absolute right-4 top-4 text-police-muted hover:text-police">
               <X size={18} />
             </button>
             <div className="flex items-center gap-3 mb-4">
@@ -240,22 +224,34 @@ export function AdminOfficers() {
                 <p className="text-[12px] text-police-muted">{selected.rank} • {selected.officer_number}</p>
               </div>
             </div>
-            <div className="space-y-2 text-[13px]">
-              <div className="flex justify-between"><span className="text-police-muted">Kituo</span><span className="text-police font-medium">{selected.station?.name ?? "—"}</span></div>
-              <div className="flex justify-between"><span className="text-police-muted">Kitengo</span><span className="text-police font-medium">{selected.user?.unit ?? "—"}</span></div>
-              <div className="flex items-center justify-between gap-3"><span className="text-police-muted">Role ya mfumo</span>
-                <select value={selected.user?.role ?? "officer-general"} disabled={saving} onChange={(e) => updateRole(selected, e.target.value)} className="max-w-[210px] rounded-lg border border-police-soft bg-police px-2 py-1 text-[12px] text-police focus:border-[#2196F3] focus:outline-none">
-                  {EDITABLE_ROLES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                </select>
-              </div>
-              <div className="flex justify-between"><span className="text-police-muted">Simu</span><span className="text-police font-medium">{selected.user?.phone ?? "—"}</span></div>
-              <div className="flex justify-between"><span className="text-police-muted">Barua Pepe</span><span className="text-police font-medium">{selected.user?.email ?? "—"}</span></div>
-              <div className="flex justify-between"><span className="text-police-muted">Hadhi</span>
-                <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${STATUS_STYLES[selected.status] ?? ""}`}>
-                  {STATUS_LABEL[selected.status] ?? selected.status}
-                </span>
-              </div>
-            </div>
+            {!editing ? (
+              <>
+                <div className="space-y-2 text-[13px]">
+                  <div className="flex justify-between"><span className="text-police-muted">Kituo</span><span className="text-police font-medium">{selected.station?.name ?? "—"}</span></div>
+                  <div className="flex justify-between"><span className="text-police-muted">Nafasi ya Mfumo</span><span className="text-police font-medium font-mono text-[11px]">{selected.user?.role ?? "—"}</span></div>
+                  <div className="flex justify-between"><span className="text-police-muted">Kitengo</span><span className="text-police font-medium">{selected.user?.unit ?? "—"}</span></div>
+                  <div className="flex justify-between"><span className="text-police-muted">Simu</span><span className="text-police font-medium">{selected.user?.phone ?? "—"}</span></div>
+                  <div className="flex justify-between"><span className="text-police-muted">Barua Pepe</span><span className="text-police font-medium">{selected.user?.email ?? "—"}</span></div>
+                  <div className="flex justify-between"><span className="text-police-muted">Hadhi</span>
+                    <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${STATUS_STYLES[selected.status] ?? ""}`}>
+                      {STATUS_LABEL[selected.status] ?? selected.status}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setEditing(true)}
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-2.5 text-[13px] font-bold text-white hover:bg-[#1E88E5]"
+                >
+                  <Pencil size={14} /> Hariri / Badilisha Nafasi
+                </button>
+              </>
+            ) : (
+              <EditOfficerForm
+                officer={selected}
+                onClose={() => setEditing(false)}
+                onSaved={() => { setEditing(false); setSelected(null); refetch(); }}
+              />
+            )}
           </div>
         </div>
       )}
@@ -514,6 +510,156 @@ function AddOfficerModal({ onClose, onSaved }: { onClose: () => void; onSaved: (
             {saving ? <><Loader2 size={14} className="animate-spin" /> Inahifadhi...</> : <><Save size={14} /> Hifadhi</>}
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+// ── Edit Officer Form (inside detail modal) ─────────────────────────
+// Lets the admin change role (e.g. traffic → general), rank, station,
+// status, and contact info. PATCH /api/officers/[id] syncs BOTH the
+// officers row and the linked users row so the change takes effect at
+// the officer's next login.
+
+function EditOfficerForm({
+  officer, onClose, onSaved,
+}: {
+  officer: Officer; onClose: () => void; onSaved: () => void;
+}) {
+  const currentRole = officer.user?.role ?? "officer-general";
+  const initialCat =
+    OFFICER_CATEGORIES.find((c) => c.roles.some((r) => r.value === currentRole))?.value ?? "kawaida";
+
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [stations, setStations] = useState<StationOption[]>([]);
+
+  const [name, setName] = useState(officer.name);
+  const [rank, setRank] = useState(officer.rank ?? "Constable");
+  const [category, setCategory] = useState(initialCat);
+  const [role, setRole] = useState(currentRole);
+  const [stationId, setStationId] = useState(officer.station?.id ?? "");
+  const [status, setStatus] = useState(officer.status ?? "active");
+  const [phone, setPhone] = useState(officer.user?.phone ?? "");
+  const [email, setEmail] = useState(officer.user?.email ?? "");
+
+  useEffect(() => {
+    fetch("/api/stations")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.data) setStations(json.data.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })));
+      })
+      .catch(() => {});
+  }, []);
+
+  const selectCls = "w-full rounded-xl border border-police-soft bg-police px-3 py-2.5 text-[13px] text-police focus:outline-none focus:border-[#2196F3]";
+
+  async function handleSave() {
+    setFormError(null);
+    if (!name.trim()) { setFormError("Jina linahitajika"); return; }
+    setSaving(true);
+    const { error } = await authFetch(`/api/officers/${officer.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name.trim(),
+        rank,
+        role,
+        stationId: stationId || null,
+        status,
+        phone: phone.trim() || null,
+        email: email.trim() || null,
+      }),
+    });
+    setSaving(false);
+    if (error) { setFormError(error); return; }
+    toast({ title: "Imesasishwa", description: `Taarifa za ${name.trim()} zimehifadhiwa. Nafasi mpya itatumika akiingia tena.` });
+    onSaved();
+  }
+
+  return (
+    <div className="space-y-3">
+      {formError && (
+        <div className="rounded-xl bg-[#EF4444]/10 px-3 py-2 text-[12px] font-medium text-[#EF4444]">{formError}</div>
+      )}
+
+      <div>
+        <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Jina</label>
+        <input value={name} onChange={(e) => setName(e.target.value)} className={selectCls} />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Nafasi / Cheo</label>
+        <select value={rank} onChange={(e) => setRank(e.target.value)} className={selectCls}>
+          {TZ_POLICE_RANKS.map((r) => <option key={r} value={r}>{r}</option>)}
+        </select>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kundi / Category</label>
+        <select
+          value={category}
+          onChange={(e) => {
+            const cat = e.target.value;
+            setCategory(cat);
+            const roles = OFFICER_CATEGORIES.find((x) => x.value === cat)?.roles ?? [];
+            setRole(roles[0]?.value ?? "officer-general");
+          }}
+          className={selectCls}
+        >
+          {OFFICER_CATEGORIES.map((cat) => (
+            <option key={cat.value} value={cat.value}>{cat.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Aina ya Nafasi (System Role)</label>
+        <select value={role} onChange={(e) => setRole(e.target.value)} className={selectCls}>
+          {(OFFICER_CATEGORIES.find((x) => x.value === category)?.roles ?? []).map((r) => (
+            <option key={r.value} value={r.value}>{r.label}</option>
+          ))}
+        </select>
+        <p className="mt-1 text-[10px] text-police-faint">Badiliko la nafasi litaanza kutumika afisa akiingia tena kwenye mfumo</p>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Kituo</label>
+        <select value={stationId} onChange={(e) => setStationId(e.target.value)} className={selectCls}>
+          <option value="">— Hakuna Kituo —</option>
+          {stations.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+        </select>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Hadhi</label>
+        <select value={status} onChange={(e) => setStatus(e.target.value)} className={selectCls}>
+          <option value="active">Kazini</option>
+          <option value="on-leave">Mapumziko</option>
+          <option value="off-duty">Ametoka</option>
+          <option value="suspended">Amesimamishwa</option>
+        </select>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Simu</label>
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} className={selectCls} />
+        </div>
+        <div>
+          <label className="mb-1 block text-[11px] font-bold text-police-muted uppercase tracking-wide">Barua Pepe</label>
+          <input value={email} onChange={(e) => setEmail(e.target.value)} className={selectCls} />
+        </div>
+      </div>
+
+      <div className="flex gap-2 pt-1">
+        <button onClick={onClose} disabled={saving}
+          className="flex-1 rounded-xl bg-police-muted py-2.5 text-[13px] font-bold text-police hover:bg-police-soft disabled:opacity-50">
+          Ghairi
+        </button>
+        <button onClick={handleSave} disabled={saving}
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-2.5 text-[13px] font-bold text-white hover:bg-[#1E88E5] disabled:opacity-50">
+          {saving ? <><Loader2 size={14} className="animate-spin" /> Inahifadhi...</> : <><Save size={14} /> Hifadhi</>}
+        </button>
       </div>
     </div>
   );

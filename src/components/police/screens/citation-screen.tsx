@@ -145,6 +145,7 @@ export function CitationScreen() {
     amount: getFineAmount(),
     officerId: OFFICER.id,
     officerName: OFFICER.name,
+    officer: OFFICER.name,
     station: OFFICER.station,
     notes: notes || undefined,
     status: "unpaid",

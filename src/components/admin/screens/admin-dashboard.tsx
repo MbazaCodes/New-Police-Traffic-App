@@ -16,7 +16,14 @@ export function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
+    // Real-time: refresh stats every 15 seconds
+    const iv = setInterval(() => { void load(); }, 15000);
+    void load();
+    return () => clearInterval(iv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function load() {
       const sb = getSupabaseClient();
       if (!sb) { setLoading(false); return; }
 
@@ -44,10 +51,7 @@ export function AdminDashboard() {
       } catch { /* ignore — stay at zeros */ }
       setLoading(false);
     }
-    load();
-    const refreshTimer = window.setInterval(load, 15_000);
-    return () => window.clearInterval(refreshTimer);
-  }, []);
+  
 
   const kpis = [
     { label:"Maofisa",       value: stats.officers,    icon: Users,         color:"#2196F3" },
@@ -64,7 +68,7 @@ export function AdminDashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-[24px] font-black text-police">Dashboard</h1>
-        <p className="text-[12px] text-police-muted mt-0.5">Muhtasari wa mfumo — husasishwa kila sekunde 15</p>
+        <p className="text-[12px] text-police-muted mt-0.5">Muhtasari wa mfumo — data ya moja kwa moja kutoka Supabase</p>
       </div>
 
       {loading ? (

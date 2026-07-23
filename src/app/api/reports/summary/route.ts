@@ -33,10 +33,14 @@ export async function GET() {
     if (isSupabaseEnabled()) {
       const admin = getSupabaseAdminAny();
       if (admin) {
-        // Count active operational officers only; admin and command accounts are
-        // active users but must not appear under "Maofisa Kazini".
-        const { count: officerCount } = await admin.from("users").select("*", { count: "exact", head: true })
-          .eq("status", "active").in("role", ["officer-traffic", "officer-general", "post-officer"]);
+        // Get officers count — ONLY officer roles. Previously counted ALL
+        // active users (admins, commanders, clerks included), which showed
+        // e.g. 4 "Maofisa Kazini" when only 2 real officers existed.
+        const OFFICER_ROLES = ["officer-traffic", "officer-general", "post-officer", "cid-officer", "investigator"];
+        const { count: officerCount } = await admin.from("users")
+          .select("*", { count: "exact", head: true })
+          .eq("status", "active")
+          .in("role", OFFICER_ROLES);
         totalOfficers = officerCount ?? 0;
 
         // Get incidents stats

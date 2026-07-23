@@ -22,7 +22,8 @@ interface FetchState<T> {
 export function useApiData<T = Record<string, unknown>>(
   endpoint: string,
   params?: Record<string, string>,
-  deps: unknown[] = []
+  deps: unknown[] = [],
+  options?: { refreshMs?: number }
 ): FetchState<T> {
   const [data, setData]       = useState<T[]>([]);
   const [total, setTotal]     = useState(0);
@@ -32,9 +33,19 @@ export function useApiData<T = Record<string, unknown>>(
 
   const refetch = useCallback(() => setTick((t) => t + 1), []);
 
+  // Real-time polling: silently refetch on an interval (no loading flash)
+  useEffect(() => {
+    if (!options?.refreshMs) return;
+    const iv = setInterval(() => setTick((t) => t + 1), options.refreshMs);
+    return () => clearInterval(iv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options?.refreshMs]);
+
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
+    // Silent refresh: only show the loading state before the first data
+    // arrives, so 15s polling doesn't make dashboards flicker
+    if (data.length === 0) setLoading(true);
     setError(null);
 
     const url = new URL(endpoint, window.location.origin);
