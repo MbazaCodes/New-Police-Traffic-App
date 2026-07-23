@@ -19,6 +19,7 @@ import type { ScreenId } from "@/lib/police-data";
 // ── Lazy-load all officer screens ─────────────────────────────────────────
 const HomeScreen             = dynamic(() => import("./screens/home-screen").then(m=>({default:m.HomeScreen})),                       {ssr:false});
 const GeneralHomeScreen      = dynamic(() => import("./screens/general-home-screen").then(m=>({default:m.GeneralHomeScreen})),         {ssr:false});
+const PostHomeScreen         = dynamic(() => import("./screens/post-home-screen").then(m=>({default:m.PostHomeScreen})),           {ssr:false});
 const GeneralPoliceScreen    = dynamic(() => import("./screens/general-police-screen").then(m=>({default:m.GeneralPoliceScreen})),     {ssr:false});
 const SearchResultsScreen    = dynamic(() => import("./screens/search-results-screen").then(m=>({default:m.SearchResultsScreen})),     {ssr:false});
 const CitizenSearchResults   = dynamic(() => import("./screens/citizen-search-results-screen").then(m=>({default:m.CitizenSearchResultsScreen})), {ssr:false});
@@ -65,8 +66,17 @@ const GENERAL_NAV = [
   { screen: "profile" as ScreenId, label: "Wasifu",      icon: User },
 ];
 
+const POST_NAV = [
+  { screen: "home"    as ScreenId, label: "Posti",       icon: Home },
+  { screen: "traffic" as ScreenId, label: "Vitendo",     icon: Car },
+  { screen: "patrol"  as ScreenId, label: "Patroli",     icon: Shield },
+  { screen: "alerts"  as ScreenId, label: "Arifa",       icon: Bell },
+  { screen: "history" as ScreenId, label: "Historia",    icon: Clock },
+  { screen: "profile" as ScreenId, label: "Wasifu",      icon: User },
+];
+
 // ── Screen renderer ────────────────────────────────────────────────────────
-function renderOfficerScreen(screen: ScreenId, isGeneral: boolean) {
+function renderOfficerScreen(screen: ScreenId, isGeneral: boolean, isPost: boolean) {
   // Shared screens
   switch (screen) {
     case "arrest-form":        return <ArrestFormScreen />;
@@ -102,7 +112,15 @@ function renderOfficerScreen(screen: ScreenId, isGeneral: boolean) {
       default:                        return <GeneralHomeScreen />;
     }
   }
-  // Traffic / Post officer screens
+  // Post officer screens — checkpoint-focused home, shares traffic action screens
+  if (isPost) {
+    switch (screen) {
+      case "home":    return <PostHomeScreen />;
+      case "traffic": return <TrafficScreen />;   // fast actions: citation, inspection
+      default:        return <PostHomeScreen />;
+    }
+  }
+  // Traffic officer screens
   switch (screen) {
     case "home":    return <HomeScreen />;
     case "traffic": return <TrafficScreen />;
@@ -118,9 +136,10 @@ export function OfficerWebShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isGeneral = authRole === "GENERAL_OFFICER";
-  const navItems  = isGeneral ? GENERAL_NAV : TRAFFIC_NAV;
-  const roleLabel = authRole === "GENERAL_OFFICER" ? "Afisa Polisi wa Jumla"
-    : authRole === "POST_OFFICER" ? "Afisa wa Posti"
+  const isPost    = authRole === "POST_OFFICER";
+  const navItems  = isGeneral ? GENERAL_NAV : isPost ? POST_NAV : TRAFFIC_NAV;
+  const roleLabel = isGeneral ? "Afisa Polisi wa Jumla"
+    : isPost    ? "Afisa wa Posti / Checkpoint"
     : "Afisa wa Trafiki";
 
   return (
@@ -257,7 +276,7 @@ export function OfficerWebShell() {
 
         {/* Screen content — renders the actual PWA screens */}
         <main key={currentScreen} className="flex-1 overflow-y-auto">
-          {renderOfficerScreen(currentScreen, isGeneral)}
+          {renderOfficerScreen(currentScreen, isGeneral, isPost)}
         </main>
       </div>
     </div>

@@ -68,11 +68,14 @@ export function WarningFormScreen() {
   const OFFICER = useOfficer();
   const { goBack, warningPrefill, setWarningPrefill, authRole } = usePoliceStore();
 
-  // Role detection — General vs Traffic
-  const isGeneral = authRole === "GENERAL_OFFICER" || OFFICER.role === "officer-general";
-  const accentColor = isGeneral ? "#1E3A8A" : "#FF9800";
-  const accentLight = isGeneral ? "#1E3A8A" : "#F57C00";
-  const offenses = isGeneral ? GENERAL_OFFENSES : TRAFFIC_OFFENSES;
+  // Role detection
+  const isPost    = authRole === "POST_OFFICER"    || OFFICER.role === "post-officer";
+  const isGeneral = (authRole === "GENERAL_OFFICER" || OFFICER.role === "officer-general") && !isPost;
+  // Post Officers work checkpoints: they use traffic-style warnings (vehicle fields shown)
+  // but with a green accent colour to distinguish from Traffic Officers
+  const accentColor = isGeneral ? "#1E3A8A" : isPost ? "#0d4f3c" : "#FF9800";
+  const accentLight = isGeneral ? "#1E3A8A" : isPost ? "#1a7a5e" : "#F57C00";
+  const offenses    = isGeneral ? GENERAL_OFFENSES : TRAFFIC_OFFENSES; // Post uses traffic offenses
 
   const [submitted, setSubmitted] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
@@ -190,11 +193,12 @@ export function WarningFormScreen() {
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
             {isGeneral
               ? <Shield size={20} className="text-white" />
-              : <AlertTriangle size={20} className="text-white" />}
+              : <AlertTriangle size={20} className="text-white" />
+            }
           </div>
           <div>
             <h1 className="text-[18px] font-bold text-white">
-              {isGeneral ? "Onyo la Polisi" : "Onyo la Trafiki"}
+              {isGeneral ? "Onyo la Polisi" : isPost ? "Onyo la Posti / Checkpoint" : "Onyo la Trafiki"}
             </h1>
             <p className="text-[11px] text-white/70">{warnId} • {dateStr} {timeStr}</p>
           </div>
@@ -299,7 +303,7 @@ export function WarningFormScreen() {
           <p className="mt-1 text-[15px] font-bold" style={{ color: accentColor }}>{OFFICER.shortName}</p>
           <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
           <p className="text-[10px] text-police-faint mt-0.5">
-            {isGeneral ? "Polisi wa Kawaida" : "Askari wa Trafiki"}
+            {isGeneral ? "Polisi wa Kawaida" : isPost ? "Afisa wa Posti" : "Askari wa Trafiki"}
           </p>
         </div>
 
