@@ -5,13 +5,27 @@ import { useState } from "react";
 import { Search, ChevronRight, FileText, Filter, AlertTriangle, Shield, X } from "lucide-react";
 import { TopAppBar } from "../top-app-bar";
 import { usePoliceStore } from "@/store/police-store";
+import { useOfficer } from "@/hooks/use-officer";
 import { toast } from "@/hooks/use-toast";
 
 type HistoryTab = "citations" | "arrests" | "warnings" | "patrols";
 
 export function HistoryScreen() {
-  const { navigate, setSelectedCitation, patrolRecords } = usePoliceStore();
-  const [tab, setTab] = useState<HistoryTab>("citations");
+  const { navigate, setSelectedCitation, patrolRecords, authRole } = usePoliceStore();
+  const OFFICER = useOfficer();
+
+  const isGeneral = authRole === "GENERAL_OFFICER" || OFFICER.role === "officer-general";
+  const isPost    = authRole === "POST_OFFICER"    || OFFICER.role === "post-officer";
+  const isTraffic = !isGeneral && !isPost;
+
+  // Role label shown in subtitle
+  const roleLabel = isGeneral ? "Afisa Polisi wa Jumla"
+    : isPost    ? "Afisa wa Posti"
+    : "Afisa wa Trafiki";
+
+  // Default tab: General/Post don't have citations as primary history
+  const defaultTab: HistoryTab = isTraffic ? "citations" : "arrests";
+  const [tab, setTab] = useState<HistoryTab>(defaultTab);
   const [filter, setFilter] = useState<"all" | "paid" | "unpaid">("all");
   const [query, setQuery] = useState("");
 
@@ -41,16 +55,26 @@ export function HistoryScreen() {
   const totalFines = 0;
   const unpaidFines = 0;
 
-  const TABS = [
-    { id: "citations" as HistoryTab, label: "Citations", count: 0, icon: <FileText size={13} /> },
-    { id: "arrests" as HistoryTab, label: "Makamato", count: 0, icon: <AlertTriangle size={13} /> },
-    { id: "warnings" as HistoryTab, label: "Maonyo", count: 0, icon: <AlertTriangle size={13} /> },
-    { id: "patrols" as HistoryTab, label: "Patroli", count: patrolRecords.length, icon: <Shield size={13} /> },
+  const ALL_TABS = [
+    { id: "citations" as HistoryTab, label: "Citations",  count: 0,                  icon: <FileText size={13} />,       roles: ["traffic", "post"] },
+    { id: "arrests"  as HistoryTab, label: "Makamato",   count: 0,                  icon: <AlertTriangle size={13} />,  roles: ["traffic", "general", "post"] },
+    { id: "warnings" as HistoryTab, label: "Maonyo",     count: 0,                  icon: <AlertTriangle size={13} />,  roles: ["traffic", "general", "post"] },
+    { id: "patrols"  as HistoryTab, label: "Patroli",    count: patrolRecords.length, icon: <Shield size={13} />,       roles: ["traffic", "general", "post"] },
   ];
+  const roleKey = isGeneral ? "general" : isPost ? "post" : "traffic";
+  const TABS = ALL_TABS.filter((t) => t.roles.includes(roleKey));
 
   return (
     <div className="min-h-full bg-police">
-      <TopAppBar title="Historia ya Rekodi" subtitle="Citations, makamato, maonyo na patroli" showBack />
+      <TopAppBar
+        title="Historia ya Rekodi"
+        subtitle={isTraffic
+          ? "Citations, makamato, maonyo na patroli"
+          : isPost
+            ? "Citations za posti, makamato, maonyo na patroli"
+            : "Makamato, matukio, maonyo na patroli"}
+        showBack
+      />
 
       <div className="space-y-3 p-4 pb-8">
         {/* Summary cards */}
