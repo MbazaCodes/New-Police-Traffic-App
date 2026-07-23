@@ -210,6 +210,7 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
           photo:     data.user.photo     ?? "",
           region:    data.user.region    ?? "",
           status:    "active",
+          role:      data.user.role      ?? "",  // e.g. "officer-general", "officer-traffic"
         });
       }
 

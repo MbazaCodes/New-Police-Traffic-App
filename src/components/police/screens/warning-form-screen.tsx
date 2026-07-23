@@ -2,41 +2,97 @@
 "use client";
 
 import { useOfficer } from "@/hooks/use-officer";
-
 import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Camera, X, CheckCircle, AlertTriangle, WifiOff, CloudUpload, RefreshCw } from "lucide-react";
+import { ArrowLeft, Camera, X, CheckCircle, AlertTriangle, Shield, WifiOff, CloudUpload, RefreshCw } from "lucide-react";
 import { usePoliceStore } from "@/store/police-store";
-import {} from "@/lib/police-data";
 import { toast } from "@/hooks/use-toast";
 import { saveWithOfflineSupport, initAutoSync, subscribeToSyncStatus, type SyncStatus } from "@/lib/offline-sync";
 
-const WARNING_OFFENSES = [
-  "Kasi kidogo zaidi ya kiwango", "Tabia mbaya barabarani", "Kuvuka mstari mdogo",
-  "Kutumia simu — onyo la kwanza", "Tabia mbaya kwa afisa", "Kuendesha gari vibaya",
-  "Kutopiga mwangaza usiku", "Kelele za gari kupita kiasi",
+// ── Traffic-specific offenses (vehicle / road) ──────────────────────
+const TRAFFIC_OFFENSES = [
+  "Kasi zaidi ya kiwango (overspeed)",
+  "Kuvuka mstari mwekundu (red light)",
+  "Kuvuka mstari mweupe (lane violation)",
+  "Kutumia simu wakati wa kuendesha",
+  "Kutopiga mwangaza usiku",
+  "Kelele za gari kupita kiasi",
+  "Mwanga wa mbele mbaya / hazijakaa sawa",
+  "Gari lisilo na bima au leseni sahihi",
+  "Kuendesha gari vibaya (reckless driving)",
+  "Kukaa upande mwingine wa barabara bila sababu",
+  "Kupita stopwatch bila kusimama",
+  "Kubeba abiria zaidi ya idadi halisi",
 ];
+
+// ── General police offenses (conduct / community / criminal) ────────
+const GENERAL_OFFENSES = [
+  "Tabia ya kutisha / kupiga watu (assault)",
+  "Kuvuruga amani ya mtaa / ghasia",
+  "Matukio ya pombe kupita kiasi mahali pa umma",
+  "Uharibifu wa mali (criminal damage)",
+  "Tusi / matusi kwa mkubwa / ofisa",
+  "Kukaidi amri ya polisi",
+  "Kushikwa na mali ya watu wengine bila idhini",
+  "Utumiaji wa madawa ya kulevya mahali pa umma",
+  "Matatizo ya nyumbani (domestic disturbance)",
+  "Kuingia mali ya mtu bila ruhusa (trespass)",
+  "Kupiga kelele usiku kupita kiasi",
+  "Ushahidi wa vitisho vya silaha",
+];
+
+function FInput({ label, value, onChange, placeholder, required, type = "text" }: {
+  label: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string; required?: boolean; type?: string;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-[12px] font-medium text-police-muted">
+        {label}{required && <span className="text-[#EF4444]"> *</span>}
+      </label>
+      <input type={type} value={value} onChange={onChange} placeholder={placeholder}
+        className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:outline-none focus:border-[#FF9800]" />
+    </div>
+  );
+}
+
+function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
+  return (
+    <div className="flex items-center justify-between text-[13px]">
+      <span className="text-police-muted">{label}</span>
+      <span className={bold ? "font-bold text-police" : "text-police"}>{value}</span>
+    </div>
+  );
+}
 
 export function WarningFormScreen() {
   const OFFICER = useOfficer();
-  const { goBack, warningPrefill, setWarningPrefill } = usePoliceStore();
+  const { goBack, warningPrefill, setWarningPrefill, authRole } = usePoliceStore();
+
+  // Role detection — General vs Traffic
+  const isGeneral = authRole === "GENERAL_OFFICER" || OFFICER.role === "officer-general";
+  const accentColor = isGeneral ? "#1E3A8A" : "#FF9800";
+  const accentLight = isGeneral ? "#1E3A8A" : "#F57C00";
+  const offenses = isGeneral ? GENERAL_OFFENSES : TRAFFIC_OFFENSES;
+
   const [submitted, setSubmitted] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
-    recipientName: warningPrefill?.recipientName ?? "", plate: warningPrefill?.plate ?? "", licenseNo: warningPrefill?.licenseNo ?? "", offense: "",
-    warningType: "traffic", location: "", notes: "", acknowledged: false,
+    recipientName: warningPrefill?.recipientName ?? "",
+    plate:         warningPrefill?.plate ?? "",
+    licenseNo:     warningPrefill?.licenseNo ?? "",
+    offense:       "",
+    warningType:   isGeneral ? "conduct" : "traffic",
+    location:      "",
+    notes:         "",
+    acknowledged:  false,
   });
 
-  // Offline sync state
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({
-    pending: 0,
-    lastSynced: null,
-    isOnline: true,
-    isSyncing: false,
+    pending: 0, lastSynced: null, isOnline: true, isSyncing: false,
   });
   const [isOfflineMode, setIsOfflineMode] = useState(false);
 
-  // Initialize auto-sync on mount
   useEffect(() => {
     initAutoSync();
     const unsubscribe = subscribeToSyncStatus((status) => {
@@ -56,22 +112,24 @@ export function WarningFormScreen() {
 
   const handleSubmit = async () => {
     if (!form.recipientName || !form.offense) {
-      toast({ title: "Kosa", description: "Jaza jina na kosa.", variant: "destructive" }); return;
+      toast({ title: "Kosa", description: "Jaza jina na kosa.", variant: "destructive" });
+      return;
     }
     try {
       const payload = {
         citizenName:  form.recipientName,
-        citizenNida:  form.nida || undefined,
-        citizenPhone: form.phone || undefined,
         offense:      form.offense,
+        warningType:  form.warningType,
         location:     form.location || undefined,
         notes:        form.notes || undefined,
+        ...(isGeneral ? {} : {
+          plate:     form.plate || undefined,
+          licenseNo: form.licenseNo || undefined,
+        }),
       };
-      
       const result = await saveWithOfflineSupport("/api/warnings", payload, "POST");
-      
       if (result.fromCache) {
-        toast({ title: "Onyo Imehifadhiwa (Offline) ⚠️", description: `Onyo kwa ${form.recipientName} imehifadhiwa kawaida.` });
+        toast({ title: "Onyo Imehifadhiwa (Offline) ⚠️", description: `Onyo kwa ${form.recipientName} imehifadhiwa.` });
       } else {
         toast({ title: "Onyo Limetolewa ✓", description: `Onyo kwa ${form.recipientName} limesajiliwa.` });
       }
@@ -92,21 +150,29 @@ export function WarningFormScreen() {
     return (
       <div className="min-h-full bg-police p-4">
         <div className="flex flex-col items-center py-10">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#FF9800]/15">
-            <CheckCircle size={44} className="text-[#FF9800]" />
+          <div className="flex h-20 w-20 items-center justify-center rounded-full" style={{ backgroundColor: `${accentColor}20` }}>
+            <CheckCircle size={44} style={{ color: accentColor }} />
           </div>
           <h2 className="mt-4 text-[20px] font-bold text-police">Onyo Limetolewa</h2>
           <p className="mt-1 text-center text-[13px] text-police-muted">Fomu ya onyo imesajiliwa kikamilifu.</p>
           <div className="mt-6 w-full rounded-2xl bg-police-card p-4 space-y-2">
             <Row label="Nambari ya Onyo" value={warnId} bold />
             <Row label="Aliyepewa Onyo" value={form.recipientName} />
-            <Row label="Gari" value={form.plate || "—"} />
+            {!isGeneral && form.plate && <Row label="Gari" value={form.plate} />}
             <Row label="Kosa" value={form.offense} />
+            <Row label="Aina" value={form.warningType} />
             <Row label="Ofisa" value={OFFICER.shortName} />
           </div>
           <div className="mt-4 w-full space-y-2">
-            <button onClick={() => setSubmitted(false)} className="w-full rounded-xl border border-police py-3 text-[14px] font-semibold text-police">Onyo Jingine</button>
-            <button onClick={() => goBack()} className="w-full rounded-xl bg-[#FF9800] py-3 text-[14px] font-bold text-white">Rudi Nyuma</button>
+            <button onClick={() => setSubmitted(false)}
+              className="w-full rounded-xl border border-police py-3 text-[14px] font-semibold text-police">
+              Onyo Jingine
+            </button>
+            <button onClick={() => goBack()}
+              className="w-full rounded-xl py-3 text-[14px] font-bold text-white"
+              style={{ backgroundColor: accentColor }}>
+              Rudi Nyuma
+            </button>
           </div>
         </div>
       </div>
@@ -115,14 +181,21 @@ export function WarningFormScreen() {
 
   return (
     <div className="min-h-full bg-police">
-      <div className="bg-gradient-to-r from-[#FF9800] to-[#F57C00] px-4 py-4">
+      {/* Header — blue for General, orange for Traffic */}
+      <div className="px-4 py-4" style={{ background: `linear-gradient(to right, ${accentColor}, ${accentLight})` }}>
         <button onClick={() => goBack()} className="mb-3 flex items-center gap-2 text-white/80">
           <ArrowLeft size={18} /> <span className="text-[13px]">Rudi Nyuma</span>
         </button>
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15"><AlertTriangle size={20} className="text-white" /></div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
+            {isGeneral
+              ? <Shield size={20} className="text-white" />
+              : <AlertTriangle size={20} className="text-white" />}
+          </div>
           <div>
-            <h1 className="text-[18px] font-bold text-white">Fomu ya Onyo</h1>
+            <h1 className="text-[18px] font-bold text-white">
+              {isGeneral ? "Onyo la Polisi" : "Onyo la Trafiki"}
+            </h1>
             <p className="text-[11px] text-white/70">{warnId} • {dateStr} {timeStr}</p>
           </div>
         </div>
@@ -131,37 +204,68 @@ export function WarningFormScreen() {
       <div className="space-y-4 p-4">
         <div className="rounded-2xl bg-police-card p-4 shadow-sm space-y-3">
           <h3 className="text-[14px] font-bold text-police">Taarifa za Mpokeaji</h3>
-          <FInput label="Jina Kamili" required value={form.recipientName} onChange={set("recipientName")} placeholder="Jina la mpokeaji wa onyo" />
-          <div className="grid grid-cols-2 gap-3">
-            <FInput label="Namba ya Gari" value={form.plate} onChange={set("plate")} placeholder="T 001 ABC" />
-            <FInput label="Namba ya Leseni" value={form.licenseNo} onChange={set("licenseNo")} placeholder="DL..." />
-          </div>
+
+          <FInput label="Jina Kamili" required value={form.recipientName} onChange={set("recipientName")}
+            placeholder={isGeneral ? "Jina la mtuhumiwa/aliyepewa onyo" : "Jina la dereva"} />
+
+          {/* Vehicle fields ONLY for Traffic officers */}
+          {!isGeneral && (
+            <div className="grid grid-cols-2 gap-3">
+              <FInput label="Namba ya Gari" value={form.plate} onChange={set("plate")} placeholder="T 001 ABC" />
+              <FInput label="Namba ya Leseni" value={form.licenseNo} onChange={set("licenseNo")} placeholder="DL..." />
+            </div>
+          )}
+
+          {/* Warning type */}
           <div>
             <label className="mb-1 block text-[12px] font-medium text-police-muted">Aina ya Onyo</label>
-            <select value={form.warningType} onChange={set("warningType")} className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:outline-none">
-              <option value="traffic">Trafiki</option>
-              <option value="conduct">Tabia</option>
-              <option value="verbal">Onyo la Mdomo</option>
+            <select value={form.warningType} onChange={set("warningType")}
+              className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:outline-none">
+              {isGeneral ? (
+                <>
+                  <option value="conduct">Tabia / Mwenendo</option>
+                  <option value="verbal">Onyo la Mdomo</option>
+                  <option value="written">Onyo la Maandishi</option>
+                  <option value="community">Uharibifu wa Jamii</option>
+                </>
+              ) : (
+                <>
+                  <option value="traffic">Trafiki</option>
+                  <option value="verbal">Onyo la Mdomo</option>
+                  <option value="written">Onyo la Maandishi</option>
+                </>
+              )}
             </select>
           </div>
+
+          {/* Offense list — different per role */}
           <div>
-            <label className="mb-1 block text-[12px] font-medium text-police-muted">Kosa <span className="text-[#EF4444]">*</span></label>
-            <select value={form.offense} onChange={set("offense")} className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:outline-none">
+            <label className="mb-1 block text-[12px] font-medium text-police-muted">
+              Kosa <span className="text-[#EF4444]">*</span>
+            </label>
+            <select value={form.offense} onChange={set("offense")}
+              className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police focus:outline-none">
               <option value="">— Chagua kosa —</option>
-              {WARNING_OFFENSES.map((o) => <option key={o}>{o}</option>)}
+              {offenses.map((o) => <option key={o}>{o}</option>)}
             </select>
           </div>
-          <FInput label="Mahali" required value={form.location} onChange={set("location")} placeholder="Mtaa au eneo halisi" />
+
+          <FInput label="Mahali" required value={form.location} onChange={set("location")}
+            placeholder={isGeneral ? "Mtaa / eneo la tukio" : "Barabara au makutano"} />
+
           <div>
             <label className="mb-1 block text-[12px] font-medium text-police-muted">Maelezo / Madokezo</label>
-            <textarea rows={3} value={form.notes} onChange={set("notes")} placeholder="Maelezo ya ziada..." className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
+            <textarea rows={3} value={form.notes} onChange={set("notes")}
+              placeholder="Maelezo ya ziada..."
+              className="w-full rounded-xl border border-police bg-police-input px-3 py-2.5 text-[13px] text-police placeholder:text-police-faint focus:outline-none" />
           </div>
 
           {/* Photo evidence */}
           <div>
             <label className="mb-1 block text-[12px] font-medium text-police-muted">Picha / Ushahidi</label>
-            <button onClick={() => fileRef.current?.click()} className="flex w-full flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-police bg-police-input py-4">
-              <Camera size={20} className="text-[#FF9800]" />
+            <button onClick={() => fileRef.current?.click()}
+              className="flex w-full flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-police bg-police-input py-4">
+              <Camera size={20} style={{ color: accentColor }} />
               <span className="text-[12px] font-medium text-police-muted">Ongeza picha za ushahidi</span>
             </button>
             <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhoto} />
@@ -171,7 +275,10 @@ export function WarningFormScreen() {
                   <div key={i} className="relative h-16 w-16 overflow-hidden rounded-lg border border-police">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={src} alt="" className="h-full w-full object-cover" />
-                    <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))} className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#EF4444]"><X size={10} className="text-white" /></button>
+                    <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))}
+                      className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#EF4444]">
+                      <X size={10} className="text-white" />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -179,61 +286,52 @@ export function WarningFormScreen() {
           </div>
 
           <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={form.acknowledged} onChange={(e) => setForm((f) => ({ ...f, acknowledged: e.target.checked }))} className="h-4 w-4 rounded accent-[#FF9800]" />
+            <input type="checkbox" checked={form.acknowledged}
+              onChange={(e) => setForm((f) => ({ ...f, acknowledged: e.target.checked }))}
+              className="h-4 w-4 rounded" style={{ accentColor }} />
             <span className="text-[12px] text-police-muted">Mpokeaji amekubaliana na onyo hili</span>
           </label>
         </div>
 
-        <div className="rounded-2xl border border-[#FF9800]/20 bg-[#FF9800]/5 p-4">
+        {/* Officer card */}
+        <div className="rounded-2xl border p-4" style={{ borderColor: `${accentColor}30`, backgroundColor: `${accentColor}08` }}>
           <p className="text-[12px] font-medium text-police-muted">Afisa</p>
-          <p className="mt-1 text-[15px] font-bold text-[#FF9800]">{OFFICER.shortName}</p>
+          <p className="mt-1 text-[15px] font-bold" style={{ color: accentColor }}>{OFFICER.shortName}</p>
           <p className="text-[11px] text-police-muted">{OFFICER.id} • {OFFICER.station}</p>
+          <p className="text-[10px] text-police-faint mt-0.5">
+            {isGeneral ? "Polisi wa Kawaida" : "Askari wa Trafiki"}
+          </p>
         </div>
 
-        {/* Sync Status Indicator */}
+        {/* Offline/Sync status */}
         {(isOfflineMode || syncStatus.pending > 0) && (
           <div className={`rounded-2xl border p-4 flex items-center gap-3 ${
-            syncStatus.isSyncing ? "border-[#2196F3]/30 bg-[#2196F3]/5" : 
-            syncStatus.isOnline ? "border-[#FF9800]/30 bg-[#FF9800]/5" : "border-[#EF4444]/30 bg-[#EF4444]/5"
+            syncStatus.isSyncing ? "border-[#2196F3]/30 bg-[#2196F3]/5"
+            : syncStatus.isOnline ? "border-[#FF9800]/30 bg-[#FF9800]/5"
+            : "border-[#EF4444]/30 bg-[#EF4444]/5"
           }`}>
-            {syncStatus.isSyncing ? <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" /> :
-             syncStatus.isOnline ? <CloudUpload size={18} className="text-[#FF9800] shrink-0" /> :
-             <WifiOff size={18} className="text-[#EF4444] shrink-0" />}
-            <div className="flex-1">
-              <p className={`text-[12px] font-bold ${syncStatus.isSyncing ? "text-[#2196F3]" : syncStatus.isOnline ? "text-[#FF9800]" : "text-[#EF4444]"}`}>
-                {syncStatus.isSyncing ? "Inasasisha data..." : syncStatus.isOnline ? `Data ${syncStatus.pending} inasubiri kusasishwa` : "Hakuna Mtandao — Hifadhi ya Kawaida"}
+            {syncStatus.isSyncing
+              ? <RefreshCw size={18} className="text-[#2196F3] animate-spin shrink-0" />
+              : syncStatus.isOnline
+                ? <CloudUpload size={18} className="text-[#FF9800] shrink-0" />
+                : <WifiOff size={18} className="text-[#EF4444] shrink-0" />}
+            <div>
+              <p className="text-[12px] font-semibold text-police">
+                {syncStatus.isSyncing ? "Inasync..." : syncStatus.isOnline ? "Inasubiri sync" : "Huna mtandao"}
               </p>
+              {syncStatus.pending > 0 && (
+                <p className="text-[11px] text-police-muted">Rekodi {syncStatus.pending} zinasubiri</p>
+              )}
             </div>
-            {syncStatus.pending > 0 && syncStatus.isOnline && !syncStatus.isSyncing && (
-              <button onClick={() => { import("@/lib/offline-sync").then(({ processSyncQueue }) => processSyncQueue().then(({ success, failed }) => toast({ title: "Matokeo ya Usasishaji", description: `Mafanikio: ${success}, Mashindwa: ${failed}` }))); }} 
-              className="shrink-0 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-[11px] font-semibold">Sasa Sasisha</button>
-            )}
           </div>
         )}
 
-        <button onClick={handleSubmit} className="w-full rounded-xl bg-[#FF9800] py-3.5 text-[15px] font-bold text-white shadow-md shadow-[#FF9800]/30 active:scale-[0.98]">
-          Hifadhi Onyo
+        <button onClick={handleSubmit}
+          className="w-full rounded-xl py-4 text-[15px] font-bold text-white shadow-lg active:scale-[0.98] transition"
+          style={{ backgroundColor: accentColor }}>
+          Wasilisha Onyo
         </button>
-        <div className="h-4" />
       </div>
-    </div>
-  );
-}
-
-function FInput({ label, required, value, onChange, placeholder }: { label: string; required?: boolean; value: string; onChange: React.ChangeEventHandler<HTMLInputElement>; placeholder?: string }) {
-  return (
-    <div>
-      <label className="mb-1 block text-[12px] font-medium text-police-muted">{label}{required && <span className="ml-0.5 text-[#EF4444]">*</span>}</label>
-      <input value={value} onChange={onChange} placeholder={placeholder} className="w-full rounded-xl border border-police bg-police-input px-3 h-10 text-[13px] text-police placeholder:text-police-faint focus:border-[#FF9800] focus:outline-none" />
-    </div>
-  );
-}
-
-function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
-  return (
-    <div className="flex items-center justify-between py-1 border-b border-police-soft last:border-0">
-      <span className="text-[12px] text-police-muted">{label}</span>
-      <span className={`text-[12px] ${bold ? "font-bold text-[#FF9800]" : "font-medium text-police"}`}>{value}</span>
     </div>
   );
 }

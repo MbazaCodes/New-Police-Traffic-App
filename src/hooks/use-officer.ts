@@ -19,6 +19,7 @@ export interface OfficerProfile {
   photo:     string;
   region:    string;
   status:    string;
+  role:      string; // officer-traffic | officer-general | post-officer | etc.
 }
 
 const EMPTY_OFFICER: OfficerProfile = {
@@ -35,6 +36,7 @@ const EMPTY_OFFICER: OfficerProfile = {
   photo:     "",
   region:    "",
   status:    "",
+  role:      "",
 };
 
 export function useOfficer(): OfficerProfile {

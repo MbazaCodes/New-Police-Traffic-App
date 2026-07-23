@@ -7,13 +7,14 @@ import { PoliceIcon } from "../police-icons";
 import { usePoliceStore } from "@/store/police-store";
 import { GENERAL_INCIDENTS } from "@/lib/police-data";
 
+// General Police quick actions — NO traffic/vehicle actions
 const POLICE_QUICK_ACTIONS = [
   { label: "Ripoti Tukio",      icon: "clipboard",   color: "#2196F3", screen: "incident-detail"        },
   { label: "Tafuta Raia",       icon: "search",      color: "#1E3A8A", screen: "citizen-search-results" },
-  { label: "Lipa Faini",        icon: "wallet",      color: "#10B981", screen: "fine-payment"           },
   { label: "Kamata Mtuhumiwa",  icon: "user-x",      color: "#EF4444", screen: "arrest-form"            },
-  { label: "Dhamana",           icon: "shield",      color: "#8B5CF6", screen: "bail-out"               },
-  { label: "Toa Onyo",          icon: "alert-triangle", color: "#FF9800", screen: "warning-form"        },
+  { label: "Dhamana / Bail",    icon: "shield",      color: "#8B5CF6", screen: "bail-out"               },
+  { label: "Toa Onyo (Polisi)", icon: "alert-triangle", color: "#1E3A8A", screen: "warning-form"       },
+  { label: "Mali Iliyopotea",   icon: "package",     color: "#10B981", screen: "lost-property"          },
 ];
 
 export function GeneralPoliceScreen() {
@@ -25,9 +26,9 @@ export function GeneralPoliceScreen() {
   const totalWarnings = 0;
 
   const policeStats = [
-    { label: "Matukio Yote",    value: String(GENERAL_INCIDENTS.length), color: "#1E3A8A" },
+    { label: "Matukio",         value: String(GENERAL_INCIDENTS.length), color: "#1E3A8A" },
     { label: "Yanayoendelea",   value: String(activeIncidents),           color: "#FF9800" },
-    { label: "Yameitatuliwa",   value: String(resolvedIncidents),         color: "#10B981" },
+    { label: "Yaliyotatiwa",    value: String(resolvedIncidents),         color: "#10B981" },
     { label: "Makamato",        value: String(heldArrests),               color: "#EF4444" },
   ];
 
