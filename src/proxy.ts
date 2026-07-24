@@ -65,16 +65,20 @@ export async function proxy(request: NextRequest) {
   const role = token?.role as Role | undefined;
 
   // Root path acts as auth-aware entrypoint.
-  // - unauthenticated: show login app on /
-  // - authenticated: redirect to role-specific default route
+  // admin-web hostname: always serve /admin (the web admin panel)
+  // Other hostnames: authenticated → role dashboard, else show root page
   if (pathname === "/") {
-    if (!role) {
-      if (hostname.toLowerCase().includes("admin-web")) {
-        return NextResponse.redirect(new URL("/admin", request.url));
-      }
-      return NextResponse.next();
+    const isAdminHost = hostname.toLowerCase().includes("admin-web");
+    if (isAdminHost) {
+      // Admin-web always goes to /admin regardless of auth state
+      // (officers may have a cookie from the PWA but they shouldn't be
+      // bounced to /officer/* on the admin-web domain)
+      return NextResponse.redirect(new URL("/admin", request.url));
     }
-    return NextResponse.redirect(new URL(getDefaultRouteForRole(role), request.url));
+    if (role) {
+      return NextResponse.redirect(new URL(getDefaultRouteForRole(role), request.url));
+    }
+    return NextResponse.next();
   }
 
   if (PUBLIC_PATHS.has(pathname)) {
