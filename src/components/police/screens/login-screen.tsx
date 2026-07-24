@@ -307,6 +307,23 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
       const mappedRole = toStoreOfficerRole(userRole, role);
       saveLoginIdentifier(cleanIdentifier);
       setLoginIdentifier(cleanIdentifier);
+
+      // TRAFFIC and GENERAL officers get redirected to their PWA URL.
+      // A full page navigation (window.location.href) is required so the browser
+      // loads the officer manifest, registers the service worker, and fires
+      // beforeinstallprompt — a Zustand-only state change doesn't do this.
+      if (userRole === "TRAFFIC_OFFICER" || userRole === "GENERAL_OFFICER") {
+        const pwaRoute = userRole === "TRAFFIC_OFFICER"
+          ? "/officer/traffic/home?pwa=1"
+          : "/officer/general/home?pwa=1";
+        // Mark Zustand as authenticated first so the shell renders instead of login
+        login(mappedRole);
+        setStep("success");
+        setTimeout(() => { window.location.href = pwaRoute; }, 800);
+        return;
+      }
+
+      // POST_OFFICER and others: same shell, no full redirect
       setStep("success");
       setTimeout(() => { login(mappedRole); }, 900);
     } catch {
