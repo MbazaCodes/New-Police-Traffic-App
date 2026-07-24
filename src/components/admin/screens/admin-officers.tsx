@@ -44,6 +44,23 @@ const OFFICER_CATEGORIES: { value: string; label: string; roles: { value: string
       { value: "national-commissioner", label: "Kamanda wa Kitaifa" },
     ],
   },
+  {
+    value: "karani", label: "Karani wa Data (Clerk)",
+    roles: [
+      { value: "district-clerk",  label: "Karani wa Wilaya — District Clerk" },
+      { value: "regional-clerk",  label: "Karani wa Mkoa — Regional Clerk" },
+      { value: "national-clerk",  label: "Karani wa Taifa — National Clerk" },
+      { value: "clerk",           label: "Karani — General Clerk" },
+    ],
+  },
+  {
+    value: "utawala", label: "Utawala / Usimamizi (Admin)",
+    roles: [
+      { value: "admin",       label: "Admin — Msimamizi" },
+      { value: "super-admin", label: "Super Admin — Msimamizi Mkuu" },
+      { value: "viewer",      label: "Viewer — Mtazamaji tu" },
+    ],
+  },
 ];
 
 type Officer = {
