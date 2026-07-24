@@ -9,6 +9,17 @@ export function saveLoginIdentifier(id: string) {
   }
 }
 
+export function saveOfficerUserId(userId: string) {
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem("tpf-officer-uid", userId);
+  }
+}
+
+export function getOfficerUserId(): string {
+  if (typeof window === "undefined") return "";
+  return sessionStorage.getItem("tpf-officer-uid") ?? "";
+}
+
 export function clearLoginIdentifier() {
   if (typeof window !== "undefined") {
     sessionStorage.removeItem("tpf-login-id");

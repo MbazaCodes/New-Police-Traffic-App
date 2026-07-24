@@ -22,7 +22,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { usePoliceStore, AUTH_ROLES, type AuthRole } from "@/store/police-store";
-import { saveLoginIdentifier, clearLoginIdentifier } from "@/lib/session-context";
+import { saveLoginIdentifier, clearLoginIdentifier, saveOfficerUserId } from "@/lib/session-context";
 import type { UserRole } from "@/store/police-store";
 
 
@@ -193,6 +193,10 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
         setAuthResolvedRole(apiRole);
         if (mode === "admin") setWebRole(apiRole);
       }
+
+      // Persist user ID to sessionStorage so /api/police/me can identify
+      // the officer even after window.location.href redirect (PWA flow).
+      if (data?.user?.id) saveOfficerUserId(data.user.id);
 
       // Store full profile from Supabase for use across the app
       if (data?.user) {

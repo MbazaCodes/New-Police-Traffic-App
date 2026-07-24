@@ -144,7 +144,22 @@ export function OfficerWebShell() {
   // session restore, and cases where login stored incomplete data).
   useEffect(() => {
     if (!isAuthenticated) return;
-    fetch("/api/police/me")
+    // Resolve the officer user ID from multiple sources (in priority order):
+    // 1. Zustand officerProfile (set at login, lost on page reload)
+    // 2. sessionStorage tpf-officer-uid (set at login, survives redirect)
+    // 3. sessionStorage tpf-login-id (badge/phone identifier — used as badge lookup)
+    const profileId = usePoliceStore.getState().officerProfile?.id ?? "";
+    const sessionUid = typeof window !== "undefined"
+      ? (sessionStorage.getItem("tpf-officer-uid") ?? "") : "";
+    const loginId = typeof window !== "undefined"
+      ? (sessionStorage.getItem("tpf-login-id") ?? "") : "";
+    const resolvedId = profileId || sessionUid;
+    fetch("/api/police/me", {
+      headers: {
+        ...(resolvedId ? { "x-officer-id": resolvedId } : {}),
+        ...(!resolvedId && loginId ? { "x-officer-badge": loginId } : {}),
+      },
+    })
       .then((r) => r.json())
       .then((json) => {
         if (!json?.ok || !json.data) return;
