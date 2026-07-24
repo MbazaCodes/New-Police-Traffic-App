@@ -706,11 +706,22 @@ export function LoginScreen({ mode = "officer" }: { mode?: "officer" | "admin" }
                 </div>
               )}
 
+              {/* Helper when no identifier entered */}
+              {!identifier.trim() && (
+                <p className="mt-3 text-center text-[11px] text-[#FF9800]">
+                  ⬆ Ingiza badge number, simu, au barua pepe kwanza
+                </p>
+              )}
+
               {/* Send OTP Button */}
               <button
                 onClick={sendOtp}
                 disabled={!identifier.trim() || sending}
-                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2196F3] py-3.5 text-[15px] font-bold text-white shadow-lg shadow-[#2196F3]/30 transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                className={`mt-5 flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-[15px] font-bold text-white shadow-lg transition active:scale-[0.98] ${
+                  !identifier.trim() || sending
+                    ? "cursor-not-allowed bg-[#9CA3AF] shadow-none"
+                    : "bg-[#2196F3] shadow-[#2196F3]/30 hover:bg-[#1E88E5]"
+                }`}
               >
                 {sending ? (
                   <>
