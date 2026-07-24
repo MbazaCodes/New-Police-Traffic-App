@@ -6,7 +6,7 @@
  * Full-width responsive layout with a sidebar navigation
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import {
   Home, FileText, Shield, Clock, Bell, User, Car, UserCheck,
@@ -135,10 +135,53 @@ function renderOfficerScreen(screen: ScreenId, isGeneral: boolean, isPost: boole
 
 // ── Shell ─────────────────────────────────────────────────────────────────
 export function OfficerWebShell() {
-  const { currentScreen, navigate, logout, authRole, unreadAlertCount: _unreadAlertCount } = usePoliceStore();
+  const { currentScreen, navigate, logout, authRole, isAuthenticated, setOfficerProfile, unreadAlertCount: _unreadAlertCount } = usePoliceStore();
   const unreadAlertCount = typeof _unreadAlertCount === "function" ? _unreadAlertCount() : _unreadAlertCount;
   const OFFICER = useOfficer();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Fetch fresh profile from DB on every shell mount (covers page reload in PWA,
+  // session restore, and cases where login stored incomplete data).
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    fetch("/api/police/me")
+      .then((r) => r.json())
+      .then((json) => {
+        if (!json?.ok || !json.data) return;
+        const d = json.data;
+        setOfficerProfile({
+          name:            d.name           ?? "",
+          shortName:       d.shortName      ?? d.name?.split(" ").slice(0,2).join(" ") ?? "",
+          rank:            d.rank           ?? "",
+          rankShort:       d.rankShort      ?? "",
+          id:              d.id             ?? "",
+          badgeNo:         d.badgeNo        ?? "",
+          idNumber:        d.idNumber       ?? "",
+          officerId:       d.officerId      ?? "",
+          station:         d.station        ?? "",
+          stationId:       d.stationId      ?? "",
+          stationPhone:    d.stationPhone   ?? "",
+          stationRegion:   d.stationRegion  ?? "",
+          stationDistrict: d.stationDistrict ?? "",
+          unit:            d.unit           ?? "",
+          phone:           d.phone          ?? "",
+          email:           d.email          ?? "",
+          photo:           d.photo          ?? "",
+          region:          d.region         ?? "",
+          status:          d.status         ?? "active",
+          role:            d.role           ?? "",
+          roleRaw:         d.roleRaw ?? d.role ?? "",
+          lastLogin:       d.lastLogin      ?? null,
+          createdAt:       d.createdAt      ?? null,
+          patrolsCount:    d.patrolsCount   ?? 0,
+          citationsCount:  d.citationsCount ?? 0,
+          incidentsCount:  d.incidentsCount ?? 0,
+          hoursToday:      d.hoursToday     ?? 0,
+        });
+      })
+      .catch(() => { /* network offline — use cached Zustand data */ });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   const isGeneral = authRole === "GENERAL_OFFICER";
   const isPost    = authRole === "POST_OFFICER";
@@ -174,13 +217,23 @@ export function OfficerWebShell() {
             {OFFICER.photo
               ? <img src={OFFICER.photo} alt={OFFICER.name} className="h-9 w-9 rounded-full object-cover ring-2 ring-[#2196F3]" />
               : <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2196F3] text-[11px] font-bold text-white">
-                  {OFFICER.shortName.split(" ").map((w:string)=>w[0]).join("").slice(0,2)}
+                  {(OFFICER.shortName || OFFICER.name || "?").split(" ").map((w:string)=>w[0]).join("").slice(0,2).toUpperCase() || "?"}
                 </div>
             }
             <div className="min-w-0">
-              <p className="truncate text-[11px] font-bold text-white">{OFFICER.shortName}</p>
-              <p className="truncate text-[9px] text-white/50">{OFFICER.rank}</p>
-              <p className="truncate text-[9px] text-white/40">{OFFICER.station}</p>
+              {OFFICER.name ? (
+                <>
+                  <p className="truncate text-[11px] font-bold text-white">{OFFICER.shortName || OFFICER.name}</p>
+                  <p className="truncate text-[9px] text-white/50">{OFFICER.rank || "—"}</p>
+                  <p className="truncate text-[9px] text-white/40">{OFFICER.station || OFFICER.region || "—"}</p>
+                  <p className="truncate text-[9px] font-mono text-white/30">{OFFICER.badgeNo}</p>
+                </>
+              ) : (
+                <div className="space-y-1">
+                  <div className="h-2.5 w-24 animate-pulse rounded bg-white/10" />
+                  <div className="h-2 w-16 animate-pulse rounded bg-white/10" />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -240,7 +293,9 @@ export function OfficerWebShell() {
             <p className="text-[13px] font-bold text-police">
               {navItems.find(n => n.screen === currentScreen)?.label ?? "Nyumbani"}
             </p>
-            <p className="text-[10px] text-police-faint">{roleLabel} · {OFFICER.station}</p>
+            <p className="text-[10px] text-police-faint">
+              {roleLabel}{OFFICER.station ? ` · ${OFFICER.station}` : OFFICER.region ? ` · ${OFFICER.region}` : ""}
+            </p>
           </div>
 
           {/* Search shortcut */}
@@ -269,7 +324,7 @@ export function OfficerWebShell() {
             {OFFICER.photo
               ? <img src={OFFICER.photo} alt={OFFICER.name} className="h-8 w-8 rounded-full object-cover" />
               : <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2196F3] text-[11px] font-bold text-white">
-                  {OFFICER.shortName.split(" ").map((w:string)=>w[0]).join("").slice(0,2)}
+                  {(OFFICER.shortName || OFFICER.name || "?").split(" ").map((w:string)=>w[0]).join("").slice(0,2).toUpperCase() || "?"}
                 </div>
             }
             <div className="hidden sm:block text-left">
