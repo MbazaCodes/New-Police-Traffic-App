@@ -199,6 +199,15 @@ export const usePoliceStore = create<PoliceState>()(
       logout: () => {
         if (typeof window !== "undefined") {
           localStorage.removeItem("tz-police-auth");
+          // Clear all session identifiers so no role leaks to the next login
+          sessionStorage.removeItem("tpf-login-id");
+          sessionStorage.removeItem("tpf-officer-uid");
+          sessionStorage.removeItem("pwa-install-dismissed");
+          // Redirect to root — the general login page that serves ALL roles.
+          // Staying on /officer/*/home would show <LoginScreen mode="officer">
+          // which only lists officer roles, blocking admins/clerks/commanders.
+          window.location.href = "/api/auth/signout?callbackUrl=/";
+          return;
         }
         set({ isAuthenticated: false, userRole: "officer-traffic", authRole: null, officerProfile: null, loginIdentifier: "", currentScreen: "login", activeTab: "home", history: [], readAlertIds: [] });
       },

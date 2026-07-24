@@ -186,7 +186,7 @@ export function ClerkShell() {
 
         {/* Logout */}
         <div className="border-t border-white/10 p-3">
-          <button onClick={() => window.location.href = "/api/auth/signout"}
+          <button onClick={() => window.location.href = "/api/auth/signout?callbackUrl=/"}
             className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-[11px] font-medium text-white/40 hover:bg-white/10 hover:text-white">
             <LogOut size={13}/> Toka
           </button>
