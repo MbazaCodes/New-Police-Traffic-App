@@ -1,190 +1,157 @@
-// TPF Officer Service Worker — Phase 2 PWA
-// Handles offline caching for officer operational screens
+// TPF Officer Service Worker — v2 (fixed)
+// Strategy:
+//   API calls (/api/*)         → Network-first, cache fallback (offline JSON)
+//   Static assets (/_next/*)  → Cache-first, network fallback
+//   Officer pages (/officer/*) → Network-first, cache fallback to shell
+//   Everything else            → Network only
 
-const CACHE_VERSION = "tpf-officer-v1";
-const STATIC_CACHE  = `${CACHE_VERSION}-static`;
-const API_CACHE     = `${CACHE_VERSION}-api`;
+const CACHE_VERSION  = "tpf-officer-v2";
+const STATIC_CACHE   = `${CACHE_VERSION}-static`;
+const API_CACHE      = `${CACHE_VERSION}-api`;
 
-// App shell — pages that should always be available offline
+// Pages to pre-cache on install
 const APP_SHELL = [
   "/officer/traffic/home",
   "/officer/general/home",
   "/officer/post/home",
-  "/police-logo.png",
-  "/officer-manifest.json",
 ];
 
-// ── Install: cache the app shell ─────────────────────────────────────────
+// ── Install: pre-cache shell pages ────────────────────────────────────
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then((cache) => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
+    caches.open(STATIC_CACHE).then((cache) =>
+      Promise.allSettled(APP_SHELL.map((url) => cache.add(url).catch(() => {})))
+    )
   );
 });
 
-// ── Activate: clean old caches ────────────────────────────────────────────
+// ── Activate: clean up old caches ─────────────────────────────────────
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((key) => key.startsWith("tpf-officer-") && key !== STATIC_CACHE && key !== API_CACHE)
-          .map((key) => caches.delete(key))
+          .filter((k) => k.startsWith("tpf-officer-") && !k.startsWith(CACHE_VERSION))
+          .map((k) => caches.delete(k))
       )
     ).then(() => self.clients.claim())
   );
 });
 
-// ── Fetch strategy ─────────────────────────────────────────────────────────
+// ── Fetch: route-based caching strategies ─────────────────────────────
 self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
+  const url = new URL(event.request.url);
 
-  // Skip non-GET and cross-origin requests
-  if (request.method !== "GET") return;
+  // Only handle same-origin requests
   if (url.origin !== self.location.origin) return;
 
-  // API routes: Network-first, fall back to cache
+  // Skip non-GET requests (POST, PATCH, DELETE go straight to network)
+  if (event.request.method !== "GET") return;
+
+  // Skip auth endpoints — never cache
+  if (url.pathname.startsWith("/api/auth")) return;
+
+  // ── Strategy 1: API calls — Network-first, JSON fallback ─────────────
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(
-      fetch(request)
+      fetch(event.request)
         .then((response) => {
+          // Clone BEFORE doing anything else with the response
+          const clone = response.clone();
           if (response.ok) {
-            const clone = response.clone();
-            caches.open(API_CACHE).then((cache) => cache.put(request, clone));
+            caches.open(API_CACHE).then((cache) => cache.put(event.request, clone));
           }
           return response;
         })
-        .catch(() => caches.match(request).then((cached) => cached ?? new Response(
-          JSON.stringify({ error: "Huna muunganisho wa mtandao", offline: true }),
-          { status: 503, headers: { "Content-Type": "application/json" } }
-        )))
-    );
-    return;
-  }
-
-  // Next.js static assets: Cache-first
-  if (url.pathname.startsWith("/_next/static/")) {
-    event.respondWith(
-      caches.match(request).then((cached) =>
-        cached ?? fetch(request).then((response) => {
-          if (response.ok) {
-            caches.open(STATIC_CACHE).then((cache) => cache.put(request, response.clone()));
-          }
-          return response;
-        })
-      )
-    );
-    return;
-  }
-
-  // Officer pages: Network-first, fall back to cached shell
-  if (url.pathname.startsWith("/officer/")) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            caches.open(STATIC_CACHE).then((cache) => cache.put(request, response.clone()));
-          }
-          return response;
-        })
-        .catch(() => caches.match(request)
-          .then((cached) => cached ?? caches.match("/officer/traffic/home"))
+        .catch(() =>
+          caches.match(event.request).then(
+            (cached) =>
+              cached ??
+              new Response(
+                JSON.stringify({ error: "Huna muunganisho wa mtandao", offline: true }),
+                { status: 503, headers: { "Content-Type": "application/json" } }
+              )
+          )
         )
     );
     return;
   }
 
-  // Default: network
-  event.respondWith(fetch(request));
+  // ── Strategy 2: Next.js static assets — Cache-first ──────────────────
+  if (url.pathname.startsWith("/_next/static/")) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request).then((response) => {
+          // Clone BEFORE returning
+          const clone = response.clone();
+          if (response.ok) {
+            caches.open(STATIC_CACHE).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        });
+      })
+    );
+    return;
+  }
+
+  // ── Strategy 3: Officer pages — Network-first, shell fallback ─────────
+  if (url.pathname.startsWith("/officer/")) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Clone BEFORE returning
+          const clone = response.clone();
+          if (response.ok) {
+            caches.open(STATIC_CACHE).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() =>
+          caches.match(event.request).then(
+            (cached) =>
+              cached ??
+              caches.match("/officer/traffic/home") ??
+              new Response("Offline — reopen when connected", { status: 503 })
+          )
+        )
+    );
+    return;
+  }
+
+  // ── Default: network only ─────────────────────────────────────────────
+  // (Don't intercept — let browser handle normally)
 });
 
-// ── Background sync for offline actions ───────────────────────────────────
+// ── Background sync ────────────────────────────────────────────────────
 self.addEventListener("sync", (event) => {
-  if (event.tag === "sync-citations") {
-    event.waitUntil(syncPendingCitations());
+  if (event.tag === "sync-citations") event.waitUntil(syncQueue("tpf-citations-queue", "/api/citations"));
+  if (event.tag === "sync-incidents") event.waitUntil(syncQueue("tpf-incidents-queue", "/api/incidents"));
+  if (event.tag === "sync-warnings")  event.waitUntil(syncQueue("tpf-warnings-queue",  "/api/warnings"));
+});
+
+async function syncQueue(storeName, endpoint) {
+  try {
+    const cache = await caches.open("tpf-officer-pending");
+    const keys  = await cache.keys();
+    const queued = keys.filter((k) => k.url.includes(storeName));
+    for (const key of queued) {
+      const resp = await cache.match(key);
+      if (!resp) continue;
+      const body = await resp.json();
+      try {
+        const res = await fetch(endpoint, {
+          method:  "POST",
+          headers: { "Content-Type": "application/json" },
+          body:    JSON.stringify(body),
+        });
+        if (res.ok) await cache.delete(key);
+      } catch {
+        // Will retry on next sync event
+      }
+    }
+  } catch {
+    // Cache not available — ignore
   }
-  if (event.tag === "sync-incidents") {
-    event.waitUntil(syncPendingIncidents());
-  }
-});
-
-async function syncPendingCitations() {
-  // Citations saved offline are posted when connectivity returns
-  const cache = await caches.open("tpf-officer-pending");
-  const keys  = await cache.keys();
-  await Promise.all(
-    keys
-      .filter((r) => r.url.includes("pending-citation"))
-      .map(async (r) => {
-        const data = await cache.match(r);
-        if (!data) return;
-        const body = await data.json();
-        try {
-          const res = await fetch("/api/citations", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          });
-          if (res.ok) await cache.delete(r);
-        } catch { /* retry next sync */ }
-      })
-  );
 }
-
-async function syncPendingIncidents() {
-  const cache = await caches.open("tpf-officer-pending");
-  const keys  = await cache.keys();
-  await Promise.all(
-    keys
-      .filter((r) => r.url.includes("pending-incident"))
-      .map(async (r) => {
-        const data = await cache.match(r);
-        if (!data) return;
-        const body = await data.json();
-        try {
-          const res = await fetch("/api/incidents", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          });
-          if (res.ok) await cache.delete(r);
-        } catch { /* retry next sync */ }
-      })
-  );
-}
-
-// ── Push notifications ─────────────────────────────────────────────────────
-self.addEventListener("push", (event) => {
-  if (!event.data) return;
-  const data = event.data.json().catch(() => ({ title: "TPF Alert", body: event.data.text() }));
-  event.waitUntil(
-    data.then((payload) =>
-      self.registration.showNotification(payload.title ?? "TPF Officer", {
-        body:    payload.body ?? "",
-        icon:    "/police-logo.png",
-        badge:   "/police-logo.png",
-        tag:     payload.tag ?? "tpf-alert",
-        data:    payload.data ?? {},
-        actions: [
-          { action: "view",    title: "Angalia" },
-          { action: "dismiss", title: "Funga"   },
-        ],
-      })
-    )
-  );
-});
-
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
-  if (event.action === "dismiss") return;
-  event.waitUntil(
-    self.clients.matchAll({ type: "window" }).then((clients) => {
-      const focused = clients.find((c) => c.focused);
-      if (focused) return focused.focus();
-      if (clients[0]) return clients[0].focus();
-      return self.clients.openWindow("/officer/traffic/home");
-    })
-  );
-});
