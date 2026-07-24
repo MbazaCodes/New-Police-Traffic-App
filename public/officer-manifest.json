@@ -1,5 +1,5 @@
 {
-  "name": "TPF Officer — Tanzania Police Force",
+  "name": "TPF Officer - Tanzania Police Force",
   "short_name": "TPF Afisa",
   "description": "Jukwaa la kidijitali la maafisa wa Jeshi la Polisi Tanzania. Toa citations, ripoti matukio, na dhibiti patroli.",
   "start_url": "/officer/traffic/home",
@@ -8,7 +8,11 @@
   "orientation": "portrait-primary",
   "background_color": "#0B1120",
   "theme_color": "#1E3A8A",
-  "categories": ["productivity", "business", "government"],
+  "categories": [
+    "productivity",
+    "business",
+    "government"
+  ],
   "lang": "sw",
   "dir": "ltr",
   "icons": [
@@ -31,16 +35,27 @@
       "short_name": "Citation",
       "description": "Toa citation mpya haraka",
       "url": "/officer/traffic/home",
-      "icons": [{ "src": "/police-logo.png", "sizes": "96x96" }]
+      "icons": [
+        {
+          "src": "/police-logo.png",
+          "sizes": "96x96"
+        }
+      ]
     },
     {
       "name": "Ripoti Tukio",
       "short_name": "Tukio",
       "description": "Ripoti tukio jipya",
       "url": "/officer/traffic/home",
-      "icons": [{ "src": "/police-logo.png", "sizes": "96x96" }]
+      "icons": [
+        {
+          "src": "/police-logo.png",
+          "sizes": "96x96"
+        }
+      ]
     }
   ],
   "screenshots": [],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "id": "/officer/"
 }

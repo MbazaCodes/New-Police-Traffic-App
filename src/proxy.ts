@@ -25,9 +25,14 @@ function isPublicAsset(pathname: string): boolean {
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/icon") ||
     pathname.startsWith("/manifest") ||
+    pathname.startsWith("/officer-manifest") ||
     pathname.startsWith("/sw.js") ||
+    pathname.startsWith("/officer-sw.js") ||
     pathname.startsWith("/robots.txt") ||
-    pathname.startsWith("/police-logo")
+    pathname.startsWith("/police-logo") ||
+    pathname.startsWith("/icons/") ||
+    pathname.endsWith(".json") ||     // all JSON files (manifests, configs)
+    pathname.endsWith("-sw.js")       // all service workers
   );
 }
 
@@ -105,6 +110,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon|icon|manifest|sw\.js|robots\.txt|police-logo).*)",
+    "/((?!_next/static|_next/image|favicon|icon|manifest|officer-manifest|sw\.js|officer-sw\.js|robots\.txt|police-logo|icons\/).*)",
   ],
 };
