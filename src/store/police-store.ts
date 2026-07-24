@@ -63,7 +63,16 @@ function normalizeOfficerRole(role?: UserRole): OfficerRole {
 }
 
 export type AdminScreen =
-  | "dashboard" | "officers" | "incidents" | "citations" | "patrols"
+  | "dashboard"
+  // ── 6 Management Pages ──
+  | "mgmt-command"     // Command & Utawala
+  | "mgmt-officers"    // Officers hub (Traffic/General/Post sub-tabs)
+  | "mgmt-clerks"      // Clerk hierarchy (National/Regional/District)
+  | "mgmt-cid"         // CID & Investigators
+  | "mgmt-admins"      // Admin hierarchy (District/Regional/National)
+  | "mgmt-special"     // Idara Maalum (Special Units)
+  // ── Legacy screens ──
+  | "officers" | "incidents" | "citations" | "patrols"
   | "alerts" | "reports" | "users" | "settings" | "stations" | "posts"
   | "assignments" | "detained-citizens" | "waliokamatwa"
   | "missing" | "requests" | "communications" | "clerks";

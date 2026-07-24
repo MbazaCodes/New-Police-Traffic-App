@@ -44,6 +44,12 @@ import { AdminAssignments } from "./screens/admin-assignments";
 import { DetainedCitizensScreen } from "./screens/detained-citizens-screen";
 import { AdminMissing } from "./screens/admin-missing";
 import { AdminClerks } from "./screens/admin-clerks";
+import { MgmtCommand }  from "./screens/mgmt-command";
+import { MgmtOfficers } from "./screens/mgmt-officers";
+import { MgmtCID }      from "./screens/mgmt-cid";
+import { MgmtAdmins }   from "./screens/mgmt-admins";
+import { MgmtSpecial }  from "./screens/mgmt-special";
+// MgmtClerks reuses AdminClerks
 
 const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
   { id: "dashboard",         label: "Dashboard",       icon: LayoutDashboard },
@@ -78,17 +84,22 @@ const OFFICER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboar
 ];
 
 // Admin — management focus
-const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "officers", label: "Maofisa", icon: Users },
-  { id: "users", label: "Watumiaji", icon: Users },
-  { id: "stations", label: "Vituo", icon: Building2 },
-  { id: "posts", label: "Posti", icon: Network },
-  { id: "assignments", label: "Mgao", icon: ArrowRightLeft },
-  { id: "reports", label: "Ripoti", icon: BarChart3 },
-  { id: "missing", label: "Wanaotafutwa", icon: AlertTriangle },
-  { id: "clerks", label: "Makarani", icon: Database },
-  { id: "settings", label: "Mipangilio", icon: Settings },
+const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; group?: string }[] = [
+  { id: "dashboard",       label: "Dashibodi",           icon: LayoutDashboard, group: "" },
+  // ── 6 Management Pages ─────────────────────────────────────────
+  { id: "mgmt-officers",  label: "👮 Maafisa",            icon: Users,           group: "Usimamizi" },
+  { id: "mgmt-command",   label: "🎖️ Kamandi",            icon: Shield,          group: "Usimamizi" },
+  { id: "mgmt-clerks",    label: "📋 Makarani",            icon: Database,        group: "Usimamizi" },
+  { id: "mgmt-cid",       label: "🔍 CID & Upelelezi",    icon: Search,          group: "Usimamizi" },
+  { id: "mgmt-admins",    label: "⚙️ Wasimamizi",         icon: Settings,        group: "Usimamizi" },
+  { id: "mgmt-special",   label: "⭐ Idara Maalum",       icon: AlertTriangle,   group: "Usimamizi" },
+  // ── Operational ────────────────────────────────────────────────
+  { id: "stations",        label: "Vituo",                icon: Building2,       group: "Uendeshaji" },
+  { id: "posts",           label: "Posti",                icon: Network,         group: "Uendeshaji" },
+  { id: "assignments",     label: "Mgao",                 icon: ArrowRightLeft,  group: "Uendeshaji" },
+  { id: "missing",         label: "Wanaotafutwa",         icon: AlertTriangle,   group: "Uendeshaji" },
+  { id: "reports",         label: "Ripoti",               icon: BarChart3,       group: "Uendeshaji" },
+  { id: "settings",        label: "Mipangilio",           icon: Settings,        group: "" },
 ];
 
 export function AdminShell() {
@@ -151,28 +162,37 @@ export function AdminShell() {
 
           {/* Nav */}
           <nav className="flex-1 overflow-y-auto px-2.5 py-3 space-y-0.5 app-scroll">
-            {navItems.map((item) => {
-              const active = adminScreen === item.id;
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setAdminScreen(item.id);
-                    setSidebarOpen(false);
-                  }}
-                  className={`tpf-nav-item ${active ? "active" : ""}`}
-                >
-                  <Icon size={16} className="tpf-nav-icon shrink-0" />
-                  <span className="flex-1 truncate">{item.label}</span>
-                  {item.badge && (
-                    <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+            {(() => {
+              let lastGroup = "UNSET_SENTINEL";
+              return navItems.map((item) => {
+                const active = adminScreen === item.id;
+                const Icon = item.icon;
+                const showGroupHeader = (item as any).group !== undefined && (item as any).group !== "" && (item as any).group !== lastGroup;
+                if ((item as any).group !== undefined) lastGroup = (item as any).group || "";
+                return (
+                  <div key={item.id}>
+                    {showGroupHeader && (
+                      <p className="px-3 pt-3 pb-1 text-[9px] font-bold uppercase tracking-widest text-police-faint">{(item as any).group}</p>
+                    )}
+                    <button
+                      onClick={() => {
+                        setAdminScreen(item.id);
+                        setSidebarOpen(false);
+                      }}
+                      className={`tpf-nav-item ${active ? "active" : ""}`}
+                    >
+                      <Icon size={16} className="tpf-nav-icon shrink-0" />
+                      <span className="flex-1 truncate">{item.label}</span>
+                      {item.badge && (
+                        <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#EF4444] px-1 text-[9px] font-bold text-white">
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                );
+              });
+            })()}
           </nav>
 
           {/* User */}
@@ -361,6 +381,18 @@ function renderAdminScreen(screen: AdminScreen) {
       return <AdminMissing />;
     case "clerks":
       return <AdminClerks />;
+    case "mgmt-command":
+      return <MgmtCommand />;
+    case "mgmt-officers":
+      return <MgmtOfficers />;
+    case "mgmt-clerks":
+      return <AdminClerks />;
+    case "mgmt-cid":
+      return <MgmtCID />;
+    case "mgmt-admins":
+      return <MgmtAdmins />;
+    case "mgmt-special":
+      return <MgmtSpecial />;
     case "settings":
       return <AdminSettings />;
     default:
