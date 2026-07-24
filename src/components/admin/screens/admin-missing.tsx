@@ -4,6 +4,8 @@ import { OFFICERS, ADMIN_CITATIONS, ADMIN_INCIDENTS, ACTIVE_PATROLS, ASSIGNMENTS
 import type { OfficerRecord, CitationRecord, IncidentRecord, PatrolRecord, AssignmentRecord, PostRecord, StationRecord, AdminUserRecord, WarningRecord, MissingRecord, DetainedRecord, LiveIncidentRecord } from "@/lib/admin-data";
 
 import { useState, useRef } from "react";
+import { useApiData } from "@/hooks/use-api-data";
+import { authFetch } from "@/lib/client-auth";
 import { Search, X, Plus, AlertTriangle, Car, Smartphone, User, CheckCircle, Camera, Clock, MapPin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -26,7 +28,15 @@ export function AdminMissing() {
   const [form, setForm] = useState({ type:"person" as "person"|"car"|"device", title:"", identifier:"", details:"", lastSeen:"", lastSeenLocation:"", reportedBy:"", station:"Kituo Kikuu cha Polisi DSM" });
   const setF = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>) => setForm((f) => ({...f,[k]:e.target.value}));
 
-  const records: never[] = [];
+  const { data: records, refetch } = useApiData<MissingRecord>("/api/missing", undefined, [], { refreshMs: 15000 });
+  const handleSaveForm = async () => {
+    const { error } = await authFetch("/api/missing", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    if (error) { toast({ title: "Hitilafu", description: error, variant: "destructive" }); return; }
+    toast({ title: "Imehifadhiwa ✓" }); setShowForm(false); void refetch();
+  };
   const filtered = records.filter((r) => {
     if (typeFilter !== "all" && r.type !== typeFilter) return false;
     if (statusFilter !== "all" && r.status !== statusFilter) return false;
@@ -41,12 +51,7 @@ export function AdminMissing() {
     reader.readAsDataURL(f);
   };
 
-  const handleSave = () => {
-    if (!form.title || !form.identifier) { toast({ title:"Kosa", description:"Jaza kichwa na kitambulisho.", variant:"destructive" }); return; }
-    toast({ title:"Ripoti Imewasilishwa ✓", description:`${form.title} — kesi MS-${Date.now().toString().slice(-4)} imefunguliwa.` });
-    setShowForm(false); setUploadedPhoto(null);
-    setForm({ type:"person", title:"", identifier:"", details:"", lastSeen:"", lastSeenLocation:"", reportedBy:"", station:"Kituo Kikuu cha Polisi DSM" });
-  };
+  const handleSave = handleSaveForm; // redirect to the real API save
 
   if (selected) return (
     <div className="space-y-5">
@@ -121,7 +126,7 @@ export function AdminMissing() {
           </div>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
         </div>
-        <button onClick={handleSave} className="w-full rounded-xl bg-[#EF4444] py-3.5 text-[15px] font-bold text-white active:scale-[0.98]">
+        <button onClick={handleSaveForm} className="w-full rounded-xl bg-[#EF4444] py-3.5 text-[15px] font-bold text-white active:scale-[0.98]">
           <AlertTriangle size={16} className="mr-2 inline" /> Wasilisha Ripoti ya Kutafuta
         </button>
       </div>

@@ -17,13 +17,35 @@ import {
   Phone,
 } from "lucide-react";
 import { getOfficerProfilePath } from "@/lib/admin-navigation";
-import { useRecordsStore, type AdminPatrolRecord } from "@/store/records-store";
+import { type AdminPatrolRecord } from "@/store/records-store";
+import { useApiData } from "@/hooks/use-api-data";
+import { authFetch } from "@/lib/client-auth";
 import { toast } from "@/hooks/use-toast";
 
 export function AdminPatrols() {
   const pathname = usePathname();
-  const patrols = useRecordsStore((s) => s.adminPatrols);
-  const endAdminPatrol = useRecordsStore((s) => s.endAdminPatrol);
+  const { data: rawPatrols, refetch } = useApiData<any>("/api/patrols", undefined, [], { refreshMs: 15000 });
+  const patrols: AdminPatrolRecord[] = rawPatrols.map((p: any) => ({
+    id:           p.id,
+    officerName:  p.officer?.name  ?? p.officer_name ?? "—",
+    officerId:    p.officer?.id    ?? p.officer_id   ?? "",
+    area:         p.area           ?? "—",
+    route:        p.route          ?? "—",
+    type:         p.type           ?? "foot",
+    status:       p.status         ?? "active",
+    startTime:    p.start_time     ?? p.created_at ?? "",
+    endTime:      p.end_time       ?? null,
+    stationName:  p.station?.name  ?? "—",
+  }));
+
+  const endAdminPatrol = async (id: string) => {
+    await authFetch(`/api/patrols/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "completed", end_time: new Date().toISOString() }),
+    });
+    refetch();
+  };
   const [activePin, setActivePin] = useState<AdminPatrolRecord | null>(null);
 
   const total = patrols.length;

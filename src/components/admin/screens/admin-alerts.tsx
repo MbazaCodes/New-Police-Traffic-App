@@ -12,7 +12,8 @@ import {
   type MissingAlertType,
 } from "@/lib/shared-missing-alerts";
 import { usePoliceStore } from "@/store/police-store";
-import { useRecordsStore } from "@/store/records-store";
+import { useApiData } from "@/hooks/use-api-data";
+import { authFetch } from "@/lib/client-auth";
 import { toast } from "@/hooks/use-toast";
 
 const AUDIENCE_OPTIONS = [
@@ -30,8 +31,15 @@ const PRIORITY_OPTIONS = [
 
 export function AdminAlerts() {
   const userRole = usePoliceStore((s) => s.userRole);
-  const alertsHistory = useRecordsStore((s) => s.adminAlertsHistory);
-  const addAdminAlertHistory = useRecordsStore((s) => s.addAdminAlertHistory);
+  const { data: alertsHistory, refetch: refetchAlerts } = useApiData<any>("/api/alerts", undefined, [], { refreshMs: 15000 });
+  const addAdminAlertHistory = async (alert: Record<string, unknown>) => {
+    await authFetch("/api/alerts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(alert),
+    });
+    refetchAlerts();
+  };
   const [audience, setAudience] = useState<string>("all");
   const [priority, setPriority] = useState<string>("normal");
   const [message, setMessage] = useState("");

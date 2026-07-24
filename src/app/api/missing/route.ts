@@ -1,4 +1,4 @@
-// Patrols API — /api/patrols  (Supabase-backed, was in-memory)
+// Missing persons / items / vehicles — /api/missing (Supabase-backed)
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
@@ -9,18 +9,18 @@ import { errMsg } from "@/lib/api-error";
 export async function GET(request: Request) {
   try {
     const session = await getServerSession();
-    const check = requirePermission(session, "patrols", "view");
+    const check = requirePermission(session, "search", "view");
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
     const url = new URL(request.url);
+    const type   = url.searchParams.get("type");
     const status = url.searchParams.get("status");
-    const officerId = url.searchParams.get("officerId");
     if (isSupabaseEnabled()) {
       const admin = getSupabaseAdminAny() as any;
       if (admin) {
-        let q = admin.from("patrols").select("*, officer:users(id,name,badge_no), station:stations(id,name)")
-          .order("start_time", { ascending: false }).limit(100);
+        let q = admin.from("missing_records")
+          .select("*").order("created_at", { ascending: false }).limit(200);
+        if (type   && type   !== "all") q = q.eq("type",   type);
         if (status && status !== "all") q = q.eq("status", status);
-        if (officerId) q = q.eq("officer_id", officerId);
         const { data, error } = await q;
         if (error) throw error;
         return NextResponse.json({ ok: true, data: data ?? [], total: data?.length ?? 0 });
@@ -35,29 +35,33 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession();
-    const check = requirePermission(session, "patrols", "create");
+    const check = requirePermission(session, "search", "create");
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
     const body = await request.json().catch(() => ({}));
+    if (!body.title) return NextResponse.json({ error: "Kichwa kinahitajika" }, { status: 400 });
     if (isSupabaseEnabled()) {
       const admin = getSupabaseAdminAny() as any;
       if (admin) {
-        const { data, error } = await admin.from("patrols").insert({
-          officer_id:   body.officerId   || session?.user?.id || null,
-          officer_name: body.officerName || session?.user?.name || null,
-          station_id:   body.stationId   || null,
-          area:         body.area        || null,
-          route:        body.route       || null,
-          type:         body.type        || "foot",
-          status:       "active",
-          start_time:   new Date().toISOString(),
-          notes:        body.notes       || null,
+        const caseNo = `MS-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`;
+        const { data, error } = await admin.from("missing_records").insert({
+          case_no:           caseNo,
+          type:              body.type            || "person",
+          title:             body.title,
+          identifier:        body.identifier      || null,
+          details:           body.details         || null,
+          last_seen:         body.lastSeen        || null,
+          last_seen_location:body.lastSeenLocation|| null,
+          reported_by:       body.reportedBy      || session?.user?.name || null,
+          station:           body.station         || session?.user?.station || null,
+          photo:             body.photo           || null,
+          status:            "active",
         }).select().single();
         if (error) throw error;
-        await logAction(session, "patrol_started", "patrols", data.id, { area: body.area });
+        await logAction(session, "missing_reported", "missing_records", data.id, { type: body.type, title: body.title });
         return NextResponse.json({ ok: true, data }, { status: 201 });
       }
     }
-    return NextResponse.json({ ok: true, data: { id: `PAT-${Date.now()}` } }, { status: 201 });
+    return NextResponse.json({ ok: true, data: { id: `MS-${Date.now()}` } }, { status: 201 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
