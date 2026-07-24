@@ -17,6 +17,7 @@ export async function GET(request: Request) {
 
     const url = new URL(request.url);
     const role   = url.searchParams.get("role");
+    const roles  = url.searchParams.get("roles");  // comma-separated, e.g. "national-clerk,regional-clerk"
     const status = url.searchParams.get("status");
     const search = url.searchParams.get("search")?.toLowerCase() ?? "";
 
@@ -24,7 +25,13 @@ export async function GET(request: Request) {
       const admin = getSupabaseAdminAny();
       if (admin) {
         let q = admin.from("users").select("*, station:stations(id, name, region)").order("name");
-        if (role && role !== "all") q = q.eq("role", role);
+        if (roles) {
+          const roleList = roles.split(",").map(r => r.trim()).filter(Boolean);
+          if (roleList.length === 1) q = q.eq("role", roleList[0]);
+          else if (roleList.length > 1) q = q.in("role", roleList);
+        } else if (role && role !== "all") {
+          q = q.eq("role", role);
+        }
         if (status && status !== "all") q = q.eq("status", status);
         if (search) q = q.or(`name.ilike.%${search}%,badge_no.ilike.%${search}%,email.ilike.%${search}%`);
         const { data, error } = await q;

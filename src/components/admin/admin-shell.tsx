@@ -21,6 +21,7 @@ import {
   Building2,
   Network,
   ArrowRightLeft,
+  Database,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { usePoliceStore, type AdminScreen } from "@/store/police-store";
@@ -42,6 +43,7 @@ import { AdminPosts } from "./screens/admin-posts";
 import { AdminAssignments } from "./screens/admin-assignments";
 import { DetainedCitizensScreen } from "./screens/detained-citizens-screen";
 import { AdminMissing } from "./screens/admin-missing";
+import { AdminClerks } from "./screens/admin-clerks";
 
 const COMMANDER_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
   { id: "dashboard",         label: "Dashboard",       icon: LayoutDashboard },
@@ -85,6 +87,7 @@ const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard;
   { id: "assignments", label: "Mgao", icon: ArrowRightLeft },
   { id: "reports", label: "Ripoti", icon: BarChart3 },
   { id: "missing", label: "Wanaotafutwa", icon: AlertTriangle },
+  { id: "clerks", label: "Makarani", icon: Database },
   { id: "settings", label: "Mipangilio", icon: Settings },
 ];
 
@@ -356,6 +359,8 @@ function renderAdminScreen(screen: AdminScreen) {
       return <WaliokamatwaScreen />;
     case "missing":
       return <AdminMissing />;
+    case "clerks":
+      return <AdminClerks />;
     case "settings":
       return <AdminSettings />;
     default:

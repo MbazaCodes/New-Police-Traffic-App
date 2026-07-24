@@ -66,7 +66,7 @@ export type AdminScreen =
   | "dashboard" | "officers" | "incidents" | "citations" | "patrols"
   | "alerts" | "reports" | "users" | "settings" | "stations" | "posts"
   | "assignments" | "detained-citizens" | "waliokamatwa"
-  | "missing" | "requests" | "communications";
+  | "missing" | "requests" | "communications" | "clerks";
 
 export interface CitationPrefill {
   plate: string; model: string; color: string; vehicleType: string;
