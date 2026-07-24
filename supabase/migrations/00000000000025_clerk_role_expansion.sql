@@ -13,3 +13,8 @@ ALTER TABLE missing_records ADD COLUMN IF NOT EXISTS photo             TEXT;
 ALTER TABLE missing_records ADD COLUMN IF NOT EXISTS last_seen_location TEXT;
 ALTER TABLE missing_records ADD COLUMN IF NOT EXISTS reported_by       VARCHAR(255);
 ALTER TABLE missing_records ADD COLUMN IF NOT EXISTS station           VARCHAR(255);
+
+-- Add clerk hierarchy roles to enum
+ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'national-clerk';
+ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'regional-clerk';
+ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'district-clerk';

@@ -10,7 +10,10 @@ import type { Role } from "@/lib/auth";
 
 export const ROLE_HIERARCHY: Role[] = [
   "VIEWER",
+  "DISTRICT_CLERK",
+  "REGIONAL_CLERK",
   "CLERK",
+  "NATIONAL_CLERK",
   "INVESTIGATOR",
   "GENERAL_OFFICER",
   "TRAFFIC_OFFICER",
@@ -269,6 +272,72 @@ export const PERMISSIONS: Record<Role, Partial<Record<Resource, ActionList>>> = 
     inspections: ["view"],
     reports: ["view"],
     audit_logs: [],
+  },
+  DISTRICT_CLERK: {
+    // District Clerk: data entry scoped to their district only
+    // Managed by Regional Clerk. Cannot create users.
+    citizens:    ["view","create","update"],
+    vehicles:    ["view","create","update"],
+    citations:   ["view","create","update"],
+    incidents:   ["view","create","update"],
+    arrests:     ["view","create","update"],
+    warnings:    ["view","create","update"],
+    patrols:     ["view","create","update"],
+    reports:     ["view","create","update"],
+    pf3:         ["view","create","update"],
+    inspections: ["view","create","update"],
+    search:      ["view","create"],
+    alerts:      ["view"],
+    officers:    ["view"],
+    stations:    ["view"],
+    posts:       ["view"],
+    users:       ["view"],
+    assignments: ["view"],
+    audit_logs:  ["view"],
+  },
+  REGIONAL_CLERK: {
+    // Regional Clerk: oversees all district clerks in their region
+    // Can create/manage District Clerks. Full CRUD on regional data.
+    citizens:    ["view","create","update","delete"],
+    vehicles:    ["view","create","update","delete"],
+    citations:   ["view","create","update"],
+    incidents:   ["view","create","update"],
+    arrests:     ["view","create","update"],
+    warnings:    ["view","create","update"],
+    patrols:     ["view","create","update"],
+    reports:     ["view","create","update","delete"],
+    pf3:         ["view","create","update"],
+    inspections: ["view","create","update"],
+    search:      ["view","create"],
+    alerts:      ["view","create"],
+    officers:    ["view"],
+    stations:    ["view"],
+    posts:       ["view"],
+    users:       ["view","create","update"],   // can create district clerks
+    assignments: ["view","create","update"],
+    audit_logs:  ["view"],
+  },
+  NATIONAL_CLERK: {
+    // National Clerk: manages all clerks nationwide
+    // Full CRUD on all data. Can create Regional + District Clerks.
+    citizens:    ["view","create","update","delete"],
+    vehicles:    ["view","create","update","delete"],
+    citations:   ["view","create","update","delete"],
+    incidents:   ["view","create","update","delete"],
+    arrests:     ["view","create","update","delete"],
+    warnings:    ["view","create","update","delete"],
+    patrols:     ["view","create","update"],
+    reports:     ["view","create","update","delete"],
+    pf3:         ["view","create","update","delete"],
+    inspections: ["view","create","update","delete"],
+    search:      ["view","create"],
+    alerts:      ["view","create"],
+    officers:    ["view"],
+    stations:    ["view"],
+    posts:       ["view"],
+    users:       ["view","create","update","delete"],  // manage all clerks
+    assignments: ["view","create","update"],
+    audit_logs:  ["view"],
   },
   CLERK: {
     // CLERK = Data Entry Powerhouse (primary records officer)

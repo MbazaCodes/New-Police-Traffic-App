@@ -10,7 +10,7 @@ export const ROLES = [
   "SUPER_ADMIN","COMMANDER","OFFICER","SYSTEM_ADMIN",
   "NATIONAL_COMMANDER","REGIONAL_COMMANDER","DISTRICT_COMMANDER",
   "STATION_COMMANDER","TRAFFIC_OFFICER","GENERAL_OFFICER","POST_OFFICER",
-  "INVESTIGATOR","CLERK","VIEWER",
+  "INVESTIGATOR","CLERK","NATIONAL_CLERK","REGIONAL_CLERK","DISTRICT_CLERK","VIEWER",
 ] as const;
 
 export type Role = (typeof ROLES)[number];
@@ -99,6 +99,9 @@ export function resolveDashboardRoute(role: Role): string {
     POST_OFFICER:        "/officer/post/home",
     INVESTIGATOR:        "/cid/home",
     CLERK:               "/clerk/records",
+    NATIONAL_CLERK:      "/clerk/records",
+    REGIONAL_CLERK:      "/clerk/records",
+    DISTRICT_CLERK:      "/clerk/records",
     VIEWER:              "/viewer/dashboard",
   };
   return map[role] ?? "/admin/dashboard";

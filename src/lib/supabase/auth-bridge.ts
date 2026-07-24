@@ -120,6 +120,9 @@ export function mapSupabaseRole(role: string): string {
     "dig":                     "DIG",
     "commander":               "NATIONAL_COMMANDER",
     "clerk":                   "CLERK",
+    "national-clerk":          "NATIONAL_CLERK",
+    "regional-clerk":          "REGIONAL_CLERK",
+    "district-clerk":          "DISTRICT_CLERK",
   };
   return map[role.toLowerCase()] ?? "VIEWER";
 }
