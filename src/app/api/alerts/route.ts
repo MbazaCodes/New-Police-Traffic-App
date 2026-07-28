@@ -1,58 +1,40 @@
-// Alerts API — PostgreSQL (VPS) backed (was in-memory)
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { logAction } from "@/lib/audit-log";
-import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
-import { errMsg } from "@/lib/api-error";
+// Alerts API — PostgreSQL (VPS) backed
+// Refactored to use centralized api-guard for auth, audit, and error handling.
+import { withAuth } from "@/lib/api-guard";
+import { isDbEnabled } from "@/lib/db/client";
 
-export async function GET(request: Request) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "alerts", "view");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    if (isDbEnabled()) {
-      const admin = getDbAdmin() as any;
-      if (admin) {
-        const { data, error } = await admin.from("alerts")
-          .select("*").order("created_at", { ascending: false }).limit(100);
-        if (error) throw error;
-        return NextResponse.json({ ok: true, data: data ?? [], total: data?.length ?? 0 });
-      }
-    }
-    return NextResponse.json({ ok: true, data: [], total: 0 });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
-  }
-}
+// GET /api/alerts — list all alerts
+export const GET = withAuth("alerts", "view", async ({ db }) => {
+  if (!isDbEnabled()) return { ok: true, data: [], total: 0 };
 
-export async function POST(request: Request) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "alerts", "create");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    const body = await request.json().catch(() => ({}));
-    if (!body.title || !body.message) {
-      return NextResponse.json({ error: "Kichwa na ujumbe vinahitajika" }, { status: 400 });
-    }
-    if (isDbEnabled()) {
-      const admin = getDbAdmin() as any;
-      if (admin) {
-        const { data, error } = await admin.from("alerts").insert({
-          title:    body.title,
-          message:  body.message,
-          source:   session?.user?.name || "Admin",
-          category: body.category || "all",
-          priority: body.priority || "normal",
-          is_read:  false,
-        }).select().single();
-        if (error) throw error;
-        await logAction(session, "alert_sent", "alerts", data.id, { title: body.title });
-        return NextResponse.json({ ok: true, data }, { status: 201 });
-      }
-    }
-    return NextResponse.json({ ok: true, data: { id: `ALT-${Date.now()}` } }, { status: 201 });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+  const { data, error } = await db.from("alerts")
+    .select("*").order("created_at", { ascending: false }).limit(100);
+  if (error) throw error;
+  return { ok: true, data: data ?? [], total: data?.length ?? 0 };
+});
+
+// POST /api/alerts — create alert (auto-audited by api-guard)
+export const POST = withAuth("alerts", "create", async ({ body, session, db }) => {
+  const { title, message, category, priority } = body as {
+    title: string; message: string; category?: string; priority?: string;
+  };
+
+  if (!title || !message) {
+    return { ok: false, error: "Kichwa na ujumbe vinahitajika", status: 400 };
   }
-}
+
+  if (!isDbEnabled()) {
+    return { ok: true, data: { id: `ALT-${Date.now()}` }, status: 201 };
+  }
+
+  const { data, error } = await db.from("alerts").insert({
+    title,
+    message,
+    source: session.user.name || "Admin",
+    category: category || "all",
+    priority: priority || "normal",
+    is_read: false,
+  }).select().single();
+  if (error) throw error;
+  return { ok: true, data, status: 201 };
+});

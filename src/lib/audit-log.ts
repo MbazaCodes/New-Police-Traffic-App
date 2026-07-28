@@ -1,65 +1,136 @@
-// Audit log service for TZ Police Digital Platform.
-// In-memory implementation; would be backed by PostgreSQL `audit_logs` table
-// in production.
+// ============================================================
+// AUDIT LOG — TZ Police Digital Platform
+// PostgreSQL-backed audit logging for all platform operations.
+//
+// ARCHITECTURE:
+//   Primary: PostgreSQL `audit_logs` table (persistent, queryable)
+//   Fallback: In-memory store (dev/testing when DB is unavailable)
+//
+// The api-guard.ts wrapper calls logAuditEvent() automatically
+// for all mutation routes (POST/PUT/PATCH/DELETE). Individual
+// routes can also call it manually for custom events.
+//
+// USAGE (automatic — via api-guard):
+//   export const POST = withAuth("officers", "create", async ({ body, db }) => {
+//     const { data } = await db.from("officers").insert(body).select().single();
+//     return { ok: true, data };
+//   });
+//   // ↑ Audit log entry created automatically
+//
+// USAGE (manual — for custom events):
+//   import { logAuditEvent } from "@/lib/audit-log";
+//   await logAuditEvent({ userId, action: "login", resource: "auth", ... });
+//
+// ============================================================
+
+import { getDbAdmin, isDbEnabled, query } from "@/lib/db/client";
+import { errMsg } from "@/lib/api-error";
 
 export interface AuditLogEntry {
   id: string;
-  userId: string | null;
-  userName: string | null;
-  action: string; // e.g. "create", "update", "delete", "send_alert"
-  resource: string; // e.g. "officers", "citations"
-  resourceId: string | null;
+  user_id: string | null;
+  user_name: string | null;
+  action: string;
+  resource: string;
+  resource_id: string | null;
   details: Record<string, unknown> | null;
-  timestamp: string; // ISO string
-  ip?: string | null;
-  userAgent?: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  created_at: string;
 }
 
-// In-memory store (resets on server restart — fine for dev)
-const auditStore: AuditLogEntry[] = [];
+// ── In-memory fallback store ─────────────────────────────────
+const memoryStore: AuditLogEntry[] = [];
+let memoryCounter = 0;
 
-// Seed with a few entries so the audit-logs API returns data immediately.
-auditStore.push(
-  {
-    id: "AL-SEED-001",
-    userId: "ADM-001",
-    userName: "CP. Saidi Waziri",
-    action: "login",
-    resource: "auth",
-    resourceId: "ADM-001",
-    details: { method: "credentials" },
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-  },
-  {
-    id: "AL-SEED-002",
-    userId: "ADM-002",
-    userName: "ACP. Mariam Juma",
-    action: "create",
-    resource: "alerts",
-    resourceId: "AL-001",
-    details: { title: "Gari la Uhalifu limeonekana", audience: "Wote" },
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 1).toISOString(),
-  },
-  {
-    id: "AL-SEED-003",
-    userId: "TP123456",
-    userName: "Insp. Juma Mwinyi",
-    action: "create",
-    resource: "citations",
-    resourceId: "CT-2026-0451",
-    details: { plate: "T 003 GHI", offense: "Over Speeding" },
-    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-  },
-);
+// ── Generate ID ─────────────────────────────────────────────
+function generateId(): string {
+  memoryCounter += 1;
+  return `AL-${Date.now()}-${memoryCounter.toString().padStart(4, "0")}`;
+}
 
-let counter = 0;
-function nextId(): string {
-  counter += 1;
-  return `AL-${Date.now()}-${counter.toString().padStart(4, "0")}`;
+// ── Extract IP and User-Agent from request ───────────────────
+function extractRequestMeta(request?: Request): { ip: string | null; userAgent: string | null } {
+  if (!request) return { ip: null, userAgent: null };
+  // IP may be forwarded by proxy
+  const forwarded = request.headers.get("x-forwarded-for");
+  const ip = forwarded?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip") ?? null;
+  const userAgent = request.headers.get("user-agent") ?? null;
+  return { ip, userAgent };
+}
+
+// ── Core logging function ────────────────────────────────────
+// This is the single function called by everything (api-guard, manual calls).
+
+export type AuditEventInput = {
+  userId: string | null;
+  userName?: string | null;
+  action: string;
+  resource: string;
+  resourceId?: string | null;
+  details?: Record<string, unknown> | null;
+  request?: Request;
+};
+
+/**
+ * logAuditEvent: Create an audit log entry.
+ * Writes to PostgreSQL when available, falls back to in-memory.
+ *
+ * This function is:
+ *   - Fire-and-forget (errors are logged but never thrown)
+ *   - Non-blocking (called via api-guard after response is ready)
+ *   - Safe to call from any context (route handler, background task)
+ */
+export async function logAuditEvent(input: AuditEventInput): Promise<AuditLogEntry> {
+  const { ip, userAgent } = extractRequestMeta(input.request);
+  const entry: AuditLogEntry = {
+    id: generateId(),
+    user_id: input.userId,
+    user_name: input.userName ?? null,
+    action: input.action,
+    resource: input.resource,
+    resource_id: input.resourceId ?? null,
+    details: input.details ?? null,
+    ip_address: ip,
+    user_agent: userAgent,
+    created_at: new Date().toISOString(),
+  };
+
+  // ── Try PostgreSQL first ──────────────────────────────────
+  if (isDbEnabled()) {
+    try {
+      await query(
+        `INSERT INTO audit_logs (user_id, user_name, action, resource, resource_id, details, ip_address, user_agent)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [
+          entry.user_id,
+          entry.user_name,
+          entry.action,
+          entry.resource,
+          entry.resource_id,
+          entry.details ? JSON.stringify(entry.details) : null,
+          entry.ip_address,
+          entry.user_agent,
+        ]
+      );
+      return entry;
+    } catch (err) {
+      console.error("[AUDIT] PostgreSQL write failed, falling back to memory:", errMsg(err));
+    }
+  }
+
+  // ── Fallback: in-memory ────────────────────────────────────
+  memoryStore.push(entry);
+  if (memoryStore.length > 1000) {
+    memoryStore.splice(0, memoryStore.length - 1000);
+  }
+  return entry;
 }
 
 /**
- * logAction: append a new audit log entry.
+ * logAction: Legacy-compatible synchronous wrapper.
+ * Kept for backward compatibility with routes that call it directly.
+ * Now writes to PostgreSQL asynchronously in the background.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function logAction(
@@ -71,7 +142,6 @@ export function logAction(
   userName: string | null = null,
   meta?: { ip?: string | null; userAgent?: string | null },
 ): AuditLogEntry {
-  // Accept either a session object or a userId string
   let userId: string | null = null;
   let resolvedUserName: string | null = userName;
   if (sessionOrUserId && typeof sessionOrUserId === "object") {
@@ -80,54 +150,121 @@ export function logAction(
   } else {
     userId = sessionOrUserId ?? null;
   }
+
   const entry: AuditLogEntry = {
-    id: nextId(),
-    userId,
-    userName: resolvedUserName,
+    id: generateId(),
+    user_id: userId,
+    user_name: resolvedUserName,
     action,
     resource,
-    resourceId,
+    resource_id: resourceId,
     details,
-    timestamp: new Date().toISOString(),
-    ip: meta?.ip ?? null,
-    userAgent: meta?.userAgent ?? null,
+    ip_address: meta?.ip ?? null,
+    user_agent: meta?.userAgent ?? null,
+    created_at: new Date().toISOString(),
   };
-  auditStore.push(entry);
-  // Cap memory at 1000 entries to prevent unbounded growth.
-  if (auditStore.length > 1000) {
-    auditStore.splice(0, auditStore.length - 1000);
+
+  // Fire-and-forget PostgreSQL write
+  if (isDbEnabled()) {
+    query(
+      `INSERT INTO audit_logs (user_id, user_name, action, resource, resource_id, details, ip_address, user_agent)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        entry.user_id, entry.user_name, entry.action, entry.resource,
+        entry.resource_id,
+        entry.details ? JSON.stringify(entry.details) : null,
+        entry.ip_address, entry.user_agent,
+      ]
+    ).catch((err) => {
+      console.error("[AUDIT] Background PG write failed:", errMsg(err));
+      // Fallback to memory
+      memoryStore.push(entry);
+      if (memoryStore.length > 1000) memoryStore.splice(0, memoryStore.length - 1000);
+    });
+  } else {
+    memoryStore.push(entry);
+    if (memoryStore.length > 1000) memoryStore.splice(0, memoryStore.length - 1000);
   }
+
   return entry;
 }
 
-/**
- * listAuditLogs: retrieve audit log entries (newest first).
- */
-export function listAuditLogs(opts?: {
+// ── Query functions ──────────────────────────────────────────
+
+export async function listAuditLogs(opts?: {
   limit?: number;
   offset?: number;
   resource?: string;
   userId?: string;
   action?: string;
-}): AuditLogEntry[] {
+  startDate?: string;
+  endDate?: string;
+}): Promise<{ data: AuditLogEntry[]; total: number }> {
+  if (isDbEnabled()) {
+    try {
+      const conditions: string[] = [];
+      const params: unknown[] = [];
+
+      if (opts?.resource) {
+        params.push(opts.resource);
+        conditions.push(`resource = $${params.length}`);
+      }
+      if (opts?.userId) {
+        params.push(opts.userId);
+        conditions.push(`user_id = $${params.length}`);
+      }
+      if (opts?.action) {
+        params.push(opts.action);
+        conditions.push(`action = $${params.length}`);
+      }
+      if (opts?.startDate) {
+        params.push(opts.startDate);
+        conditions.push(`created_at >= $${params.length}`);
+      }
+      if (opts?.endDate) {
+        params.push(opts.endDate);
+        conditions.push(`created_at <= $${params.length}`);
+      }
+
+      const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
+
+      const countRow = await query(`SELECT COUNT(*)::int as total FROM audit_logs ${where}`, params);
+      const total = countRow[0]?.total ?? 0;
+
+      const limit = opts?.limit ?? 100;
+      const offset = opts?.offset ?? 0;
+      params.push(limit, offset);
+
+      const rows = await query(
+        `SELECT id, user_id, user_name, action, resource, resource_id, details, ip_address, user_agent, created_at
+         FROM audit_logs ${where}
+         ORDER BY created_at DESC
+         LIMIT $${params.length - 1} OFFSET $${params.length}`,
+        params
+      );
+
+      return {
+        data: rows.map((r) => ({
+          ...r,
+          details: typeof r.details === "string" ? JSON.parse(r.details) : r.details,
+        })) as AuditLogEntry[],
+        total,
+      };
+    } catch (err) {
+      console.error("[AUDIT] PostgreSQL read failed:", errMsg(err));
+    }
+  }
+
+  // Fallback: in-memory
+  let entries = [...memoryStore].reverse();
+  if (opts?.resource) entries = entries.filter((e) => e.resource === opts.resource);
+  if (opts?.userId) entries = entries.filter((e) => e.user_id === opts.userId);
+  if (opts?.action) entries = entries.filter((e) => e.action === opts.action);
   const limit = opts?.limit ?? 100;
   const offset = opts?.offset ?? 0;
-  let entries = [...auditStore].reverse();
-  if (opts?.resource) {
-    entries = entries.filter((e) => e.resource === opts.resource);
-  }
-  if (opts?.userId) {
-    entries = entries.filter((e) => e.userId === opts.userId);
-  }
-  if (opts?.action) {
-    entries = entries.filter((e) => e.action === opts.action);
-  }
-  return entries.slice(offset, offset + limit);
+  return { data: entries.slice(offset, offset + limit), total: entries.length };
 }
 
-/**
- * clearAuditLogs: clear all entries (admin/testing only).
- */
 export function clearAuditLogs(): void {
-  auditStore.length = 0;
+  memoryStore.length = 0;
 }

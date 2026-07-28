@@ -1,37 +1,19 @@
-// Audit logs API — list audit logs
-// GET /api/audit-logs -> list audit log entries (newest first)
-
-import { NextResponse } from "next/server";
+// Audit logs API — PostgreSQL-backed audit trail
+// Refactored: uses api-guard for auth, upgraded to async PostgreSQL queries
+import { withAuth } from "@/lib/api-guard";
 import { listAuditLogs } from "@/lib/audit-log";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { errMsg } from "@/lib/api-error";
 
-export async function GET(request: Request) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "audit_logs", "view");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
-
-    const url = new URL(request.url);
-    const limit = Number(url.searchParams.get("limit") ?? 100);
-    const offset = Number(url.searchParams.get("offset") ?? 0);
-    const resource = url.searchParams.get("resource") ?? undefined;
-    const userId = url.searchParams.get("userId") ?? undefined;
-    const action = url.searchParams.get("action") ?? undefined;
-
-    const entries = listAuditLogs({ limit, offset, resource, userId, action });
-
-    return NextResponse.json(
-      { data: entries, total: entries.length },
-      { status: 200 },
-    );
-  } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to list audit logs", detail: errMsg(err) },
-      { status: 500 },
-    );
-  }
-}
+// GET /api/audit-logs → list audit log entries (newest first)
+// Now reads from PostgreSQL audit_logs table (not in-memory)
+export const GET = withAuth("audit_logs", "view", async ({ searchParams }) => {
+  const result = await listAuditLogs({
+    limit:    Number(searchParams.get("limit") ?? 100),
+    offset:   Number(searchParams.get("offset") ?? 0),
+    resource: searchParams.get("resource") ?? undefined,
+    userId:   searchParams.get("userId") ?? undefined,
+    action:   searchParams.get("action") ?? undefined,
+    startDate: searchParams.get("from") ?? undefined,
+    endDate:   searchParams.get("to") ?? undefined,
+  });
+  return { ok: true, ...result };
+});
