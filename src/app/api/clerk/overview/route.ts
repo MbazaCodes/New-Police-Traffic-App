@@ -1,8 +1,6 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
+// Clerk overview — migrated to withAuth() for centralized auth
+import { withAuth } from "@/lib/api-guard";
 import { isDbEnabled, getDbAdmin } from "@/lib/db/client";
-import { errMsg } from "@/lib/api-error";
 
 type ClerkAlert = {
   title: string;
@@ -10,31 +8,24 @@ type ClerkAlert = {
   priority: "high" | "medium" | "low";
 };
 
-export async function GET() {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "reports", "view");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
+export const GET = withAuth("reports", "view", async () => {
+  // Load real data from PostgreSQL (VPS) (or return empty state)
+  let totalRecords = 0;
+  let pendingReview = 0;
+  let citizensMissingDocs = 0;
+  let invalidNidaCount = 0;
+  let closedCases = 0;
+  let defaultStation = "Station not set";
+  let syncEnabled = true;
+  let offlineEnabled = false;
 
-    // Load real data from PostgreSQL (VPS) (or return empty state)
-    let totalRecords = 0;
-    let pendingReview = 0;
-    let citizensMissingDocs = 0;
-    let invalidNidaCount = 0;
-    let closedCases = 0;
-    let defaultStation = "Station not set";
-    let syncEnabled = true;
-    let offlineEnabled = false;
-    
-    const recentEntries: Array<{ id: string; name: string; status: string; documentCount: number; updatedAt: string }> = [];
-    const documentsQueue: Array<{ id: string; name: string; status: string }> = [];
+  const recentEntries: Array<{ id: string; name: string; status: string; documentCount: number; updatedAt: string }> = [];
+  const documentsQueue: Array<{ id: string; name: string; status: string }> = [];
 
-    if (isDbEnabled()) {
-      const admin = getDbAdmin();
-      if (admin) {
-        try {
+  if (isDbEnabled()) {
+    const admin = getDbAdmin();
+    if (admin) {
+      try {
           // Fetch citizens count
           const { count: citizensCount } = await admin
             .from("citizens")
@@ -151,37 +142,29 @@ export async function GET() {
       },
     ];
 
-    return NextResponse.json(
-      {
-        data: {
-          generatedAt: new Date().toISOString(),
-          notifications,
-          settings: {
-            defaultStation,
-            exportFrequency: "Daily at 18:00",
-            syncEnabled,
-            offlineEnabled,
-          },
-          profile: {
-            recordsEntered: totalRecords,
-            validated,
-            pending: pendingReview,
-            accuracy: Number(accuracy.toFixed(1)),
-            casesClosed: closedCases,
-            avgTurnaroundMins: 12,
-            qualityScore,
-            actionRequired: invalidNidaCount,
-          },
-          records,
-          documents,
+    return {
+      ok: true,
+      data: {
+        generatedAt: new Date().toISOString(),
+        notifications,
+        settings: {
+          defaultStation,
+          exportFrequency: "Daily at 18:00",
+          syncEnabled,
+          offlineEnabled,
         },
+        profile: {
+          recordsEntered: totalRecords,
+          validated,
+          pending: pendingReview,
+          accuracy: Number(accuracy.toFixed(1)),
+          casesClosed: closedCases,
+          avgTurnaroundMins: 12,
+          qualityScore,
+          actionRequired: invalidNidaCount,
+        },
+        records,
+        documents,
       },
-      { status: 200 },
-    );
-  } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to load clerk overview", detail: errMsg(err) },
-      { status: 500 },
-    );
-  }
-}
+    };
+});
