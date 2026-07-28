@@ -1,81 +1,56 @@
-// Incidents API — PostgreSQL (VPS) first
-// GET  /api/incidents   -> list incidents
-// POST /api/incidents   -> create incident
+// Incidents API — migrated to withAuth() for centralized auth + audit
+// GET  /api/incidents   → list incidents (scope-aware)
+// POST /api/incidents   → create incident (auto-audited)
+import { withAuth } from "@/lib/api-guard";
+import { isDbEnabled } from "@/lib/db/client";
+import { applyScopeToQuery } from "@/lib/data-scope";
 
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { logAction } from "@/lib/audit-log";
-import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
-import { getScope, applyScopeToQuery } from "@/lib/data-scope";
-import { errMsg } from "@/lib/api-error";
+// GET /api/incidents → list incidents (auto-scoped via getScope)
+export const GET = withAuth("incidents", "view", async ({ db, scope, searchParams }) => {
+  const status   = searchParams.get("status");
+  const priority = searchParams.get("priority");
+  const search   = searchParams.get("search")?.toLowerCase() ?? "";
 
-export async function GET(request: Request) {
-  try {
-    const session = await getServerSession();
-    const scope = getScope(session);
-    const check = requirePermission(session, "incidents", "view");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-
-    const url = new URL(request.url);
-    const status   = url.searchParams.get("status");
-    const priority = url.searchParams.get("priority");
-    const search   = url.searchParams.get("search")?.toLowerCase() ?? "";
-
-    if (isDbEnabled()) {
-      const admin = getDbAdmin();
-      if (admin) {
-        let q = applyScopeToQuery(admin.from("incidents"), scope).select("*").order("created_at", { ascending: false });
-        if (status && status !== "all") q = q.eq("status", status);
-        if (priority && priority !== "all") q = q.eq("priority", priority);
-        if (search) q = q.or(`type.ilike.%${search}%,location.ilike.%${search}%,incident_number.ilike.%${search}%`);
-        const { data, error } = await q;
-        if (error) throw error;
-        return NextResponse.json({ ok: true, data: data ?? [], total: data?.length ?? 0 });
-      }
-    }
-
-    return NextResponse.json({ ok: true, data: [], total: 0 });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+  if (!isDbEnabled()) {
+    return { ok: true, data: [], total: 0 };
   }
-}
 
-export async function POST(request: Request) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "incidents", "create");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-
-    const body = await request.json().catch(() => ({}));
-    const { type, location, description, priority, citizenName, citizenPhone, citizenNida } = body;
-
-    if (!type || !location) {
-      return NextResponse.json({ error: "Aina ya tukio na eneo vinahitajika" }, { status: 400 });
-    }
-
-    const incidentNumber = `INC-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
-
-    if (isDbEnabled()) {
-      const admin = getDbAdmin();
-      if (admin) {
-        const { data, error } = await admin.from("incidents").insert({
-          incident_number: incidentNumber,
-          type, location, description: description || null,
-          priority: priority || "medium", status: "active",
-          citizen_name: citizenName || null,
-          citizen_phone: citizenPhone || null,
-          citizen_nida: citizenNida || null,
-          officer_id: session?.user?.id || null,
-        }).select().single();
-        if (error) throw error;
-        await logAction(session, "incident_created", "incidents", data.id, { type, location });
-        return NextResponse.json({ ok: true, data }, { status: 201 });
-      }
-    }
-
-    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+  let q = applyScopeToQuery(db.from("incidents"), scope)
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (status && status !== "all")         q = q.eq("status", status);
+  if (priority && priority !== "all")     q = q.eq("priority", priority);
+  if (search) {
+    q = q.or(`type.ilike.%${search}%,location.ilike.%${search}%,incident_number.ilike.%${search}%`);
   }
-}
+
+  const { data, error } = await q;
+  if (error) throw error;
+  return { ok: true, data: data ?? [], total: data?.length ?? 0 };
+});
+
+// POST /api/incidents → create incident (auto-audited)
+export const POST = withAuth("incidents", "create", async ({ body, session, db }) => {
+  const { type, location, description, priority, citizenName, citizenPhone, citizenNida } = body;
+  if (!type || !location) {
+    return { ok: false, error: "Aina ya tukio na eneo vinahitajika", status: 400 };
+  }
+
+  if (!isDbEnabled()) {
+    return { ok: false, error: "Database haijawezeshwa", status: 503 };
+  }
+
+  const incidentNumber = `INC-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
+  const { data, error } = await db.from("incidents").insert({
+    incident_number: incidentNumber,
+    type, location, description: description || null,
+    priority: priority || "medium", status: "active",
+    citizen_name:  citizenName  || null,
+    citizen_phone: citizenPhone || null,
+    citizen_nida:  citizenNida  || null,
+    officer_id:    session?.user?.id || null,
+  }).select().single();
+
+  if (error) throw error;
+  return { ok: true, data, status: 201 };
+});

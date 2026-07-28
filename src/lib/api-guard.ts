@@ -115,7 +115,7 @@ const METHOD_ACTION_MAP: Record<string, string> = {
  * @param handler  - The actual route handler function
  * @param options  - Optional: disable audit, custom role requirements, etc.
  */
-export function withAuth<TBody = unknown>(
+export function withAuth<TBody = any>(
   resource: Resource,
   action: Action,
   handler: AuthHandler<TBody>,
@@ -229,7 +229,7 @@ export function withAuth<TBody = unknown>(
 // ── withAuthAny: allow ANY authenticated user ─────────────────
 // Skips RBAC check, just requires a valid session.
 
-export function withAuthAny<TBody = unknown>(
+export function withAuthAny<TBody = any>(
   resource: Resource,
   handler: AuthHandler<TBody>,
   options: { skipAudit?: boolean; auditAction?: string } = {}

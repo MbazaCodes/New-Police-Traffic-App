@@ -1,49 +1,28 @@
-// Incident detail API
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { logAction } from "@/lib/audit-log";
-import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
-import { errMsg } from "@/lib/api-error";
+// Incident detail API — migrated to withAuth() for centralized auth + audit
+import { withAuth } from "@/lib/api-guard";
+import { isDbEnabled } from "@/lib/db/client";
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "incidents", "view");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    const { id } = await params;
-    if (!isDbEnabled()) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
-    const admin = getDbAdmin();
-    if (!admin) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
-    const { data, error } = await admin.from("incidents").select("*").eq("id", id).single();
-    if (error || !data) return NextResponse.json({ error: "Tukio halipatikani" }, { status: 404 });
-    return NextResponse.json({ data });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+// GET /api/incidents/[id] → fetch single incident
+export const GET = withAuth("incidents", "view", async ({ params, db }) => {
+  const id = String(params.id ?? "");
+  if (!isDbEnabled()) {
+    return { ok: false, error: "Database haijawezeshwa", status: 503 };
   }
-}
+  const { data, error } = await db.from("incidents").select("*").eq("id", id).single();
+  if (error || !data) {
+    return { ok: false, error: "Tukio halipatikani", status: 404 };
+  }
+  // Preserve legacy response shape: { data } (no ok flag)
+  return { ok: true, data };
+});
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "incidents", "update");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    const { id } = await params;
-    const body = await request.json().catch(() => ({}));
-    if (!isDbEnabled()) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
-    const admin = getDbAdmin();
-    if (!admin) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
-    const { data, error } = await admin.from("incidents").update(body).eq("id", id).select().single();
-    if (error) throw error;
-    await logAction(session, "incident_updated", "incidents", id, body);
-    return NextResponse.json({ data });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+// PATCH /api/incidents/[id] → update incident (auto-audited)
+export const PATCH = withAuth("incidents", "update", async ({ params, body, db }) => {
+  const id = String(params.id ?? "");
+  if (!isDbEnabled()) {
+    return { ok: false, error: "Database haijawezeshwa", status: 503 };
   }
-}
+  const { data, error } = await db.from("incidents").update(body).eq("id", id).select().single();
+  if (error) throw error;
+  return { ok: true, data };
+});
