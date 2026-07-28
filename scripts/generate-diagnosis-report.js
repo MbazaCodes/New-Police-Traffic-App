@@ -134,7 +134,7 @@ const doc = new Document({
       
       criticalBox("ROW-LEVEL SECURITY (RLS) IS SILENTLY BLOCKING ALL INSERT OPERATIONS FOR NON-ADMIN USERS"),
       
-      body("The core issue stems from Supabase's Row-Level Security implementation combined with missing or misconfigured policies. When RLS is enabled on a table but no INSERT policy exists (or the policy conditions are not met), Supabase does NOT return an error - it simply inserts zero rows. This is the expected PostgreSQL behavior but creates significant confusion for developers who expect errors to be thrown."),
+      body("The core issue stems from PostgreSQL's Row-Level Security implementation combined with missing or misconfigured policies. When RLS is enabled on a table but no INSERT policy exists (or the policy conditions are not met), PostgreSQL does NOT return an error - it simply inserts zero rows. This is the expected PostgreSQL behavior but creates significant confusion for developers who expect errors to be thrown."),
       
       // Scope
       heading("2. ANALYSIS SCOPE"),
@@ -159,10 +159,10 @@ const doc = new Document({
       codeBlock("CREATE POLICY citations_insert_officer ON citations"),
       codeBlock("  FOR INSERT TO authenticated"),
       codeBlock("  WITH CHECK (officer_id IN (SELECT o.id FROM officers o WHERE o.user_id = auth.uid()));"),
-      body("If the authenticated user has no matching record in the officers table, or if auth.uid() returns NULL (unauthenticated session), this policy evaluates to FALSE. Supabase then silently discards the insert without returning an error to the client application."),
+      body("If the authenticated user has no matching record in the officers table, or if auth.uid() returns NULL (unauthenticated session), this policy evaluates to FALSE. PostgreSQL then silently discards the insert without returning an error to the client application."),
       
       heading("3.2 Critical Issue #2: Missing auth_user_id Linkage", HeadingLevel.HEADING_2),
-      body("The v2 schema extension (migration 0008) adds an auth_user_id column to the users table to link Supabase Auth users to application users. However, many RLS policies still reference the original pattern of comparing users.id directly with auth.uid(). If these values don't match (which they won't unless explicitly set during user creation), all policy checks fail silently."),
+      body("The v2 schema extension (migration 0008) adds an auth_user_id column to the users table to link PostgreSQL Auth users to application users. However, many RLS policies still reference the original pattern of comparing users.id directly with auth.uid(). If these values don't match (which they won't unless explicitly set during user creation), all policy checks fail silently."),
       
       codeBlock("-- Migration 0008 adds this column:"),
       codeBlock("ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_user_id UUID UNIQUE;"),
@@ -232,7 +232,7 @@ const doc = new Document({
       bullet("Migration 0010+: Features that depend on above"),
       
       heading("5.2 Fix auth_user_id Linkage", HeadingLevel.HEADING_2),
-      body("When creating a new user record (during registration or admin creation), always set the auth_user_id field to the Supabase Auth UUID:"),
+      body("When creating a new user record (during registration or admin creation), always set the auth_user_id field to the PostgreSQL Auth UUID:"),
       
       codeBlock("-- During user creation, link auth user to app user:"),
       codeBlock("INSERT INTO users (name, id_number, auth_user_id, role, ...)"),
@@ -277,7 +277,7 @@ const doc = new Document({
       // Verification Steps
       heading("6. VERIFICATION CHECKLIST"),
       body("After applying fixes, verify each entity with these steps:"),
-      bullet("Connect to Supabase SQL Editor with service_role key"),
+      bullet("Connect to PostgreSQL SQL Editor with service_role key"),
       bullet("Run: SELECT * FROM pg_policies WHERE tablename = 'table_name';"),
       bullet("Verify INSERT policy exists and uses correct function references"),
       bullet("Test insert as authenticated officer (not admin)"),
@@ -300,7 +300,7 @@ const doc = new Document({
       
       // Conclusion
       heading("8. CONCLUSION"),
-      body("The root cause of 'no error but not recorded' behavior in the TZ Police Digital Platform is definitively identified as Row-Level Security silently blocking INSERT operations. When RLS policies evaluate to FALSE for an insert operation, PostgreSQL (and by extension Supabase) returns success with zero rows affected rather than throwing an error. This is working as designed but creates a poor developer experience when policies are misconfigured or when the authentication context doesn't match expectations."),
+      body("The root cause of 'no error but not recorded' behavior in the TZ Police Digital Platform is definitively identified as Row-Level Security silently blocking INSERT operations. When RLS policies evaluate to FALSE for an insert operation, PostgreSQL (and by extension PostgreSQL) returns success with zero rows affected rather than throwing an error. This is working as designed but creates a poor developer experience when policies are misconfigured or when the authentication context doesn't match expectations."),
       body("The recommended fix sequence is: (1) verify and reorder migrations if needed, (2) fix the auth_user_id linkage in user creation flows, (3) correct column name references in search/update functions, (4) review and expand RLS policies for tables where officers need write access, and (5) enhance client-side code to detect and report silent failures. With these fixes applied, all data submission workflows should correctly persist records to the database while maintaining proper security boundaries between user roles."),
       
       new Paragraph({ spacing: { before: 400 }, children: [] }),

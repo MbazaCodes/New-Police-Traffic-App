@@ -1,6 +1,6 @@
 // ============================================================
 // POLICE HELPERS — input validation + search stubs
-// No mock data. Validation is real; search hits Supabase.
+// No mock data. Validation is real; search hits PostgreSQL (VPS).
 // Updated: Supports new NIDA format (0000-0000-0000-0000-00)
 // ============================================================
 
@@ -74,7 +74,7 @@ export function cleanNida(nida: string): string {
   return nida ? nida.replace(/\D/g, "") : "";
 }
 
-// Search suggestions — returns empty; real autocomplete from Supabase
+// Search suggestions — returns empty; real autocomplete from PostgreSQL (VPS)
 export function getSuggestions(_value: string, _type: string): string[] { return []; }
 
 // Citizen lookup stub — real lookup via /api/search/citizen

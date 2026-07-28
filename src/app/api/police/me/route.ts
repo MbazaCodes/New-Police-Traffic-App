@@ -12,7 +12,7 @@ import { errMsg } from "@/lib/api-error";
 export async function GET(request: Request) {
   try {
     if (!isDbEnabled()) {
-      return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+      return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     }
     const admin = getDbAdmin() as any;
     if (!admin) return NextResponse.json({ error: "DB haijawezeshwa" }, { status: 503 });

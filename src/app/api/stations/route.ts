@@ -1,4 +1,4 @@
-// Stations API — Supabase-first
+// Stations API — PostgreSQL (VPS) first
 // GET  /api/stations  -> list stations
 // POST /api/stations  -> create station
 
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }

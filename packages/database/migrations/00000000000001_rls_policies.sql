@@ -12,7 +12,7 @@
 -- RBAC functions exist.
 
 -- ===== Helper: current user's id + role (defined as SECURITY DEFINER below) =====
--- We use `auth.uid()` (Supabase built-in) plus a join to `users`.
+-- We use `auth.uid()` (PostgreSQL (VPS) built-in) plus a join to `users`.
 -- For server-side service-role clients, RLS is bypassed entirely.
 
 -- ============================================================

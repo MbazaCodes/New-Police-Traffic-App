@@ -1,4 +1,4 @@
-// Users [id] API — Supabase-only
+// Users [id] API — PostgreSQL (VPS) only
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
@@ -10,9 +10,9 @@ export async function GET(_: Request, { params: _params }: { params: Promise<{ i
     const session = await getServerSession();
     const check = requirePermission(session, "users", "view");
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    if (!isDbEnabled()) return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    if (!isDbEnabled()) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     const admin = getDbAdmin();
-    if (!admin) return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    if (!admin) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     const { data, error } = await admin.from("users").select("*, station:stations(id,name,region)").eq("id", (await _params).id).single();
     if (error || !data) return NextResponse.json({ error: "Mtumiaji hapatikani" }, { status: 404 });
     return NextResponse.json({ ok: true, data });
@@ -25,9 +25,9 @@ export async function PATCH(request: Request, { params: _params }: { params: Pro
     const check = requirePermission(session, "users", "update");
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
     const body = await request.json().catch(() => ({}));
-    if (!isDbEnabled()) return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    if (!isDbEnabled()) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     const admin = getDbAdmin();
-    if (!admin) return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    if (!admin) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     const updates: Record<string, unknown> = {};
     if (body.name)       updates.name       = body.name;
     if (body.email)      updates.email      = body.email;
@@ -49,9 +49,9 @@ export async function DELETE(_: Request, { params: _params }: { params: Promise<
     const session = await getServerSession();
     const check = requirePermission(session, "users", "delete");
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    if (!isDbEnabled()) return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    if (!isDbEnabled()) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     const admin = getDbAdmin();
-    if (!admin) return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    if (!admin) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     const { error } = await admin.from("users").delete().eq("id", (await _params).id);
     if (error) throw error;
     await logAction(session, "user_deleted", "users", (await _params).id, {});

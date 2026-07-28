@@ -112,7 +112,7 @@ interface PoliceState {
   logout: () => void;
   setRole: (role: UserRole) => void;
 
-  // Logged-in officer profile from Supabase
+  // Logged-in officer profile from PostgreSQL (VPS)
   officerProfile: import("@/hooks/use-officer").OfficerProfile | null;
   setOfficerProfile: (p: import("@/hooks/use-officer").OfficerProfile | null) => void;
 

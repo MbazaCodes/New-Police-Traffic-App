@@ -1,4 +1,4 @@
-// Arrests API — Supabase-first
+// Arrests API — PostgreSQL (VPS) first
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";
@@ -53,6 +53,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ ok: true, data }, { status: 201 });
       }
     }
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (e) { return NextResponse.json({ error: String(e) }, { status: 500 }); }
 }

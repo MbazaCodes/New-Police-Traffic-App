@@ -96,7 +96,7 @@ const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard;
 export function AdminShell() {
   const { adminScreen, setAdminScreen, logout, userRole, authRole, loginIdentifier, officerProfile } = usePoliceStore();
 
-  // Use profile stored at login from Supabase — no ROLE_USERS lookup
+  // Use profile stored at login from PostgreSQL (VPS) — no ROLE_USERS lookup
   const displayName     = officerProfile?.name ?? "Msimamizi";
   const displayRank     = officerProfile?.rank ?? "";
   const displayRole     = authRole?.replace(/_/g, " ") ?? (userRole === "commander" ? "Commander" : "Admin");

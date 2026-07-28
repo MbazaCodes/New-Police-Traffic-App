@@ -1,9 +1,9 @@
 // ============================================================
 // LOCAL PostgreSQL CLIENT — TZ Police Digital Platform
-// Replaces @supabase/supabase-js entirely.
+// Native PostgreSQL (VPS) client — replaced @supabase/supabase-js.
 // Uses `pg` Pool — set DATABASE_URL in your .env.
-// Exposes a chainable query-builder that mirrors the
-// Supabase JS v2 API so all existing route files stay intact.
+// Exposes a chainable query-builder that mirrors a
+// pg query builder API so all existing route files stay intact.
 // ============================================================
 
 import { Pool } from "pg";
@@ -47,7 +47,7 @@ export async function queryOne<T = Record<string, unknown>>(
 }
 
 // ── Chainable query builder ───────────────────────────────────
-// Mirrors the Supabase JS API shape:
+// Mirrors a familiar query builder API shape:
 //   admin.from("table").select("*").eq("col", val).order("col").limit(n)
 //   → { data, error }
 //
@@ -161,7 +161,7 @@ class QueryBuilder<T = AnyRecord> {
     return this;
   }
 
-  // or() accepts Supabase's filter string format:
+  // or() accepts OR filter string format:
   // "col1.ilike.%x%,col2.eq.val"
   or(raw: string): this {
     this._clauses.push({ type: "or", c: { raw } });
@@ -363,7 +363,7 @@ class QueryBuilder<T = AnyRecord> {
           parts.push(`${this._quote(clause.c.col)} NOT IN (${placeholders.join(", ")})`);
         }
       } else if (clause.type === "or") {
-        // Parse Supabase OR filter string: "col.op.val,col2.op.val2"
+        // Parse OR filter string: "col.op.val,col2.op.val2"
         const orParts = this._parseOrFilter(clause.c.raw, params);
         if (orParts.length) parts.push(`(${orParts.join(" OR ")})`);
       }

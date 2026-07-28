@@ -1,7 +1,7 @@
 -- ============================================================
 -- TZ POLICE — SEED: ROLE USERS
 -- Migration: 00000000000007_seed_role_users
--- Seeds all 21 users from mock-engine.ts into Supabase
+-- Seeds all 21 users from mock-engine.ts into PostgreSQL (VPS)
 -- Run AFTER schema migration 0005
 -- ============================================================
 

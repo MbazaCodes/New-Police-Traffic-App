@@ -1,4 +1,4 @@
-// useOfficer — resolves logged-in officer from Zustand store (populated from Supabase at login)
+// useOfficer — resolves logged-in officer from Zustand store (populated from database at login)
 // No hardcoded names. Falls back to empty/loading state if not authenticated.
 "use client";
 

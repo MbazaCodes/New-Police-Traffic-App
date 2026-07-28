@@ -1,5 +1,5 @@
 // Audit log service for TZ Police Digital Platform.
-// In-memory implementation; would be backed by Supabase `audit_logs` table
+// In-memory implementation; would be backed by PostgreSQL `audit_logs` table
 // in production.
 
 export interface AuditLogEntry {

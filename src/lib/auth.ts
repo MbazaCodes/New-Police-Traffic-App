@@ -1,5 +1,5 @@
 // NextAuth v4 — TZ Police Digital Platform
-// Supabase-only auth. No mock users. No demo fallback.
+// PostgreSQL (VPS) only auth. No mock users. No demo fallback.
 
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -132,7 +132,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.username) return null;
 
-        // Supabase lookup only
+        // Database lookup only
         const sbUser = await findUser(credentials.username);
         if (!sbUser || sbUser.status !== "active") return null;
 

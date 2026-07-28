@@ -71,7 +71,7 @@ const VIEWER_NAV: { id: ViewerScreen; label: string; icon: typeof LayoutDashboar
 /* ---- ViewerDashboard ---- */
 function ViewerDashboard() {
   const overviewStats = [
-    { label: "Total Officers", value: "0", icon: Users, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400", sub: "Data from Supabase" },
+    { label: "Total Officers", value: "0", icon: Users, color: "bg-blue-500/15 text-blue-600 dark:text-blue-400", sub: "Data from PostgreSQL (VPS)" },
     { label: "Active Cases", value: "0", icon: FileText, color: "bg-[#FF9800]/15 text-[#FF9800] ", sub: "—" },
     { label: "Stations", value: "0", icon: Building2, color: "bg-[#10B981]/15 text-[#10B981] ", sub: "—" },
     { label: "Regions", value: "0", icon: MapPin, color: "bg-[#1E3A8A]/15 text-[#1E3A8A] dark:", sub: "—" },

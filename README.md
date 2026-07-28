@@ -1,6 +1,6 @@
 # Tanzania Police Force — Digital Operations Platform
 
-**Stack:** Next.js 16 · TypeScript · Supabase/PostgreSQL · Tailwind CSS · PM2 · Ubuntu VPS
+**Stack:** Next.js 16 · TypeScript · PostgreSQL (VPS) · Tailwind CSS · PM2 · Ubuntu VPS
 
 ## Architecture
 

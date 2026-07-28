@@ -15,9 +15,9 @@ export async function GET(
     const check = requirePermission(session, "citations", "view");
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
     const { id } = await params;
-    if (!isDbEnabled()) return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    if (!isDbEnabled()) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     const admin = getDbAdmin();
-    if (!admin) return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    if (!admin) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     const { data, error } = await admin.from("citations").select("*").eq("id", id).single();
     if (error || !data) return NextResponse.json({ error: "Citation haipatikani" }, { status: 404 });
     return NextResponse.json({ data });
@@ -36,9 +36,9 @@ export async function PATCH(
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
     const { id } = await params;
     const body = await request.json().catch(() => ({}));
-    if (!isDbEnabled()) return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    if (!isDbEnabled()) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     const admin = getDbAdmin();
-    if (!admin) return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    if (!admin) return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
     const { data, error } = await admin.from("citations").update(body).eq("id", id).select().single();
     if (error) throw error;
     await logAction(session, "citation_updated", "citations", id, body);

@@ -254,7 +254,7 @@ ${regionStats.map((r) => `<tr><td>${r.region ?? r.name}</td><td>${r.officers ?? 
         {loading ? (
           <div className="h-20 flex items-center justify-center"><Loader2 size={20} className="animate-spin text-police-faint" /></div>
         ) : regionStats.length === 0 ? (
-          <p className="py-6 text-center text-[13px] text-police-muted">Hakuna vituo vilivyopatikana — ongeza vituo kwenye Supabase</p>
+          <p className="py-6 text-center text-[13px] text-police-muted">Hakuna vituo vilivyopatikana — ongeza vituo kwenye database</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[600px] text-left text-[12px]">

@@ -1,6 +1,6 @@
--- ===== TZ Police Digital Platform — Supabase Database Schema =====
+-- ===== TZ Police Digital Platform — PostgreSQL (VPS) Database Schema =====
 -- Shared by: PWA (Next.js), Web (Next.js), Flutter (Dart)
--- Database: PostgreSQL (Supabase)
+-- Database: PostgreSQL (PostgreSQL (VPS))
 
 -- ===== Extensions =====
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

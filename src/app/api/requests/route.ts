@@ -9,7 +9,7 @@ import { requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
 
-// In-memory store fallback (empty — data from Supabase)
+// In-memory store fallback (empty — data from PostgreSQL (VPS))
 interface OfficerRequest {
   id: string;
   type: string;
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
         return NextResponse.json({ ok: true, data });
       }
     }
-    // Supabase required — return empty when not available
+    // Database required — return empty when not available
     return NextResponse.json({ ok: true, data: [] });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
@@ -102,8 +102,8 @@ export async function POST(request: Request) {
         return NextResponse.json({ ok: true, data }, { status: 201 });
       }
     }
-    // Supabase required for request creation
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    // Database required for request creation
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
   }

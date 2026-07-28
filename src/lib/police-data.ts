@@ -1,5 +1,5 @@
 // TZ Police Digital Platform — Types & Configuration Constants
-// All mock data removed. Data now comes from Supabase.
+// All mock data removed. Data now comes from PostgreSQL (VPS).
 
 export type ScreenId =
   | "login"
@@ -32,7 +32,7 @@ export type ScreenId =
   | "bail-out"
   | "officer-request"
 
-// ── Officer profile (empty — populated from Supabase at login) ──────────
+// ── Officer profile (empty — populated from database at login) ──────────
 export const OFFICER = {
   name: "",
   shortName: "",
@@ -46,10 +46,10 @@ export const OFFICER = {
   status: "",
 };
 
-// ── Officers list (empty — loaded from Supabase) ───────────────────────
+// ── Officers list (empty — loaded from database) ───────────────────────
 export const OFFICERS_LIST: Record<string, unknown>[] = [];
 
-// ── Home stats (zeros until loaded from Supabase) ──────────────────────
+// ── Home stats (zeros until loaded from database) ──────────────────────
 export const HOME_STATS = [
   { label: "Matukio Yote", value: "0", icon: "alert", color: "#1E3A8A" },
   { label: "Kesi Zinazosubiri", value: "0", icon: "clock", color: "#FF9800" },
@@ -70,7 +70,7 @@ export const TRAFFIC_QUICK_ACTIONS = [
   { label: "Mali Iliyopotea", icon: "package",         color: "#10B981", screen: "lost-property"           as ScreenId },
 ];
 
-// ── Patrol stats (zeros until loaded from Supabase) ─────────────────────
+// ── Patrol stats (zeros until loaded from database) ─────────────────────
 export const PATROL_STATS = [
   { label: "Patroli za Leo", value: "0", icon: "shield", color: "#2196F3" },
   { label: "Eneo Lililofunikwa", value: "0", icon: "map-pin", color: "#10B981" },
@@ -78,10 +78,10 @@ export const PATROL_STATS = [
   { label: "Umbali (km)", value: "0", icon: "route", color: "#1E3A8A" },
 ];
 
-// ── Alerts (empty — loaded from Supabase) ───────────────────────────────
+// ── Alerts (empty — loaded from database) ───────────────────────────────
 export const ALERTS: Record<string, unknown>[] = [];
 
-// ── Profile stats (zeros until loaded from Supabase) ────────────────────
+// ── Profile stats (zeros until loaded from database) ────────────────────
 export const PROFILE_STATS = [
   { label: "Patroli Zilizofanywa", value: "0", sub: "Leo", icon: "car", color: "#2196F3" },
   { label: "Citations Zimetolewa", value: "0", sub: "Leo", icon: "file-text", color: "#FF9800" },
@@ -90,7 +90,7 @@ export const PROFILE_STATS = [
   { label: "Umbali (km)", value: "0", sub: "Wiki Hii", icon: "route", color: "#2196F3" },
 ];
 
-// ── Profile activities (empty — loaded from Supabase) ───────────────────
+// ── Profile activities (empty — loaded from database) ───────────────────
 export const PROFILE_ACTIVITIES: Record<string, unknown>[] = [];
 
 // ── Profile settings (UI config — not mock data) ───────────────────────
@@ -215,7 +215,7 @@ export interface DriverPointsRecord {
   deductions: PointsDeduction[];
 }
 
-// ── Driver points (empty — loaded from Supabase) ──────────────────────
+// ── Driver points (empty — loaded from database) ──────────────────────
 export const DRIVER_POINTS: DriverPointsRecord[] = [];
 
 // ── Citizen conduct points types ───────────────────────────────────────
@@ -227,16 +227,16 @@ export interface CitizenPointsRecord {
   deductions: PointsDeduction[];
 }
 
-// ── Citizen points (empty — loaded from Supabase) ─────────────────────
+// ── Citizen points (empty — loaded from database) ─────────────────────
 export const CITIZEN_POINTS: CitizenPointsRecord[] = [];
 
-// ── Lost properties (empty — loaded from Supabase) ─────────────────────
+// ── Lost properties (empty — loaded from database) ─────────────────────
 export const LOST_PROPERTIES: Record<string, unknown>[] = [];
 
-// ── Detained citizens (empty — loaded from Supabase) ──────────────────
+// ── Detained citizens (empty — loaded from database) ──────────────────
 export const DETAINED_CITIZENS: Record<string, unknown>[] = [];
 
-// ── Chat messages (empty — loaded from Supabase) ──────────────────────
+// ── Chat messages (empty — loaded from database) ──────────────────────
 export const CHAT_MESSAGES: Record<string, unknown>[] = [];
 
 // ── Search result (empty template) ────────────────────────────────────
@@ -259,10 +259,10 @@ export const SEARCH_RESULT = {
   total_fines_amount: "TZS 0",
 };
 
-// ── General incidents (empty — loaded from Supabase) ──────────────────
+// ── General incidents (empty — loaded from database) ──────────────────
 export const GENERAL_INCIDENTS: Record<string, unknown>[] = [];
 
-// ── Traffic stats (zeros until loaded from Supabase) ───────────────────
+// ── Traffic stats (zeros until loaded from database) ───────────────────
 export const TRAFFIC_STATS = [
   { label: "Jumla ya Makosa", value: "0", icon: "clipboard", color: "#2196F3" },
   { label: "Inasubiri",       value: "0", icon: "clock",     color: "#FF9800" },

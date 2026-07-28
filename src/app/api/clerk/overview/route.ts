@@ -18,7 +18,7 @@ export async function GET() {
       return NextResponse.json({ error: check.error }, { status: check.status });
     }
 
-    // Load real data from Supabase (or return empty state)
+    // Load real data from PostgreSQL (VPS) (or return empty state)
     let totalRecords = 0;
     let pendingReview = 0;
     let citizensMissingDocs = 0;
@@ -102,7 +102,7 @@ export async function GET() {
             defaultStation = (stations[0].station_name ?? stations[0].name) ?? "Station not set";
           }
         } catch (dbError) {
-          console.error("Supabase query error:", dbError);
+          console.error("Database query error:", dbError);
           // Continue with empty data on error
         }
       }

@@ -260,7 +260,7 @@ export function AdminDashboard() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: "Jukwaa",    value: "Next.js 16"         },
-            { label: "Database",  value: "PostgreSQL / Supabase" },
+            { label: "Database: PostgreSQL (VPS)" },
             { label: "Seva",      value: "Ubuntu 22 VPS"      },
             { label: "Toleo",     value: "v1.0.0 — 2026"      },
           ].map(s => (

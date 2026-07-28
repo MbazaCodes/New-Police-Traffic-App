@@ -39,7 +39,7 @@
   ],
   "exclude": [
     "node_modules",
-    "supabase/functions",
+    "packages/database/migrations",
     "skills",
     "src/lib/db.ts"
   ]

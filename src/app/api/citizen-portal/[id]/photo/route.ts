@@ -6,7 +6,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   try {
     const { id } = await params;
     if (!isDbEnabled()) return NextResponse.json({ error: "DB haijawezeshwa" }, { status: 503 });
-    // For now: store placeholder. In production this would upload to Supabase Storage.
+    // For now: store placeholder. In production this would upload to server storage.
     const admin = getDbAdmin();
     const { data: acc } = await (admin as any).from("citizen_accounts").select("citizen_id").eq("id", id).maybeSingle();
     const citizenId = acc?.citizen_id || id;

@@ -52,7 +52,7 @@ DO $$ BEGIN CREATE TYPE arrest_status  AS ENUM ('held','released','charged','bai
 -- TABLE EXTENSIONS (add columns that the app uses but are missing)
 -- ═══════════════════════════════════════════════════════════════
 
--- users: add auth_user_id (Supabase Auth link), region, badge_no, username
+-- users: add auth_user_id (PostgreSQL (VPS) Auth link), region, badge_no, username
 ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_user_id UUID UNIQUE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS username     VARCHAR(100) UNIQUE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS badge_no     VARCHAR(50);

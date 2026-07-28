@@ -1,4 +1,4 @@
-// Alerts API — Supabase-backed (was in-memory)
+// Alerts API — PostgreSQL (VPS) backed (was in-memory)
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";

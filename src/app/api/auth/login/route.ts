@@ -1,4 +1,4 @@
-// Login API — Supabase ONLY. No mock fallback.
+// Login API — PostgreSQL (VPS) ONLY. No mock fallback.
 import { NextResponse } from "next/server";
 import { generateOtp, isOtpBypassEnabled, resolveDashboardRoute } from "@/lib/auth";
 import { findUser, mapRole } from "@/lib/db/auth";
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Identifier inahitajika" }, { status: 400 });
     }
 
-    // Supabase lookup — no fallback
+    // Database lookup — no fallback
     const sbUser = await findUser(identifier);
 
     if (!sbUser) {

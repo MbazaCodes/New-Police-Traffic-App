@@ -1,6 +1,6 @@
-// Turn any thrown value (Error, Supabase PostgrestError, plain object)
+// Turn any thrown value (Error, pg.DatabaseError, plain object)
 // into a human-readable message. Previously routes did String(err),
-// which renders Supabase error objects as "[object Object]".
+// which renders error objects as "[object Object]".
 
 type AnyErr = {
   message?: string; details?: string; hint?: string; code?: string;

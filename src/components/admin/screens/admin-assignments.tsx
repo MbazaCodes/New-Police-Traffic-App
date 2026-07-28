@@ -39,7 +39,7 @@ type AssignTarget =
 export function AdminAssignments() {
   const pathname = usePathname();
   const router = useRouter();
-  // Live data from Supabase (was: client-side Zustand store that never
+  // Live data from PostgreSQL (VPS) (was: client-side Zustand store that never
   // touched the database — assignments were lost on every refresh)
   const { data: rawAssignments, refetch: refetchAssignments } = useApiData<{
     id: string; officer_id: string; station_id: string; post_id: string | null;

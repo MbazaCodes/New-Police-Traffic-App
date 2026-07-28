@@ -1,4 +1,4 @@
-// Officers [id] API — Supabase-backed (was in-memory mock)
+// Officers [id] API — PostgreSQL (VPS) backed (was in-memory mock)
 // PATCH supports role change (e.g. traffic → general): updates BOTH the
 // officers row and the linked users row so login role stays in sync.
 
@@ -29,7 +29,7 @@ export async function GET(
         return NextResponse.json({ ok: true, data });
       }
     }
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
@@ -103,7 +103,7 @@ export async function PATCH(
         return NextResponse.json({ ok: true, data: fresh });
       }
     }
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
@@ -133,7 +133,7 @@ export async function DELETE(
         return NextResponse.json({ ok: true });
       }
     }
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }

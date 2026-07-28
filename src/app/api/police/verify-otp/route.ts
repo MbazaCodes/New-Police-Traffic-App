@@ -1,4 +1,4 @@
-// Verify OTP — Supabase-backed, strict validation
+// Verify OTP — PostgreSQL (VPS) backed, strict validation
 import { NextResponse } from "next/server";
 import { verifyOtp } from "@/lib/auth";
 import { findUser } from "@/lib/db/auth";
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "OTP lazima iwe tarakimu 6" }, { status: 400 });
     }
 
-    // Must exist in Supabase
+    // Must exist in database
     const sbUser = await findUser(identifier);
     if (!sbUser) {
       return NextResponse.json({ error: "Akaunti haipatikani" }, { status: 404 });

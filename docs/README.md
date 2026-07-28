@@ -10,7 +10,7 @@
 
 ## Database
 - [Schema](./database-schema.md) — 15-table PostgreSQL schema
-- [Migrations](./migrations.md) — Supabase migration guide
+- [Migrations](./migrations.md) — PostgreSQL migration guide
 - [RLS Policies](./rls.md) — Row Level Security policies
 
 ## Apps
@@ -20,7 +20,7 @@
 - [Command Center](./command-center.md) — Commander dashboard
 
 ## Deployment
-- [Supabase Setup](./supabase-setup.md) — Supabase project configuration
+- [Database Setup](./database-setup.md) — PostgreSQL (VPS) configuration
 - [Vercel Deploy](./deployment.md) — Vercel deployment guide
 - [Flutter Build](./flutter-build.md) — Flutter APK/IPA build
 

@@ -28,7 +28,7 @@ import {
 import { usePoliceStore, type AdminScreen } from "@/store/police-store";
 import { toast } from "@/hooks/use-toast";
 
-// ── Command Center Data — Loaded from Supabase ──────────────────────────────────
+// ── Command Center Data — Loaded from PostgreSQL (VPS) ──────────────────────────────────
 // Mock data removed — now uses live database via API calls
 
 const ACTIVE_PATROLS: never[] = [];
@@ -69,7 +69,7 @@ const PRIORITY_STYLE: Record<string, string> = {
   low: "bg-blue-500/15 text-[#2196F3] border border-blue-500/30",
 };
 
-// ── Map placeholder (ASCII/SVG style — real map via Supabase + MapLibre later) ─
+// ── Map placeholder (ASCII/SVG style — real map via PostgreSQL + MapLibre later) ─
 
 function MapView({ patrols }: { patrols: typeof ACTIVE_PATROLS }) {
   return (

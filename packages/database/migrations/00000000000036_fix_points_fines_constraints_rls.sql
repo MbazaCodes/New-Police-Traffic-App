@@ -9,7 +9,7 @@
 -- ERROR 2: points_deductions table also has DECIMAL(3,1) + same constraint
 --          Fix: widen column + constraint
 --
--- ERROR 3: auth_uid() is Supabase-only, does not exist on plain PostgreSQL
+-- ERROR 3: auth_uid() is PostgreSQL (VPS)-only, does not exist on plain PostgreSQL
 --          The RLS policies referencing auth_uid() failed to create.
 --          Fix: Drop broken policies (if any partial), DISABLE RLS on
 --          citizen_fines, citizen_conduct_points, driver_points (matching
@@ -63,7 +63,7 @@ ALTER TABLE points_deductions ADD CONSTRAINT points_deductions_points_deducted_c
 -- 4. Fix RLS — Drop broken auth_uid() policies, disable RLS, grant access
 -- ═══════════════════════════════════════════════════════════════
 -- Migration 35 tried to create RLS policies using auth_uid(), a
--- Supabase-only function. On plain PostgreSQL (VPS deployment),
+-- PostgreSQL (VPS)-only function. On plain PostgreSQL (VPS deployment),
 -- auth_uid() does not exist, so these policies failed.
 --
 -- Following the established pattern from migration 27 (citizen_rls_fix),

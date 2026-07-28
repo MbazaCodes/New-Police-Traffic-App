@@ -164,7 +164,7 @@ CREATE INDEX IF NOT EXISTS idx_cr_type    ON conduct_reports(report_type);
 CREATE INDEX IF NOT EXISTS idx_cr_year    ON conduct_reports(year);
 
 -- ── Annual Reset Function ─────────────────────────────────────
--- Called on Jan 1 each year (via pg_cron or Supabase scheduled function)
+-- Called on Jan 1 each year (via pg_cron or PostgreSQL (VPS) scheduled function)
 CREATE OR REPLACE FUNCTION reset_annual_points()
 RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE

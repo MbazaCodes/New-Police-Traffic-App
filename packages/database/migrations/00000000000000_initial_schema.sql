@@ -1,6 +1,6 @@
 -- ===== TZ Police Digital Platform — Migration 00000000000000_initial_schema =====
 -- Creates all 15 tables with proper columns, types, constraints, indexes.
--- Database: PostgreSQL 15 (Supabase)
+-- Database: PostgreSQL 15 (PostgreSQL (VPS))
 -- Replaces the older single-file `schema.sql`.
 
 -- ===== Extensions =====

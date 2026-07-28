@@ -275,7 +275,7 @@ function CidDashboard() {
   );
 }
 
-// Live data from Supabase
+// Live data from PostgreSQL (VPS)
 
 const CITIZENS_DB = [
   { name: "Juma Mwenda", nida: "1234567890123", phone: "+255 713 456 789", region: "Dar es Salaam", status: "Clean" },

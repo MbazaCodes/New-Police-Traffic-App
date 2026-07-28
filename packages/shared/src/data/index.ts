@@ -1,5 +1,5 @@
 // Barrel re-export — copy police-data.ts, admin-data.ts, admin-mgmt-data.ts here
-// In production, these would be fetched from Supabase.
+// In production, these would be fetched from PostgreSQL (VPS).
 // For now, re-export from the root source for compatibility.
 export { OFFICER } from "../../../src/lib/police-data";
 export { HOME_STATS } from "../../../src/lib/police-data";

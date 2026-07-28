@@ -35,15 +35,14 @@ export async function GET(request: Request) {
     tokenError = String(e);
   }
 
-  // Supabase env check
+  // Database env check
   const dbChecks = {
     isDbEnabled: isDbEnabled(),
-    NEXT_PUBLIC_SUPABASE_URL:      process.env.NEXT_PUBLIC_SUPABASE_URL      ? "SET" : "MISSING",
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "SET" : "MISSING",
-    SUPABASE_SERVICE_ROLE_KEY:     process.env.SUPABASE_SERVICE_ROLE_KEY     ? "SET" : "MISSING",
+    DATABASE_URL:              process.env.DATABASE_URL              ? "SET" : "MISSING",
+    DB_SSL:                    process.env.DB_SSL                    ? "SET" : "MISSING",
   };
 
-  // Optional: count users if Supabase is wired
+  // Optional: count users if Database is connected
   let totalUsers: number | string = "skipped";
   if (isDbEnabled()) {
     try {
@@ -70,7 +69,7 @@ export async function GET(request: Request) {
     NEXTAUTH_URL:        process.env.NEXTAUTH_URL ?? "NOT SET",
     NODE_ENV:            process.env.NODE_ENV,
 
-    // Supabase
+    // PostgreSQL (VPS)
     ...dbChecks,
     totalUsers,
   });

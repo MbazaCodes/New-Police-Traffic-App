@@ -1,7 +1,7 @@
 -- ============================================================
 -- TZ POLICE DIGITAL PLATFORM — FULL SEED v2
 -- Migration: 00000000000011_seed_full
--- Seeds ALL mock database records into Supabase
+-- Seeds ALL mock database records into PostgreSQL (VPS)
 -- Citizens (20), Vehicles (20), Devices (20), Licenses (20)
 -- Missing Records (8), Citations (20), Patrols (5)
 -- All inserts are ON CONFLICT DO NOTHING (idempotent)

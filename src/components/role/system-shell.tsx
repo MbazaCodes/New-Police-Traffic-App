@@ -378,7 +378,7 @@ function SystemUserManagement() {
 function SystemIntegrations() {
   const integrations = [
     {
-      name: "Supabase",
+      name: "PostgreSQL (VPS)",
       description: "Primary database and authentication backend",
       status: "Connected",
       icon: Database,

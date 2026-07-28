@@ -1,4 +1,4 @@
-// Citations API — Supabase-first
+// Citations API — PostgreSQL (VPS) first
 // GET  /api/citations   -> list citations
 // POST /api/citations   -> create citation
 
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }

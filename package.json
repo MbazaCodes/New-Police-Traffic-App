@@ -11,7 +11,7 @@
     "simulation": "tsx Simulation/engine/engine.ts",
     "mock": "powershell ./Mock Database/scripts/generate_mock_data.ps1",
     "test:simulation": "vitest",
-    "supabase:migrate": "bash scripts/db-migrate.sh",
+    "db:migrate": "bash scripts/db-migrate.sh",
     "deploy": "bash scripts/deploy.sh",
     "security-audit": "bash scripts/security-audit.sh",
     "clean": "rm -rf .next node_modules/.cache"

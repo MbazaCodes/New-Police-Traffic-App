@@ -33,7 +33,7 @@ export async function PATCH(
         return NextResponse.json({ ok: true, data });
       }
     }
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }

@@ -1,13 +1,11 @@
 // ===== TZ Police — Typed Query Functions =====
-// Each function wraps a Supabase call and returns a typed result.
-// Use the browser client for officer-scoped reads (RLS enforced), and
-// the admin client for server-side aggregate writes.
+// Each function wraps a PostgreSQL query via the DbAdmin interface
+// from src/lib/db/client.ts. Accepts the DbAdmin client so the caller
+// decides the context (server-side pool).
 //
-// All functions accept the client as the first argument so the caller
-// decides whether to use the anon browser client or the service-role
-// admin client.
+// NOTE: These are convenience helpers. Most API routes use the
+// query builder directly via getDbAdmin().from("table").select(...).
 
-import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   type OfficerRow,
   type CitationRow,
@@ -19,39 +17,29 @@ import {
   TABLES,
 } from "./client";
 
+// DbAdmin type mirrors src/lib/db/client.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type DbAdmin = any;
+
 // ============================================================
 // Officers
 // ============================================================
 
 export async function getOfficerById(
-  client: SupabaseClient,
+  db: DbAdmin,
   id: string,
 ): Promise<OfficerRow | null> {
-  const { data, error } = await client
-    .from(TABLES.OFFICERS)
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
-  if (error) {
-    console.error("[queries.getOfficerById]", error);
-    return null;
-  }
+  const { data, error } = await db.from(TABLES.OFFICERS).select("*").eq("id", id).maybeSingle();
+  if (error) { console.error("[queries.getOfficerById]", error); return null; }
   return (data as OfficerRow | null) ?? null;
 }
 
 export async function getOfficersByStation(
-  client: SupabaseClient,
+  db: DbAdmin,
   stationId: string,
 ): Promise<OfficerRow[]> {
-  const { data, error } = await client
-    .from(TABLES.OFFICERS)
-    .select("*")
-    .eq("station_id", stationId)
-    .order("name", { ascending: true });
-  if (error) {
-    console.error("[queries.getOfficersByStation]", error);
-    return [];
-  }
+  const { data, error } = await db.from(TABLES.OFFICERS).select("*").eq("station_id", stationId).order("name", { ascending: true });
+  if (error) { console.error("[queries.getOfficersByStation]", error); return []; }
   return (data as OfficerRow[]) ?? [];
 }
 
@@ -60,34 +48,20 @@ export async function getOfficersByStation(
 // ============================================================
 
 export async function getCitationsByOfficer(
-  client: SupabaseClient,
+  db: DbAdmin,
   officerId: string,
 ): Promise<CitationRow[]> {
-  const { data, error } = await client
-    .from(TABLES.CITATIONS)
-    .select("*")
-    .eq("officer_id", officerId)
-    .order("date", { ascending: false });
-  if (error) {
-    console.error("[queries.getCitationsByOfficer]", error);
-    return [];
-  }
+  const { data, error } = await db.from(TABLES.CITATIONS).select("*").eq("officer_id", officerId).order("date", { ascending: false });
+  if (error) { console.error("[queries.getCitationsByOfficer]", error); return []; }
   return (data as CitationRow[]) ?? [];
 }
 
 export async function getCitationsByStatus(
-  client: SupabaseClient,
+  db: DbAdmin,
   status: "paid" | "unpaid",
 ): Promise<CitationRow[]> {
-  const { data, error } = await client
-    .from(TABLES.CITATIONS)
-    .select("*")
-    .eq("status", status)
-    .order("date", { ascending: false });
-  if (error) {
-    console.error("[queries.getCitationsByStatus]", error);
-    return [];
-  }
+  const { data, error } = await db.from(TABLES.CITATIONS).select("*").eq("status", status).order("date", { ascending: false });
+  if (error) { console.error("[queries.getCitationsByStatus]", error); return []; }
   return (data as CitationRow[]) ?? [];
 }
 
@@ -96,38 +70,23 @@ export async function getCitationsByStatus(
 // ============================================================
 
 export async function getIncidentsByStatus(
-  client: SupabaseClient,
-  status: "urgent" | "active" | "resolved" | "investigating",
+  db: DbAdmin,
+  status: string,
 ): Promise<IncidentRow[]> {
-  const { data, error } = await client
-    .from(TABLES.INCIDENTS)
-    .select("*")
-    .eq("status", status)
-    .order("date", { ascending: false });
-  if (error) {
-    console.error("[queries.getIncidentsByStatus]", error);
-    return [];
-  }
+  const { data, error } = await db.from(TABLES.INCIDENTS).select("*").eq("status", status).order("date", { ascending: false });
+  if (error) { console.error("[queries.getIncidentsByStatus]", error); return []; }
   return (data as IncidentRow[]) ?? [];
 }
 
 export async function assignIncident(
-  client: SupabaseClient,
+  db: DbAdmin,
   incidentId: string,
   officerId: string,
 ): Promise<boolean> {
-  const { error } = await client
-    .from(TABLES.INCIDENTS)
-    .update({
-      assigned_officer_id: officerId,
-      status: "active",
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", incidentId);
-  if (error) {
-    console.error("[queries.assignIncident]", error);
-    return false;
-  }
+  const { error } = await db.from(TABLES.INCIDENTS).update({
+    assigned_officer_id: officerId, status: "active", updated_at: new Date().toISOString(),
+  }).eq("id", incidentId);
+  if (error) { console.error("[queries.assignIncident]", error); return false; }
   return true;
 }
 
@@ -135,18 +94,9 @@ export async function assignIncident(
 // Patrols
 // ============================================================
 
-export async function getActivePatrols(
-  client: SupabaseClient,
-): Promise<PatrolRow[]> {
-  const { data, error } = await client
-    .from(TABLES.PATROLS)
-    .select("*")
-    .eq("status", "active")
-    .order("start_time", { ascending: false });
-  if (error) {
-    console.error("[queries.getActivePatrols]", error);
-    return [];
-  }
+export async function getActivePatrols(db: DbAdmin): Promise<PatrolRow[]> {
+  const { data, error } = await db.from(TABLES.PATROLS).select("*").eq("status", "active").order("start_time", { ascending: false });
+  if (error) { console.error("[queries.getActivePatrols]", error); return []; }
   return (data as PatrolRow[]) ?? [];
 }
 
@@ -157,56 +107,37 @@ export interface StartPatrolInput {
 }
 
 export async function startPatrol(
-  client: SupabaseClient,
+  db: DbAdmin,
   input: StartPatrolInput,
 ): Promise<PatrolRow | null> {
-  // patrol_number is auto-generated by the assign_patrol_number() trigger
-  // when we send NULL — but the supabase-js client does not allow sending
-  // NULL for a NOT NULL column without an explicit value, so we let the
-  // DB default / trigger handle it by inserting an empty string.
-  const { data, error } = await client
-    .from(TABLES.PATROLS)
-    .insert({
-      patrol_number: "", // trigger will replace this with PT-YYYY-NNNN
-      officer_id: input.officerId,
-      area: input.area,
-      start_time: new Date().toISOString(),
-      status: "active",
-      progress: 0,
-      notes: input.notes ?? null,
-    })
-    .select("*")
-    .single();
-  if (error) {
-    console.error("[queries.startPatrol]", error);
-    return null;
-  }
+  const { data, error } = await db.from(TABLES.PATROLS).insert({
+    patrol_number: "",
+    officer_id: input.officerId,
+    area: input.area,
+    start_time: new Date().toISOString(),
+    status: "active",
+    progress: 0,
+    notes: input.notes ?? null,
+  }).select("*").single();
+  if (error) { console.error("[queries.startPatrol]", error); return null; }
   return data as PatrolRow;
 }
 
 export async function endPatrol(
-  client: SupabaseClient,
+  db: DbAdmin,
   patrolId: string,
   extra?: { distance_km?: number; notes?: string; incidents_observed?: string },
 ): Promise<boolean> {
   const patch: Record<string, unknown> = {
-    status: "completed",
-    end_time: new Date().toISOString(),
-    progress: 100,
-    updated_at: new Date().toISOString(),
+    status: "completed", end_time: new Date().toISOString(),
+    progress: 100, updated_at: new Date().toISOString(),
   };
   if (typeof extra?.distance_km === "number") patch.distance_km = extra.distance_km;
   if (extra?.notes) patch.notes = extra.notes;
   if (extra?.incidents_observed) patch.incidents_observed = extra.incidents_observed;
 
-  const { error } = await client
-    .from(TABLES.PATROLS)
-    .update(patch)
-    .eq("id", patrolId);
-  if (error) {
-    console.error("[queries.endPatrol]", error);
-    return false;
-  }
+  const { error } = await db.from(TABLES.PATROLS).update(patch).eq("id", patrolId);
+  if (error) { console.error("[queries.endPatrol]", error); return false; }
   return true;
 }
 
@@ -215,18 +146,11 @@ export async function endPatrol(
 // ============================================================
 
 export async function searchVehicle(
-  client: SupabaseClient,
+  db: DbAdmin,
   plate: string,
 ): Promise<VehicleRow | null> {
-  const { data, error } = await client
-    .from(TABLES.VEHICLES)
-    .select("*")
-    .ilike("plate", plate.trim())
-    .maybeSingle();
-  if (error) {
-    console.error("[queries.searchVehicle]", error);
-    return null;
-  }
+  const { data, error } = await db.from(TABLES.VEHICLES).select("*").ilike("plate", plate.trim()).maybeSingle();
+  if (error) { console.error("[queries.searchVehicle]", error); return null; }
   return (data as VehicleRow | null) ?? null;
 }
 
@@ -237,27 +161,24 @@ export async function searchVehicle(
 export type CitizenSearchType = "name" | "nida" | "mobile";
 
 export async function searchCitizen(
-  client: SupabaseClient,
+  db: DbAdmin,
   query: string,
   type: CitizenSearchType = "name",
 ): Promise<CitizenRow[]> {
-  const column = type; // 'name' | 'nida' | 'mobile'
-  let builder = client.from(TABLES.CITIZENS).select("*");
+  const column = type;
+  let builder = db.from(TABLES.CITIZENS).select("*");
   if (type === "name") {
     builder = builder.ilike("name", `%${query.trim()}%`);
   } else {
     builder = builder.eq(column, query.trim());
   }
   const { data, error } = await builder.order("name", { ascending: true }).limit(20);
-  if (error) {
-    console.error("[queries.searchCitizen]", error);
-    return [];
-  }
+  if (error) { console.error("[queries.searchCitizen]", error); return []; }
   return (data as CitizenRow[]) ?? [];
 }
 
 // ============================================================
-// Dashboard stats (aggregate KPIs)
+// Dashboard stats
 // ============================================================
 
 export interface DashboardStats {
@@ -271,84 +192,33 @@ export interface DashboardStats {
   totalOfficers: number;
 }
 
-export async function getDashboardStats(
-  client: SupabaseClient,
-): Promise<DashboardStats> {
-  const today = new Date().toISOString().slice(0, 10);
-
-  // Run all count queries in parallel
-  const [
-    officersActive,
-    patrolsActive,
-    incidentsToday,
-    citationsToday,
-    citationsUnpaid,
-    incidentsUrgent,
-    stationsAll,
-    officersAll,
-  ] = await Promise.all([
-    client.from(TABLES.OFFICERS).select("*", { count: "exact", head: true }).eq("status", "active"),
-    client.from(TABLES.PATROLS).select("*", { count: "exact", head: true }).eq("status", "active"),
-    client.from(TABLES.INCIDENTS).select("*", { count: "exact", head: true }).eq("date", today),
-    client.from(TABLES.CITATIONS).select("*", { count: "exact", head: true }).eq("date", today),
-    client.from(TABLES.CITATIONS).select("*", { count: "exact", head: true }).eq("status", "unpaid"),
-    client.from(TABLES.INCIDENTS).select("*", { count: "exact", head: true }).eq("status", "urgent"),
-    client.from(TABLES.STATIONS).select("*", { count: "exact", head: true }),
-    client.from(TABLES.OFFICERS).select("*", { count: "exact", head: true }),
-  ]);
-
-  return {
-    activeOfficers: officersActive.count ?? 0,
-    activePatrols: patrolsActive.count ?? 0,
-    todaysIncidents: incidentsToday.count ?? 0,
-    todaysCitations: citationsToday.count ?? 0,
-    unpaidCitations: citationsUnpaid.count ?? 0,
-    urgentIncidents: incidentsUrgent.count ?? 0,
-    totalStations: stationsAll.count ?? 0,
-    totalOfficers: officersAll.count ?? 0,
-  };
-}
-
 // ============================================================
 // Audit log
 // ============================================================
 
 export interface CreateAuditLogInput {
   userId: string;
-  action: string; // INSERT | UPDATE | DELETE | LOGIN | LOGOUT | ...
-  resource: string; // table name
+  action: string;
+  resource: string;
   resourceId?: string | null;
   details?: Record<string, unknown> | null;
   ipAddress?: string | null;
   userAgent?: string | null;
 }
 
-/**
- * Inserts a row into `audit_logs`. Use the admin client from server code.
- * Note: INSERT/UPDATE/DELETE on audited tables are auto-logged by the
- * `create_audit_log()` trigger — call this function only for explicit
- * events (login, logout, exports, etc.).
- */
 export async function createAuditLog(
-  client: SupabaseClient,
+  db: DbAdmin,
   input: CreateAuditLogInput,
 ): Promise<AuditLogRow | null> {
-  const { data, error } = await client
-    .from(TABLES.AUDIT_LOGS)
-    .insert({
-      user_id: input.userId,
-      action: input.action,
-      resource: input.resource,
-      resource_id: input.resourceId ?? null,
-      details: input.details ?? null,
-      ip_address: input.ipAddress ?? null,
-      user_agent: input.userAgent ?? null,
-    })
-    .select("*")
-    .single();
-  if (error) {
-    console.error("[queries.createAuditLog]", error);
-    return null;
-  }
+  const { data, error } = await db.from(TABLES.AUDIT_LOGS).insert({
+    user_id: input.userId,
+    action: input.action,
+    resource: input.resource,
+    resource_id: input.resourceId ?? null,
+    details: input.details ?? null,
+    ip_address: input.ipAddress ?? null,
+    user_agent: input.userAgent ?? null,
+  }).select("*").single();
+  if (error) { console.error("[queries.createAuditLog]", error); return null; }
   return data as AuditLogRow;
 }

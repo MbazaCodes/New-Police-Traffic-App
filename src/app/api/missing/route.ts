@@ -1,4 +1,4 @@
-// Missing persons / items / vehicles — /api/missing (Supabase-backed)
+// Missing persons / items / vehicles — /api/missing (PostgreSQL (VPS) backed)
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { requirePermission } from "@/lib/rbac";

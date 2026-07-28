@@ -1,5 +1,5 @@
 -- Migration 027: Disable RLS on citizen tables + grant service_role access
--- Run this in Supabase SQL Editor if citizen registration is failing
+-- Run this in PostgreSQL (VPS) SQL Editor if citizen registration is failing
 
 ALTER TABLE citizen_accounts     DISABLE ROW LEVEL SECURITY;
 ALTER TABLE citizen_properties   DISABLE ROW LEVEL SECURITY;

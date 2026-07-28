@@ -91,7 +91,7 @@ export function buildScopeWhere(
 }
 
 /**
- * Apply scope to a Supabase-style query builder.
+ * Apply scope to a query builder builder.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function applyScopeToQuery(query: any, scope: Scope): any {

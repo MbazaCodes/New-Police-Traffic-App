@@ -39,7 +39,7 @@ export async function GET(request: Request) {
       }
     }
 
-    // Supabase required — return empty when not available
+    // Database required — return empty when not available
     return NextResponse.json({ ok: true, data: [], total: 0 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
@@ -175,8 +175,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // Supabase required for fine creation
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    // Database required for fine creation
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }

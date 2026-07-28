@@ -1,4 +1,4 @@
-// Login API — Supabase ONLY. No mock fallback.
+// Login API — PostgreSQL (VPS) ONLY. No mock fallback.
 import { NextResponse } from "next/server";
 import { generateOtp, isOtpBypassEnabled, resolveDashboardRoute } from "@/lib/auth";
 import { findUser, mapRole } from "@/lib/db/auth";

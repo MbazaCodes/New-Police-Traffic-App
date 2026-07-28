@@ -2,7 +2,7 @@
 //
 // `AppDataService` is a thin synchronous data layer that today simply returns
 // the static mock data from `mock_data.dart`, but is shaped to be the single
-// swap-in point when the backend (Supabase) comes online.
+// swap-in point when the backend (PostgreSQL API) comes online.
 //
 // Each getter returns the same shape as its TypeScript counterpart so the
 // Flutter widgets can consume them exactly like the PWA does. When the real

@@ -511,5 +511,5 @@ SELECT
 -- MIGRATION COMPLETE
 -- ============================================================
 -- This migration adds all necessary columns for Forms 1-12
--- Run this in Supabase SQL Editor to update your database
+-- Run this in PostgreSQL (VPS) SQL Editor to update your database
 -- After running, all forms will work with full offline sync support

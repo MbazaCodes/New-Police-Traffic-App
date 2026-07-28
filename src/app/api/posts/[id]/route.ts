@@ -1,4 +1,4 @@
-// Posts [id] API — Supabase-backed (was in-memory mock)
+// Posts [id] API — PostgreSQL (VPS) backed (was in-memory mock)
 // GET    /api/posts/:id  -> single post
 // PATCH  /api/posts/:id  -> update post
 // DELETE /api/posts/:id  -> delete post
@@ -29,7 +29,7 @@ export async function GET(
         return NextResponse.json({ ok: true, data });
       }
     }
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
@@ -67,7 +67,7 @@ export async function PATCH(
         return NextResponse.json({ ok: true, data });
       }
     }
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }
@@ -92,7 +92,7 @@ export async function DELETE(
         return NextResponse.json({ ok: true });
       }
     }
-    return NextResponse.json({ error: "Supabase haijawezeshwa" }, { status: 503 });
+    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
   } catch (err) {
     return NextResponse.json({ error: errMsg(err) }, { status: 500 });
   }

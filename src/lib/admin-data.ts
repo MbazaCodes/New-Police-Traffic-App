@@ -1,6 +1,6 @@
 // ============================================================
 // ADMIN DATA TYPES — typed empty arrays, no mock data.
-// All data is loaded from Supabase at runtime.
+// All data is loaded from database at runtime.
 // ============================================================
 
 export interface OfficerRecord {
@@ -65,7 +65,7 @@ export interface RegionStat {
   region: string; officers?: number; incidents?: number; citations?: number; resolved?: number;
 }
 
-// Empty — populated from Supabase at runtime
+// Empty — populated from PostgreSQL (VPS) at runtime
 export const OFFICERS: OfficerRecord[] = [];
 export const ADMIN_CITATIONS: CitationRecord[] = [];
 export const ADMIN_INCIDENTS: IncidentRecord[] = [];
@@ -96,7 +96,7 @@ export const GENERAL_INCIDENT_DISTRIBUTION: ChartPoint[] = [];
 export const COMBINED_DISTRIBUTION: ChartPoint[] = [];
 export const REGION_STATS: RegionStat[] = [];
 
-// Auth user — populated at login from Supabase session
+// Auth user — populated at login from PostgreSQL (VPS) session
 export const ADMIN_USER = { id: "", name: "", shortName: "", badgeNo: "", role: "", station: "", region: "" };
 
 // App settings — real values come from user preferences / DB
