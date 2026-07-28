@@ -140,7 +140,7 @@ export function CitizenPwaManager() {
     <>
       {/* ── Offline bar — with safe-area padding ──────────────────── */}
       {isOffline && (
-        <div className="fixed inset-x-0 top-0 z-[9999] flex items-center gap-2 bg-[#EF4444] px-4 py-2 text-[12px] font-medium text-white shadow-lg"
+        <div className="fixed inset-x-0 top-0 z-[9999] flex items-center gap-2 bg-[var(--tpf-status-danger)] px-4 py-2 text-[12px] font-medium text-white shadow-lg"
           style={{ paddingTop: "calc(8px + env(safe-area-inset-top, 0px))" }}>
           <WifiOff size={14} />
           <span>Huna mtandao — Data iliyohifadhiwa inaonekana tu</span>
@@ -155,7 +155,7 @@ export function CitizenPwaManager() {
             style={{ background: "linear-gradient(to bottom, #0a1a12, #0d2818)" }}>
             {/* Header */}
             <div className="relative px-5 sm:px-6 pb-5 sm:pb-6 pt-7 sm:pt-8 text-center"
-              style={{ background: "linear-gradient(135deg, #0d4f3c, #10B981, #059669)" }}>
+              style={{ background: "linear-gradient(135deg, #0d4f3c, var(--tpf-citizen-accent), var(--tpf-citizen-accent-dark))" }}>
               <button onClick={dismissModal}
                 className="absolute right-3 sm:right-4 top-3 sm:top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/60 hover:bg-white/20 transition touch-manipulation">
                 <X size={16} />
@@ -170,8 +170,8 @@ export function CitizenPwaManager() {
             {/* Features */}
             <div className="space-y-2.5 px-5 sm:px-6 py-4 sm:py-5">
               {[
-                { icon: Zap,        color: "#10B981", title: "Ufikiaji wa Haraka",         desc: "Fungua moja kwa moja kutoka skrini ya nyumbani" },
-                { icon: WifiOff,    color: "#059669", title: "Inafanya Bila Mtandao",      desc: "Taarifa zako zihifadhiwa kwa matumizi popote" },
+                { icon: Zap,        color: "var(--tpf-citizen-accent)",      title: "Ufikiaji wa Haraka",         desc: "Fungua moja kwa moja kutoka skrini ya nyumbani" },
+                { icon: WifiOff,    color: "var(--tpf-citizen-accent-dark)", title: "Inafanya Bila Mtandao",      desc: "Taarifa zako zihifadhiwa kwa matumizi popote" },
                 { icon: Bell,       color: "#2196F3", title: "Arifa za Huduma",             desc: "Pata arifa za maombi, malipo na malalamiko" },
                 { icon: User,       color: "#D97706", title: "Huduma za Raia",              desc: "Ripoti, malipo, maombi — yote kwenye simu yako" },
               ].map((f) => (
@@ -191,7 +191,7 @@ export function CitizenPwaManager() {
             {/* iOS special instruction */}
             {isIOS && (
               <div className="mx-5 sm:mx-6 mb-3 sm:mb-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                <p className="text-[12px] font-bold text-[#10B981] flex items-center gap-2">
+                <p className="text-[12px] font-bold text-[var(--tpf-citizen-accent)] flex items-center gap-2">
                   <Share size={14} /> Kifaa cha Apple (iOS)
                 </p>
                 <p className="mt-1.5 text-[11px] text-white/60 leading-relaxed">
@@ -208,14 +208,14 @@ export function CitizenPwaManager() {
                 <button
                   onClick={handleInstall}
                   disabled={!installPrompt || installing}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#10B981] py-3.5 sm:py-4 text-[14px] sm:text-[15px] font-black text-white shadow-lg shadow-[#10B981]/30 transition active:scale-[0.98] disabled:opacity-60 touch-manipulation"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[var(--tpf-citizen-accent)] py-3.5 sm:py-4 text-[14px] sm:text-[15px] font-black text-white shadow-lg transition active:scale-[0.98] disabled:opacity-60 touch-manipulation"
                 >
                   <Download size={18} />
                   {installing ? "Inasanikishwa..." : "Sakinisha Sasa"}
                 </button>
               )}
               {isIOS && (
-                <div className="rounded-2xl bg-white/10 py-3 text-center text-[13px] font-bold text-[#10B981]">
+                <div className="rounded-2xl bg-white/10 py-3 text-center text-[13px] font-bold text-[var(--tpf-citizen-accent)]">
                   Tumia Safari → Add to Home Screen
                 </div>
               )}
@@ -238,7 +238,7 @@ export function CitizenPwaManager() {
         <div className="fixed inset-x-0 bottom-16 sm:bottom-20 z-[9997] border-t p-3 shadow-2xl backdrop-blur-sm"
           style={{
             background: "rgba(10,26,18,0.95)",
-            borderColor: "rgba(16,185,129,0.3)",
+            borderColor: "color-mix(in srgb, var(--tpf-citizen-accent) 30%, transparent)",
             paddingBottom: "calc(12px + env(safe-area-inset-bottom, 0px))",
           }}>
           <div className="flex items-center gap-2.5 sm:gap-3">
@@ -248,7 +248,7 @@ export function CitizenPwaManager() {
               <p className="text-[9px] sm:text-[10px] text-white/50">Ufikiaji wa haraka · Inafanya kazi bila mtandao</p>
             </div>
             <button onClick={handleInstall} disabled={!installPrompt || installing}
-              className="flex shrink-0 items-center gap-1 rounded-xl bg-[#10B981] px-3 py-2 text-[11px] sm:text-[12px] font-bold text-white disabled:opacity-60 transition active:scale-[0.96] touch-manipulation">
+              className="flex shrink-0 items-center gap-1 rounded-xl bg-[var(--tpf-citizen-accent)] px-3 py-2 text-[11px] sm:text-[12px] font-bold text-white disabled:opacity-60 transition active:scale-[0.96] touch-manipulation">
               <Smartphone size={13} /> Sakinisha
             </button>
             <button onClick={dismissModal} className="shrink-0 text-white/30 hover:text-white/60 transition touch-manipulation">

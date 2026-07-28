@@ -17,7 +17,7 @@ function calcCompletion(d: any) {
 
 function ProfileProgressBar({ d, onClick }: { d: any; onClick?: () => void }) {
   const { pct, filledCount, total } = calcCompletion(d);
-  const color = pct >= 80 ? "#10B981" : pct >= 50 ? "#F59E0B" : "#EF4444";
+  const color = pct >= 80 ? "var(--tpf-citizen-accent)" : pct >= 50 ? "var(--tpf-status-warning)" : "var(--tpf-status-danger)";
   return (
     <button onClick={onClick} className="flex w-full flex-col gap-2 rounded-2xl p-4 text-left transition active:scale-[0.98]"
       style={{ background: `color-mix(in srgb, ${color} 8%, transparent)`, border: `1px solid color-mix(in srgb, ${color} 25%, transparent)` }}>
@@ -74,9 +74,9 @@ export function CitizenDashboard({ citizen, setScreen }: any) {
   const deductions = d.pointsDeductions ?? [];
 
   // ── Status helpers ──────────────────────────────────────────────────────
-  const statusColor = (pts: number) => pts >= 80 ? "#10B981" : pts >= 60 ? "#F59E0B" : pts >= 40 ? "#EF4444" : "#7F1D1D";
+  const statusColor = (pts: number) => pts >= 80 ? "var(--tpf-citizen-accent)" : pts >= 60 ? "var(--tpf-status-warning)" : pts >= 40 ? "var(--tpf-status-danger)" : "var(--tpf-status-critical)";
   const statusLabel = (pts: number) => pts >= 80 ? "Njema" : pts >= 60 ? "Tahadhari" : pts >= 40 ? "Hatari" : "Imesimwa";
-  const statusBg    = (pts: number) => pts >= 80 ? "bg-[#10B981]/10 text-[#10B981]" : pts >= 60 ? "bg-[#F59E0B]/10 text-[#F59E0B]" : pts >= 40 ? "bg-[#EF4444]/10 text-[#EF4444]" : "bg-[#7F1D1D]/10 text-[#7F1D1D]";
+  const statusBg    = (pts: number) => pts >= 80 ? "bg-[var(--tpf-citizen-accent)]/10 text-[var(--tpf-citizen-accent)]" : pts >= 60 ? "bg-[var(--tpf-status-warning)]/10 text-[var(--tpf-status-warning)]" : pts >= 40 ? "bg-[var(--tpf-status-danger)]/10 text-[var(--tpf-status-danger)]" : "bg-[var(--tpf-status-critical)]/10 text-[var(--tpf-status-critical)]";
 
   const gcColor = statusColor(citizenPoints.current);
   const gcLabel = statusLabel(citizenPoints.current);
@@ -162,8 +162,8 @@ export function CitizenDashboard({ citizen, setScreen }: any) {
                   <p className="text-[10px] font-semibold" style={{ color: "rgb(255 255 255 / 0.7)" }}>Pointi Leseni</p>
                 </div>
                 <span className="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
-                  style={{ background: dpCurrent >= 80 ? "rgb(16 185 129 / 0.2)" : dpCurrent >= 60 ? "rgb(245 158 11 / 0.2)" : "rgb(239 68 68 / 0.2)",
-                           color: dpCurrent >= 80 ? "#10B981" : dpCurrent >= 60 ? "#F59E0B" : "#EF4444" }}>
+                  style={{ background: dpCurrent >= 80 ? "color-mix(in srgb, var(--tpf-citizen-accent) 20%, transparent)" : dpCurrent >= 60 ? "color-mix(in srgb, var(--tpf-status-warning) 20%, transparent)" : "color-mix(in srgb, var(--tpf-status-danger) 20%, transparent)",
+                           color: dpCurrent >= 80 ? "var(--tpf-citizen-accent)" : dpCurrent >= 60 ? "var(--tpf-status-warning)" : "var(--tpf-status-danger)" }}>
                   {dpLabel}
                 </span>
               </div>
@@ -192,20 +192,20 @@ export function CitizenDashboard({ citizen, setScreen }: any) {
         <div className="rounded-2xl p-4"
           style={{
             background: citizenPoints.current < 40 || (isDriver && dpCurrent < 40)
-              ? "color-mix(in srgb, #EF4444 8%, transparent)"
-              : "color-mix(in srgb, #F59E0B 8%, transparent)",
+              ? "color-mix(in srgb, var(--tpf-status-danger) 8%, transparent)"
+              : "color-mix(in srgb, var(--tpf-status-warning) 8%, transparent)",
             border: citizenPoints.current < 40 || (isDriver && dpCurrent < 40)
-              ? "1px solid color-mix(in srgb, #EF4444 25%, transparent)"
-              : "1px solid color-mix(in srgb, #F59E0B 25%, transparent)"
+              ? "1px solid color-mix(in srgb, var(--tpf-status-danger) 25%, transparent)"
+              : "1px solid color-mix(in srgb, var(--tpf-status-warning) 25%, transparent)"
           }}>
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
               style={{ background: citizenPoints.current < 40 || (isDriver && dpCurrent < 40)
-                ? "color-mix(in srgb, #EF4444 15%, transparent)"
-                : "color-mix(in srgb, #F59E0B 15%, transparent)" }}>
+                ? "color-mix(in srgb, var(--tpf-status-danger) 15%, transparent)"
+                : "color-mix(in srgb, var(--tpf-status-warning) 15%, transparent)" }}>
               {citizenPoints.current < 40 || (isDriver && dpCurrent < 40)
-                ? <Ban size={18} style={{ color: "#EF4444" }} />
-                : <AlertTriangle size={18} style={{ color: "#F59E0B" }} />}
+                ? <Ban size={18} style={{ color: "var(--tpf-status-danger)" }} />
+                : <AlertTriangle size={18} style={{ color: "var(--tpf-status-warning)" }} />}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-bold" style={{ color: "var(--tpf-text)" }}>
@@ -241,8 +241,8 @@ export function CitizenDashboard({ citizen, setScreen }: any) {
               <div key={dd.id} className="flex items-center gap-3 rounded-xl p-3"
                 style={{ background: "var(--tpf-card)", border: "1px solid var(--tpf-border)" }}>
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-                  style={{ background: "color-mix(in srgb, #EF4444 10%, transparent)" }}>
-                  <TrendingDown size={16} style={{ color: "#EF4444" }} />
+                  style={{ background: "color-mix(in srgb, var(--tpf-status-danger) 10%, transparent)" }}>
+                  <TrendingDown size={16} style={{ color: "var(--tpf-status-danger)" }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="truncate text-[12px] font-semibold" style={{ color: "var(--tpf-text)" }}>
@@ -254,7 +254,7 @@ export function CitizenDashboard({ citizen, setScreen }: any) {
                   </p>
                 </div>
                 <div className="shrink-0 text-right">
-                  <p className="text-[11px] font-bold" style={{ color: "#EF4444" }}>
+                  <p className="text-[11px] font-bold" style={{ color: "var(--tpf-status-danger)" }}>
                     {dd.points_after}/{dd.points_before}
                   </p>
                   <p className="text-[9px]" style={{ color: "var(--tpf-text-4)" }}>
