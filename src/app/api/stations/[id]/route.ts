@@ -1,112 +1,45 @@
-// Station detail API — get, patch, delete
-// GET    /api/stations/[id]  -> fetch single station
-// PATCH  /api/stations/[id]  -> update station
-// DELETE /api/stations/[id]  -> delete station
+// Station detail API — migrated to withAuth() for centralized auth + audit
+// GET    /api/stations/[id]  → fetch single station (mock store; DB list lives in /api/stations)
+// PATCH  /api/stations/[id]  → update station (auto-audited)
+// DELETE /api/stations/[id]  → delete station (auto-audited)
+//
+// NOTE: This route uses an in-memory store for the legacy mock path.
+// The list endpoint at /api/stations reads from PostgreSQL. When the
+// detail endpoint is migrated to DB in a future task, replace the
+// stationsStore with db.from("stations").select(...).eq("id", id).
+import { withAuth } from "@/lib/api-guard";
 
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { logAction } from "@/lib/audit-log";
-import { errMsg } from "@/lib/api-error";
+const stationsStore: { id: string; name: string; region: string; status: string }[] = [];
 
-const stationsStore: {id:string;name:string;region:string;status:string}[] = [];
-
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "stations", "view");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
-
-    const { id } = await params;
-    const station = stationsStore.find((s) => s.id === id);
-    if (!station) {
-      return NextResponse.json({ error: "Station not found" }, { status: 404 });
-    }
-    return NextResponse.json({ data: station }, { status: 200 });
-  } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to fetch station", detail: errMsg(err) },
-      { status: 500 },
-    );
+// GET /api/stations/[id] → fetch single station
+export const GET = withAuth("stations", "view", async ({ params }) => {
+  const id = String(params.id ?? "");
+  const station = stationsStore.find((s) => s.id === id);
+  if (!station) {
+    return { ok: false, error: "Station not found", status: 404 };
   }
-}
+  return { ok: true, data: station };
+});
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "stations", "update");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
-
-    const { id } = await params;
-    const idx = stationsStore.findIndex((s) => s.id === id);
-    if (idx === -1) {
-      return NextResponse.json({ error: "Station not found" }, { status: 404 });
-    }
-
-    const body = await request.json().catch(() => ({}));
-    const updated = { ...stationsStore[idx], ...body, id: stationsStore[idx].id };
-    stationsStore[idx] = updated;
-
-    logAction(
-      session!.user.id,
-      "update",
-      "stations",
-      id,
-      { changes: body },
-      session!.user.name,
-    );
-
-    return NextResponse.json({ data: updated }, { status: 200 });
-  } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to update station", detail: errMsg(err) },
-      { status: 500 },
-    );
+// PATCH /api/stations/[id] → update station (auto-audited)
+export const PATCH = withAuth("stations", "update", async ({ params, body }) => {
+  const id = String(params.id ?? "");
+  const idx = stationsStore.findIndex((s) => s.id === id);
+  if (idx === -1) {
+    return { ok: false, error: "Station not found", status: 404 };
   }
-}
+  const updated = { ...stationsStore[idx], ...body, id: stationsStore[idx].id };
+  stationsStore[idx] = updated;
+  return { ok: true, data: updated };
+});
 
-export async function DELETE(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "stations", "delete");
-    if (!check.ok) {
-      return NextResponse.json({ error: check.error }, { status: check.status });
-    }
-
-    const { id } = await params;
-    const idx = stationsStore.findIndex((s) => s.id === id);
-    if (idx === -1) {
-      return NextResponse.json({ error: "Station not found" }, { status: 404 });
-    }
-    const [removed] = stationsStore.splice(idx, 1);
-
-    logAction(
-      session!.user.id,
-      "delete",
-      "stations",
-      id,
-      { station: removed },
-      session!.user.name,
-    );
-
-    return NextResponse.json({ data: { id, deleted: true } }, { status: 200 });
-  } catch (err) {
-    return NextResponse.json(
-      { error: "Failed to delete station", detail: errMsg(err) },
-      { status: 500 },
-    );
+// DELETE /api/stations/[id] → delete station (auto-audited)
+export const DELETE = withAuth("stations", "delete", async ({ params }) => {
+  const id = String(params.id ?? "");
+  const idx = stationsStore.findIndex((s) => s.id === id);
+  if (idx === -1) {
+    return { ok: false, error: "Station not found", status: 404 };
   }
-}
+  const [removed] = stationsStore.splice(idx, 1);
+  return { ok: true, data: { id, deleted: true, name: removed.name } };
+});

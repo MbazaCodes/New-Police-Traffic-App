@@ -1,110 +1,66 @@
-// Requests API — officer requests + commander approvals
-// GET    /api/requests          → list requests (scoped by role)
-// POST   /api/requests          → create request (officer)
+// Requests API — migrated to withAuth() for centralized auth + audit
+// GET    /api/requests          → list requests (officers see own; commanders see all in scope)
+// POST   /api/requests          → create request (officer, auto-audited)
 // PATCH  /api/requests/[id]     → approve/reject/reallocate (commander)
+import { withAuthAny } from "@/lib/api-guard";
+import { isDbEnabled } from "@/lib/db/client";
 
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { logAction } from "@/lib/audit-log";
-import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
+// GET /api/requests → list requests (scope-aware for officers vs commanders)
+export const GET = withAuthAny("officer_requests", async ({ session, db, searchParams }) => {
+  const status = searchParams.get("status") ?? "";
+  const type   = searchParams.get("type") ?? "";
 
-// In-memory store fallback (empty — data from PostgreSQL (VPS))
-interface OfficerRequest {
-  id: string;
-  type: string;
-  officerId: string;
-  officerName: string;
-  officerBadge: string;
-  station: string;
-  region: string;
-  details: string;
-  priority: "high" | "medium" | "low";
-  status: "pending" | "approved" | "rejected" | "reallocated";
-  response?: string;
-  respondedBy?: string;
-  respondedAt?: string;
-  newStation?: string;
-  createdAt: string;
-}
-const requestsStore: OfficerRequest[] = [];
-
-export async function GET(request: Request) {
-  try {
-    const session = await getServerSession();
-    if (!session?.user) return NextResponse.json({ error: "Uthibitishaji umekosea. Tafadhali ingia tena." }, { status: 401 });
-
-    const url = new URL(request.url);
-    const status = url.searchParams.get("status") ?? "";
-    const type   = url.searchParams.get("type") ?? "";
-
-    if (isDbEnabled()) {
-      const admin = getDbAdmin();
-      if (admin) {
-        let q = admin.from("officer_requests").select("*").order("created_at", { ascending: false });
-        if (status) q = q.eq("status", status);
-        if (type)   q = q.eq("type", type);
-        // Scope: officers see own; commanders see all in scope
-        const userRole = session.user.role ?? "";
-        const isOfficer = ["TRAFFIC_OFFICER","GENERAL_OFFICER","POST_OFFICER"].includes(userRole);
-        if (isOfficer) q = q.eq("officer_badge", session.user.badgeNo ?? "");
-        const { data } = await q;
-        return NextResponse.json({ ok: true, data });
-      }
-    }
-    // Database required — return empty when not available
-    return NextResponse.json({ ok: true, data: [] });
-  } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+  if (!isDbEnabled()) {
+    return { ok: true, data: [] };
   }
-}
 
-export async function POST(request: Request) {
-  try {
-    const session = await getServerSession();
-    if (!session?.user) return NextResponse.json({ error: "Uthibitishaji umekosea. Tafadhali ingia tena." }, { status: 401 });
+  let q = db
+    .from("officer_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (status) q = q.eq("status", status);
+  if (type)   q = q.eq("type", type);
 
-    const body = await request.json().catch(() => ({}));
-    if (!body.type || !body.details) {
-      return NextResponse.json({ error: "Aina na maelezo yanahitajika" }, { status: 400 });
-    }
-
-    const newReq: OfficerRequest = {
-      id:           `REQ-${Date.now()}`,
-      type:         body.type,
-      officerId:    session.user.id ?? "",
-      officerName:  session.user.name ?? "",
-      officerBadge: (session.user as {badgeNo?:string}).badgeNo ?? session.user.id ?? "",
-      station:      (session.user as {station?:string}).station ?? "",
-      region:       (session.user as {region?:string}).region ?? "",
-      details:      body.details,
-      priority:     body.priority ?? "medium",
-      status:       "pending",
-      createdAt:    new Date().toISOString(),
-    };
-
-    if (isDbEnabled()) {
-      const admin = getDbAdmin();
-      if (admin) {
-        const { data, error } = await admin.from("officer_requests").insert({
-          type:          newReq.type,
-          officer_id:    newReq.officerId,
-          officer_name:  newReq.officerName,
-          officer_badge: newReq.officerBadge,
-          station:       newReq.station,
-          region:        newReq.region,
-          details:       newReq.details,
-          priority:      newReq.priority,
-          status:        "pending",
-        }).select().single();
-        if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-        await logAction(session, "CREATE", "officer_requests", data.id, { type: body.type });
-        return NextResponse.json({ ok: true, data }, { status: 201 });
-      }
-    }
-    // Database required for request creation
-    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
-  } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+  // Scope: officers see own; commanders see all in scope
+  const userRole  = session.user.role ?? "";
+  const isOfficer = ["TRAFFIC_OFFICER", "GENERAL_OFFICER", "POST_OFFICER"].includes(userRole);
+  if (isOfficer) {
+    const badge = (session.user as { badgeNo?: string }).badgeNo ?? session.user.id ?? "";
+    q = q.eq("officer_badge", badge);
   }
-}
+
+  const { data } = await q;
+  return { ok: true, data: data ?? [] };
+});
+
+// POST /api/requests → create officer request (auto-audited)
+export const POST = withAuthAny("officer_requests", async ({ session, body, db }) => {
+  if (!body.type || !body.details) {
+    return { ok: false, error: "Aina na maelezo yanahitajika", status: 400 };
+  }
+
+  if (!isDbEnabled()) {
+    return { ok: false, error: "Database haijawezeshwa", status: 503 };
+  }
+
+  const officerBadge = (session.user as { badgeNo?: string }).badgeNo ?? session.user.id ?? "";
+  const station      = (session.user as { station?: string }).station ?? "";
+  const region       = (session.user as { region?: string }).region ?? "";
+
+  const { data, error } = await db.from("officer_requests").insert({
+    type:          body.type,
+    officer_id:    session.user.id ?? "",
+    officer_name:  session.user.name ?? "",
+    officer_badge: officerBadge,
+    station,
+    region,
+    details:       body.details,
+    priority:      body.priority ?? "medium",
+    status:        "pending",
+  }).select().single();
+
+  if (error) {
+    return { ok: false, error: error.message, status: 400 };
+  }
+  return { ok: true, data, status: 201 };
+});

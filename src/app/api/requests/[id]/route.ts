@@ -1,49 +1,49 @@
-// PATCH /api/requests/[id]  → approve | reject | reallocate
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { logAction } from "@/lib/audit-log";
-import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
+// PATCH /api/requests/[id]  → approve | reject | reallocate (auto-audited)
+// Migrated to withAuth(): auth + audit handled centrally.
+import { withAuth } from "@/lib/api-guard";
+import { isDbEnabled } from "@/lib/db/client";
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "requests", "manage");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
+export const PATCH = withAuth("requests", "manage", async ({ params, body, session, db }) => {
+  const id = String(params.id ?? "");
+  const { action, response, newStation } = body;
 
-    const { id } = await params;
-    const body = await request.json().catch(() => ({}));
-    const { action, response, newStation } = body;
-
-    if (!["manage","reject","reallocate"].includes(action)) {
-      return NextResponse.json({ error: "action lazima iwe: approve | reject | reallocate" }, { status: 400 });
-    }
-
-    const statusMap: Record<string,string> = {
-      approve: "approved", reject: "rejected", reallocate: "reallocated"
+  if (!["approve", "reject", "reallocate"].includes(action)) {
+    return {
+      ok: false,
+      error: "action lazima iwe: approve | reject | reallocate",
+      status: 400,
     };
-
-    if (isDbEnabled()) {
-      const admin = getDbAdmin();
-      if (admin) {
-        const { data, error } = await admin.from("officer_requests").update({
-          status:       statusMap[action],
-          response:     response || null,
-          new_station:  newStation || null,
-          responded_by: session?.user?.name,
-          responded_at: new Date().toISOString(),
-        }).eq("id", id).select().single();
-        if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-        await logAction(session, action.toUpperCase(), "officer_requests", id, { action, response });
-        return NextResponse.json({ ok: true, data });
-      }
-    }
-    // Mock: just return success
-    return NextResponse.json({ ok: true, data: { id, status: statusMap[action], action, response, respondedBy: session?.user?.name, respondedAt: new Date().toISOString() } });
-  } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
   }
-}
+
+  const statusMap: Record<string, string> = {
+    approve: "approved", reject: "rejected", reallocate: "reallocated",
+  };
+
+  if (!isDbEnabled()) {
+    // Mock: just return success
+    return {
+      ok: true,
+      data: {
+        id,
+        status:      statusMap[action],
+        action,
+        response,
+        respondedBy: session?.user?.name,
+        respondedAt: new Date().toISOString(),
+      },
+    };
+  }
+
+  const { data, error } = await db.from("officer_requests").update({
+    status:       statusMap[action],
+    response:     response || null,
+    new_station:  newStation || null,
+    responded_by: session?.user?.name,
+    responded_at: new Date().toISOString(),
+  }).eq("id", id).select().single();
+
+  if (error) {
+    return { ok: false, error: error.message, status: 400 };
+  }
+  return { ok: true, data };
+});
