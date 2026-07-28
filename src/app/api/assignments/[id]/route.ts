@@ -1,48 +1,30 @@
-// Assignment [id] API
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
-import { errMsg } from "@/lib/api-error";
+// Assignment [id] API — migrated to withAuth() for centralized auth + audit
+import { withAuth } from "@/lib/api-guard";
+import { isDbEnabled } from "@/lib/db/client";
 
-type Params = { params: Promise<{ id: string }> };
-
-export async function PATCH(request: Request, { params }: Params) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "assignments", "update");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    if (!isDbEnabled()) return NextResponse.json({ error: "DB haijawezeshwa" }, { status: 503 });
-
-    const { id } = await params;
-    const body = await request.json().catch(() => ({}));
-    const patch: Record<string, unknown> = {};
-    if (body.status)   patch.status   = body.status;
-    if (body.endDate)  patch.end_date = body.endDate;
-    if (body.notes)    patch.notes    = body.notes;
-
-    const admin = getDbAdmin();
-    const { data, error } = await (admin as any).from("assignments").update(patch).eq("id", id).select().single();
-    if (error) throw error;
-    return NextResponse.json({ ok: true, data });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+// PATCH /api/assignments/[id] → update assignment (auto-audited)
+export const PATCH = withAuth("assignments", "update", async ({ params, body, db }) => {
+  const id = String(params.id ?? "");
+  if (!isDbEnabled()) {
+    return { ok: false, error: "DB haijawezeshwa", status: 503 };
   }
-}
+  const patch: Record<string, unknown> = {};
+  if (body.status)  patch.status   = body.status;
+  if (body.endDate) patch.end_date = body.endDate;
+  if (body.notes)   patch.notes    = body.notes;
 
-export async function DELETE(_: Request, { params }: Params) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "assignments", "delete");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    if (!isDbEnabled()) return NextResponse.json({ error: "DB haijawezeshwa" }, { status: 503 });
+  const { data, error } = await db.from("assignments").update(patch).eq("id", id).select().single();
+  if (error) throw error;
+  return { ok: true, data };
+});
 
-    const { id } = await params;
-    const admin = getDbAdmin();
-    const { error } = await (admin as any).from("assignments").delete().eq("id", id);
-    if (error) throw error;
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+// DELETE /api/assignments/[id] → delete assignment (auto-audited)
+export const DELETE = withAuth("assignments", "delete", async ({ params, db }) => {
+  const id = String(params.id ?? "");
+  if (!isDbEnabled()) {
+    return { ok: false, error: "DB haijawezeshwa", status: 503 };
   }
-}
+  const { error } = await db.from("assignments").delete().eq("id", id);
+  if (error) throw error;
+  return { ok: true };
+});
