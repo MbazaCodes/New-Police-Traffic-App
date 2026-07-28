@@ -60,7 +60,11 @@ function toStoreRole(authRole: string): UserRole {
   return "officer-general";
 }
 
-export function LoginScreen() {
+// R1 (stabilize): accept optional `mode` prop — admin/page.tsx,
+// command/page.tsx, and admin-web-shell.tsx all render
+// <LoginScreen mode="admin" /> etc. The previous signature took
+// no props, causing TS2322 at 3 call sites.
+export function LoginScreen({ mode }: { mode?: string } = {}) {
   const { setOfficerProfile } = usePoliceStore();
   const [step, setStep]               = useState<Step>("credentials");
   const [category, setCategory]       = useState<RoleCategory | "">("");

@@ -28,12 +28,27 @@ declare module "next-auth" {
       id: string; name: string | null; email: string | null;
       role: Role; idNumber: string; station: string;
       badgeNo?: string; region?: string; unit?: string;
+      // R1 (stabilize): auth.ts:180 + data-scope.ts:38 read district
+      // from the session user; without this property, TS2339.
+      district?: string;
+      // R1 (stabilize): data-scope.ts:39 reads stationId + station_id
+      // from the session user.
+      stationId?: string;
+      station_id?: string;
     };
   }
   interface User {
     id: string; name?: string | null; email?: string | null;
     role: Role; idNumber: string; station: string;
     badgeNo?: string; region?: string; unit?: string;
+    // R1 (stabilize): police/login route reads last_login + created_at
+    // from the DB row and stores them on the User object. Without these
+    // properties, TS2339 was raised at police/login/route.ts:78-79.
+    last_login?: string | null;
+    created_at?: string | null;
+    district?: string;
+    stationId?: string;
+    station_id?: string;
   }
 }
 
@@ -41,6 +56,9 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string; role: Role; idNumber: string; station: string;
     badgeNo?: string; region?: string; unit?: string;
+    district?: string;
+    stationId?: string;
+    station_id?: string;
   }
 }
 

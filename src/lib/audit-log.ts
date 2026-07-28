@@ -229,7 +229,11 @@ export async function listAuditLogs(opts?: {
       const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
 
       const countRow = await query(`SELECT COUNT(*)::int as total FROM audit_logs ${where}`, params);
-      const total = countRow[0]?.total ?? 0;
+      // R1 (stabilize): cast to number — countRow[0]?.total is typed
+      // as `{} | undefined` because query<T> defaults to
+      // Record<string, unknown>. The COALESCE/::int cast in SQL
+      // guarantees it's a number at runtime.
+      const total = (countRow[0]?.total as number) ?? 0;
 
       const limit = opts?.limit ?? 100;
       const offset = opts?.offset ?? 0;

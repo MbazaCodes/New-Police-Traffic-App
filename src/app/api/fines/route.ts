@@ -141,7 +141,11 @@ export async function POST(request: Request) {
     const totalAmount = effectiveBaseAmount + penaltyAmount;
 
     const effectiveFineType = fineType || "traffic";
-    const effectiveCitationType = citationType || (session?.user?.role === "officer-traffic" ? "traffic" : session?.user?.role === "officer-post" ? "post" : "general");
+    // R1 (stabilize): compare against Role values (TRAFFIC_OFFICER,
+    // POST_OFFICER), not UserRole strings (officer-traffic, officer-post).
+    // The previous comparison caused TS2367 because Role and UserRole
+    // are disjoint string-literal unions.
+    const effectiveCitationType = citationType || (session?.user?.role === "TRAFFIC_OFFICER" ? "traffic" : session?.user?.role === "POST_OFFICER" ? "post" : "general");
 
     const payload = {
       driver_name:    driverName || null,

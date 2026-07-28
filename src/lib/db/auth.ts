@@ -22,6 +22,10 @@ export interface User {
   region: string | null;
   unit: string | null;
   photo_url: string | null;
+  // R1 (stabilize): police/login route reads last_login + created_at
+  // from the DB row. Without these properties, TS2339 was raised.
+  last_login?: string | null;
+  created_at?: string | null;
   station?: { id: string; name: string; region: string } | null;
 }
 
@@ -80,7 +84,8 @@ export function mapRole(role: string): string {
     "system-admin":               "SYSTEM_ADMIN",
 
     // Commissioners
-    "national-commissioner":      "NATIONAL_COMMANDER",
+    // R1 (stabilize): removed duplicate "national-commissioner" key —
+    // it was already defined on line 76 above. TS1117.
     "regional-commissioner":      "REGIONAL_COMMANDER",
     "district-commissioner":      "DISTRICT_COMMANDER",
     "station-commissioner":       "STATION_COMMANDER",

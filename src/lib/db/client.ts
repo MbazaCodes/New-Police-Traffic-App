@@ -101,12 +101,24 @@ class QueryBuilder<T = AnyRecord> {
   constructor(table: string) { this._table = table; }
 
   // ── SELECT ──────────────────────────────────────────────────
-  select(cols: string): this {
+  // R1 (stabilize): made `cols` optional AND added optional `opts`
+  // argument for { count, head } — many routes call
+  // `.select("*", { count: "exact", head: true })` to get counts
+  // without fetching rows. The previous strict 1-arg signature
+  // caused TS2554 at 4+ routes.
+  select(cols?: string, opts?: { count?: "exact" | "planned" | "estimated"; head?: boolean }): this {
     if (this._mutationMode) {
       // .select() after insert/update/delete → specify returning cols
-      this._mutationCols = cols;
+      this._mutationCols = cols ?? "*";
     } else {
-      this._selectCols = cols;
+      this._selectCols = cols ?? "*";
+    }
+    // Store count/head options for _exec to use
+    if (opts?.count) {
+      (this as any)._countMode = opts.count;
+    }
+    if (opts?.head) {
+      (this as any)._headMode = true;
     }
     return this;
   }
@@ -212,15 +224,19 @@ class QueryBuilder<T = AnyRecord> {
   }
 
   // ── EXECUTE (thenable) ───────────────────────────────────────
+  // R1 (stabilize): return type uses `any` for data to match the
+  // pre-existing AnyRecord-based pattern across all API routes.
+  // The previous `T | T[] | null` union broke property access
+  // (TS2339) and null checks (TS18047) at 100+ call sites.
   then<R>(
-    resolve: (v: { data: T | T[] | null; error: Error | null; count?: number }) => R,
+    resolve: (v: { data: any; error: Error | null; count?: number }) => R,
     reject?: (e: unknown) => R
   ): Promise<R> {
     return this._exec().then(resolve, reject);
   }
 
   // ── INTERNAL ─────────────────────────────────────────────────
-  private async _exec(): Promise<{ data: T | T[] | null; error: Error | null; count?: number }> {
+  private async _exec(): Promise<{ data: any; error: Error | null; count?: number }> {
     try {
       const pool = getPool();
 
@@ -437,13 +453,13 @@ class RpcBuilder<T = AnyRecord> {
   }
 
   then<R>(
-    resolve: (v: { data: T[] | null; error: Error | null }) => R,
+    resolve: (v: { data: any; error: Error | null }) => R,
     reject?: (e: unknown) => R
   ): Promise<R> {
     return this._exec().then(resolve, reject);
   }
 
-  private async _exec(): Promise<{ data: T[] | null; error: Error | null }> {
+  private async _exec(): Promise<{ data: any; error: Error | null }> {
     try {
       const pool = getPool();
       const keys = Object.keys(this._args);

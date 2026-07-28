@@ -131,8 +131,13 @@ export function CitizenShell() {
 
       {/* ── Bottom nav — Mobile-optimized, touch-friendly, safe-area ── */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-50 flex items-stretch" style={{ height:"calc(64px + env(safe-area-inset-bottom,0px))", paddingBottom:"env(safe-area-inset-bottom,0px)" }}
-        style={{ background: "var(--tpf-card)", borderTop: "1px solid var(--tpf-border)" }}
+        className="fixed inset-x-0 bottom-0 z-50 flex items-stretch"
+        style={{
+          height: "calc(64px + env(safe-area-inset-bottom,0px))",
+          paddingBottom: "env(safe-area-inset-bottom,0px)",
+          background: "var(--tpf-card)",
+          borderTop: "1px solid var(--tpf-border)",
+        }}
       >
         {NAV.map((item) => {
           const Icon = item.icon;

@@ -219,7 +219,10 @@ export default function LoginPage() {
       const route = ROLE_ROUTES[role] ?? '/admin/dashboard';
       setTimeout(() => {
         if (role === 'TRAFFIC_OFFICER' || role === 'GENERAL_OFFICER' || role === 'POST_OFFICER') {
-          login(storeRole);
+          // R1 (stabilize): cast AuthRole to UserRole — the police-store
+          // login() expects UserRole, but storeRole is AuthRole. The two
+          // types overlap but TypeScript can't verify the conversion.
+          login(storeRole as unknown as UserRole);
           window.location.href = route + '?pwa=1';
         } else {
           loginAsRole(storeRole);

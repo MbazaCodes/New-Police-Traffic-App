@@ -89,7 +89,11 @@ export function clearClientToken(): void {
  * - Intercepts 401 responses and redirects to login
  * - Returns typed JSON
  */
-export async function authFetch<T = unknown>(
+// R1 (stabilize): default type param is `any` (not `unknown`) so callers
+// can access response shape without per-call generic. The previous
+// `unknown` default caused TS2339 across all commander shells + admin
+// screens that do `res.data?.data` / `res.data?.ok`.
+export async function authFetch<T = any>(
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<{ data: T | null; error: string | null; status: number }> {

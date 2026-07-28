@@ -51,7 +51,7 @@ import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
 import { errMsg } from "@/lib/api-error";
 import { logAuditEvent } from "@/lib/audit-log";
 import { headers as nextHeaders } from "next/headers";
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import type { Session } from "next-auth";
 
 // ── Context passed to every route handler ──────────────────────
@@ -127,8 +127,8 @@ export function withAuth<TBody = unknown>(
     /** Require specific roles instead of RBAC permission matrix */
     requireRoles?: string[];
   } = {}
-): (request: Request, context?: Record<string, string | string[]>) => Promise<Response> {
-  return async (request: Request, context?: Record<string, string | string[]>) => {
+): (request: NextRequest, context: { params: Promise<Record<string, string | string[]>> }) => Promise<Response> {
+  return async (request: NextRequest, context: { params: Promise<Record<string, string | string[]>> }) => {
     const method = request.method.toUpperCase();
     const auditAction = options.auditAction ?? METHOD_ACTION_MAP[method] ?? action;
 
@@ -178,7 +178,8 @@ export function withAuth<TBody = unknown>(
         request,
         searchParams,
         body,
-        params: context ?? {},
+        // R1 (stabilize): Next.js 16 — params is a Promise. Resolve it.
+        params: await context.params,
         userId: validatedSession.user.id,
         userName: validatedSession.user.name,
         resource,
@@ -232,8 +233,8 @@ export function withAuthAny<TBody = unknown>(
   resource: Resource,
   handler: AuthHandler<TBody>,
   options: { skipAudit?: boolean; auditAction?: string } = {}
-): (request: Request, context?: Record<string, string | string[]>) => Promise<Response> {
-  return async (request: Request, context?: Record<string, string | string[]>) => {
+): (request: NextRequest, context: { params: Promise<Record<string, string | string[]>> }) => Promise<Response> {
+  return async (request: NextRequest, context: { params: Promise<Record<string, string | string[]>> }) => {
     try {
       const session = await getServerSession();
       if (!session?.user) {
@@ -262,7 +263,8 @@ export function withAuthAny<TBody = unknown>(
         request,
         searchParams,
         body,
-        params: context ?? {},
+        // R1 (stabilize): Next.js 16 — params is a Promise. Resolve it.
+        params: await context.params,
         userId: session.user.id,
         userName: session.user.name,
         resource,

@@ -7,6 +7,9 @@ import { getServerSession } from "@/lib/auth";
 import { enforceDataScope, requirePermission } from "@/lib/rbac";
 import { logAction } from "@/lib/audit-log";
 import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
+// R1 (stabilize): missing imports caused TS2304 — getScope and
+// applyScopeToQuery are used below but were never imported.
+import { getScope, applyScopeToQuery } from "@/lib/data-scope";
 import { getScopeContext } from "@/lib/scope";
 import { errMsg } from "@/lib/api-error";
 

@@ -126,6 +126,11 @@ export async function GET(request: Request) {
           dob:         c.dob || null,
           occupation:  c.occupation || "—",
           address:     c.address || "—",
+          // R1 (stabilize): add region + district — the row type
+          // requires them but they were missing from the object
+          // literal, causing TS2345.
+          region:      c.region || null,
+          district:    c.district || null,
           tribe:       c.tribe || "—",
           license_no:  c.license_no || "—",
           is_verified: !!c.verified,

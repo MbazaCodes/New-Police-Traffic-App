@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Search, X, ChevronDown, ChevronUp, ChevronsUpDown, Loader2 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Pagination } from "./pagination";
 import { EmptyState } from "./empty-state";
 import { LoadingState } from "./loading-state";
@@ -115,8 +115,11 @@ export function DataTable<T extends Record<string, unknown>>({
   const totalPages = Math.ceil(sorted.length / pageSize);
   const paginated = sorted.slice((page - 1) * pageSize, page * pageSize);
 
-  // Reset page on search change
-  useMemo(() => setPage(1), [search]);
+  // Reset page on search change.
+  // FIX (build-stabilize): was `useMemo(() => setPage(1), [search])` —
+  // calling setState inside useMemo is a render-phase side effect that
+  // can cause infinite re-render loops. Use useEffect (runs after commit).
+  useEffect(() => setPage(1), [search]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) {

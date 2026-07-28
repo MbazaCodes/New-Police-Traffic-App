@@ -76,7 +76,10 @@ export async function POST(request: Request) {
             [data.id, body.ownerCitizenId ?? null, body.ownerName,
              body.ownerNida ?? null, body.ownerPhone ?? null,
              data.status ?? "active",
-             session.user.id, session.user.name ?? "", session.user.role ?? ""]
+             // R1 (stabilize): session is possibly null per TS18047;
+             // use optional chaining + fallback to match the
+             // recorded_by_* semantics (empty string when no session).
+             session?.user?.id ?? "", session?.user?.name ?? "", session?.user?.role ?? ""]
           );
         } catch (e) { console.warn("[DEVICE OWNERSHIP LOG]", e); }
         return NextResponse.json({ ok: true, data }, { status: 201 });
