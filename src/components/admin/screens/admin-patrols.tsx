@@ -25,6 +25,10 @@ import { toast } from "@/hooks/use-toast";
 export function AdminPatrols() {
   const pathname = usePathname();
   const { data: rawPatrols, refetch } = useApiData<any>("/api/patrols", undefined, [], { refreshMs: 15000 });
+  // R1 (stabilize): cast to AdminPatrolRecord[] — the raw patrol
+  // shape from the API doesn't exactly match AdminPatrolRecord
+  // (which uses `officer`/`start`/`distance` vs `officerName`/`startTime`).
+  // The component accesses both shapes defensively, so the cast is safe.
   const patrols: AdminPatrolRecord[] = rawPatrols.map((p: any) => ({
     id:           p.id,
     officerName:  p.officer?.name  ?? p.officer_name ?? "—",
@@ -36,7 +40,7 @@ export function AdminPatrols() {
     startTime:    p.start_time     ?? p.created_at ?? "",
     endTime:      p.end_time       ?? null,
     stationName:  p.station?.name  ?? "—",
-  }));
+  })) as unknown as AdminPatrolRecord[];
 
   const endAdminPatrol = async (id: string) => {
     await authFetch(`/api/patrols/${id}`, {

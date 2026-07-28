@@ -30,11 +30,15 @@ import {
 export type CommandScreen = AdminScreen;
 
 /** Nav item shape for the commander sidebar. */
+// R1 (stabilize): added optional `badge` — admin-shell.tsx and
+// commander shells render badge counts on nav items; the previous
+// missing property caused TS2339 in 4 shells.
 export interface CommandNavItem {
   id: CommandScreen;
   label: string;
   icon: typeof LayoutDashboard;
   group?: string;
+  badge?: string | number;
 }
 
 /**

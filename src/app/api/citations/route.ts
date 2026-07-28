@@ -1,86 +1,65 @@
-// Citations API — PostgreSQL (VPS) first
-// GET  /api/citations   -> list citations
-// POST /api/citations   -> create citation
+// Citations API — migrated to withAuth() for centralized auth + audit
+// GET  /api/citations  → list citations (auto-scoped)
+// POST /api/citations  → create citation (auto-audited)
+import { withAuth } from "@/lib/api-guard";
+import { isDbEnabled } from "@/lib/db/client";
+import { applyScopeToQuery } from "@/lib/data-scope";
 
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { enforceDataScope, requirePermission } from "@/lib/rbac";
-import { logAction } from "@/lib/audit-log";
-import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
-import { getScopeContext } from "@/lib/scope";
-import { errMsg } from "@/lib/api-error";
+// GET /api/citations → list citations (auto-scoped via getScope)
+export const GET = withAuth("citations", "view", async ({ db, scope, searchParams }) => {
+  const status = searchParams.get("status");
+  const plate  = searchParams.get("plate");
+  const search = searchParams.get("search")?.toLowerCase() ?? "";
 
-export async function GET(request: Request) {
-  try {
-    const session = await getServerSession();
-    const scope = getScope(session);
-    const check = requirePermission(session, "citations", "view");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-
-    const url = new URL(request.url);
-    const status = url.searchParams.get("status");
-    const plate  = url.searchParams.get("plate");
-    const search = url.searchParams.get("search")?.toLowerCase() ?? "";
-
-    if (isDbEnabled()) {
-      const admin = getDbAdmin();
-      if (admin) {
-        let q = applyScopeToQuery(admin.from("citations"), scope).select("*").order("created_at", { ascending: false });
-        if (status && status !== "all") q = q.eq("status", status === "Imelipwa" ? "paid" : status === "Hajalipwa" ? "unpaid" : status);
-        if (plate) q = q.ilike("plate", plate);
-        if (search) q = q.or(`plate.ilike.%${search}%,offense.ilike.%${search}%,citation_number.ilike.%${search}%`);
-        const { data, error } = await q;
-        if (error) throw error;
-        return NextResponse.json({ ok: true, data: data ?? [], total: data?.length ?? 0 });
-      }
-    }
-
-    return NextResponse.json({ ok: true, data: [], total: 0 });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+  if (!isDbEnabled()) {
+    return { ok: true, data: [], total: 0 };
   }
-}
 
-export async function POST(request: Request) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "citations", "create");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-
-    const body = await request.json().catch(() => ({}));
-    const { plate, offense, driverName, driverPhone, driverLicense, driverNida, amount, location, vehicleType, notes } = body;
-
-    if (!plate || !offense) {
-      return NextResponse.json({ error: "Plate na kosa vinahitajika" }, { status: 400 });
-    }
-
-    const citationNumber = `CT-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
-
-    if (isDbEnabled()) {
-      const admin = getDbAdmin();
-      if (admin) {
-        const { data, error } = await admin.from("citations").insert({
-          citation_number: citationNumber,
-          plate: plate.toUpperCase(),
-          offense, status: "unpaid",
-          driver_name: driverName || null,
-          driver_phone: driverPhone || null,
-          driver_license: driverLicense || null,
-          driver_nida: driverNida || null,
-          fine_amount: amount ? parseInt(String(amount).replace(/[^\d]/g, ""), 10) : null,
-          location: location || null,
-          vehicle_type: vehicleType || null,
-          notes: notes || null,
-          officer_id: session?.user?.id || null,
-        }).select().single();
-        if (error) throw error;
-        await logAction(session, "citation_created", "citations", data.id, { plate, offense });
-        return NextResponse.json({ ok: true, data }, { status: 201 });
-      }
-    }
-
-    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+  let q = applyScopeToQuery(db.from("citations"), scope)
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (status && status !== "all") {
+    // Translate Swahili status labels used by the UI back to DB values
+    const s = status === "Imelipwa" ? "paid" : status === "Hajalipwa" ? "unpaid" : status;
+    q = q.eq("status", s);
   }
-}
+  if (plate)  q = q.ilike("plate", plate);
+  if (search) {
+    q = q.or(`plate.ilike.%${search}%,offense.ilike.%${search}%,citation_number.ilike.%${search}%`);
+  }
+
+  const { data, error } = await q;
+  if (error) throw error;
+  return { ok: true, data: data ?? [], total: data?.length ?? 0 };
+});
+
+// POST /api/citations → create citation (auto-audited)
+export const POST = withAuth("citations", "create", async ({ body, session, db }) => {
+  const { plate, offense, driverName, driverPhone, driverLicense, driverNida, amount, location, vehicleType, notes } = body;
+  if (!plate || !offense) {
+    return { ok: false, error: "Plate na kosa vinahitajika", status: 400 };
+  }
+
+  if (!isDbEnabled()) {
+    return { ok: false, error: "Database haijawezeshwa", status: 503 };
+  }
+
+  const citationNumber = `CT-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
+  const { data, error } = await db.from("citations").insert({
+    citation_number: citationNumber,
+    plate:           plate.toUpperCase(),
+    offense, status: "unpaid",
+    driver_name:     driverName   || null,
+    driver_phone:    driverPhone  || null,
+    driver_license:  driverLicense|| null,
+    driver_nida:     driverNida   || null,
+    fine_amount:     amount ? parseInt(String(amount).replace(/[^\d]/g, ""), 10) : null,
+    location:        location     || null,
+    vehicle_type:    vehicleType  || null,
+    notes:           notes        || null,
+    officer_id:      session?.user?.id || null,
+  }).select().single();
+
+  if (error) throw error;
+  return { ok: true, data, status: 201 };
+});

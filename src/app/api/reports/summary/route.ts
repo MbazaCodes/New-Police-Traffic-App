@@ -1,16 +1,11 @@
-// Reports summary — direct SQL counts + trends + distributions + region stats.
-//
+// Reports summary — migrated to withAuth() for centralized auth
 // Returns the { aggregated, trends, distribution } shape expected by the
-// admin-reports.tsx screen. Previously this route returned a flat object
-// which caused every chart and KPI on the reports page to show 0 / empty.
+// admin-reports.tsx screen.
 //
 // All queries are wrapped in safe helpers so a missing table or column
 // never 500s the whole endpoint — it just returns 0 / [] for that metric.
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
+import { withAuth } from "@/lib/api-guard";
 import { isDbEnabled, query } from "@/lib/db/client";
-import { errMsg } from "@/lib/api-error";
 
 async function cnt(sql: string, params: unknown[] = []): Promise<number> {
   try {
@@ -37,17 +32,15 @@ function rangeToInterval(range: string): string {
 
 const WEEK_DAYS = ["Jumatatu", "Jumanne", "Jumatano", "Alhamisi", "Ijumaa", "Jumamosi", "Jumapili"];
 
-export async function GET(request: Request) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "reports", "view");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    if (!isDbEnabled()) return NextResponse.json({ ok: true, data: { aggregated: {}, trends: {}, distribution: {} } });
+// GET /api/reports/summary → aggregated KPIs + trends + distributions + region stats
+export const GET = withAuth("reports", "view", async ({ searchParams }) => {
+  if (!isDbEnabled()) {
+    return { ok: true, data: { aggregated: {}, trends: {}, distribution: {} } };
+  }
 
-    const url   = new URL(request.url);
-    const range = url.searchParams.get("range") || "7d";
-    const interval = rangeToInterval(range);
-    const today = new Date().toISOString().split("T")[0];
+  const range = searchParams.get("range") || "7d";
+  const interval = rangeToInterval(range);
+  const today = new Date().toISOString().split("T")[0];
 
     /* ── Aggregated KPIs ─────────────────────────────────────────────────── */
     const [
@@ -181,7 +174,7 @@ export async function GET(request: Request) {
         }))
       : [];
 
-    return NextResponse.json({
+    return {
       ok: true,
       data: {
         aggregated: {
@@ -207,9 +200,5 @@ export async function GET(request: Request) {
           regionStats,
         },
       },
-    });
-  } catch (err) {
-    console.error("[REPORTS SUMMARY]", errMsg(err));
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
-  }
-}
+    };
+});

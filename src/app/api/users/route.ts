@@ -1,10 +1,7 @@
-// src/app/api/users/route.ts
+// src/app/api/users/route.ts — migrated to withAuth() for centralized auth + audit
 // NO embeds. Role filtering done in JS with slug aliases so unknown roles return [] not 500.
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
-import { errMsg } from "@/lib/api-error";
+import { withAuth } from "@/lib/api-guard";
+import { isDbEnabled } from "@/lib/db/client";
 
 const norm = (s: string) => String(s ?? "").toLowerCase().replace(/[^a-z]/g, "");
 
@@ -46,105 +43,89 @@ async function safeSelect(admin: any, table: string, limit = 500): Promise<any[]
   } catch { return []; }
 }
 
-export async function GET(request: Request) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "users", "view");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
+// GET /api/users → list users (role/status/search filtered in JS)
+export const GET = withAuth("users", "view", async ({ db, searchParams }) => {
+  if (!isDbEnabled()) return { ok: true, data: [], total: 0 };
 
-    if (!isDbEnabled()) return NextResponse.json({ ok: true, data: [], total: 0 });
-    const admin = getDbAdmin() as any;
-    if (!admin) return NextResponse.json({ ok: true, data: [], total: 0 });
+  const search = (searchParams.get("search") || "").toLowerCase().trim();
+  const status = searchParams.get("status") || "";
+  const limit  = Math.min(parseInt(searchParams.get("limit") || "200"), 500);
+  const roleQ  = [searchParams.get("role") || "", searchParams.get("roles") || ""]
+                   .filter(Boolean).join(",");
 
-    const url    = new URL(request.url);
-    const search = (url.searchParams.get("search") || "").toLowerCase().trim();
-    const status = url.searchParams.get("status") || "";
-    const limit  = Math.min(parseInt(url.searchParams.get("limit") || "200"), 500);
-    const roleQ  = [url.searchParams.get("role") || "", url.searchParams.get("roles") || ""]
-                     .filter(Boolean).join(",");
+  const [users, stations, officers] = await Promise.all([
+    safeSelect(db, "users", limit),
+    safeSelect(db, "stations", 500),
+    safeSelect(db, "officers", 500),
+  ]);
 
-    const [users, stations, officers] = await Promise.all([
-      safeSelect(admin, "users", limit),
-      safeSelect(admin, "stations", 500),
-      safeSelect(admin, "officers", 500),
-    ]);
+  const stationById = new Map(stations.map((s: any) => [String(s.id), s]));
+  const officerByUser = new Map<string, any>();
+  for (const o of officers) if (o.user_id) officerByUser.set(String(o.user_id), o);
 
-    const stationById = new Map(stations.map((s: any) => [String(s.id), s]));
-    const officerByUser = new Map<string, any>();
-    for (const o of officers) if (o.user_id) officerByUser.set(String(o.user_id), o);
+  let rows = users.map((u: any) => {
+    const o  = officerByUser.get(String(u.id));
+    const st = stationById.get(String(u.station_id ?? o?.station_id ?? ""));
+    return {
+      id:           u.id,
+      name:         u.name ?? "—",
+      short_name:   u.short_name ?? "",
+      role:         u.role ?? "—",
+      rank:         u.rank ?? o?.rank ?? "—",
+      rank_short:   u.rank_short ?? "",
+      badge_no:     u.badge_no ?? o?.officer_number ?? "—",
+      email:        u.email ?? "—",
+      phone:        u.phone ?? "—",
+      photo_url:    u.photo_url ?? null,
+      unit:         u.unit ?? o?.unit ?? "—",
+      region:       u.region ?? (st as any)?.region ?? "—",
+      station_id:   u.station_id ?? o?.station_id ?? null,
+      station_name: (st as any)?.name ?? "—",
+      status:       u.status ?? "active",
+      last_login:   u.last_login ?? null,
+      created_at:   u.created_at ?? null,
+    };
+  });
 
-    let rows = users.map((u: any) => {
-      const o  = officerByUser.get(String(u.id));
-      const st = stationById.get(String(u.station_id ?? o?.station_id ?? ""));
-      return {
-        id:         u.id,
-        name:       u.name ?? "—",
-        short_name: u.short_name ?? "",
-        role:       u.role ?? "—",
-        rank:       u.rank ?? o?.rank ?? "—",
-        rank_short: u.rank_short ?? "",
-        badge_no:   u.badge_no ?? o?.officer_number ?? "—",
-        email:      u.email ?? "—",
-        phone:      u.phone ?? "—",
-        photo_url:  u.photo_url ?? null,
-        unit:       u.unit ?? o?.unit ?? "—",
-        region:     u.region ?? (st as any)?.region ?? "—",
-        station_id: u.station_id ?? o?.station_id ?? null,
-        station_name: (st as any)?.name ?? "—",
-        status:     u.status ?? "active",
-        last_login: u.last_login ?? null,
-        created_at: u.created_at ?? null,
-      };
-    });
-
-    if (roleQ) {
-      const wanted = new Set(expandRoles(roleQ).map(norm));
-      rows = rows.filter(r => wanted.has(norm(r.role)));
-    }
-    if (status && status !== "all") rows = rows.filter(r => norm(r.status) === norm(status));
-    if (search) {
-      rows = rows.filter(r =>
-        ["name", "badge_no", "email", "phone", "role", "station_name"]
-          .some(f => String(r[f] ?? "").toLowerCase().includes(search))
-      );
-    }
-
-    rows.sort((a, b) => String(b.created_at ?? "").localeCompare(String(a.created_at ?? "")));
-    return NextResponse.json({ ok: true, data: rows, total: rows.length });
-  } catch (err) {
-    console.error("[USERS GET]", errMsg(err));
-    return NextResponse.json({ ok: true, data: [], total: 0, warn: errMsg(err) });
+  if (roleQ) {
+    const wanted = new Set(expandRoles(roleQ).map(norm));
+    rows = rows.filter(r => wanted.has(norm(r.role)));
   }
-}
-
-export async function POST(request: Request) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "users", "create");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-
-    if (!isDbEnabled()) return NextResponse.json({ error: "DB haijawezeshwa" }, { status: 503 });
-    const admin = getDbAdmin() as any;
-    if (!admin) return NextResponse.json({ error: "DB haijawezeshwa" }, { status: 503 });
-
-    const b = await request.json().catch(() => ({} as any));
-    if (!b.name || !b.role) return NextResponse.json({ error: "Jina na jukumu vinahitajika" }, { status: 400 });
-
-    const { data, error } = await admin.from("users").insert({
-      name: String(b.name).trim(),
-      short_name: b.short_name ?? b.shortName ?? String(b.name).trim().split(" ")[0],
-      role: b.role, rank: b.rank || null, rank_short: b.rank_short || null,
-      badge_no: b.badge_no || b.badgeNo || null,
-      email: b.email || null, phone: b.phone || null,
-      unit: b.unit || null, region: b.region || null,
-      station_id: b.station_id || b.stationId || null,
-      id_number: b.id_number || b.idNumber || b.badge_no || b.badgeNo || `TZP-${Date.now().toString().slice(-8)}`,
-      status: "active", created_at: new Date().toISOString(),
-    }).select().single();
-
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ ok: true, data }, { status: 201 });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+  if (status && status !== "all") rows = rows.filter(r => norm(r.status) === norm(status));
+  if (search) {
+    rows = rows.filter(r =>
+      ["name", "badge_no", "email", "phone", "role", "station_name"]
+        .some(f => String(r[f] ?? "").toLowerCase().includes(search))
+    );
   }
-}
+
+  rows.sort((a, b) => String(b.created_at ?? "").localeCompare(String(a.created_at ?? "")));
+  return { ok: true, data: rows, total: rows.length };
+});
+
+// POST /api/users → create user (auto-audited)
+export const POST = withAuth("users", "create", async ({ body: b, db }) => {
+  if (!isDbEnabled()) {
+    return { ok: false, error: "DB haijawezeshwa", status: 503 };
+  }
+  if (!b.name || !b.role) {
+    return { ok: false, error: "Jina na jukumu vinahitajika", status: 400 };
+  }
+
+  const { data, error } = await db.from("users").insert({
+    name:        String(b.name).trim(),
+    short_name:  b.short_name ?? b.shortName ?? String(b.name).trim().split(" ")[0],
+    role:        b.role, rank: b.rank || null, rank_short: b.rank_short || null,
+    badge_no:    b.badge_no || b.badgeNo || null,
+    email:       b.email || null, phone: b.phone || null,
+    unit:        b.unit || null, region: b.region || null,
+    station_id:  b.station_id || b.stationId || null,
+    id_number:   b.id_number || b.idNumber || b.badge_no || b.badgeNo || `TZP-${Date.now().toString().slice(-8)}`,
+    status:      "active", created_at: new Date().toISOString(),
+  }).select().single();
+
+  if (error) {
+    return { ok: false, error: error.message, status: 500 };
+  }
+  return { ok: true, data, status: 201 };
+});

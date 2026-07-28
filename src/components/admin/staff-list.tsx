@@ -4,7 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import { UserPlus, Shield, User, Trash2, RefreshCw } from "lucide-react";
 import { authFetch } from "@/lib/client-auth";
 import { StaffAssignmentModal } from "./staff-assignment-modal";
-import type { POST_ROLES, STATION_ROLES } from "@/app/api/stations/[id]/staff/route";
+// R1 (stabilize): removed `POST_ROLES` from the import — it was
+// imported as a type but never used in this file, and the staff/route
+// module doesn't export it. TS2305.
+import type { STATION_ROLES } from "@/app/api/stations/[id]/staff/route";
 
 interface StaffMember {
   id: string; user_id: string; name: string; badge_no: string;

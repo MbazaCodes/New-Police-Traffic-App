@@ -1,137 +1,111 @@
-// Station Staff API
-// GET  /api/stations/[id]/staff         → list staff at station
-// POST /api/stations/[id]/staff         → assign officer to station (rank-enforced)
-// DELETE /api/stations/[id]/staff?uid=  → remove from station
-
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
+// Station Staff API — migrated to withAuth() for centralized auth + audit
+// GET    /api/stations/[id]/staff        → list staff at station
+// POST   /api/stations/[id]/staff        → assign officer (rank-enforced, auto-audited)
+// DELETE /api/stations/[id]/staff?staff_id=  → remove from station (auto-audited)
+import { withAuth, withAuthAny } from "@/lib/api-guard";
 import { query, isDbEnabled } from "@/lib/db/client";
-import { errMsg } from "@/lib/api-error";
 
-type Params = { params: Promise<{ id: string }> };
-
-// Station role display config
+// Station role display config (kept exported for screen consumers)
 export const STATION_ROLES = [
-  { id: "OCD",    label: "OCD — Officer Commanding District",   max: 1, commanding: true  },
-  { id: "OCS",    label: "OCS — Officer Commanding Station",    max: 2, commanding: true  },
-  { id: "OCPD",   label: "OCPD — Officer Commanding Police Div",max: 2, commanding: true  },
-  { id: "officer",label: "Afisa wa Kawaida",                    max: null, commanding: false },
-  { id: "clerk",  label: "Karani",                              max: null, commanding: false },
-  { id: "driver", label: "Dereva",                              max: null, commanding: false },
-  { id: "guard",  label: "Mlinzi",                              max: null, commanding: false },
+  { id: "OCD",    label: "OCD — Officer Commanding District",    max: 1, commanding: true  },
+  { id: "OCS",    label: "OCS — Officer Commanding Station",     max: 2, commanding: true  },
+  { id: "OCPD",   label: "OCPD — Officer Commanding Police Div", max: 2, commanding: true  },
+  { id: "officer",label: "Afisa wa Kawaida",                     max: null, commanding: false },
+  { id: "clerk",  label: "Karani",                               max: null, commanding: false },
+  { id: "driver", label: "Dereva",                               max: null, commanding: false },
+  { id: "guard",  label: "Mlinzi",                               max: null, commanding: false },
 ];
 
-export async function GET(_: Request, { params }: Params) {
-  try {
-    const session = await getServerSession();
-    if (!session?.user) return NextResponse.json({ error: "Uthibitishaji umekosea." }, { status: 401 });
-    if (!isDbEnabled()) return NextResponse.json({ ok: true, data: [] });
+// GET /api/stations/[id]/staff → list staff at station
+export const GET = withAuthAny("station_staff", async ({ params }) => {
+  if (!isDbEnabled()) return { ok: true, data: [] };
+  const id = String(params.id ?? "");
 
-    const { id } = await params;
+  const rows = await query(
+    `SELECT ss.*, u.name, u.badge_no, u.email, u.phone, u.photo_url,
+            u.rank as user_rank, u.role as user_role
+     FROM station_staff ss
+     LEFT JOIN users u ON u.id = ss.user_id
+     WHERE ss.station_id = $1
+     ORDER BY
+       CASE LOWER(ss.station_role)
+         WHEN 'ocd'  THEN 1 WHEN 'ocs' THEN 2 WHEN 'ocpd' THEN 3
+         ELSE 4
+       END,
+       ss.created_at DESC`,
+    [id]
+  );
 
-    const rows = await query(
-      `SELECT ss.*, u.name, u.badge_no, u.email, u.phone, u.photo_url,
-              u.rank as user_rank, u.role as user_role
-       FROM station_staff ss
-       LEFT JOIN users u ON u.id = ss.user_id
-       WHERE ss.station_id = $1
-       ORDER BY
-         CASE LOWER(ss.station_role)
-           WHEN 'ocd'  THEN 1 WHEN 'ocs' THEN 2 WHEN 'ocpd' THEN 3
-           ELSE 4
-         END,
-         ss.created_at DESC`,
-      [id]
-    );
+  return { ok: true, data: rows };
+});
 
-    return NextResponse.json({ ok: true, data: rows });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+// POST /api/stations/[id]/staff → assign officer (auto-audited)
+export const POST = withAuth("stations", "create", async ({ params, body, session }) => {
+  if (!isDbEnabled()) {
+    return { ok: false, error: "DB haijawezeshwa", status: 503 };
   }
-}
+  const stationId = String(params.id ?? "");
+  const { user_id, station_role, rank, shift, notes } = body;
+  if (!user_id || !station_role) {
+    return { ok: false, error: "user_id na station_role vinahitajika", status: 400 };
+  }
 
-export async function POST(request: Request, { params }: Params) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "stations", "create");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    if (!isDbEnabled()) return NextResponse.json({ error: "DB haijawezeshwa" }, { status: 503 });
+  // Check rank constraints
+  const constraintRows = await query<{ check_station_rank_constraint: string | null }>(
+    `SELECT check_station_rank_constraint($1, $2, $3, NULL)`,
+    [stationId, user_id, station_role]
+  );
+  const violation = constraintRows[0]?.check_station_rank_constraint;
+  if (violation) {
+    return { ok: false, error: violation, status: 409 };
+  }
 
-    const { id: stationId } = await params;
-    const body = await request.json().catch(() => ({}));
-    const { user_id, station_role, rank, shift, notes } = body;
+  // End any existing active assignment for this user at this station
+  await query(
+    `UPDATE station_staff SET status='ended', assigned_until=CURRENT_DATE
+     WHERE station_id=$1 AND user_id=$2 AND status='active'`,
+    [stationId, user_id]
+  );
 
-    if (!user_id || !station_role) {
-      return NextResponse.json({ error: "user_id na station_role vinahitajika" }, { status: 400 });
-    }
+  const isCommanding = ["ocd", "ocs", "ocpd"].includes(station_role.toLowerCase());
 
-    // Check rank constraints
-    const constraintRows = await query<{ check_station_rank_constraint: string | null }>(
-      `SELECT check_station_rank_constraint($1, $2, $3, NULL)`,
-      [stationId, user_id, station_role]
-    );
-    const violation = constraintRows[0]?.check_station_rank_constraint;
-    if (violation) {
-      return NextResponse.json({ error: violation }, { status: 409 });
-    }
+  const rows = await query(
+    `INSERT INTO station_staff
+     (station_id, user_id, station_role, rank, is_commanding, status, notes,
+      assigned_by_id, assigned_by_name)
+     VALUES($1,$2,$3,$4,$5,'active',$6,$7,$8)
+     RETURNING *`,
+    [stationId, user_id, station_role.toUpperCase(), rank ?? null,
+     isCommanding, notes ?? null,
+     session.user.id, session.user.name ?? ""]
+  );
 
-    // End any existing active assignment for this user at this station
+  // Update station commissioner if OCD/OCS
+  if (isCommanding) {
     await query(
-      `UPDATE station_staff SET status='ended', assigned_until=CURRENT_DATE
-       WHERE station_id=$1 AND user_id=$2 AND status='active'`,
-      [stationId, user_id]
-    );
-
-    const isCommanding = ["ocd","ocs","ocpd"].includes(station_role.toLowerCase());
-
-    const rows = await query(
-      `INSERT INTO station_staff
-       (station_id, user_id, station_role, rank, is_commanding, status, notes,
-        assigned_by_id, assigned_by_name)
-       VALUES($1,$2,$3,$4,$5,'active',$6,$7,$8)
-       RETURNING *`,
-      [stationId, user_id, station_role.toUpperCase(), rank ?? null,
-       isCommanding, notes ?? null,
-       session!.user.id, session!.user.name ?? ""]
-    );
-
-    // Update station commissioner if OCD/OCS
-    if (isCommanding) {
-      await query(
-        `UPDATE stations SET commissioner_user_id=$1 WHERE id=$2`,
-        [user_id, stationId]
-      ).catch(() => {}); // non-critical
-    }
-
-    return NextResponse.json({ ok: true, data: rows[0] }, { status: 201 });
-  } catch (err) {
-    console.error("[STATION STAFF POST]", errMsg(err));
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+      `UPDATE stations SET commissioner_user_id=$1 WHERE id=$2`,
+      [user_id, stationId]
+    ).catch(() => {}); // non-critical
   }
-}
 
-export async function DELETE(request: Request, { params }: Params) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "stations", "create");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
-    if (!isDbEnabled()) return NextResponse.json({ error: "DB haijawezeshwa" }, { status: 503 });
+  return { ok: true, data: rows[0], status: 201 };
+});
 
-    const { id: stationId } = await params;
-    const url = new URL(request.url);
-    const staffId = url.searchParams.get("staff_id");
-
-    if (!staffId) return NextResponse.json({ error: "staff_id inahitajika" }, { status: 400 });
-
-    await query(
-      `UPDATE station_staff SET status='ended', assigned_until=CURRENT_DATE
-       WHERE id=$1 AND station_id=$2`,
-      [staffId, stationId]
-    );
-
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+// DELETE /api/stations/[id]/staff?staff_id=... → end assignment (auto-audited)
+export const DELETE = withAuth("stations", "create", async ({ params, searchParams }) => {
+  if (!isDbEnabled()) {
+    return { ok: false, error: "DB haijawezeshwa", status: 503 };
   }
-}
+  const stationId = String(params.id ?? "");
+  const staffId   = searchParams.get("staff_id");
+  if (!staffId) {
+    return { ok: false, error: "staff_id inahitajika", status: 400 };
+  }
+
+  await query(
+    `UPDATE station_staff SET status='ended', assigned_until=CURRENT_DATE
+     WHERE id=$1 AND station_id=$2`,
+    [staffId, stationId]
+  );
+  return { ok: true };
+});

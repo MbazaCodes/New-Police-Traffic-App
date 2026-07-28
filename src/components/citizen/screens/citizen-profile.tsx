@@ -101,7 +101,7 @@ function calcCompletion(d: any): { pct: number; missing: string[]; filled: numbe
 
 function ProfileCompletion({ d, onEdit }: { d: any; onEdit?: () => void }) {
   const { pct, missing, filled, total } = calcCompletion(d);
-  const color = pct >= 80 ? "#10B981" : pct >= 50 ? "#F59E0B" : "#EF4444";
+  const color = pct >= 80 ? "var(--tpf-citizen-accent)" : pct >= 50 ? "var(--tpf-status-warning)" : "var(--tpf-status-danger)";
   const bg    = pct >= 80 ? "bg-green-50 border-green-100" : pct >= 50 ? "bg-amber-50 border-amber-100" : "bg-red-50 border-red-100";
   return (
     <div className={`rounded-2xl border p-4 ${bg}`}>
@@ -133,7 +133,7 @@ function ProfileCompletion({ d, onEdit }: { d: any; onEdit?: () => void }) {
         </button>
       )}
       {pct === 100 && (
-        <p className="mt-2 text-center text-[11px] font-bold" style={{color:"#10B981"}}>✅ Profaili imekamilika!</p>
+        <p className="mt-2 text-center text-[11px] font-bold" style={{color:"var(--tpf-citizen-accent)"}}>✅ Profaili imekamilika!</p>
       )}
     </div>
   );
@@ -303,7 +303,7 @@ export function CitizenProfile({ citizen }: any) {
 
   // Driver points
   const driverPoints = d.driver_points ?? { current: 100, percentage: 100, status: "good" };
-  const pointsColor = driverPoints.percentage >= 70 ? "#10B981" : driverPoints.percentage >= 40 ? "#F59E0B" : "#EF4444";
+  const pointsColor = driverPoints.percentage >= 70 ? "var(--tpf-citizen-accent)" : driverPoints.percentage >= 40 ? "var(--tpf-status-warning)" : "var(--tpf-status-danger)";
 
   const inp = {
     background:"var(--tpf-soft,#f8fafc)", border:"1px solid var(--tpf-border,#e2e8f0)",
@@ -570,7 +570,7 @@ export function CitizenProfile({ citizen }: any) {
           ) : vehicles.map((v:any) => {
             const insExpiry = daysRemaining(v.insurance_expires);
             const insStatus = insExpiry < 0 ? "Imeisha" : insExpiry < 30 ? `Siku ${insExpiry}` : `Siku ${insExpiry}`;
-            const insColor  = insExpiry < 0 ? "#EF4444" : insExpiry < 30 ? "#F59E0B" : "#10B981";
+            const insColor  = insExpiry < 0 ? "var(--tpf-status-danger)" : insExpiry < 30 ? "var(--tpf-status-warning)" : "var(--tpf-citizen-accent)";
             return (
               <div key={v.id} className="rounded-2xl bg-police-card border border-police-soft p-4 space-y-2">
                 <div className="flex items-start justify-between gap-2">
@@ -748,7 +748,7 @@ export function CitizenProfile({ citizen }: any) {
                   <p className="text-[14px] font-black text-police">{p.name || p.address}</p>
                   <p className="text-[11px] text-police-muted capitalize">{p.property_type}</p>
                 </div>
-                {p.value && <span className="text-[12px] font-black text-[#10B981]">TZS {parseInt(p.value).toLocaleString()}</span>}
+                {p.value && <span className="text-[12px] font-black text-[var(--tpf-citizen-accent)]">TZS {parseInt(p.value).toLocaleString()}</span>}
               </div>
               <Row label="Wilaya"    value={p.district} />
               <Row label="Mkoa"     value={p.region} />

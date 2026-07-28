@@ -157,8 +157,11 @@ function Field({ field, value, onChange }: { field: any; value: string; onChange
 
 // ── Past applications list ─────────────────────────────────────────────────────
 const STATUS_COLOR: Record<string, string> = {
-  pending: "#F59E0B", processing: "#3B82F6", approved: "#10B981",
-  rejected: "#EF4444", completed: "#10B981",
+  pending: "var(--tpf-status-warning)",
+  processing: "var(--tpf-status-info)",
+  approved: "var(--tpf-citizen-accent)",
+  rejected: "var(--tpf-status-danger)",
+  completed: "var(--tpf-citizen-accent)",
 };
 const STATUS_LABEL: Record<string, string> = {
   pending: "Inasubiri", processing: "Inashughulikiwa",

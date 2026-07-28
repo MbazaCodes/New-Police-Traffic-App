@@ -86,7 +86,10 @@ export async function POST(req: Request) {
     if (!validOtp) return NextResponse.json({ error: "OTP si sahihi" }, { status: 401 });
 
     // Get linked citizen
-    let citizen = null;
+    // R1 (stabilize): typed as `any` — TypeScript inferred `null` from
+    // the initializer and narrowed to `never` after the conditional
+    // assignment, causing TS2339 on `citizen?.name` etc.
+    let citizen: any = null;
     if (acc.citizen_id) {
       const { data: cit } = await (admin as any).from("citizens").select("*").eq("id", acc.citizen_id).maybeSingle();
       citizen = cit;

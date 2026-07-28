@@ -74,7 +74,10 @@ export type Resource =
   | "missing"
   | string;
 
-export type Action = "view" | "create" | "update" | "delete" | "manage";
+// R1 (stabilize): added "edit" — government-ids and service-prices
+// routes use requirePermission(session, resource, "edit"). The
+// previous Action union lacked "edit", causing TS2345 at 4 sites.
+export type Action = "view" | "create" | "update" | "delete" | "manage" | "edit";
 
 // ---------------------------------------------------------------------------
 // Permissions matrix

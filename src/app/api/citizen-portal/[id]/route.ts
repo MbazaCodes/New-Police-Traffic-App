@@ -22,7 +22,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         const name = account.cached_name || account.phone || "Raia";
         const parts = name.trim().split(" ");
         // Try to find existing citizen by phone/nida first
-        let existingCit = null;
+        // R1 (stabilize): typed as `any` — TypeScript inferred `null`
+        // from the initializer and then narrowed to `never` after the
+        // conditional assignments, causing TS2339 on `existingCit?.id`.
+        let existingCit: any = null;
         if (account.phone) {
           const { data: byPhone } = await admin.from("citizens").select("id").eq("mobile", account.phone).maybeSingle();
           existingCit = byPhone;
@@ -165,10 +168,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         region:            citizen?.region       || null,
         district:          citizen?.district     || null,
         ward:              citizen?.ward         || null,
-        nationality:       citizen?.nationality  || "Mtanzania",
-        religion:          citizen?.religion     || null,
-        marital_status:    citizen?.marital_status || null,
-        blood_group:       citizen?.blood_group  || null,
+        // R1 (stabilize): removed duplicate nationality/religion/
+        // marital_status/blood_group keys — they were redefined below
+        // with (citizen as any)? casts. Duplicate keys cause TS1117
+        // and the later definition silently overwrites the earlier.
         photo_url:         citizen?.photo_url    || null,
         license_no:        citizen?.license_no   || null,
         street:            citizen?.street       || null,

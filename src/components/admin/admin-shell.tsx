@@ -66,7 +66,10 @@ import { AdminActivityLog } from "./screens/admin-activity-log";
 // from @/components/admin/admin-shell).
 export { COMMANDER_NAV } from "@/lib/commander-nav";
 
-const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; group?: string }[] = [
+// R1 (stabilize): added optional `badge` — admin-shell renders badge
+// counts on nav items below; the previous missing property caused
+// TS2339 at lines 175, 177, 311, 313.
+const ADMIN_NAV: { id: AdminScreen; label: string; icon: typeof LayoutDashboard; group?: string; badge?: string | number }[] = [
   // ── Main ──────────────────────────────────────────────────────
   { id: "search",          label: "Tafuta",                icon: Search,          group: "" },
   { id: "dashboard",       label: "Dashibodi",             icon: LayoutDashboard, group: "" },

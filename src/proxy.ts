@@ -17,7 +17,10 @@ const PUBLIC_PATHS = new Set([
   "/api/debug/auth",
 ]);
 
-const PUBLIC_LOGIN_ENTRY_PATHS = new Set(["/", "/admin", "/command"]);
+// R2 (stabilize): /login must be in the entry-path allow-list.
+// It is the alternate admin-web login page — without it, unauthenticated
+// users on /login would be redirected to /, breaking the admin-web login flow.
+const PUBLIC_LOGIN_ENTRY_PATHS = new Set(["/", "/login", "/admin", "/command"]);
 
 function isPublicAsset(pathname: string): boolean {
   return (

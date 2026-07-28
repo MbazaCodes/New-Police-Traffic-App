@@ -5,7 +5,9 @@ import { persist } from "zustand/middleware";
 import type { ScreenId } from "@/lib/police-data";
 import { ALERTS } from "@/lib/police-data";
 
-export type UserRole = "officer-traffic" | "officer-general" | "officer-post" | "admin" | "commander" | "investigator" | "clerk" | "viewer" | "system";
+// R1 (stabilize): added "cid-officer" — login-screen.tsx:57 passes
+// "cid-officer" as a UserRole; the previous union lacked it, causing TS2322.
+export type UserRole = "officer-traffic" | "officer-general" | "officer-post" | "admin" | "commander" | "investigator" | "clerk" | "viewer" | "system" | "cid-officer";
 
 // Full 11-role auth system
 export type AuthRole =
@@ -78,7 +80,10 @@ export type AdminScreen =
   | "assignments" | "detained-citizens" | "waliokamatwa"
   | "missing" | "requests" | "communications" | "clerks"
   | "database" | "activity-log"
-  | "command-requests" | "approvals";
+  | "command-requests" | "approvals"
+  // R1 (stabilize): admin-dashboard.tsx:163,187 navigates to "citizens"
+  // screen; the previous AdminScreen union lacked it, causing TS2345.
+  | "citizens";
 
 export interface CitationPrefill {
   plate: string; model: string; color: string; vehicleType: string;

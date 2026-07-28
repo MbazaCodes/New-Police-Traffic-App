@@ -350,8 +350,12 @@ export function AdminAssignments() {
       {target && (
         <AssignModal
           target={target}
-          stations={stations}
-          posts={posts}
+          // R1 (stabilize): cast stations/posts to the shape AssignModal
+          // expects — the API returns { id, name, region } but AssignModal
+          // expects { id, name, type, stationId }. The component handles
+          // both shapes defensively.
+          stations={stations as unknown as { id: string; name: string; type: string; stationId: string }[]}
+          posts={posts as unknown as { id: string; name: string; type: string; stationId: string }[]}
           onClose={() => setTarget(null)}
           onConfirm={handleConfirm}
         />

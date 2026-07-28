@@ -1,13 +1,10 @@
-// src/app/api/admin/database/route.ts
+// src/app/api/admin/database/route.ts — migrated to withAuth() for centralized auth + audit
 // NO PostgREST embeds — manual joins in JS so missing FKs can't cause 500s.
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
-import { errMsg } from "@/lib/api-error";
+import { withAuth } from "@/lib/api-guard";
+import { isDbEnabled } from "@/lib/db/client";
 
 const ok = (data: any[], warn?: string) =>
-  NextResponse.json({ ok: true, data, total: data.length, ...(warn ? { warn } : {}) });
+  ({ ok: true, data, total: data.length, ...(warn ? { warn } : {}) }) as any;
 
 /** Never throws. Returns [] on any failure. */
 async function safeSelect(admin: any, table: string, limit = 500): Promise<any[]> {
@@ -30,20 +27,14 @@ const byId = (rows: any[], key = "id") => {
 const nameOf = (c: any) =>
   c?.name || [c?.first_name, c?.last_name].filter(Boolean).join(" ") || null;
 
-export async function GET(request: Request) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "audit_logs", "view");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
+export const GET = withAuth("audit_logs", "view", async ({ db, searchParams, session }) => {
+  if (!isDbEnabled()) return ok([]);
+  const admin = db as any;
+  if (!admin) return ok([]);
 
-    if (!isDbEnabled()) return ok([]);
-    const admin = getDbAdmin() as any;
-    if (!admin) return ok([]);
-
-    const url    = new URL(request.url);
-    const tab    = url.searchParams.get("tab") || "citizens";
-    const search = (url.searchParams.get("search") || "").toLowerCase().trim();
-    const limit  = Math.min(parseInt(url.searchParams.get("limit") || "500"), 2000);
+  const tab    = searchParams.get("tab") || "citizens";
+  const search = (searchParams.get("search") || "").toLowerCase().trim();
+  const limit  = Math.min(parseInt(searchParams.get("limit") || "500"), 2000);
 
     const match = (row: any, fields: string[]) =>
       !search || fields.some(f => String(row[f] ?? "").toLowerCase().includes(search));
@@ -126,6 +117,11 @@ export async function GET(request: Request) {
           dob:         c.dob || null,
           occupation:  c.occupation || "—",
           address:     c.address || "—",
+          // R1 (stabilize): add region + district — the row type
+          // requires them but they were missing from the object
+          // literal, causing TS2345.
+          region:      c.region || null,
+          district:    c.district || null,
           tribe:       c.tribe || "—",
           license_no:  c.license_no || "—",
           is_verified: !!c.verified,
@@ -252,57 +248,47 @@ export async function GET(request: Request) {
     }
 
     return ok([]);
-  } catch (err) {
-    console.error("[ADMIN DATABASE]", errMsg(err));
-    // Never 500 the dashboard — return empty with the reason attached
-    return NextResponse.json({ ok: true, data: [], total: 0, warn: errMsg(err) });
-  }
-}
+});
 
-// ── PATCH — approve / reject / suspend ────────────────────────────────────────
-export async function PATCH(request: Request) {
+// ── PATCH — approve / reject / suspend (auto-audited) ─────────────────────────
+export const PATCH = withAuth("audit_logs", "edit", async ({ body, session, db }) => {
+  const { citizenId, accountId, action } = body;
+  if (!isDbEnabled()) {
+    return { ok: false, error: "DB haijawezeshwa", status: 503 };
+  }
+  const admin = db as any;
+
+  const officerName = session?.user?.name || "Admin";
+  const now = new Date().toISOString();
+  const status = action === "approve" ? "active" : action === "reject" ? "rejected" : "suspended";
+
+  if (accountId) {
+    const { error } = await admin.from("citizen_accounts").update({
+      status, approved: action === "approve",
+      approved_at: action === "approve" ? now : null,
+      approved_by: action === "approve" ? officerName : null,
+      updated_at: now,
+    }).eq("id", accountId);
+    if (error) {
+      return { ok: false, error: error.message, status: 500 };
+    }
+  }
+
+  if (citizenId) {
+    await admin.from("citizens").update({
+      status, verified: action === "approve", updated_at: now,
+    }).eq("id", citizenId);
+  }
+
   try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "audit_logs", "view");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
+    await admin.from("activity_logs").insert({
+      user_id: session?.user?.id, user_type: "officer", user_name: officerName,
+      action: `citizen_${action}`, resource: "citizen_accounts",
+      resource_id: accountId || citizenId,
+      description: `Raia ${action === "approve" ? "ameidhinishwa" : action === "reject" ? "amekataliwa" : "amesimamishwa"}`,
+      success: true,
+    });
+  } catch { /* non-critical */ }
 
-    const { citizenId, accountId, action } = await request.json().catch(() => ({} as any));
-    if (!isDbEnabled()) return NextResponse.json({ error: "DB haijawezeshwa" }, { status: 503 });
-    const admin = getDbAdmin() as any;
-    if (!admin) return NextResponse.json({ error: "DB haijawezeshwa" }, { status: 503 });
-
-    const officerName = session?.user?.name || "Admin";
-    const now = new Date().toISOString();
-    const status = action === "approve" ? "active" : action === "reject" ? "rejected" : "suspended";
-
-    if (accountId) {
-      const { error } = await admin.from("citizen_accounts").update({
-        status, approved: action === "approve",
-        approved_at: action === "approve" ? now : null,
-        approved_by: action === "approve" ? officerName : null,
-        updated_at: now,
-      }).eq("id", accountId);
-      if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    if (citizenId) {
-      await admin.from("citizens").update({
-        status, verified: action === "approve", updated_at: now,
-      }).eq("id", citizenId);
-    }
-
-    try {
-      await admin.from("activity_logs").insert({
-        user_id: session?.user?.id, user_type: "officer", user_name: officerName,
-        action: `citizen_${action}`, resource: "citizen_accounts",
-        resource_id: accountId || citizenId,
-        description: `Raia ${action === "approve" ? "ameidhinishwa" : action === "reject" ? "amekataliwa" : "amesimamishwa"}`,
-        success: true,
-      });
-    } catch { /* non-critical */ }
-
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
-  }
-}
+  return { ok: true };
+});

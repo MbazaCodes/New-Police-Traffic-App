@@ -1,40 +1,28 @@
 // Lost Item [id] — update status (found, returned, claimed)
-import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
-import { logAction } from "@/lib/audit-log";
-import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
-import { errMsg } from "@/lib/api-error";
+// Migrated to withAuth(): auth + audit handled centrally.
+import { withAuth } from "@/lib/api-guard";
+import { isDbEnabled } from "@/lib/db/client";
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "citizens", "update");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
+export const PATCH = withAuth("citizens", "update", async ({ params, body, db }) => {
+  const id = String(params.id ?? "");
+  if (!id) return { ok: false, error: "ID inahitajika", status: 400 };
 
-    const { id } = await params;
-    const body = await request.json().catch(() => ({}));
-
-    if (isDbEnabled()) {
-      const admin = getDbAdmin();
-      if (admin) {
-        const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
-        if (body.status)        patch.status         = body.status;
-        if (body.foundDate)     patch.found_date     = body.foundDate;
-        if (body.foundLocation) patch.found_location = body.foundLocation;
-        if (body.notes)         patch.notes          = body.notes;
-
-        const { data, error } = await admin.from("lost_items").update(patch).eq("id", id).select().single();
-        if (error) throw error;
-        await logAction(session, "lost_item_updated", "lost_items", id, { changes: patch });
-        return NextResponse.json({ ok: true, data });
-      }
-    }
-    return NextResponse.json({ error: "Database haijawezeshwa" }, { status: 503 });
-  } catch (err) {
-    return NextResponse.json({ error: errMsg(err) }, { status: 500 });
+  if (!isDbEnabled()) {
+    return { ok: false, error: "Database haijawezeshwa", status: 503 };
   }
-}
+
+  const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (body.status)        patch.status         = body.status;
+  if (body.foundDate)     patch.found_date     = body.foundDate;
+  if (body.foundLocation) patch.found_location = body.foundLocation;
+  if (body.notes)         patch.notes          = body.notes;
+
+  const { data, error } = await db
+    .from("lost_items")
+    .update(patch)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return { ok: true, data };
+});

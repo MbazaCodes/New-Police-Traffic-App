@@ -1,0 +1,60 @@
+# Security audit — runs daily and on PRs touching package.json
+name: Security Audit
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # 06:00 UTC daily
+  push:
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/security-audit.yml"
+  pull_request:
+    paths:
+      - "package.json"
+      - "package-lock.json"
+
+permissions:
+  contents: read
+
+jobs:
+  npm-audit:
+    name: npm audit (production)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: npm audit (prod-only, no failure on moderate)
+        run: |
+          npm audit --omit=dev --audit-level=high || {
+            echo "::warning::Production dependencies have audit findings. Review with 'npm audit'.";
+            exit 0;
+          }
+
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history for commit scanning
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Don't fail the workflow on historical findings — surface them.
+        continue-on-error: true

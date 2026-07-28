@@ -1,14 +1,8 @@
-// src/app/api/search/route.ts
+// src/app/api/search/route.ts — migrated to withAuth() for centralized auth
 // NO PostgREST embeds, NO RPC dependency. Everything joined in JS.
 // GET /api/search?q=...&type=plate|name|nida|mobile|license|passport|nssf|nhif|ppf|enec|tin
-//
-// UPDATED: Now includes government IDs, citizen_conduct_points, driver_points,
-// service_prices, and full fines list in citizen search results.
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth";
-import { requirePermission } from "@/lib/rbac";
+import { withAuth } from "@/lib/api-guard";
 import { getDbAdmin, isDbEnabled } from "@/lib/db/client";
-import { errMsg } from "@/lib/api-error";
 
 const clean = (s: any) => String(s ?? "").trim();
 const digits = (s: any) => String(s ?? "").replace(/\D/g, "");
@@ -35,20 +29,14 @@ async function safeSelect(admin: any, table: string, limit = 1000): Promise<any[
   }
 }
 
-export async function GET(req: NextRequest) {
-  try {
-    const session = await getServerSession();
-    const check = requirePermission(session, "search", "view");
-    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
+export const GET = withAuth("search", "view", async ({ searchParams }) => {
+  const q    = clean(searchParams.get("q"));
+  const type = searchParams.get("type") || "name";
+  if (!q) return { ok: false, error: "Query inahitajika", status: 400 } as any;
 
-    const { searchParams } = new URL(req.url);
-    const q    = clean(searchParams.get("q"));
-    const type = searchParams.get("type") || "name";
-    if (!q) return NextResponse.json({ error: "Query inahitajika" }, { status: 400 });
-
-    if (!isDbEnabled()) return NextResponse.json({ found: false, error: "DB haijawezeshwa" }, { status: 503 });
-    const admin = getDbAdmin() as any;
-    if (!admin) return NextResponse.json({ found: false, error: "DB haijawezeshwa" }, { status: 503 });
+  if (!isDbEnabled()) return { ok: false, error: "DB haijawezeshwa", status: 503 } as any;
+  const admin = getDbAdmin() as any;
+    if (!admin) return { ok: false, error: "DB haijawezeshwa", status: 503 } as any;
 
     const currentYear = new Date().getFullYear();
 
@@ -124,7 +112,7 @@ export async function GET(req: NextRequest) {
           lc(v.chassis_number).includes(qLower) ||
           lc(v.engine_number).includes(qLower));
 
-      if (!vehicle) return NextResponse.json({ found: false, type: "vehicle", query: q, data: null });
+      if (!vehicle) return { found: false, type: "vehicle", query: q, data: null } as any;
 
       let citizen: any = null;
       if (vehicle.owner_citizen_id) {
@@ -135,11 +123,11 @@ export async function GET(req: NextRequest) {
         citizen = citizens.find((c: any) => digits(c.mobile) === vp) ?? null;
       }
 
-      return NextResponse.json({
+      return {
         found: true, type: "vehicle", query: q,
         data: { ...vehicle, chassis_no: vehicle.chassis_no || vehicle.chassis_number || null },
         citizen: citizen ? build(citizen) : null,
-      });
+      } as any;
     }
 
     // ── CITIZEN lookup ───────────────────────────────────────────────────────
@@ -210,9 +198,9 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    if (!citizen) return NextResponse.json({ found: false, type, query: q, data: null });
+    if (!citizen) return { found: false, type, query: q, data: null } as any;
 
-    return NextResponse.json({ found: true, type: "citizen", query: q, data: build(citizen) });
+    return { found: true, type: "citizen", query: q, data: build(citizen) } as any;
 
     // ── Build the full citizen payload ───────────────────────────────────────
     function build(c: any) {
@@ -384,8 +372,4 @@ export async function GET(req: NextRequest) {
         service_prices: servicePrices.filter((sp: any) => sp.is_active),
       };
     }
-  } catch (err) {
-    console.error("[SEARCH]", errMsg(err));
-    return NextResponse.json({ found: false, error: errMsg(err) }, { status: 500 });
-  }
-}
+});

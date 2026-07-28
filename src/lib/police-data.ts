@@ -31,6 +31,11 @@ export type ScreenId =
   | "fine-payment"
   | "bail-out"
   | "officer-request"
+  // R1 (stabilize): officer-web-shell.tsx:125-126 navigates to
+  // "dashboard" and "services" screens; the previous ScreenId union
+  // lacked them, causing TS2678.
+  | "dashboard"
+  | "services"
 
 // ── Officer profile (empty — populated from database at login) ──────────
 export const OFFICER = {
