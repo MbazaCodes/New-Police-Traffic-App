@@ -1,9 +1,9 @@
 // ============================================================
 // LOCAL PostgreSQL CLIENT — TZ Police Digital Platform
-// Native PostgreSQL (VPS) client — replaced @supabase/supabase-js.
-// Uses `pg` Pool — set DATABASE_URL in your .env.
+// Native PostgreSQL (VPS) — Uses `pg` Pool.
+// Set DATABASE_URL in your .env to connect.
 // Exposes a chainable query-builder that mirrors a
-// pg query builder API so all existing route files stay intact.
+// familiar query builder API so all existing route files stay intact.
 // ============================================================
 
 import { Pool } from "pg";

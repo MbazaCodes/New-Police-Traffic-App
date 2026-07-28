@@ -99,6 +99,63 @@
   --tpf-text-3:     #64748B;
   --tpf-text-4:     #94A3B8;
 
+  /* ── TPF Status tokens (semantic operational states) ─────── */
+  --tpf-status-success:      #059669;
+  --tpf-status-success-bg:   #F0FDF4;
+  --tpf-status-warning:      #D97706;
+  --tpf-status-warning-bg:   #FFFBEB;
+  --tpf-status-danger:       #DC2626;
+  --tpf-status-danger-bg:    #FEF2F2;
+  --tpf-status-info:         #2563EB;
+  --tpf-status-info-bg:      #EFF6FF;
+  --tpf-status-pending:      #EA580C;
+  --tpf-status-pending-bg:   #FFF7ED;
+  --tpf-status-neutral:      #64748B;
+  --tpf-status-neutral-bg:   #F8FAFC;
+  --tpf-status-online:       #22C55E;
+  --tpf-status-offline:      #94A3B8;
+  --tpf-status-critical:     #DC2626;
+
+  /* ── TPF Spacing scale (use only these values) ──────────── */
+  --tpf-space-xs:  4px;
+  --tpf-space-sm:  8px;
+  --tpf-space-md:  12px;
+  --tpf-space-base:16px;
+  --tpf-space-lg:  24px;
+  --tpf-space-xl:  32px;
+  --tpf-space-2xl: 48px;
+  --tpf-space-3xl: 64px;
+
+  /* ── TPF Elevation tokens (shadows) ─────────────────────── */
+  --tpf-shadow-none:  none;
+  --tpf-shadow-xs:    0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --tpf-shadow-sm:    0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --tpf-shadow-md:    0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+  --tpf-shadow-lg:    0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+  --tpf-shadow-xl:    0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.08);
+
+  /* ── TPF Typography scale ────────────────────────────────── */
+  --tpf-font-display: 700 30px/1.1 var(--font-sans, system-ui, sans-serif);
+  --tpf-font-h1:      700 24px/1.2 var(--font-sans, system-ui, sans-serif);
+  --tpf-font-h2:      600 20px/1.25 var(--font-sans, system-ui, sans-serif);
+  --tpf-font-h3:      600 16px/1.4 var(--font-sans, system-ui, sans-serif);
+  --tpf-font-body:    400 14px/1.5 var(--font-sans, system-ui, sans-serif);
+  --tpf-font-caption: 400 12px/1.4 var(--font-sans, system-ui, sans-serif);
+  --tpf-font-label:   600 11px/1.2 var(--font-sans, system-ui, sans-serif);
+  --tpf-font-overline:600 10px/1 var(--font-sans, system-ui, sans-serif);
+
+  /* ── TPF Color palette (semantic) ──────────────────────── */
+  --tpf-palette-primary:    var(--tpf-blue);
+  --tpf-palette-secondary:  var(--tpf-navy-2);
+  --tpf-palette-success:    var(--tpf-green);
+  --tpf-palette-warning:    var(--tpf-amber);
+  --tpf-palette-danger:     var(--tpf-red);
+  --tpf-palette-info:       var(--tpf-blue-light);
+  --tpf-palette-muted:      var(--tpf-text-4);
+  --tpf-palette-background: var(--tpf-surface);
+  --tpf-palette-surface:     var(--tpf-card);
+  --tpf-palette-border:     var(--tpf-border);
+
   /* Legacy tokens — kept for backward compat with existing components */
   --police-bg:          var(--tpf-surface);
   --police-card:        var(--tpf-card);
@@ -166,6 +223,29 @@
   --tpf-text-3:     #94A3B8;
   --tpf-text-4:     #64748B;
 
+  /* Dark status tokens */
+  --tpf-status-success-bg:   rgb(5 150 105 / 0.15);
+  --tpf-status-warning-bg:   rgb(217 119 6 / 0.15);
+  --tpf-status-danger-bg:    rgb(220 38 38 / 0.15);
+  --tpf-status-info-bg:       rgb(37 99 235 / 0.15);
+  --tpf-status-pending-bg:   rgb(234 88 12 / 0.15);
+  --tpf-status-neutral-bg:   rgb(100 116 139 / 0.15);
+  --tpf-status-success:      #6EE7B7;
+  --tpf-status-warning:      #FCD34D;
+  --tpf-status-danger:       #FCA5A5;
+  --tpf-status-info:          #93C5FD;
+  --tpf-status-pending:      #FDBA74;
+  --tpf-status-neutral:       #94A3B8;
+  --tpf-status-online:        #4ADE80;
+  --tpf-status-offline:       #64748B;
+  --tpf-status-critical:      #FCA5A5;
+
+  /* Dark elevation tokens (stronger shadows) */
+  --tpf-shadow-xs:  0 1px 2px 0 rgb(0 0 0 / 0.15);
+  --tpf-shadow-sm:  0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.15);
+  --tpf-shadow-md:  0 4px 6px -1px rgb(0 0 0 / 0.25), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --tpf-shadow-lg:  0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.2);
+
   /* Legacy dark overrides */
   --police-bg:          #0F172A;
   --police-card:        #1E293B;
@@ -211,6 +291,24 @@
     scrollbar-color: var(--tpf-border-2) transparent;
   }
 }
+
+/* ── TPF DESIGN SYSTEM UTILITIES ────────────────────────────── */
+@utility tpf-font-display { font: var(--tpf-font-display); }
+@utility tpf-font-h1      { font: var(--tpf-font-h1); }
+@utility tpf-font-h2      { font: var(--tpf-font-h2); }
+@utility tpf-font-h3      { font: var(--tpf-font-h3); }
+@utility tpf-font-body    { font: var(--tpf-font-body); }
+@utility tpf-font-caption { font: var(--tpf-font-caption); }
+@utility tpf-font-label   { font: var(--tpf-font-label); font-variant: all-small-caps; letter-spacing: 0.06em; }
+@utility tpf-font-overline { font: var(--tpf-font-overline); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Status color utilities */
+@utility tpf-status-success { color: var(--tpf-status-success); background: var(--tpf-status-success-bg); }
+@utility tpf-status-warning { color: var(--tpf-status-warning); background: var(--tpf-status-warning-bg); }
+@utility tpf-status-danger  { color: var(--tpf-status-danger);  background: var(--tpf-status-danger-bg); }
+@utility tpf-status-info    { color: var(--tpf-status-info);    background: var(--tpf-status-info-bg); }
+@utility tpf-status-pending { color: var(--tpf-status-pending); background: var(--tpf-status-pending-bg); }
+@utility tpf-status-neutral { color: var(--tpf-status-neutral); background: var(--tpf-status-neutral-bg); }
 
 /* ── POLICE APP UTILITIES ────────────────────────────────────── */
 @utility bg-police          { background-color: var(--police-bg); }
@@ -465,7 +563,7 @@
     background-color: var(--tpf-card);
   }
 
-  /* ── Badge / Status pill ──────────────────────────────────── */
+  /* ── Badge / Status pill (uses status tokens) ─────────────── */
   .tpf-badge {
     display: inline-flex;
     align-items: center;
@@ -477,20 +575,21 @@
     line-height: 1.4;
     white-space: nowrap;
   }
-  .tpf-badge-blue   { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
-  .tpf-badge-green  { background: #F0FDF4; color: #059669; border: 1px solid #BBF7D0; }
-  .tpf-badge-red    { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
-  .tpf-badge-amber  { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
-  .tpf-badge-gray   { background: #F8FAFC; color: #64748B; border: 1px solid #E2E8F0; }
+  .tpf-badge-success { background: var(--tpf-status-success-bg); color: var(--tpf-status-success); border: 1px solid rgb(5 150 105 / 0.25); }
+  .tpf-badge-warning { background: var(--tpf-status-warning-bg); color: var(--tpf-status-warning); border: 1px solid rgb(217 119 6 / 0.25); }
+  .tpf-badge-danger  { background: var(--tpf-status-danger-bg);  color: var(--tpf-status-danger);  border: 1px solid rgb(220 38 38 / 0.25); }
+  .tpf-badge-info    { background: var(--tpf-status-info-bg);    color: var(--tpf-status-info);    border: 1px solid rgb(37 99 235 / 0.25); }
+  .tpf-badge-pending { background: var(--tpf-status-pending-bg); color: var(--tpf-status-pending); border: 1px solid rgb(234 88 12 / 0.25); }
+  .tpf-badge-neutral{ background: var(--tpf-status-neutral-bg); color: var(--tpf-status-neutral); border: 1px solid rgb(100 116 139 / 0.2); }
+
+  /* Semantic aliases (backward compat) */
+  .tpf-badge-blue   { background: var(--tpf-status-info-bg);    color: var(--tpf-status-info);    border: 1px solid rgb(37 99 235 / 0.25); }
+  .tpf-badge-green  { background: var(--tpf-status-success-bg); color: var(--tpf-status-success); border: 1px solid rgb(5 150 105 / 0.25); }
+  .tpf-badge-red    { background: var(--tpf-status-danger-bg);  color: var(--tpf-status-danger);  border: 1px solid rgb(220 38 38 / 0.25); }
+  .tpf-badge-amber  { background: var(--tpf-status-warning-bg); color: var(--tpf-status-warning); border: 1px solid rgb(217 119 6 / 0.25); }
+  .tpf-badge-gray   { background: var(--tpf-status-neutral-bg); color: var(--tpf-status-neutral); border: 1px solid rgb(100 116 139 / 0.2); }
   .tpf-badge-navy   { background: #EFF6FF; color: #1E3A8A; border: 1px solid #93C5FD; }
   .tpf-badge-purple { background: #FAF5FF; color: #7C3AED; border: 1px solid #DDD6FE; }
-
-  /* Dark mode badge overrides */
-  .dark .tpf-badge-blue   { background: rgb(37 99 235 / 0.15); border-color: rgb(37 99 235 / 0.3); color: #93C5FD; }
-  .dark .tpf-badge-green  { background: rgb(5 150 105 / 0.15); border-color: rgb(5 150 105 / 0.3); color: #6EE7B7; }
-  .dark .tpf-badge-red    { background: rgb(220 38 38 / 0.15); border-color: rgb(220 38 38 / 0.3); color: #FCA5A5; }
-  .dark .tpf-badge-amber  { background: rgb(217 119 6 / 0.15); border-color: rgb(217 119 6 / 0.3); color: #FCD34D; }
-  .dark .tpf-badge-gray   { background: rgb(100 116 139 / 0.15); border-color: rgb(100 116 139 / 0.3); color: #94A3B8; }
 
   /* ── Table ────────────────────────────────────────────────── */
   .tpf-table-wrap {

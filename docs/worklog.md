@@ -52,7 +52,7 @@ Work Log:
 - Investigated citizen portal codebase: page.tsx, citizen-store.ts, citizen-auth.ts, layout.tsx
 - Discovered root cause: auth and verify routes query `citizens` table with `phone` column in SELECT, but the `citizens` table only has `mobile` (no `phone` column). This caused SQL errors that silently failed, making citizen lookup return null, leading to "Akaunti haipatikani" error
 - Also discovered: Henry Joseph's citizen_accounts record had empty NIDA field (created via phone but NIDA was never set), so NIDA-based login couldn't match
-- Also discovered: VPS .env was overwritten by git pull, reverting to Supabase credentials instead of local PostgreSQL
+- Also discovered: VPS .env was overwritten by git pull, reverting to external database credentials instead of local PostgreSQL
 - Fixed auth route (src/app/api/citizen-portal/auth/route.ts):
   - Removed `phone` from citizens SELECT columns (replaced with `mobile`)
   - Changed fallback phone lookup from `.eq("phone", ...)` to `.ilike("mobile", ...)` 
@@ -71,6 +71,6 @@ Work Log:
 Stage Summary:
 - Root cause: `phone` column doesn't exist in `citizens` table (only `mobile`), causing SQL errors in auth/verify routes
 - Secondary cause: Henry Joseph's citizen_accounts had empty NIDA, so NIDA login couldn't match
-- Third cause: VPS .env reverted to Supabase, causing database connection failures
+- Third cause: VPS .env had incorrect DATABASE_URL, causing database connection failures
 - All 3 issues fixed and verified on production VPS
 - Henry Joseph account now works for both NIDA and phone login
