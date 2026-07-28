@@ -1,0 +1,55 @@
+{
+  "name": "TPF Citizen Portal — Tanzania Police Force",
+  "short_name": "TPF Raia",
+  "id": "/citizen/",
+  "description": "Jukwaa la kidijitali la raia — Ripoti, malipo, na huduma za polisi Tanzania",
+  "start_url": "/citizen/dashboard?pwa=1",
+  "scope": "/citizen/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#10B981",
+  "background_color": "#0a1a12",
+  "icons": [
+    { "src": "/police-logo.png", "sizes": "72x72",    "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "96x96",    "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "128x128",  "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "144x144",  "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "152x152",  "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "192x192",  "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "384x384",  "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "512x512",  "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [],
+  "categories": ["government", "utilities"],
+  "lang": "sw",
+  "shortcuts": [
+    {
+      "name": "Malalamiko",
+      "short_name": "Malalamiko",
+      "url": "/citizen/complaints?pwa=1",
+      "icons": [{ "src": "/police-logo.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Maombi Yangu",
+      "short_name": "Maombi",
+      "url": "/citizen/reports?pwa=1",
+      "icons": [{ "src": "/police-logo.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Malipo",
+      "short_name": "Malipo",
+      "url": "/citizen/payments?pwa=1",
+      "icons": [{ "src": "/police-logo.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Dashibodi",
+      "short_name": "Home",
+      "url": "/citizen/dashboard?pwa=1",
+      "icons": [{ "src": "/police-logo.png", "sizes": "96x96" }]
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}

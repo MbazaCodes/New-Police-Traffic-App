@@ -1,0 +1,16 @@
+name: tz_police_mobile_shared
+description: Shared Flutter UI/data/tokens for TZ Police apps
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_lints: ^4.0.0

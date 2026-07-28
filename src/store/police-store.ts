@@ -1,0 +1,334 @@
+"use client";
+
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { ScreenId } from "@/lib/police-data";
+import { ALERTS } from "@/lib/police-data";
+
+export type UserRole = "officer-traffic" | "officer-general" | "officer-post" | "admin" | "commander" | "investigator" | "clerk" | "viewer" | "system";
+
+// Full 11-role auth system
+export type AuthRole =
+  | "SUPER_ADMIN" | "SYSTEM_ADMIN"
+  | "NATIONAL_COMMANDER" | "REGIONAL_COMMANDER" | "DISTRICT_COMMANDER" | "STATION_COMMANDER"
+  | "TRAFFIC_OFFICER" | "GENERAL_OFFICER" | "POST_OFFICER"
+  | "INVESTIGATOR" | "CID_OFFICER" | "INVESTIGATION_SUPERVISOR" | "CYBER_CRIME"
+  | "IMMIGRATION_LIAISON" | "PRISON_LIAISON"
+  | "EMERGENCY_DISPATCHER" | "EVIDENCE_OFFICER" | "AUDIT_OFFICER"
+  | "DIG"
+  | "CLERK" | "VIEWER";
+
+export const AUTH_ROLES: { id: AuthRole; label: string; labelSw: string; description: string; icon: string; shellType: "mobile" | "admin" | "cid" | "clerk" | "viewer" | "system" }[] = [
+  { id: "SUPER_ADMIN", label: "Super Admin", labelSw: "Msimamizi Mkuu", description: "Full system control & user management", icon: "ShieldCheck", shellType: "admin" },
+  { id: "SYSTEM_ADMIN", label: "System Admin", labelSw: "Msimamizi wa Mfumo", description: "System health & configuration", icon: "Server", shellType: "system" },
+  { id: "NATIONAL_COMMANDER", label: "National Commander", labelSw: "Mkamandeshi Kitaifa", description: "National oversight & analytics", icon: "Landmark", shellType: "admin" },
+  { id: "REGIONAL_COMMANDER", label: "Regional Commander", labelSw: "Mkamandeshi wa Mkoa", description: "Regional operations management", icon: "MapPin", shellType: "admin" },
+  { id: "DISTRICT_COMMANDER", label: "District Commander", labelSw: "Mkamandeshi wa Wilaya", description: "District-level command", icon: "Building2", shellType: "admin" },
+  { id: "STATION_COMMANDER", label: "Station Commander", labelSw: "Mkamandeshi wa Kituo", description: "Station operations & duty rosters", icon: "Building", shellType: "admin" },
+  { id: "TRAFFIC_OFFICER", label: "Traffic Officer", labelSw: "Afisa Trafiki", description: "Traffic enforcement & citations", icon: "Car", shellType: "mobile" },
+  { id: "POST_OFFICER", label: "Post Officer", labelSw: "Afisa wa Posti", description: "Post station operations & patrol", icon: "MapPin", shellType: "mobile" },
+  { id: "GENERAL_OFFICER", label: "General Officer", labelSw: "Afisa Polisi", description: "General policing duties", icon: "UserCheck", shellType: "mobile" },
+  { id: "INVESTIGATOR",           label: "CID / Investigator",       labelSw: "Mpelelezi",                      description: "Criminal investigation & intelligence",      icon: "Search",       shellType: "cid" },
+  { id: "CID_OFFICER",            label: "CID Officer",               labelSw: "Afisa CID",                      description: "Criminal Investigation Department officer",   icon: "Search",       shellType: "cid" },
+  { id: "INVESTIGATION_SUPERVISOR",label:"Investigation Supervisor",   labelSw: "Msimamizi wa Uchunguzi",         description: "Supervises investigation teams",             icon:"ClipboardList",  shellType: "cid" },
+  { id: "CYBER_CRIME",            label: "Cyber Crime Unit",          labelSw: "Kitengo cha Uhalifu wa Mtandaoni",description: "Digital forensics & cybercrime",             icon: "Monitor",      shellType: "cid" },
+  { id: "IMMIGRATION_LIAISON",    label: "Immigration Liaison",       labelSw: "Afisa Uhamiaji",                 description: "Immigration & border control",               icon: "Globe",        shellType: "viewer" },
+  { id: "PRISON_LIAISON",         label: "Prison Liaison",            labelSw: "Afisa Magereza",                 description: "Prison & corrections coordination",          icon: "Lock",         shellType: "viewer" },
+  { id: "EMERGENCY_DISPATCHER",   label: "Emergency Dispatcher",      labelSw: "Msimamizi wa Dharura",           description: "911/112 emergency dispatch coordination",    icon: "Phone",        shellType: "system" },
+  { id: "EVIDENCE_OFFICER",       label: "Evidence Officer",          labelSw: "Afisa Ushahidi",                 description: "Evidence collection & chain of custody",     icon: "Package",      shellType: "clerk" },
+  { id: "AUDIT_OFFICER",          label: "Audit / Internal Affairs",  labelSw: "Afisa Ukaguzi",                  description: "Internal affairs & professional standards",  icon: "FileSearch",   shellType: "system" },
+  { id: "DIG",                    label: "Deputy IGP",                labelSw: "Naibu IGP",                      description: "Deputy Inspector General of Police",         icon: "ShieldCheck",  shellType: "admin" },
+  { id: "CLERK", label: "Clerk", labelSw: "Karani", description: "Records & file management", icon: "FileText", shellType: "clerk" },
+  { id: "VIEWER", label: "Viewer", labelSw: "Mpangaji", description: "Read-only reports & dashboards", icon: "Eye", shellType: "viewer" },
+];
+
+function authRoleToStoreRole(authRole: AuthRole): UserRole {
+  if (authRole === "TRAFFIC_OFFICER") return "officer-traffic";
+  if (authRole === "GENERAL_OFFICER") return "officer-general";
+  if (authRole === "POST_OFFICER") return "officer-post";
+  if (authRole === "CLERK" || authRole === "EVIDENCE_OFFICER" || authRole === "AUDIT_OFFICER") return "clerk";
+  if (authRole === "VIEWER" || authRole === "IMMIGRATION_LIAISON" || authRole === "PRISON_LIAISON") return "viewer";
+  if (authRole === "SYSTEM_ADMIN" || authRole === "EMERGENCY_DISPATCHER") return "system";
+  if (["INVESTIGATOR","CID_OFFICER","CYBER_CRIME","INVESTIGATION_SUPERVISOR"].includes(authRole)) return "investigator";
+  // Admin/command roles
+  if (["SUPER_ADMIN","NATIONAL_COMMANDER","REGIONAL_COMMANDER","DISTRICT_COMMANDER","STATION_COMMANDER","DIG"].includes(authRole)) return "admin";
+  return "commander";
+}
+export type OfficerRole = "officer-traffic" | "officer-general" | "officer-post";
+export const OFFICER_ROLES: OfficerRole[] = ["officer-traffic", "officer-general", "officer-post"];
+
+function normalizeOfficerRole(role?: UserRole): OfficerRole {
+  if (role === "officer-general" || role === "officer-traffic" || role === "officer-post") return role as OfficerRole;
+  return "officer-traffic";
+}
+
+export type AdminScreen =
+  | "search"
+  | "dashboard"
+  // ── 6 Management Pages ──
+  | "mgmt-command"     // Command & Utawala
+  | "mgmt-officers"    // Officers hub (Traffic/General/Post sub-tabs)
+  | "mgmt-clerks"      // Clerk hierarchy (National/Regional/District)
+  | "mgmt-cid"         // CID & Investigators
+  | "mgmt-admins"      // Admin hierarchy (District/Regional/National)
+  | "mgmt-special"     // Idara Maalum (Special Units)
+  // ── Legacy screens ──
+  | "officers" | "incidents" | "citations" | "patrols"
+  | "alerts" | "reports" | "users" | "settings" | "stations" | "posts"
+  | "assignments" | "detained-citizens" | "waliokamatwa"
+  | "missing" | "requests" | "communications" | "clerks"
+  | "database" | "activity-log"
+  | "command-requests" | "approvals";
+
+export interface CitationPrefill {
+  plate: string; model: string; color: string; vehicleType: string;
+  driverName: string; driverLicense: string; driverPhone: string; driverNida: string;
+}
+
+export interface ArrestPrefill {
+  suspectName: string; nida: string; phone: string; plate: string; licenseNo: string;
+}
+
+export interface WarningPrefill {
+  recipientName: string; plate: string; licenseNo: string; phone: string;
+}
+
+
+export interface IncidentPrefill {
+  citizenName: string; citizenNida: string; citizenPhone: string; citizenAddress: string;
+}
+
+export interface PatrolRecord {
+  id: string; date: string; area: string; duration: string;
+  durationSecs: number; events: string; photos: number;
+}
+
+interface PoliceState {
+  isAuthenticated: boolean;
+  userRole: UserRole;
+  authRole: AuthRole | null;
+  login: (role?: UserRole) => void;
+  loginAsRole: (authRole: AuthRole) => void;
+  logout: () => void;
+  setRole: (role: UserRole) => void;
+
+  // Logged-in officer profile from Supabase
+  officerProfile: import("@/hooks/use-officer").OfficerProfile | null;
+  setOfficerProfile: (p: import("@/hooks/use-officer").OfficerProfile | null) => void;
+
+  loginIdentifier: string;
+  setLoginIdentifier: (id: string) => void;
+
+  activeTab: ScreenId;
+  currentScreen: ScreenId;
+  history: ScreenId[];
+  navigate: (screen: ScreenId) => void;
+  setTab: (tab: ScreenId) => void;
+  goBack: () => void;
+
+  adminScreen: AdminScreen;
+  setAdminScreen: (s: AdminScreen) => void;
+
+  searchTab: "plate" | "license" | "nida" | "serial";
+  setSearchTab: (t: "plate" | "license" | "nida" | "serial") => void;
+  citizenSearchType: "name" | "nida" | "mobile";
+  setCitizenSearchType: (t: "name" | "nida" | "mobile") => void;
+  alertFilter: "all" | "mine" | "important";
+  setAlertFilter: (f: "all" | "mine" | "important") => void;
+
+  // Unread alerts count — derived from ALERTS unread flags + readIds
+  readAlertIds: (string | number)[];
+  markAlertRead: (id: number) => void;
+  markAllAlertsRead: () => void;
+  unreadAlertCount: () => number;
+
+  searchQuery: string;
+  searchEntity: "person" | "car" | "device";
+  searchStatus: "idle" | "searching" | "found" | "not-found";
+  searchResult: { citizen: any | null; vehicle: any | null } | null;
+  setSearchQuery: (q: string) => void;
+  setSearchEntity: (t: "person" | "car" | "device") => void;
+  runSearch: (query: string) => void;
+  clearSearch: () => void;
+
+  // Prefills
+  citationPrefill: CitationPrefill | null;
+  setCitationPrefill: (data: CitationPrefill | null) => void;
+  arrestPrefill: ArrestPrefill | null;
+  setArrestPrefill: (data: ArrestPrefill | null) => void;
+  warningPrefill: WarningPrefill | null;
+  setWarningPrefill: (data: WarningPrefill | null) => void;
+
+  incidentPrefill: IncidentPrefill | null;
+  setIncidentPrefill: (data: IncidentPrefill | null) => void;
+  selectedIncidentId: number | null;
+  setSelectedIncident: (id: number | null) => void;
+
+  // Scanner
+  scannerOpen: boolean;
+  scannerMode: "qr" | "ocr";
+  openScanner: (mode: "qr" | "ocr") => void;
+  closeScanner: () => void;
+
+  // Patrol timer
+  patrolActive: boolean;
+  patrolStartTime: number | null;
+  patrolElapsed: number;
+  patrolRecords: PatrolRecord[];
+  startPatrol: () => void;
+  endPatrol: () => void;
+  tickPatrol: () => void;
+  addPatrolRecord: (r: PatrolRecord) => void;
+
+  // Selected offense/citation for detail
+  selectedOffenseId: number | null;
+  setSelectedOffense: (id: number | null) => void;
+  selectedCitationId: string | null;
+  setSelectedCitation: (id: string | null) => void;
+}
+
+export const usePoliceStore = create<PoliceState>()(
+  persist(
+    (set, get) => ({
+      isAuthenticated: false,
+      userRole: "officer-traffic",
+      authRole: null,
+      officerProfile: null,
+      setOfficerProfile: (p) => set({ officerProfile: p }),
+      loginIdentifier: "",
+      setLoginIdentifier: (id) => set({ loginIdentifier: id }),
+
+      login: (role) => {
+        const officerRole = normalizeOfficerRole(role);
+        set({ isAuthenticated: true, userRole: officerRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
+      },
+      loginAsRole: (authRole) => {
+        const storeRole = authRoleToStoreRole(authRole);
+        // Never run admin/commander/officer-post through normalizeOfficerRole
+        const isOfficerRole = storeRole === "officer-traffic" || storeRole === "officer-general" || storeRole === "officer-post";
+        const finalRole: UserRole = isOfficerRole ? storeRole : (storeRole === "admin" || storeRole === "commander" ? storeRole : "admin");
+        set({ isAuthenticated: true, userRole: finalRole, authRole, currentScreen: "home", activeTab: "home", history: ["home"], adminScreen: "dashboard" });
+      },
+      logout: () => {
+        // Always clear Zustand persisted state first, then clear cookies via
+        // the API route which redirects to the root login page (/).
+        set({ isAuthenticated: false, userRole: "officer-traffic", authRole: null, officerProfile: null, loginIdentifier: "", currentScreen: "login", activeTab: "home", history: [], readAlertIds: [] });
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("tz-police-auth");
+          sessionStorage.removeItem("tpf-login-id");
+          sessionStorage.removeItem("tpf-officer-uid");
+          sessionStorage.removeItem("pwa-install-dismissed");
+          // Navigate to /api/auth/logout which clears NextAuth cookies
+          // and redirects to "/" (the unified login page for ALL roles).
+          window.location.href = "/api/auth/logout";
+        }
+      },
+  setRole: (role) => set({ userRole: normalizeOfficerRole(role) }),
+
+  activeTab: "home",
+  currentScreen: "login",
+  history: [],
+  navigate: (screen) => set({ currentScreen: screen, history: [...get().history, screen] }),
+  setTab: (tab) => set({ activeTab: tab, currentScreen: tab, history: [tab] }),
+  goBack: () => {
+    const { history } = get();
+    if (history.length > 1) {
+      const newHistory = [...history];
+      newHistory.pop();
+      set({ currentScreen: newHistory[newHistory.length - 1], history: newHistory });
+    } else {
+      set({ currentScreen: get().activeTab });
+    }
+  },
+
+  adminScreen: "dashboard",
+  setAdminScreen: (s) => set({ adminScreen: s }),
+
+  searchTab: "plate",
+  setSearchTab: (t) => set({ searchTab: t }),
+  citizenSearchType: "name",
+  setCitizenSearchType: (t) => set({ citizenSearchType: t }),
+  alertFilter: "all",
+  setAlertFilter: (f) => set({ alertFilter: f }),
+
+  // Alerts
+  readAlertIds: [],
+  markAlertRead: (id) => set((s) => ({ readAlertIds: s.readAlertIds.includes(id) ? s.readAlertIds : [...s.readAlertIds, id] })),
+  markAllAlertsRead: () => set({ readAlertIds: ALERTS.map((a: Record<string, unknown>) => a.id as string | number) }),
+  unreadAlertCount: () => ALERTS.filter((a: Record<string, unknown>) => a.unread && !get().readAlertIds.includes(a.id as string | number)).length,
+
+  searchQuery: "",
+  searchEntity: "car",
+  searchStatus: "idle",
+  searchResult: null,
+  setSearchResult: (r) => set({ searchResult: r }),
+  setSearchQuery: (q) => set({ searchQuery: q }),
+  setSearchEntity: (t) => set({ searchEntity: t }),
+  runSearch: (query) => {
+    const entity = get().searchEntity;
+    const typeMap: Record<string, string> = { car: "plate", device: "mobile", person: "name" };
+    const type = typeMap[entity] ?? "name";
+    set({ searchStatus: "searching", searchQuery: query, searchResult: null });
+    fetch("/api/search?q=" + encodeURIComponent(query) + "&type=" + type)
+      .then(r => r.json())
+      .then(d => {
+        if (d.found && d.data) {
+          set({
+            searchStatus: "found",
+            searchResult: {
+              citizen: d.type === "citizen" ? d.data : (d.citizen ?? null),
+              vehicle: d.type === "vehicle" ? d.data : (d.data?.vehicles?.[0] ?? null),
+            },
+          });
+        } else {
+          set({ searchStatus: "not-found", searchResult: null });
+        }
+      })
+      .catch(() => set({ searchStatus: "not-found", searchResult: null }));
+  },
+  clearSearch: () => set({ searchQuery: "", searchStatus: "idle", searchResult: null }),
+
+  citationPrefill: null,
+  setCitationPrefill: (data) => set({ citationPrefill: data }),
+  arrestPrefill: null,
+  setArrestPrefill: (data) => set({ arrestPrefill: data }),
+  warningPrefill: null,
+  setWarningPrefill: (data) => set({ warningPrefill: data }),
+  incidentPrefill: null,
+  setIncidentPrefill: (data) => set({ incidentPrefill: data }),
+  selectedIncidentId: null,
+  setSelectedIncident: (id) => set({ selectedIncidentId: id }),
+
+  scannerOpen: false,
+  scannerMode: "qr",
+  openScanner: (mode) => set({ scannerOpen: true, scannerMode: mode }),
+  closeScanner: () => set({ scannerOpen: false }),
+
+  // Patrol
+  patrolActive: false,
+  patrolStartTime: null,
+  patrolElapsed: 0,
+  patrolRecords: [],
+  startPatrol: () => set({ patrolActive: true, patrolStartTime: Date.now(), patrolElapsed: 0 }),
+  endPatrol: () => set({ patrolActive: false, patrolStartTime: null }),
+  tickPatrol: () => {
+    const { patrolStartTime } = get();
+    if (patrolStartTime) set({ patrolElapsed: Math.floor((Date.now() - patrolStartTime) / 1000) });
+  },
+  addPatrolRecord: (r) => set((s) => ({ patrolRecords: [r, ...s.patrolRecords] })),
+
+  selectedOffenseId: null,
+  setSelectedOffense: (id) => set({ selectedOffenseId: id }),
+  selectedCitationId: null,
+  setSelectedCitation: (id) => set({ selectedCitationId: id }),
+    }),
+    {
+      name: "tz-police-auth",
+      partialize: (state) => ({
+        isAuthenticated: state.isAuthenticated,
+        authRole: state.authRole,
+        userRole: state.userRole,
+      }) as PoliceState,
+    }
+  )
+);

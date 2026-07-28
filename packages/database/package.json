@@ -1,0 +1,13 @@
+{
+  "name": "@tz-police/database",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Supabase database client, schema, queries, migrations, and seed data",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "migrate": "supabase db push",
+    "seed": "supabase db reset",
+    "generate": "supabase gen types typescript --linked > src/types.ts"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "Jeshi la Polisi Tanzania — Mfumo wa Digital",
+  "short_name": "TPF Digital",
+  "description": "Tanzania Police Force Digital Operations Platform — Maafisa na Raia",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f2347",
+  "theme_color": "#0f2347",
+  "categories": ["productivity", "government", "security"],
+  "lang": "sw",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "/police-logo.png", "sizes": "72x72",   "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "96x96",   "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "152x152", "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/police-logo.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "/police-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Maafisa — Ingia",
+      "short_name": "Maafisa",
+      "description": "Officer login",
+      "url": "/login",
+      "icons": [{ "src": "/police-logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Raia — Ingia",
+      "short_name": "Raia",
+      "description": "Citizen portal",
+      "url": "/citizen",
+      "icons": [{ "src": "/police-logo.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/police-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "TPF Digital Platform"
+    }
+  ]
+}
