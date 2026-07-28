@@ -21,6 +21,9 @@ export { Section } from "./section";
 export { StatsRow } from "./stats-row";
 export { ActionBar } from "./action-bar";
 
+// ── Form Primitives ──────────────────────────────────────────
+export { FormSection, FormField, FormActions } from "./form";
+
 // ── Card Components ──────────────────────────────────────────
 export { AppCard, AppCardHeader, AppCardContent, AppCardFooter } from "./app-card";
 export { MetricCard } from "./metric-card";

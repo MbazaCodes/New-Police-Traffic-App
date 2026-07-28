@@ -104,7 +104,7 @@ export function CitizenShell() {
           {/* Avatar */}
           <div
             className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-xl text-[10px] sm:text-[11px] font-bold text-white"
-            style={{ background: "linear-gradient(135deg, #10B981, #059669)" }}
+            style={{ background: "linear-gradient(135deg, var(--tpf-citizen-accent), var(--tpf-citizen-accent-dark))" }}
           >
             {initials}
           </div>
@@ -147,17 +147,17 @@ export function CitizenShell() {
               key={item.id}
               onClick={() => navigate(item.href)}
               className="flex flex-1 flex-col items-center justify-center gap-0.5 transition active:scale-[0.92] touch-manipulation"
-              style={{ color: active ? "#10B981" : "var(--tpf-text-4)" }}
+              style={{ color: active ? "var(--tpf-citizen-accent)" : "var(--tpf-text-4)" }}
             >
               <div
                 className="relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl transition"
-                style={active ? { background: "rgb(16 185 129 / 0.12)" } : {}}
+                style={active ? { background: "color-mix(in srgb, var(--tpf-citizen-accent) 12%, transparent)" } : {}}
               >
                 <Icon size={18} />
                 {active && (
                   <span
                     className="absolute -top-0.5 left-1/2 h-1 w-4 -translate-x-1/2 rounded-full"
-                    style={{ background: "#10B981" }}
+                    style={{ background: "var(--tpf-citizen-accent)" }}
                   />
                 )}
               </div>

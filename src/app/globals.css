@@ -89,6 +89,10 @@
   --tpf-red:        #DC2626;
   --tpf-green:      #059669;
   --tpf-amber:      #D97706;
+  /* Citizen portal accent — brighter emerald used for active nav, primary CTAs.
+     Replaces previously-hardcoded #10B981 scattered across citizen screens. */
+  --tpf-citizen-accent:      #10B981;
+  --tpf-citizen-accent-dark: #059669;
   --tpf-surface:    #F8FAFC;
   --tpf-surface-2:  #F1F5F9;
   --tpf-card:       #FFFFFF;
@@ -213,6 +217,9 @@
   --tpf-red:        #F87171;
   --tpf-green:      #34D399;
   --tpf-amber:      #FCD34D;
+  /* Citizen portal accent — dark mode variant (slightly brighter for contrast). */
+  --tpf-citizen-accent:      #34D399;
+  --tpf-citizen-accent-dark: #10B981;
   --tpf-surface:    #0F172A;
   --tpf-surface-2:  #1E293B;
   --tpf-card:       #1E293B;
