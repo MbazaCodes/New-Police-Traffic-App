@@ -20,6 +20,9 @@ export const GET = withAuth("audit_logs", "view", async ({ db, searchParams }) =
 
   if (!isDbEnabled()) {
     return { ok: true, data: [], total: 0 };
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
   }
 
   let q = db

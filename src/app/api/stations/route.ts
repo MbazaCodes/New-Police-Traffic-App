@@ -52,6 +52,9 @@ export const POST = withAuth("stations", "create", async ({ body, db }) => {
     delete insertRow.ward;
     insertRow.address = [`Kata ${ward}`, address].filter(Boolean).join(", ");
     ({ data, error } = await db.from("stations").insert(insertRow).select().single());
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
   }
   if (error) throw error;
   return { ok: true, data, status: 201 };

@@ -127,6 +127,9 @@ export const PATCH = withAuth("citizens", "edit", async ({ body, db }) => {
 export const DELETE = withAuth("citizens", "delete", async ({ searchParams, db }) => {
   if (!isDbEnabled()) {
     return { ok: false, error: "DB haijawezeshwa", status: 503 };
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
   }
   const id = clean(searchParams.get("id"));
   if (!id) return { ok: false, error: "ID ni lazima", status: 400 };
